@@ -196,7 +196,8 @@ export default function CampaignModal({ campaign, onClose }) {
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
                   This campaign is verified and ready to launch. Dedicated Monero (XMR) and Zano (ZANO) wallets
-                  will be published directly on this page once the operator is confirmed and funding opens.
+                  are generated inside a Trusted Execution Environment (TEE) — a hardware enclave where no human,
+                  including the founders, can access the keys. Wallets will appear here once the TEE is live.
                 </p>
               </div>
 
