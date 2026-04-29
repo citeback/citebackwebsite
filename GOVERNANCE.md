@@ -380,6 +380,49 @@ This is the nuclear option - but it's always available, which keeps any would-be
 
 ---
 
+## Mission Constitution (Immutable)
+
+This section defines Citeback's permanent, unchangeable purpose. No vote, no founder action, no AI decision, and no community consensus can alter or override it.
+
+### The Principle
+
+Citeback exists to **document, challenge, limit, or resist the exercise of institutional power over individuals** — including surveillance, tracking, data collection, monitoring, and privacy violations carried out by:
+- Government bodies at any level (federal, state, local)
+- Government-funded or government-authorized entities
+- Private actors operating under government contracts or authority
+
+This framing is intentionally structural rather than legal. It does not require a court ruling, a constitutional determination, or political consensus. The test is simple: **is institutional power being used against individuals?** If yes, it is within scope.
+
+This definition is deliberately broad to accommodate future forms of overreach that cannot be anticipated today.
+
+### Campaign Mission Filter
+
+Every campaign proposal is evaluated by the AI ensemble against the mission principle before it reaches a community vote.
+
+**Ensemble evaluation tiers:**
+
+| Ensemble signal | Outcome |
+|---|---|
+| 1-of-3 models flags concern | No block — proposal proceeds with a community scrutiny flag |
+| 2-of-3 models reject | Soft block — requires 60% community vote to proceed |
+| 3-of-3 models reject | Hard block — requires 75% community supermajority to proceed |
+
+The AI evaluates **structural alignment only** — does this challenge institutional power over individuals? Not political orientation. Not whether a court has ruled on it. Not whether it is popular or controversial. The benchmark suite includes specific tests for politically contested topics to detect and correct for ideological filtering. All rejections are logged publicly with the structural reasoning used — the community can see why any proposal was flagged.
+
+**AI self-correction:** The ensemble monitors its own rejection patterns for signs of systematic bias (e.g., consistently flagging one category of rights challenge while approving structurally similar ones). Detected bias patterns are flagged for community review and feed into the model benchmark suite and upgrade evaluation.
+
+### What Cannot Be Voted Away
+
+Even a 100% community vote cannot:
+- Change or narrow the mission principle
+- Remove the mission filter from the proposal process
+- Approve a campaign that all three ensemble models reject without a 75% supermajority
+- Redirect the platform to purposes unrelated to institutional power vs. individual rights
+
+These constraints are encoded in the TEE and enforced by the execution layer — they are not policy, they are architecture.
+
+---
+
 ## What Governance Cannot Do
 
 Even with community consensus, certain actions are permanently off-limits:

@@ -113,7 +113,7 @@ const sections = [
       },
       {
         q: 'What can governance NOT do?',
-        a: `Even with 100% community consensus, some things are permanently off-limits — enforced by the TEE code, not policy:\n\n• Extract wallet private keys from the enclave\n• Retroactively reverse completed disbursements\n• Clear a confirmed misconduct record\n• Identify donors (Monero privacy is immutable)\n• Grant any individual special access above others\n\nThese constraints can't be voted away. They're in the code.`,
+        a: `Even with 100% community consensus, some things are permanently off-limits — enforced by the TEE code, not policy:\n\n• Extract wallet private keys from the enclave\n• Retroactively reverse completed disbursements\n• Clear a confirmed misconduct record\n• Identify donors (Monero privacy is immutable)\n• Grant any individual special access above others\n• Downgrade the AI ensemble to a lower-scoring model\n• Change or narrow the platform's mission\n• Approve an off-mission campaign without a 75% community supermajority\n\nThe platform's mission is also permanently locked: Citeback exists to document, challenge, limit, or resist the exercise of institutional power over individuals — surveillance, tracking, data collection, or privacy violations by government bodies or private actors operating under government authority. No vote can redirect the platform away from this purpose.\n\nThese constraints can't be voted away. They're in the architecture.`,
       },
     ],
   },
