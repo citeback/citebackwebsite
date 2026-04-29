@@ -10,6 +10,7 @@ function getDaysLeft(deadline) {
 export default function CampaignModal({ campaign, onClose }) {
   const [copied, setCopied] = useState(false)
   const [walletTab, setWalletTab] = useState('address')
+  const [currency, setCurrency] = useState('XMR')
   const [interested, setInterested] = useState(false)
   const pct = campaign.walletXMR ? Math.min(100, Math.round((campaign.raised / campaign.goal) * 100)) : 0
   const tc = typeColors[campaign.type]
@@ -17,8 +18,13 @@ export default function CampaignModal({ campaign, onClose }) {
   const prelaunch = !campaign.walletXMR
   const daysLeft = getDaysLeft(campaign.deadline)
 
+  const activeWallet = currency === 'XMR' ? campaign.walletXMR : campaign.walletZANO
+  const hasZano = !!campaign.walletZANO
+  const hasXMR = !!campaign.walletXMR
+  const hasWallet = hasXMR || hasZano
+
   const copyWallet = () => {
-    navigator.clipboard.writeText(campaign.walletXMR)
+    navigator.clipboard.writeText(activeWallet)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -178,7 +184,7 @@ export default function CampaignModal({ campaign, onClose }) {
               </div>
             </div>
 
-          ) : prelaunch ? (
+          ) : !hasWallet ? (
             /* Pre-launch state */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{
@@ -189,8 +195,8 @@ export default function CampaignModal({ campaign, onClose }) {
                   <Rocket size={16} style={{ color: 'var(--accent)' }} /> Pre-Launch Campaign
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-                  This campaign is verified and ready to launch. A dedicated Monero wallet will be published
-                  directly on this page once the human operator is confirmed and funding opens.
+                  This campaign is verified and ready to launch. Dedicated Monero (XMR) and Zano (ZANO) wallets
+                  will be published directly on this page once the operator is confirmed and funding opens.
                 </p>
               </div>
 
@@ -199,8 +205,8 @@ export default function CampaignModal({ campaign, onClose }) {
                 borderRadius: 10, padding: 16, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, textAlign: 'center',
               }}>
                 <strong style={{ color: 'var(--text)' }}>No notifications — by design.</strong><br />
-                Citeback doesn't collect emails or contact info. When the wallet activates,
-                the XMR address will appear right here. Bookmark this page and check back.
+                Citeback doesn't collect emails or contact info. When wallets activate,
+                both XMR and ZANO addresses will appear right here. Bookmark this page and check back.
               </div>
             </div>
 
@@ -223,8 +229,23 @@ export default function CampaignModal({ campaign, onClose }) {
             </div>
 
           ) : (
-            /* Active — fund with Monero */
+            /* Active — fund with XMR or ZANO */
             <>
+              {/* Currency selector */}
+              <div style={{ display: 'flex', gap: 4, background: 'var(--bg3)', borderRadius: 10, padding: 4 }}>
+                {hasXMR && (
+                  <button style={tabStyle(currency === 'XMR')} onClick={() => { setCurrency('XMR'); setCopied(false) }}>
+                    ⬛ Monero (XMR)
+                  </button>
+                )}
+                {hasZano && (
+                  <button style={tabStyle(currency === 'ZANO')} onClick={() => { setCurrency('ZANO'); setCopied(false) }}>
+                    🟣 Zano (ZANO)
+                  </button>
+                )}
+              </div>
+
+              {/* Address / QR tabs */}
               <div style={{ display: 'flex', gap: 4, background: 'var(--bg3)', borderRadius: 10, padding: 4 }}>
                 <button style={tabStyle(walletTab === 'address')} onClick={() => setWalletTab('address')}>Wallet Address</button>
                 <button style={tabStyle(walletTab === 'qr')} onClick={() => setWalletTab('qr')}>QR Code</button>
@@ -233,7 +254,7 @@ export default function CampaignModal({ campaign, onClose }) {
               {walletTab === 'address' ? (
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    Monero (XMR) — This Campaign Only
+                    {currency === 'XMR' ? 'Monero (XMR)' : 'Zano (ZANO)'} — This Campaign Only
                   </div>
                   <div style={{
                     background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8,
@@ -241,33 +262,50 @@ export default function CampaignModal({ campaign, onClose }) {
                     wordBreak: 'break-all', color: '#aaa', lineHeight: 1.7, marginBottom: 12,
                     userSelect: 'all',
                   }}>
-                    {campaign.walletXMR}
+                    {activeWallet}
                   </div>
                   <button onClick={copyWallet} style={{
                     display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'center',
-                    background: copied ? 'var(--green)' : 'var(--accent)',
+                    background: copied ? 'rgba(46,204,113,0.8)' : 'var(--accent)',
                     border: 'none', color: '#fff', padding: '12px 20px', borderRadius: 9,
                     fontWeight: 700, fontSize: 15, cursor: 'pointer',
                   }}>
-                    {copied ? <><CheckCircle size={16} /> Copied!</> : <><Copy size={16} /> Copy Wallet Address</>}
+                    {copied ? <><CheckCircle size={16} /> Copied!</> : <><Copy size={16} /> Copy {currency} Address</>}
                   </button>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
                   <div style={{ background: 'white', padding: 16, borderRadius: 12 }}>
-                    <QRCodeSVG value={`monero:${campaign.walletXMR}`} size={180} />
+                    <QRCodeSVG
+                      value={currency === 'XMR' ? `monero:${activeWallet}` : `zano:${activeWallet}`}
+                      size={180}
+                    />
                   </div>
                   <p style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
-                    Scan with any Monero wallet app. Amount is up to you.
+                    Scan with any {currency === 'XMR' ? 'Monero' : 'Zano'} wallet app. Amount is up to you.
                   </p>
                 </div>
               )}
 
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-                <strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
-                Get XMR at <a href="https://www.kraken.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Kraken</a> or{' '}
-                <a href="https://localmonero.co" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>LocalMonero</a> (no KYC).
-                Use <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> on mobile.
+                {currency === 'XMR' ? (
+                  <><strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
+                  Get XMR at <a href="https://www.kraken.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Kraken</a> or{' '}
+                  <a href="https://localmonero.co" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>LocalMonero</a> (no KYC).
+                  Use <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> on mobile.</>
+                ) : (
+                  <><strong style={{ color: 'var(--text)' }}>New to Zano?</strong>{' '}
+                  Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Zano Wallet</a> (desktop) or{' '}
+                  <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (mobile — Zano supported).
+                  Get ZANO at <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>KuCoin</a> or{' '}
+                  <a href="https://tradeogre.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>TradeOgre</a>.</>
+                )}
+              </div>
+
+              {/* Official domains disclaimer */}
+              <div style={{ background: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: 10, padding: '12px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.65 }}>
+                ⚠️ <strong style={{ color: '#f39c12' }}>Only donate from an official Citeback domain.</strong>{' '}
+                Official sites: citeback.com · citeback.net · citeback.org
               </div>
             </>
           )}
