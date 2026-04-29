@@ -211,20 +211,23 @@ Signing a vote with your private key proves identity without revealing it.
 
 Voting weight is based on **cumulative donation history** — not wallet count. This makes Sybil attacks economically irrational rather than just technically discouraged.
 
+**Funding and voting are intentionally decoupled.** Anyone can donate any amount — there is no cap on donations. The cap below applies only to *voting weight*, not to funding. A single donor can fund an entire campaign. They just don't receive disproportionate governance power for doing so.
+
 **Weight calculation:**
 
-| Cumulative donations | Weight earned |
+| Cumulative donations | Voting weight earned |
 |---|---|
-| $0–$100 | 1:1 (full weight) |
-| $101–$500 | 50% on the excess |
-| $500+ | Capped — no additional weight |
+| Below $20 | No weight (below minimum threshold) |
+| $20–$150 | 1:1 (full weight) |
+| $151–$600 | 50% on the excess |
+| $600+ | Capped — no additional weight |
 
-A donor who gives $500 total does not get 5x the influence of someone who gave $100. This prevents whale capture while still rewarding consistent supporters.
+The $20 minimum threshold means a Sybil attacker must spend at least $20 per fake identity to gain any influence at all. At scale, attacks become prohibitively expensive. A donor who reaches $600+ total does not gain more vote weight than someone at $600 — large donations are welcomed for funding but don’t buy extra governance.
 
 **Additional rules:**
 - Only wallets with donation history **before a proposal was submitted** can vote on it. Last-minute Sybil floods are blocked by this time-lock.
 - Vote weight is calculated at the time of vote using the on-chain donation record up to the proposal timestamp.
-- One XMR address = one voter identity. Splitting donations across many wallets dilutes your own weight (each address has its own cumulative cap).
+- One XMR address = one voter identity. Splitting donations across many wallets dilutes your own weight (each address has its own cumulative cap, and each starts from zero).
 
 ### Adaptive Parameter Adjustment (AI Governance Monitor)
 
