@@ -1,7 +1,7 @@
-# Citeback — Governance Specification
+# Citeback - Governance Specification
 
-> Version: 0.1 — Draft  
-> Status: Design phase  
+> Version: 0.1 - Draft
+> Status: Design phase
 > Last updated: 2026-04-29
 
 ---
@@ -48,7 +48,7 @@ Operators are accountable to the community, not to the founder.
 - Enforce time-locks
 - Cannot act outside their encoded rules
 
-The agents are not participants — they are tools the community governs.
+The agents are not participants - they are tools the community governs.
 
 ### The Founder (Scott)
 - Bootstraps the initial codebase and enclave
@@ -63,8 +63,8 @@ The agents are not participants — they are tools the community governs.
 
 ### 1. Campaign Proposals
 
-**Who can propose:** Anyone  
-**How:** Submit via the Propose Campaign form on the site  
+**Who can propose:** Anyone
+**How:** Submit via the Propose Campaign form on the site
 **Required fields:**
 - Campaign type (billboard / legal / FOIA / verification)
 - Location
@@ -87,8 +87,8 @@ Rejected → Proposal archived with vote record
 
 ### 2. Disbursement Challenges
 
-**Who can challenge:** Anyone  
-**Window:** 48 hours after proof submission  
+**Who can challenge:** Anyone
+**Window:** 48 hours after proof submission
 **How:** Submit challenge via site with reasoning and evidence
 
 **Challenge resolution:**
@@ -118,8 +118,8 @@ If a challenge is rejected (disbursement proceeds):
 
 ### 3. Campaign Extensions
 
-**Who can request:** Operator or any community member  
-**Timing:** Only within the last 25% of the campaign's time window  
+**Who can request:** Operator or any community member
+**Timing:** Only within the last 25% of the campaign's time window
 **Maximum:** 2 extensions per campaign
 
 **Request flow:**
@@ -162,7 +162,7 @@ The time-lock exists so the community has time to react to approved changes befo
 
 ### 5. Misconduct Reports
 
-**Who can file:** Anyone  
+**Who can file:** Anyone
 **Required:** Evidence (links, screenshots, transaction records)
 
 **Resolution flow:**
@@ -179,7 +179,7 @@ Confirmed: reputation zeroed, permanent public flag
 Dismissed: report archived, filer reputation unchanged
 ```
 
-Confirmed misconduct is permanent and public. There is no appeals process. This is intentional — it creates a strong disincentive to act in bad faith.
+Confirmed misconduct is permanent and public. There is no appeals process. This is intentional - it creates a strong disincentive to act in bad faith.
 
 ### 6. Founder Formal Handoff
 
@@ -202,32 +202,46 @@ After handoff, the founder's account has identical permissions to any other comm
 ### Identity
 
 Voters identify via:
-- **Monero address** — generates a pseudonymous but consistent identity
-- **Nostr public key** — adds cross-platform portability
+- **Monero address** - generates a pseudonymous but consistent identity
+- **Nostr public key** - adds cross-platform portability
 
 Signing a vote with your private key proves identity without revealing it.
 
 ### Weight
 
-Voting weight is based on **cumulative donation history** — not wallet count. This makes Sybil attacks economically irrational rather than just technically discouraged.
+Voting weight is based on **cumulative donation history** - not wallet count. This makes Sybil attacks economically irrational rather than just technically discouraged.
 
 **Funding and voting are intentionally decoupled.** Anyone can donate any amount — there is no cap on donations. The cap below applies only to *voting weight*, not to funding. A single donor can fund an entire campaign. They just don't receive disproportionate governance power for doing so.
 
-**Weight calculation:**
+**Weight thresholds scale with campaign goal.** Fixed dollar amounts are too easy to game — a threshold that's expensive for a $750 billboard is trivial for an $8,000 legal fund. Instead, thresholds are expressed as a percentage of the campaign goal they apply to, and recalculated by the AI monitor when XMR price changes significantly.
 
-| Cumulative donations | Voting weight earned |
+**Weight calculation (per campaign):**
+
+| Cumulative donations to this campaign | Voting weight earned |
 |---|---|
-| Below $20 | No weight (below minimum threshold) |
-| $20–$150 | 1:1 (full weight) |
-| $151–$600 | 50% on the excess |
-| $600+ | Capped — no additional weight |
+| Below 0.5% of goal | No weight (below minimum threshold) |
+| 0.5%–8% of goal | 1:1 (full weight) |
+| 8%–20% of goal | 50% on the excess |
+| Above 20% of goal | Capped — no additional weight |
 
-The $20 minimum threshold means a Sybil attacker must spend at least $20 per fake identity to gain any influence at all. At scale, attacks become prohibitively expensive. A donor who reaches $600+ total does not gain more vote weight than someone at $600 — large donations are welcomed for funding but don’t buy extra governance.
+**Example — $750 billboard campaign:**
+- Minimum to vote: $3.75 (0.5%) → low barrier for genuine community supporters
+- Full weight cap: $60 (8%) → affordable for real donors
+- Weight ceiling: $150 (20%) → max influence per wallet
+
+**Example — $8,000 legal fund:**
+- Minimum to vote: $40 (0.5%) → filters out trivial Sybil wallets
+- Full weight cap: $640 (8%) → meaningful commitment required
+- Weight ceiling: $1,600 (20%) → a coordinated attack needs many expensive wallets
+
+This means attacking a high-stakes campaign costs proportionally more — making economic attacks irrational regardless of campaign size.
 
 **Additional rules:**
 - Only wallets with donation history **before a proposal was submitted** can vote on it. Last-minute Sybil floods are blocked by this time-lock.
 - Vote weight is calculated at the time of vote using the on-chain donation record up to the proposal timestamp.
-- One XMR address = one voter identity. Splitting donations across many wallets dilutes your own weight (each address has its own cumulative cap, and each starts from zero).
+- One XMR address = one voter identity. Splitting donations across many wallets dilutes your own weight (each address has its own cumulative history, and each starts from zero).
+- The AI monitor tracks donation velocity — unusual acceleration from existing wallets is flagged the same as a surge in new wallets.
+- Thresholds are denominated in USD-equivalent and recalculated by the AI monitor when XMR spot price moves more than 20% from the last calibration.
 
 ### Adaptive Parameter Adjustment (AI Governance Monitor)
 
@@ -258,7 +272,7 @@ All AI-proposed parameter changes go through the standard minor/major/governance
 Combined defenses:
 - **Proof of Donation:** voting requires real XMR committed before the proposal
 - **Cumulative cap:** splitting across wallets loses weight, not gains it
-- **Time-lock:** pre-proposal donation history required — no last-minute flooding
+- **Time-lock:** pre-proposal donation history required - no last-minute flooding
 - **AI monitoring:** anomaly detection flags suspicious patterns and proposes countermeasures
 - **Economic disincentive:** a Sybil attack at scale requires spending more than the attack is worth
 
@@ -286,7 +300,7 @@ If governance is captured or the platform is irrevocably compromised:
 - The community decides which fork to use
 - Original funds remain in the TEE (inaccessible to the fork) but new fork starts fresh
 
-This is the nuclear option — but it's always available, which keeps any would-be captors honest.
+This is the nuclear option - but it's always available, which keeps any would-be captors honest.
 
 ---
 
@@ -308,7 +322,7 @@ These constraints are enforced by the TEE code, not by policy. They cannot be vo
 
 1. **Voting quorum:** What minimum participation is required for a valid vote? (Proposed: 10 unique voters for minor, 25 for major, 50 for governance)
 2. **Reputation weighting timeline:** When does the community vote to enable it?
-3. **TEE provider selection:** Phala vs Marlin vs other — requires technical evaluation
+3. **TEE provider selection:** Phala vs Marlin vs other - requires technical evaluation
 4. **GitHub repo governance:** Who controls the repo until Phase 2? (Proposed: founder, with community fork right guaranteed from day 1)
 5. **Operations wallet surplus policy:** When does the ops reserve trigger a community vote for redistribution?
 
@@ -316,6 +330,6 @@ These constraints are enforced by the TEE code, not by policy. They cannot be vo
 
 ## Related Documents
 
-- `ARCHITECTURE.md` — Full technical architecture
-- `src/data/campaigns.js` — Campaign data and rules
-- `src/components/TrustFAQ.jsx` — Public-facing FAQ
+- `ARCHITECTURE.md` - Full technical architecture
+- `src/data/campaigns.js` - Campaign data and rules
+- `src/components/TrustFAQ.jsx` - Public-facing FAQ
