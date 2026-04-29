@@ -1,4 +1,4 @@
-# Fourthright — Governance Specification
+# Citeback — Governance Specification
 
 > Version: 0.1 — Draft  
 > Status: Design phase  
@@ -209,16 +209,55 @@ Signing a vote with your private key proves identity without revealing it.
 
 ### Weight
 
-Initial model: **one identity = one vote** (flat weighting)
+Voting weight is based on **cumulative donation history** — not wallet count. This makes Sybil attacks economically irrational rather than just technically discouraged.
 
-Future consideration: reputation-weighted voting for high-stakes decisions (operators with track record have marginally more weight). This requires a governance change to implement.
+**Weight calculation:**
+
+| Cumulative donations | Weight earned |
+|---|---|
+| $0–$100 | 1:1 (full weight) |
+| $101–$500 | 50% on the excess |
+| $500+ | Capped — no additional weight |
+
+A donor who gives $500 total does not get 5x the influence of someone who gave $100. This prevents whale capture while still rewarding consistent supporters.
+
+**Additional rules:**
+- Only wallets with donation history **before a proposal was submitted** can vote on it. Last-minute Sybil floods are blocked by this time-lock.
+- Vote weight is calculated at the time of vote using the on-chain donation record up to the proposal timestamp.
+- One XMR address = one voter identity. Splitting donations across many wallets dilutes your own weight (each address has its own cumulative cap).
+
+### Adaptive Parameter Adjustment (AI Governance Monitor)
+
+The Governance AI monitors voting patterns for anomalies and can propose automatic parameter adjustments when gaming is detected.
+
+**Triggers for review:**
+- Sudden spike in new wallet activity immediately before a proposal
+- Vote distribution showing statistical clustering (many wallets with identical small donations)
+- Wallet addresses with no campaign history appearing in votes at scale
+- Weight concentration exceeding 30% in a single address
+
+**What the AI can adjust (with community approval):**
+- Donation cap thresholds (e.g., lower the $500 cap if whales emerge)
+- Weight curve steepness
+- Minimum donation age requirement (e.g., require 7-day-old donation history instead of just pre-proposal)
+- Quorum thresholds for specific vote types
+
+**What the AI cannot adjust unilaterally:**
+- Disbursement vote thresholds
+- Governance change supermajority requirements
+- Emergency pause rules
+- Any of the permanent constraints listed below
+
+All AI-proposed parameter changes go through the standard minor/major/governance change vote flow. The AI flags and proposes; the community decides.
 
 ### Anti-Sybil
 
-Flat voting is susceptible to Sybil attacks (one person, many wallets). Mitigations:
-- Time-locks make coordinated attacks expensive
-- Reputation weighting (future) ties influence to demonstrated track record
-- Community can flag suspicious voting patterns and trigger a review
+Combined defenses:
+- **Proof of Donation:** voting requires real XMR committed before the proposal
+- **Cumulative cap:** splitting across wallets loses weight, not gains it
+- **Time-lock:** pre-proposal donation history required — no last-minute flooding
+- **AI monitoring:** anomaly detection flags suspicious patterns and proposes countermeasures
+- **Economic disincentive:** a Sybil attack at scale requires spending more than the attack is worth
 
 ---
 
