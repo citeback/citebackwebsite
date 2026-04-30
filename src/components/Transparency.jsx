@@ -1,4 +1,4 @@
-import { CheckCircle, ExternalLink, FileText, Coins } from 'lucide-react'
+import { CheckCircle, ExternalLink, FileText, Coins, Shield } from 'lucide-react'
 import { ThreatDisclosure } from './VerificationTiers'
 
 const disbursements = []
@@ -31,6 +31,27 @@ export default function Transparency() {
             <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65 }}>{p.body}</p>
           </div>
         ))}
+      </div>
+
+      {/* What if we don't launch */}
+      <div style={{
+        background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)',
+        borderRadius: 12, padding: '20px 24px', marginBottom: 32,
+      }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+          <Shield size={20} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
+          <div>
+            <p style={{ fontWeight: 700, color: '#6ee7b7', marginBottom: 8, fontSize: 15 }}>
+              What happens if Citeback doesn't launch?
+            </p>
+            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
+              Campaign wallets are controlled by the TEE — not by us. If the platform shuts down before wallets activate, no funds have been accepted and there is nothing to return. We won't accept a single XMR until the launch prerequisites are fully met.
+            </p>
+            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }}>
+              Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the TEE can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.
+            </p>
+          </div>
+        </div>
       </div>
 
       <ThreatDisclosure />

@@ -1,5 +1,53 @@
-import { ArrowRight, Eye, Scale, Landmark, AlertTriangle } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ArrowRight, Eye, Scale, Landmark, AlertTriangle, Bell } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import LaunchTracker from './LaunchTracker'
+
+function NotifyMe() {
+  const [email, setEmail] = useState('')
+  const [sent, setSent] = useState(false)
+
+  const submit = (e) => {
+    e.preventDefault()
+    if (email) setSent(true)
+  }
+
+  return (
+    <div style={{
+      marginTop: 16, padding: '20px 24px',
+      background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
+      borderRadius: 12, textAlign: 'center',
+    }}>
+      {sent ? (
+        <p style={{ color: '#6ee7b7', fontWeight: 600, fontSize: 14 }}>
+          ✓ Got it. One notification at launch, nothing else.
+        </p>
+      ) : (
+        <>
+          <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 12 }}>
+            <Bell size={13} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
+            Get one email when wallets go live. That's it — no newsletter, no updates, no tracking.
+          </p>
+          <form onSubmit={submit} style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <input
+              type="email" placeholder="your@email.com" value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={{
+                padding: '9px 14px', borderRadius: 8, border: '1px solid var(--border)',
+                background: 'var(--bg2)', color: 'var(--text)', fontSize: 13,
+                outline: 'none', minWidth: 220,
+              }}
+            />
+            <button type="submit" style={{
+              padding: '9px 18px', borderRadius: 8, border: 'none',
+              background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 600,
+              cursor: 'pointer',
+            }}>Notify me at launch</button>
+          </form>
+        </>
+      )}
+    </div>
+  )
+}
 
 function CountUp({ target, suffix = '' }) {
   const [val, setVal] = useState(0)
@@ -100,14 +148,20 @@ export default function Hero({ setTab }) {
           >
             Fund a Campaign <ArrowRight size={18} />
           </button>
-          <button onClick={() => setTab('map')} style={{
+          <button onClick={() => setTab('operators')} style={{
             display: 'flex', alignItems: 'center', gap: 8,
             background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)',
             padding: '14px 28px', borderRadius: 10, fontWeight: 600, fontSize: 16,
             backdropFilter: 'blur(8px)',
           }}>
-            View Camera Map
+            Run a Campaign
           </button>
+        </div>
+
+        {/* Launch tracker + notify */}
+        <div style={{ marginTop: 48, maxWidth: 640, margin: '48px auto 0' }}>
+          <LaunchTracker />
+          <NotifyMe />
         </div>
 
         {/* Stats */}
