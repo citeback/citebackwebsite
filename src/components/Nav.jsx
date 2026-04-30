@@ -8,6 +8,7 @@ const links = [
   { id: 'registry', label: 'Human Registry' },
   { id: 'transparency', label: 'Transparency' },
   { id: 'trust', label: 'How It Works' },
+  { id: 'governance', label: 'Governance' },
 ]
 
 export default function Nav({ tab, setTab }) {

@@ -1,459 +1,523 @@
-# Citeback — Governance Specification
+# GOVERNANCE.md — Citeback / Fourthright Platform
 
-> Version: 0.2 — Draft  
-> Status: Design phase  
-> Last updated: 2026-04-29
-
----
-
-## Philosophy
-
-Citeback governance is designed around one principle: **no individual should have the power to destroy the platform.**
-
-This means:
-- No founder veto
-- No key holders who can be compromised
-- No fast-track changes
-- No secret deliberations
-
-Rules are public. Changes are slow by design. The machine executes what the community decides.
+**Version:** 0.7 — Draft
+**Status:** Pre-launch governance specification
+**Last Updated:** 2026-04-30
 
 ---
 
-## Participants
+## Changelog: v0.6 → v0.7
 
-### Anyone (Anonymous)
-- Donate to campaigns (Monero, no registration)
-- Submit camera locations to the map
-- Propose new campaigns
-- File challenges against disbursements
-- File misconduct reports
-- Vote on proposals (identified by Monero address or Nostr key)
+- Vote weight formula floor: `max(1, formula)` — no negative weights
+- Statistical evidence: AND logic (p<0.05 AND Cohen's h≥0.5 AND n≥20)
+- Diversity fallback: if <10 qualifying voters, 14-day escrow + Major-tier vote
+- Human review threshold: 5% affirmative weight minimum (not "any vote")
+- Human reviewer: DAO legal counsel, 48hr SLA, cannot be founder
+- Challenge rate limit: max 2 per 90-day window per challenger
+- Fee tiers: explicitly apply to 90-day rolling volume
+- Reputation floor: 0 after any penalty
+- Appeal anchor: on-chain publication date
+- AI emergency rollback: 60% supermajority (was 75%)
+- Multi-TEE failure recovery path defined
+- Stagnation escape state defined
+- Monero + AML and TEE evidentiary treatment added to Open Questions
 
-No account required for any of this. Participation is permissionless.
+## Changelog: v0.5 → v0.6
 
-### Operators
-- Run campaigns (rent billboards, file FOIAs, fund legal work)
-- Submit completion proofs for disbursement
-- Request campaign extensions
-- Build reputation score through track record
-- Gated by reputation score (starts at $500 campaign cap)
+**Voting Diversity Rule Hardened**
+- Fresh-account bypass closed: accounts under 90 days old or with fewer than 5 prior votes cannot satisfy the diversity requirement for high-value disbursements
+- Voting history overlap window set to 180 days (prevents rule from breaking down as platform matures)
 
-Operators are accountable to the community, not to the founder.
+**Disbursement / HOLD State**
+- Auto-release prohibition added: if the original challenge received any affirmative votes, auto-release is prohibited regardless of subsequent quorum failures — a human-review flag is required before release
+- HOLD state clarified: frozen donations apply to new campaign donations only, not existing donor governance participation
 
-### The AI Agents (Non-human)
+**Staking Freeze Clarified**
+- §8 complaint-triggered freeze applies to disbursement of staked funds only — not operational capacity. Operators under investigation can continue running campaigns
 
-The AI system has two strictly separated layers:
+**Founder Taint Tracking**
+- Decay formula specified: any hop-account with >1% residual founder taint (after 50% decay per hop) counts fully toward the 5% founder cap with no further discounting
 
-**Execution Layer — deterministic code only, no AI**
-- Releases funds when coded rules are satisfied
-- Deploys site changes after votes and time-locks clear
-- Enforces time-locks
-- Logs every action publicly
-- Cannot act outside its encoded rules
-- No AI model is in the execution path — money moves on rules, not inference
+**Provisional Pause Escalation**
+- Hour-12 outcome defined: provisional pause auto-expires unless confirmed by a 25-voter simple majority vote. If unconfirmed, pause lifts; operations resume. Safe default is resumption (not escalation)
 
-**Monitoring Ensemble — AI models for detection only**
-- 2–3 independent AI models watch for attack patterns, anomalies, and governance gaming
-- Models must reach consensus before any protective action is triggered
-- Models can flag, propose, and recommend — they do not execute
-- Model identities are not published (prevents targeted blind-spot attacks)
-- Models are subject to the upgrade rules defined in the AI System section below
+**Challenge Cooldown Refined**
+- Cooldown applies only to challenges rejected with <25% community support — not all rejected challenges. Contested challenges (25-74% support) do not trigger cooldown
 
-The agents are not participants — they are tools the community governs.
+**Bootstrapping Hardened**
+- Minimum time-since-launch: bootstrapping cannot end until the platform has been live for at least 6 months
+- 30-day transition window added: both governance regimes apply simultaneously during transition
+- Stagnation escape: if platform has been active for 36 months without meeting bootstrapping exit criteria, bootstrapping ends automatically; founder retains permanent 5% cap
 
-### The Founder (Scott)
-- Bootstraps the initial codebase and enclave
-- Holds no special governance rights post-launch
-- Cannot access wallets (TEE enforced)
-- **Cannot vote during the bootstrapping period** (first 6 months post-launch, or until voting quorum is reachable by the general community — whichever comes first). This prevents founder dominance during the period when community participation is lowest.
-- Participates as a regular community member after handoff
-- Formally steps back after Phase 2 launch
+**Seasonal Pause Constrained**
+- Maximum 4 months per rolling 12-month period
+- Must be declared before the 6-month inactivity threshold, not retroactively
+- Cannot be stacked across years
+
+**Statistical Evidence Revised**
+- OR logic adopted: p<0.05 OR (Cohen's h ≥ 0.5 AND n ≥ 20). Either strong significance at any sample size, or large effect size at meaningful sample size
+- Minimum sample of 5 removed (too small for Cohen's h to be meaningful)
+
+**Fee Cliff Smoothed**
+- Hard tier breakpoints replaced with a graduated schedule to reduce cliff-gaming
+
+**Strategic Additions**
+- Monero accessibility note added: atomic swap front-end or multi-asset routing is a recommended Phase 2 priority
+- Fiat disbursement pathway added to Open Questions as the highest operational priority
+- Campaign quality advisory board added to Launch Prerequisites
 
 ---
 
-## Governance Actions
+## Changelog: v0.4 → v0.5 / v0.3 → v0.4 / v0.2 → v0.3
+*(See prior versions for details — 59+ cumulative fixes across four audit rounds)*
 
-### 1. Campaign Proposals
+---
 
-**Who can propose:** Anyone
-**How:** Submit via the Propose Campaign form on the site
-**Required fields:**
-- Campaign type (billboard / legal / FOIA / verification)
-- Location
-- Goal amount with cost breakdown
-- Deadline
-- Evidence/source links
-- Operator identity (Monero address or Nostr key)
+## Launch Prerequisites
 
-**Approval flow:**
+**Hard prerequisites — platform does not accept funds until all are complete.**
+
+1. **Legal Entity:** Wyoming DAO LLC (or equivalent) fully incorporated with registered agent.
+2. **MSB/FinCEN Memo:** Written attorney opinion with clear "not an MSB because X" conclusion, or a registration path. Do not launch without this in hand.
+3. **Foreign Qualification:** Attorney assessment of Wyoming LLC qualification requirements in founder's home state and operational nexus states. Separate from FARA analysis.
+4. **FARA Analysis:** Attorney must confirm whether the platform itself could be construed as acting at the direction of a foreign principal — distinct from the foreign business qualification analysis.
+5. **Legislative Advocacy Compliance Mechanism:** Attorney must define a compliant disclosure structure or issue a prohibition before this campaign type goes live.
+6. **Billboard Liability Review:** Attorney must enumerate specific federal statutes that could pierce §230 for this use case (Hobbs Act, 18 U.S.C. §875, etc.) and confirm liability waiver is enforceable in key jurisdictions.
+7. **Insurance Coverage Specification:** Attorney or insurance specialist must define minimum coverage *type* (not just amount) for the $1M operator insurance requirement — must cover civil rights claims, defamation, and intentional acts.
+8. **TEE Deployment:** Minimum 3 TEE instances across different hardware providers, live with 2-of-3 threshold signatures.
+9. **TEE Threat Model:** Written, published, and community-ratified.
+10. **OFAC Integration:** Third-party screening with continuous monitoring protocol. Real-name identity data required.
+11. **AI Ensemble:** Minimum 3 models deployed, adversarial benchmark suite ratified.
+12. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
+13. **Misconduct Bond & Staking Systems:** Operationally tested.
+14. **Operator Insurance Framework:** Certificate collection and verification operational before first $25k+ campaign.
+15. **Founder Address Registry:** TEE-encoded, deployed, attestation published.
+16. **Campaign Quality Advisory Board:** Minimum 2 domain experts (civil liberties attorney + surveillance accountability practitioner) available to review early campaigns before community votes. Addresses the domain expertise gap governance cannot solve.
+
+---
+
+## 1. Philosophy
+
+Citeback exists because surveillance is asymmetric. Institutions — governments, corporations, landlords, employers — document individuals constantly, at scale, with impunity. Individuals have almost no reciprocal capacity to document institutions, challenge their claims, or fund the messy, expensive work of accountability.
+
+This platform exists to correct that asymmetry. It enables anonymous, coordination-free funding of accountability work — the infrastructure that makes institutional power answerable to the people it affects.
+
+**The platform is designed to ensure that financial access, legal pressure, and platform deplatforming cannot silence lawful accountability work.** It operates within applicable law and supports First Amendment-protected activity.
+
+**Core differentiator:** The platform's unique value is anonymous coordination that established civil liberties organizations cannot provide. They must disclose donors, answer to boards, and balance donor relationships. This platform does not. That enables funding campaigns those organizations cannot touch — targeting specific vendors, supporting local coalitions, funding internationally — without exposing participants to retaliation.
+
+**What this platform is not:**
+- It is not a tool for harassment, defamation, or coordinated attacks on private individuals.
+- It is not a platform for funding criminal defense or illegal activity.
+- It is not designed to evade lawful oversight — it is designed to withstand improper pressure on lawful activity.
+
+**On Legal Defensibility:** The platform operates within law, maintains required legal registrations, and funds only lawful activities. The goal is accountability, not impunity.
+
+**On Entity Protection:** Wyoming DAO LLC provides civil liability protection. It does not limit federal enforcement exposure. Federal civil or criminal actions against the platform or its participants remain possible regardless of entity form.
+
+---
+
+## 2. Participants
+
+### 2.1 Donors
+Anyone who sends Monero to a campaign wallet is a donor. No registration required. No identity collected. TEE records contribution amounts and timing for voting weight only.
+
+### 2.2 Operators
+Operators create and manage campaigns. They must:
+- Register with Nostr public key (preferred) or Monero address
+- Pass OFAC/sanctions screening with real-name identity data (held by DAO legal entity, not published on-chain)
+- Maintain reputation score governing campaign size limits
+- Submit verified proof of work to trigger disbursement
+
+**Operators are independent contractors, not agents or employees.** Platform approval of a campaign does not constitute endorsement, partnership, or joint liability. The platform's primary liability insulation is §230 intermediary status where applicable (§3.5); independent contractor status is a secondary layer.
+
+### 2.3 The Community
+Active donors who participate in governance votes. No membership list, no token. Governance power flows from economic participation.
+
+### 2.4 Identity: Nostr Preferred
+Nostr public keys preferred — verifiable without exposing personal data, cross-platform portable.
+
+---
+
+## 3. Campaign Types
+
+### 3.1 Open Campaign Model
+Campaign types are not a fixed list. The platform funds any lawful accountability activity aligned with the §1 mission. New types ratified via Major-tier vote.
+
+**Legal Review Gate:** Campaign types involving lobbying, electoral activity, foreign relationships, or financial services require written DAO legal counsel review before the ratification vote proceeds.
+
+### 3.2 Campaign Type Tiers (By Demonstrated Effectiveness)
+
+**Tier 1 — Primary (Launch Priority)**
+
+| Type | Why It Works |
+|---|---|
+| Public Records Litigation | Injunctions can halt programs; discovery is irreplaceable; produces permanent citable records |
+| Ordinance Campaigns | Proven 50+ city playbook; permanent wins without courts; 6-18 month timelines |
+| Counter-Database Projects | Force multiplier — feeds litigation, journalism, legislation; EFF Atlas proved the model |
+| FOIA Campaigns | Low cost, high volume, feeds every other campaign type |
+| Journalist Partnerships | Creates public accountability litigation cannot; Intercept/Markup/ProPublica model |
+
+**Tier 2 — Supporting (High Impact)**
+
+| Type | Notes |
+|---|---|
+| Vendor Accountability | Target Clearview, Flock Safety, Palantir, ShotSpotter, Axon by name; contract cancellations achievable; anonymous funding uniquely valuable |
+| Insurance/Liability Pressure | Most underexplored tool in surveillance resistance; makes surveillance tech uninsurable; no one owns this space |
+| Legal Defense | Civil and administrative only; critical safety net; lower ceiling as primary strategy |
+| Legislative Advocacy | Requires attorney sign-off pre-ratification (LDA/FARA); state-level wins achievable |
+| Procurement Intervention | Faster than ordinances; legal challenges to RFPs and sole-source contracts |
+
+**Tier 3 — Tactical (Supporting Role)**
+
+| Type | Notes |
+|---|---|
+| Billboard | Tactical amplifier for Tier 1 wins; low ROI as standalone |
+| Documentation | Input to better tools; value depends on downstream use |
+| International Mechanisms | GDPR complaints, UN submissions; long timeline but real EU AI Act leverage |
+| Research Grants | 3-7 year policy lag; use only where evidence base is genuinely missing |
+
+### 3.3 Section 230 Framework
+Platform intermediary protections under 47 U.S.C. §230(c)(1) apply where the platform hosts or facilitates activity without creating or selecting content. The attestation model (§3.5) is designed to preserve this status. Attorney review of §230 applicability is required for journalist partnerships before that type goes live. §230 does not protect against federal criminal statutes or ECPA.
+
+### 3.4 The Fiat Disbursement Problem *(Operational Priority)*
+The platform's anonymous donation architecture is strong. The deployment side — paying lawyers, filing fees, billboard vendors — inevitably touches the traditional financial system. This is the highest-priority operational gap. Phase 2 must define a legally-structured disbursement pathway (privacy-preserving foundation, licensed intermediary, or equivalent) that operators can use to deploy funds without exposing campaign participants. This is not a governance problem — it requires legal and operational design. See Open Questions.
+
+### 3.5 Operator Attestation (Billboard Campaigns)
+Platform verifies only that the operator submitted a factual attestation — source URLs or documents for each claim. Platform does not verify accuracy. Responsibility rests entirely with the operator. Liability waiver signed at registration and reaffirmed at each billboard campaign creation.
+
+### 3.6 Operator Staking
+| Campaign Goal | Required Stake |
+|---|---|
+| $5,001 – $15,000 | 2% of campaign goal |
+| Above $15,000 | 5% of campaign goal |
+
+Stake returned within 7 days of final disbursement if no misconduct finding. **Stake is frozen (disbursement only, not operational capacity) from the moment a §8 complaint is formally filed** until resolution. Operators under active §8 investigation may continue running campaigns but cannot withdraw staked funds.
+
+### 3.7 Mandatory Community Review (Above $10,000)
+Outcome paths:
+- No objections → campaign proceeds
+- Objection by 3+ voters → Major-tier vote required before launch
+- Objection by voter with reputation ≥ 25 → 24-hour hold for investigation
+- Objection sustained → campaign blocked; operator may resubmit
+
+### 3.8 Camera Documentation Policy
+Public vantage points only. Campaigns to disable, damage, or interfere with surveillance equipment are prohibited. Governance immutable (§15).
+
+---
+
+## 4. Operator Reputation
+
+### 4.1 Initial Caps
+- Reputation: 0 | Maximum campaign: $1,000
+
+### 4.2 Cap Escalation
+Requires clean challenge record AND cumulative volume:
+
+| Target Cap | Volume Required | Additional |
+|---|---|---|
+| $5,000 | $2,000 completed | — |
+| $25,000 | $10,000 completed | — |
+| $100,000 | $50,000 completed | KYC + DAO legal counsel |
+| Unlimited | $100,000 completed | Community vote |
+
+### 4.3 Reputation Decay
+-10 points/month after 6 consecutive months inactive. Floor: 0.
+
+**Seasonal pause:** One self-declared pause per 12-month period, maximum 4 months. Must be declared before the 6-month inactivity threshold — no retroactive declarations. Cannot be stacked across years to create indefinite freezes.
+
+### 4.4 OFAC Screening
+Real-name identity data. Third-party API. Continuous monitoring, 30-day cycle.
+
+### 4.5 KYC Above $25k Cap
+Entity name, jurisdiction, registration number. DAO legal counsel review required.
+
+### 4.6 Liability Insurance
+Campaigns above $25k: minimum $1M per-occurrence, coverage type specified by DAO counsel (must cover civil rights claims, defamation, and intentional acts). DAO legal entity named as additional insured.
+
+---
+
+## 5. Voting Mechanics
+
+### 5.1 Principle
+Voting power proportional to economic participation. Logarithmic curve rewards participation while limiting concentration.
+
+### 5.2 Donation Age Requirement
+Donations must be **72+ hours old at proposal submission** to qualify for voting weight.
+
+### 5.3 Voting Weight Formula
 ```
-Proposal submitted
-      ↓
-24-hour community review period (publicly visible)
-      ↓
-Simple majority vote (any identity-verified participant)
-      ↓
-Approved → Wallet Agent creates campaign wallet
-Rejected → Proposal archived with vote record
+weight = max(1, log₂(donation_amount / minimum_threshold) + 1)
 ```
+Floor of 1.0 ensures no donation produces negative or zero weight.
+`minimum_threshold` = $5 initial (Governance-tier parameter, §5.7).
 
-### 2. Disbursement Challenges
+| Donation | Weight |
+|---|---|
+| $5 | 1.0 |
+| $10 | 2.0 |
+| $40 | 4.0 |
+| $160 | 6.0 |
+| $640 | 8.0 |
+| $1,280 (cap) | 9.0 |
 
-**Who can challenge:** Anyone
-**Window:** 48 hours after proof submission
-**How:** Submit challenge via site with reasoning and evidence
+Hard cap: 9.0. No additional weight beyond $1,280.
 
-**Challenge resolution:**
+### 5.4 Parameter Snapshot Rule
+Voting parameters are snapshotted at vote-open time. Changes take effect only on votes opened after the change clears its time-lock. No retroactive shifts on open votes.
+
+### 5.5 Operator Conflict of Interest
+Operators excluded from disbursement votes on their own campaigns. TEE-enforced. Their own-campaign donations generate no disbursement voting weight.
+
+### 5.6 Quorum Requirements
+| Tier | Quorum |
+|---|---|
+| Minor | 10 unique voters |
+| Major | 25 unique voters |
+| Governance | 50 unique voters |
+
+Quorum failure: extend 48h (max ×2), then expires with no pass/fail.
+
+**Disbursement challenge quorum failure:**
+1. Quorum failure → funds HOLD, challenge reopens for 48 hours
+2. Second quorum failure → escalates to Major-tier vote
+3. Major-tier quorum failure → **if original challenge had <5% affirmative vote weight**, auto-release. **If 5%+**, human-review required before release.
+
+**Human review:** DAO legal counsel, 48-hour SLA. If unavailable within SLA, escalates to Major-tier community vote automatically. Cannot be the founder.
+
+During HOLD: new campaign donations frozen; existing donor governance participation unaffected.
+
+### 5.7 Minimum Threshold Governance
+Governance-tier parameter (75% supermajority, 14-day time-lock). Hard floor: **$1**. Governance immutable (§15).
+
+### 5.8 Voting Diversity for High-Value Disbursements
+Disbursements above $10,000 require approving votes from voters with **less than 60% pairwise voting history overlap in the prior 180 days**.
+
+**Account eligibility for diversity satisfaction:** An account must be at least **90 days old** and have cast **at least 5 prior votes** to count toward satisfying the diversity requirement. Fresh accounts with no voting history cannot trivially satisfy the threshold by having zero overlap.
+
+**Small community fallback:** If fewer than 10 accounts meet eligibility criteria at vote time, the diversity requirement is suspended and replaced with: 14-day extended escrow hold + mandatory Major-tier vote.
+
+---
+
+## 6. Governance Actions & Classification
+
+### 6.1 Change Tiers
+| Tier | Discussion | Vote | Time-lock |
+|---|---|---|---|
+| Minor | 24 hours | Simple majority | None |
+| Major | 7 days | 60% supermajority | 7 days |
+| Governance | 14 days | 75% supermajority | 14 days |
+
+### 6.2 Automatic Governance-Tier Classification (Canonical List)
+- Fund movement logic or TEE execution rules
+- Voting weight calculation or quorum thresholds
+- Disbursement approval/block thresholds
+- AI ensemble oversight or upgrade process
+- Reputation cap thresholds
+- The Immutables list (§15)
+- The minimum_threshold floor
+- Founder address registry rules
+
+### 6.3 Classification Confirmation
+Classification decisions require active confirmation from **3 reputation-weighted community members** within the 24-hour dispute window. If not received, classification defaults to next higher tier.
+
+---
+
+## 7. Disbursement
+
+### 7.1 Rolling Volume (Total Operator)
+The $2,000 threshold applies to **total operator rolling volume across all campaigns in the past 90 days**.
+
+### 7.2 Disbursement Thresholds
+| Rolling 90-Day Volume | Default | Override |
+|---|---|---|
+| Below $2,000 | Release | 60% to block |
+| $2,000 and above | Hold | 60% to approve |
+
+**Lookback grace:** If disbursement would cause rolling total to cross $2,000 at submission, hold-default applies immediately.
+
+### 7.3 Fee Schedule (Graduated)
+| Rolling 90-Day Volume | Platform Fee |
+|---|---|
+| $0 – $10,000 | 5.0% |
+| $10,001 – $25,000 | 4.5% |
+| $25,001 – $50,000 | 4.0% |
+| Above $50,000 | 3.0% |
+
+Graduated schedule eliminates cliff-gaming. Tiers apply to the same 90-day rolling operator volume as disbursement thresholds — not per-disbursement.
+
+### 7.4 Challenge Anti-Griefing
+- After **3 challenges rejected with <25% community support** against the same pair within 90 days → 90-day cooldown for that challenger-operator pair only
+- Challenges receiving 25%+ support are contested (not frivolous) and do not trigger cooldown
+- Experienced challengers (>50% lifetime confirmation rate): threshold raised to 5 frivolous challenges
+- **Challenge eligibility:** reputation ≥ 5 OR donation history ≥ 30 days old
+- **Rate limit:** Max 2 challenges per challenger per 90-day window regardless of outcome
+
+---
+
+## 8. Misconduct Reports
+
+### 8.1 Filing
+Bond: 0.5% of accused operator's largest campaign in prior 12 months, min $10, max $250.
+
+### 8.2 Resolution
 ```
-Challenge filed
-      ↓
-Disbursement paused (Wallet Agent holds funds)
-      ↓
-72-hour community review + discussion
-      ↓
-Community vote: uphold disbursement or block it
-      ↓
-60% majority required to block (default is release)
-      ↓
-Result logged permanently
-```
-
-If a challenge is upheld:
-- Operator reputation: -25 points
-- Funds remain in campaign wallet
-- Operator can resubmit with corrected proof (once)
-- Second upheld challenge → funds redirect, operator flagged
-
-If a challenge is rejected (disbursement proceeds):
-- Challenger reputation: no change (challenging in good faith is encouraged)
-- Operator reputation: +5 points (survived a challenge)
-
-### 3. Campaign Extensions
-
-**Who can request:** Operator or any community member
-**Timing:** Only within the last 25% of the campaign's time window
-**Maximum:** 2 extensions per campaign
-
-**Request flow:**
-```
-Extension request submitted with reasoning
-      ↓
-48-hour community vote
-      ↓
-Simple majority to approve
-      ↓
-Approved → deadline extended (7, 14, or 30 days as requested)
-Rejected → original deadline stands
-      ↓
-If second extension expires unfunded → funds redirect
-```
-
-### 4. Code Changes (Site + Rules)
-
-All changes to Citeback's code go through GitHub. The Site Agent enforces the process.
-
-**Minor changes** (copy, UI, content):
-- Open PR on GitHub
-- 24-hour discussion period
-- Simple majority community vote
-- Site Agent merges + deploys
-
-**Major changes** (campaign rules, fee model):
-- Open PR with detailed rationale
-- 7-day discussion period
-- 60% supermajority vote
-- 7-day time-lock after vote before deployment
-
-**Governance changes** (voting thresholds, extension rules, disbursement logic):
-- Open PR with detailed rationale
-- 14-day discussion period
-- 75% supermajority vote
-- 14-day time-lock after vote before deployment
-
-The time-lock exists so the community has time to react to approved changes before they take effect. If a bad change slips through a vote, the 14-day window allows a counter-proposal.
-
-### 5. Misconduct Reports
-
-**Who can file:** Anyone
-**Required:** Evidence (links, screenshots, transaction records)
-
-**Resolution flow:**
-```
-Report filed publicly with evidence
+Report filed + bond posted
       ↓
 7-day community review
       ↓
-Community vote: confirm or dismiss
-      ↓
-60% majority to confirm misconduct
-      ↓
-Confirmed: reputation zeroed, permanent public flag
-Dismissed: report archived, filer reputation unchanged
+60% majority to confirm
 ```
 
-Confirmed misconduct is permanent and public. There is no appeals process. This is intentional - it creates a strong disincentive to act in bad faith.
+### 8.3 Consequences
+**First confirmed:** 90-day disbursement suspension, -50 reputation (floor: 0 — cannot go below zero), public record.
+**Second confirmed:** Permanent disbursement bar, permanent public record, active campaign stake forfeited.
+**Appeals:** One appeal within 30 days of on-chain publication of the decision (publication date is the unambiguous anchor event). 75% supermajority to overturn. After that: permanent.
 
-### 6. Founder Formal Handoff
+---
 
-The founder formally steps back after Phase 2 launch (TEE wallet agent operational).
+## 9. AI Monitoring Ensemble
 
-Handoff checklist:
+### 9.1 Architecture
+Execution Layer: deterministic only, no AI in money-movement path.
+Monitoring Ensemble: minimum 3 independent models (2-model prohibited), consensus required for protective action, advisory only.
+
+### 9.2 Ensemble Actions
+| Signal | Outcome |
+|---|---|
+| 1-of-3 | Elevated monitoring |
+| 2-of-3 | Advisory flag + community notification |
+| 3-of-3 | Protective action proposed to community |
+
+### 9.3 Model Upgrades
+Benchmark outperformance (including adversarial tests) AND 60% community vote after 7-day review. 30-day shadow probation.
+
+**Emergency rollback:** 60% supermajority (precautionary principle — removing a confirmed-harmful model should be easier than installing one). Non-emergency model removal retains 75% threshold.
+
+### 9.4 Wallet Blacklisting Limitation
+Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour donation age, logarithmic weighting, challenge eligibility, ensemble monitoring.
+
+---
+
+## 10. TEE Architecture
+
+### 10.1 Multi-TEE (3 Instances, 2-of-3)
+Minimum 3 TEE instances on different hardware providers. **2-of-3 threshold signatures.** Single compromise cannot release funds. Governance immutable (§15).
+
+### 10.2 No Human Key Access
+Never. Governance immutable (§15).
+
+### 10.3 Near-Zero Custody
+Balances exceeding 120% of active campaign obligations trigger community notification within 24 hours.
+
+### 10.5 Multi-TEE Failure Recovery
+If 2+ TEE instances fail simultaneously (making 2-of-3 threshold impossible), all disbursements pause automatically. A Major-tier vote must be held within 7 days defining recovery: (a) emergency key rotation to new TEE instances, (b) supervised campaign wind-down, or (c) fork. No disbursements occur during recovery without a community-approved plan.
+
+### 10.4 Threat Model
+Published and community-ratified before launch. Must address side-channel risks, provider dependencies, supply-chain trust.
+
+---
+
+## 11. Operations Wallet
+
+- Graduated platform fee per §7.3
+- Surplus above 6 months projected operating costs → community vote on redistribution
+- Cannot flow to any individual (immutable §15)
+- Quarterly transparency report
+
+---
+
+## 12. Emergency Pause
+
+### 12.1 Triggers
+Any **2-of-3:**
+- **(a)** Ensemble majority flags active attack
+- **(b)** Statistical evidence: p<0.05 AND Cohen's h ≥ 0.5 AND n ≥ 20 (all three required)
+- **(c)** Attack pattern confirmed ongoing
+
+### 12.2 Human-Observable Trigger
+Reputation ≥ 25 member submits Pause Request → 12-hour provisional pause. At hour 12: auto-expires unless confirmed by 25-voter simple majority. Safe default: resumption (not escalation). Per-address cooldown: 72 hours between Pause Requests.
+
+### 12.3 Scope and Duration
+Suspends new votes, disbursements, campaign creation. Max 72 hours. Extension requires Major-tier vote.
+
+---
+
+## 13. Code Change Governance
+
+All changes via GitHub. Classification governed by §6.2 canonical list — this section references §6.2 only. Governance-tier TEE/fund changes require independent security audit before vote.
+
+---
+
+## 14. Bootstrapping
+
+### 14.1 Founder Voting Restriction
+No votes during bootstrapping. After: permanently capped at **5% of any vote total**. Founders cannot vote on their own ceiling removal (§15).
+
+### 14.2 TEE-Enforced Founder Address Registry
+Encoded in TEE at launch. Cannot be modified by any vote. Founder taint tracking: 3-hop minimum, 50% decay per hop. Any account with >1% residual founder taint counts fully toward the 5% cap — no further discounting. Wallet transfers from founder addresses flagged for community review.
+
+### 14.3 Bootstrapping End Conditions
+All three must be met:
+1. Platform has been live for at least **6 months**
+2. **3 qualifying governance votes** within a 90-day window (50-voter quorum, median donation ≥ $20, without founder participation)
+3. **30-day transition period** where both governance regimes apply simultaneously
+
+**Stagnation escape:** If platform has been active for **36 months** without meeting conditions 1-2, bootstrapping ends automatically. Post-escape governance is identical to post-bootstrapping — founder retains permanent 5% cap, all standard tiers apply. No constraints are relaxed.
+
+### 14.4 Formal Handoff Checklist
 - [ ] TEE enclave live with verified attestation
-- [ ] Wallet Agent running with first real campaign wallet
-- [ ] Action Logger publishing to public GitHub repo
-- [ ] Community voting interface live on site
-- [ ] Governance doc ratified by community vote
+- [ ] Wallet Agent running with first real campaign
+- [ ] Action Logger publishing to public GitHub
+- [ ] Community voting interface live
+- [ ] Governance doc ratified
+- [ ] Founder address registry encoded and attested
 - [ ] Founder publicly removes any special access
 
-After handoff, the founder's account has identical permissions to any other community participant.
+---
+
+## 15. Immutables
+
+Encoded in TEE. Cannot be overridden by any vote — requires a fork.
+
+1. No human key access
+2. Criminal defense prohibition
+3. Illegal activity prohibition
+4. Camera tampering prohibition
+5. No individual surplus distribution
+6. Founder ceiling permanence (founders cannot vote on this rule)
+7. Multi-TEE permanence (minimum 3 instances)
+8. Minimum threshold floor ($1 equivalent)
+9. Founder address registry permanence
 
 ---
 
-## Voting Mechanics
+## 16. Amendments
 
-### Identity
+Governance documents: Governance-tier process (75% supermajority, 14-day discussion, 14-day time-lock). Immutables require a fork.
 
-Voters identify via:
-- **Monero address** - generates a pseudonymous but consistent identity
-- **Nostr public key** - adds cross-platform portability
-
-Signing a vote with your private key proves identity without revealing it.
-
-### Weight
-
-Voting weight is based on **cumulative donation history** — not wallet count. Funding and voting are intentionally decoupled: anyone can donate any amount with no cap. The caps below apply only to *voting weight*. A single donor can fund an entire campaign and still has the same governance ceiling as anyone else.
-
-**Thresholds scale with campaign goal** so that attacking a large legal fund costs proportionally more than attacking a small billboard campaign. Thresholds are denominated in USD-equivalent.
-
-**Weight calculation (per campaign):**
-
-| Cumulative donations to this campaign | Voting weight earned |
-|---|---|
-| Below 0.5% of goal | No weight |
-| 0.5%–8% of goal | 1:1 (full weight) |
-| 8%–20% of goal | 50% on the excess |
-| Above 20% of goal | Capped — no additional weight |
-
-**Example — $750 billboard:** min $3.75 to vote · full weight to $60 · ceiling at $150  
-**Example — $8,000 legal fund:** min $40 to vote · full weight to $640 · ceiling at $1,600
-
-**Rules that close known loopholes:**
-- Only wallets with donation history **before a proposal was submitted** can vote on it — last-minute flooding is impossible
-- Vote weight is calculated at proposal timestamp, not vote time — no retroactive boosting
-- Splitting across wallets hurts the attacker (each address starts from zero, each pays the minimum threshold separately)
-- Campaign goals are validated during approval (cost breakdown required) — artificially low goals to lower thresholds are rejected at the proposal stage
-- XMR price recalibration uses a **30-day rolling average**, not spot price — price manipulation cannot suddenly lower thresholds. Downward threshold adjustments are capped at 20% per recalibration cycle; upward adjustments are uncapped
-- Donation velocity is monitored — unusual acceleration from existing wallets is flagged identically to a surge in new wallets
-
-### Anti-Sybil Defense Stack
-
-Defenses are layered so that bypassing one layer still faces the others:
-
-1. **Economic floor** — every fake voter identity costs real XMR (minimum 0.5% of goal, scales with campaign)
-2. **Splitting penalty** — Sybil wallets each pay the entry cost independently; consolidating into one wallet is always more efficient
-3. **Time-lock** — pre-proposal donation history required; no flooding a live vote
-4. **AI ensemble monitoring** — 2–3 independent models watch for coordinated patterns; consensus required before action
-5. **Wallet blacklisting** — confirmed attack wallets are permanently excluded (see AI System section)
-6. **Emergency pause** — active attack distorting a live vote can be frozen (see AI System section)
-
-### Adaptive Governance Parameters
-
-The AI ensemble can **propose** parameter adjustments when it detects gaming. It cannot act unilaterally.
-
-**Proposable adjustments (minor change tier — community vote required):**
-- Weight curve percentages
-- Minimum donation age (e.g. require 7-day-old history instead of just pre-proposal)
-- Quorum thresholds per vote type
-- Blacklist confidence threshold
-
-**Requires governance-tier vote (75% supermajority + 14-day time-lock):**
-- Disbursement vote thresholds
-- Emergency pause trigger bar
-- Benchmark suite definition (see AI System section)
-- Permanent constraint list
-
-All AI proposals are logged publicly. The AI flags and proposes; the community votes.
+Fork option is always available. Community's ultimate check is exit.
 
 ---
 
-## AI System Architecture
+## Open Questions (Unresolved Pre-Launch)
 
-This section defines how the AI monitoring ensemble works, how it is defended against manipulation, and how models are upgraded.
-
-### Execution vs. Monitoring Separation
-
-The execution layer (releasing funds, deploying code) runs on **deterministic rules only** — no AI model is involved in any action that moves money or changes the live site. This means the execution layer cannot be fooled, manipulated, or gradually influenced by adversarial inputs. It either satisfies the coded conditions or it doesn't.
-
-The monitoring ensemble operates entirely separately. It can flag, pause, propose, and recommend — but every consequential action it proposes still flows through the community vote process or coded execution rules.
-
-### Monitoring Ensemble
-
-- 2–3 independent AI models run in parallel inside the TEE
-- Each model independently analyzes voting patterns, donation velocity, wallet clustering, and governance activity
-- **Consensus required for action:** a 1-of-N flag triggers elevated monitoring mode only. A majority flag triggers protective action (blacklist proposal, pause trigger)
-- **Model identities are not published.** The community knows N models exist; they do not know which models or architectures. This prevents targeted blind-spot attacks where an adversary studies a known model's weaknesses
-- **Probation runs blind.** When a new model is in the 30-day shadow probation period, its flags are not published in real time. Results are compared after probation ends. This prevents an attacker from laying low during probation and striking after the upgrade goes live
-
-### Wallet Blacklisting
-
-When the ensemble reaches consensus that a wallet is part of a coordinated attack:
-
-1. The wallet is flagged with a confidence score and the evidence (pattern match, timing analysis, clustering data) is logged publicly
-2. Blacklisting requires **high confidence threshold** — a single anomaly is not enough. Multiple corroborating signals across independent models are required
-3. The blacklisted wallet is excluded from all future votes permanently
-4. The blacklist entry is public and includes the evidence — not just a ban, but a documented record
-
-**Appeal process (anti-weaponization rule):**
-- A blacklisted wallet can appeal by submitting a community vote request
-- Appeal requires a **donation stake** equal to 10% of the wallet's cumulative donation history, paid to the ops wallet — this stake is burned if the appeal fails, returned if the appeal succeeds
-- This prevents both mass false-positive blacklisting (high cost to wrongly ban a real donor) and trivial appeal spam (costs something to challenge)
-- If an appeal succeeds, the blacklist entry is removed and the evidence is flagged as a false positive, feeding back into model improvement
-
-**Anti-weaponization:** The ensemble monitors for attempts to get legitimate wallets blacklisted by mimicking their donation patterns. Artificially induced false positives are themselves a flagged attack pattern.
-
-### Emergency Pause
-
-If an active attack is distorting a live vote:
-
-**Trigger requires all three:**
-1. Ensemble majority consensus that an attack is in progress (not just elevated monitoring)
-2. Statistical evidence that the active vote outcome is being materially affected
-3. The attack pattern is ongoing, not historical
-
-This three-signal requirement prevents the pause from being used as a denial-of-service weapon — an attacker cannot repeatedly trigger pauses by manufacturing one signal.
-
-**Pause behavior:**
-- The affected campaign vote is frozen; all other campaigns continue independently (cascading platform-wide pauses require all three signals across 3+ campaigns simultaneously)
-- Paused state is announced publicly with the evidence
-- Community has 72 hours to review and vote to resume early or extend
-- **Maximum pause: 72 hours auto-resume** — if no community action is taken, the vote resumes automatically. This prevents indefinite stalling by freeze
-- After resume, blacklisted wallets are excluded and the vote restarts with clean participants
-
-### AI Model Upgrades
-
-**Core rule: models can only be upgraded, never downgraded.** A candidate model must demonstrably outperform the current model on Citeback's benchmark suite. The community cannot vote to install a lower-scoring model — math decides, not politics.
-
-**Benchmark suite:**
-- Tests are specific to Citeback's threat model: Sybil detection accuracy, false positive rate, coordinated attack pattern recognition, adversarial input resistance
-- General AI capability benchmarks are irrelevant — a model better at writing essays but worse at detecting coordinated wallet clustering does not qualify
-- **The benchmark suite definition is governance-tier** (75% supermajority + 14-day time-lock to change) — this prevents an attacker from socially engineering a benchmark redefinition that a weaker model happens to pass
-- The initial benchmark suite is published as part of pre-launch documentation and ratified by community vote before the first upgrade is ever considered
-
-**Upgrade pipeline:**
-1. Candidate model proposed (anyone can propose; includes benchmark scores from independent evaluation)
-2. Community votes to enter 30-day shadow probation (minor change tier)
-3. Shadow probation: candidate runs blind alongside current model; results compared after 30 days
-4. If candidate outscores current model in live probation → upgrade proceeds, TEE re-attests, community verifies attestation
-5. If candidate scores lower → rejected, current model stays, vote result preserved for retry with a different candidate
-6. The pipeline is atomic — if the deployment step fails after a passed probation, the current model stays running and the vote result is preserved for retry
-
-**Pre-launch:** Before Phase 2 launch, the ensemble is run against synthetic attack datasets (not just benchmarks) to reduce first-attack naivety. This is part of the Phase 2 launch checklist.
-
----
-
-## Emergency Procedures
-
-### Pause
-
-See AI System — Emergency Pause section above for the full pause mechanism.
-
-For non-AI emergencies (infrastructure failure, TEE compromise discovery, etc.):
-- Any community member can file an emergency pause request
-- Requires 3 independent cosigners from established operators (reputation > 50)
-- Wallet Agent freezes all pending disbursements
-- Site Agent halts deployments
-- Community convenes for emergency review (72-hour window)
-- Resume requires same threshold
-
-The emergency pause cannot be triggered by the founder alone.
-
-### Fork
-
-If governance is captured or the platform is irrevocably compromised:
-- Anyone can fork the open source code
-- Redeploy on new infrastructure
-- The community decides which fork to use
-- Original funds remain in the TEE (inaccessible to the fork) but new fork starts fresh
-
-This is the nuclear option - but it's always available, which keeps any would-be captors honest.
-
----
-
-## Mission Constitution (Immutable)
-
-This section defines Citeback's permanent, unchangeable purpose. No vote, no founder action, no AI decision, and no community consensus can alter or override it.
-
-### The Principle
-
-Citeback exists to **document, challenge, limit, or resist the exercise of institutional power over individuals** — including surveillance, tracking, data collection, monitoring, and privacy violations carried out by:
-- Government bodies at any level (federal, state, local)
-- Government-funded or government-authorized entities
-- Private actors operating under government contracts or authority
-
-This framing is intentionally structural rather than legal. It does not require a court ruling, a constitutional determination, or political consensus. The test is simple: **is institutional power being used against individuals?** If yes, it is within scope.
-
-This definition is deliberately broad to accommodate future forms of overreach that cannot be anticipated today.
-
-### Campaign Mission Filter
-
-Every campaign proposal is evaluated by the AI ensemble against the mission principle before it reaches a community vote.
-
-**Ensemble evaluation tiers:**
-
-| Ensemble signal | Outcome |
-|---|---|
-| 1-of-3 models flags concern | No block — proposal proceeds with a community scrutiny flag |
-| 2-of-3 models reject | Soft block — requires 60% community vote to proceed |
-| 3-of-3 models reject | Hard block — requires 75% community supermajority to proceed |
-
-The AI evaluates **structural alignment only** — does this challenge institutional power over individuals? Not political orientation. Not whether a court has ruled on it. Not whether it is popular or controversial. The benchmark suite includes specific tests for politically contested topics to detect and correct for ideological filtering. All rejections are logged publicly with the structural reasoning used — the community can see why any proposal was flagged.
-
-**AI self-correction:** The ensemble monitors its own rejection patterns for signs of systematic bias (e.g., consistently flagging one category of rights challenge while approving structurally similar ones). Detected bias patterns are flagged for community review and feed into the model benchmark suite and upgrade evaluation.
-
-### What Cannot Be Voted Away
-
-Even a 100% community vote cannot:
-- Change or narrow the mission principle
-- Remove the mission filter from the proposal process
-- Approve a campaign that all three ensemble models reject without a 75% supermajority
-- Redirect the platform to purposes unrelated to institutional power vs. individual rights
-
-These constraints are encoded in the TEE and enforced by the execution layer — they are not policy, they are architecture.
-
----
-
-## What Governance Cannot Do
-
-Even with community consensus, certain actions are permanently off-limits:
-
-- ❌ Extracting wallet private keys from the TEE
-- ❌ Retroactively reversing completed disbursements
-- ❌ Clearing a confirmed misconduct record
-- ❌ Identifying donors (Monero privacy is immutable)
-- ❌ Granting any individual special access above others
-- ❌ Downgrading the AI ensemble to a model with a lower benchmark score than the current one
-- ❌ Overriding a failed shadow probation to force a model upgrade
-- ❌ Changing the benchmark suite without a governance-tier vote (75% supermajority + 14-day time-lock)
-
-The first five are enforced by TEE code. The last three are enforced by the upgrade pipeline logic — they cannot be bypassed by community vote.
-
----
-
-## Open Questions (To Be Resolved Pre-Launch)
-
-1. **Voting quorum:** Proposed: 10 unique voters for minor, 25 for major, 50 for governance — needs community ratification
-2. **TEE provider selection:** Phala vs Marlin vs other — requires technical evaluation
-3. **GitHub repo governance:** Who controls the repo until Phase 2? (Proposed: founder, with community fork right guaranteed from day 1)
-4. **Operations wallet surplus policy:** When does the ops reserve trigger a community vote for redistribution?
-5. **Ensemble size:** 2 or 3 models at launch? (3 preferred for tie-breaking, 2 acceptable for Phase 2 if one TEE slot is constrained)
-6. **Initial benchmark suite:** Must be drafted, published, and community-ratified before any upgrade vote is held
-7. **Bootstrapping quorum:** What's the threshold for declaring quorum is "reachable" and ending the founder non-voting period?
+1. **Monero + AML legal question** *(Attorney required)* — Monero's privacy features create higher AML risk than other crypto. Attorney must address compatibility with the OFAC/KYC framework before launch.
+2. **TEE attestation evidentiary treatment** — If subpoenaed, TEE logs may be primary evidence. Chain-of-custody, data retention obligations, and compromised-instance posture need attorney analysis before launch.
+3. **Fiat disbursement pathway** *(Highest operational priority)* — Lawyers get paid in dollars. Billboard vendors require entity names. How do campaigns deploy funds without exposing participants? Requires legal + operational design: privacy-preserving foundation, licensed intermediary, or equivalent. This is not solved by governance — it requires Phase 2 design work.
+2. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible donor pool size significantly.
+3. **TEE provider selection** — Phala vs Marlin vs other; requires technical evaluation
+4. **GitHub repo governance during bootstrap** — Founder controls; community fork right guaranteed from day 1
+5. **Legislative advocacy compliance mechanism** — Attorney must resolve before type goes live
+6. **Initial benchmark suite** — Must be drafted and ratified before any model upgrade vote
+7. **XMR price oracle** — 30-day rolling average; specific oracle source to be selected
+8. **Voting diversity overlap calculation** — Technical specification for 180-day overlap calculation needed
+9. **"Accountability vs. extortion" bright line policy** — Attorney must produce an operational definition of where accountability campaigns cross into Hobbs Act territory; operators need decision criteria
 
 ---
 
 ## Related Documents
 
-- `ARCHITECTURE.md` - Full technical architecture
-- `src/data/campaigns.js` - Campaign data and rules
-- `src/components/TrustFAQ.jsx` - Public-facing FAQ
+- `ARCHITECTURE.md` — Full technical architecture
+- `src/data/campaigns.js` — Campaign data
+- `src/components/TrustFAQ.jsx` — Public-facing FAQ
