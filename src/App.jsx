@@ -15,6 +15,7 @@ import CampaignModal from './components/CampaignModal'
 import ThemePicker from './components/ThemePicker'
 import ChatBot from './components/ChatBot'
 import TrustFAQ from './components/TrustFAQ'
+import Governance from './components/Governance'
 
 export default function App() {
   const [tab, setTab] = useState('home')
@@ -40,6 +41,7 @@ export default function App() {
       {tab === 'registry' && <HumanRegistry />}
       {tab === 'transparency' && <Transparency />}
       {tab === 'trust' && <TrustFAQ />}
+      {tab === 'governance' && <Governance />}
 
       <Footer setTab={setTab} />
       <ThemePicker />
