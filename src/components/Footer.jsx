@@ -30,8 +30,8 @@ export default function Footer({ setTab }) {
               <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.3px' }}>Citeback</span>
             </div>
             <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.75 }}>
-              Decentralized legal resistance to mass surveillance.
-              The Fourth Amendment enforced by the people who live under it.
+              Surveillance resistance, funded anonymously.
+              No human holds the keys — by design.
             </p>
             <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--border)' }}>
               citeback.com

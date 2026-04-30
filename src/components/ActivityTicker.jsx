@@ -37,7 +37,7 @@ export default function ActivityTicker() {
         gap: 6,
         whiteSpace: 'nowrap',
       }}>
-        Verified
+        Surveillance Intel
         <span style={{
           width: 7, height: 7, borderRadius: '50%',
           background: 'var(--accent)',

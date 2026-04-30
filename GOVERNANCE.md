@@ -1,6 +1,6 @@
 # GOVERNANCE.md — Citeback / Fourthright Platform
 
-**Version:** 0.7 — Draft
+**Version:** 0.7 — Active
 **Status:** Pre-launch governance specification
 **Last Updated:** 2026-04-30
 

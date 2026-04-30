@@ -37,8 +37,8 @@ export default function Manifesto() {
           {[
             ['They built the cage.', 'We document every bar.'],
             ['They scan without consent.', 'We expose without apology.'],
-            ['They share your data freely.', 'We fund the lawsuits to stop it.'],
-            ['They count on your silence.', 'We put billboards next to their cameras.'],
+            ['They share your data freely.', 'We fund the litigation to stop it.'],
+            ['They pressure donors to back down.', 'We hold no keys. There\'s no one to pressure.'],
           ].map(([them, us], i) => (
             <div key={i} style={{
               padding: '20px 24px',

@@ -50,7 +50,7 @@ export default function Hero({ setTab }) {
           fontSize: 12, fontWeight: 600, color: '#f39c12',
           letterSpacing: '0.05em', textTransform: 'uppercase',
         }}>
-          <AlertTriangle size={12} /> Pre-Launch — Campaigns verified. Wallets activating soon.
+          <AlertTriangle size={12} /> Pre-Launch — Campaigns open for review. Wallets activating soon.
         </div>
 
         <h1 style={{

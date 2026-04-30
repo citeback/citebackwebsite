@@ -108,7 +108,7 @@ export default function Governance() {
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Governance Specification</h1>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-          <Tag>v0.6 — Draft</Tag>
+          <Tag>v0.7 — Active</Tag>
           <Tag color="#f59e0b">Pre-Launch</Tag>
           <Tag color="#a78bfa">Updated 2026-04-30</Tag>
         </div>
