@@ -4,10 +4,10 @@ import { useState } from 'react'
 const links = [
   { id: 'home', label: 'Home' },
   { id: 'campaigns', label: 'Campaigns' },
-  { id: 'map', label: 'Camera Map' },
-  { id: 'registry', label: 'Human Registry' },
-  { id: 'transparency', label: 'Transparency' },
   { id: 'trust', label: 'How It Works' },
+  { id: 'transparency', label: 'Transparency' },
+  { id: 'registry', label: 'Expert Directory' },
+  { id: 'map', label: 'Camera Map' },
   { id: 'governance', label: 'Governance' },
 ]
 

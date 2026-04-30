@@ -1,10 +1,10 @@
 import { Eye, Coins, Hammer, Megaphone } from 'lucide-react'
 
 const steps = [
-  { icon: <Eye size={24} />, title: 'Map It', desc: 'Community members submit surveillance camera locations. No account required. Just coordinates and a photo.' },
-  { icon: <Megaphone size={24} />, title: 'Propose & Vote', desc: 'Anyone can propose a campaign — billboard, lawsuit, FOIA request. The community votes to approve. No gatekeepers.' },
-  { icon: <Coins size={24} />, title: 'Fund Anonymously', desc: 'Each campaign gets a dedicated Monero wallet created inside a TEE secure enclave. No human holds the keys — not even the founder. Donate privately.' },
-  { icon: <Hammer size={24} />, title: 'Execute with Proof', desc: 'Operators execute the action and submit verified proof. A 48-hour challenge window opens. Proof cleared → funds release automatically from the TEE.' },
+  { icon: <Megaphone size={24} />, title: 'Propose a Campaign', desc: 'Submit a FOIA lawsuit, surveillance ordinance challenge, vendor accountability campaign, or counter-database project. Anyone can propose. The community votes on what gets funded.' },
+  { icon: <Coins size={24} />, title: 'Fund Anonymously', desc: 'Send Monero to a campaign wallet. No account. No identity. No trail. The wallet is TEE-secured — no human holds the keys, including us.' },
+  { icon: <Eye size={24} />, title: 'Track It Publicly', desc: 'Every transaction is on-chain. Every expenditure verified before release. Every outcome documented. The record is permanent and public.' },
+  { icon: <Hammer size={24} />, title: 'Win on Record', desc: 'Operators submit verified proof of outcomes — court filings, ordinance text, database takedowns. The campaign closes with receipts.' },
 ]
 
 export default function HowItWorks() {
