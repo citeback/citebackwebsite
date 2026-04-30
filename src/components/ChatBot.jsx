@@ -69,6 +69,7 @@ const MODEL = 'llama3.2'
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false)
+  const [accepted, setAccepted] = useState(false)
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -150,8 +151,28 @@ export default function ChatBot() {
         {open ? <X size={22} /> : <MessageCircle size={24} />}
       </button>
 
+      {/* Disclaimer gate */}
+      {open && !accepted && (
+        <div style={{
+          position: 'fixed', bottom: 96, right: 28, zIndex: 900,
+          width: 340, maxWidth: 'calc(100vw - 32px)',
+          background: 'var(--bg2)', border: '1px solid var(--border)',
+          borderRadius: 18, padding: '24px 20px',
+        }}>
+          <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>Citeback AI</p>
+          <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.6, marginBottom: 16 }}>
+            This is an experimental AI assistant running locally. It may make mistakes. Verify anything important with the governance documentation or GitHub repo.
+          </p>
+          <button onClick={() => setAccepted(true)} style={{
+            width: '100%', padding: '10px', borderRadius: 8,
+            background: 'var(--accent)', border: 'none',
+            color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer',
+          }}>Got it — open the assistant</button>
+        </div>
+      )}
+
       {/* Chat window */}
-      {open && (
+      {open && accepted && (
         <div style={{
           position: 'fixed', bottom: 96, right: 28, zIndex: 900,
           width: 380, maxWidth: 'calc(100vw - 32px)',

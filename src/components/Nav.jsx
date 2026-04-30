@@ -5,6 +5,7 @@ const links = [
   { id: 'home', label: 'Home' },
   { id: 'campaigns', label: 'Campaigns' },
   { id: 'trust', label: 'How It Works' },
+  { id: 'operators', label: 'Run a Campaign' },
   { id: 'transparency', label: 'Transparency' },
   { id: 'registry', label: 'Expert Directory' },
   { id: 'map', label: 'Camera Map' },

@@ -16,6 +16,7 @@ import ThemePicker from './components/ThemePicker'
 import ChatBot from './components/ChatBot'
 import TrustFAQ from './components/TrustFAQ'
 import Governance from './components/Governance'
+import Operators from './components/Operators'
 
 export default function App() {
   const [tab, setTab] = useState('home')
@@ -42,6 +43,7 @@ export default function App() {
       {tab === 'transparency' && <Transparency />}
       {tab === 'trust' && <TrustFAQ />}
       {tab === 'governance' && <Governance />}
+      {tab === 'operators' && <Operators />}
 
       <Footer setTab={setTab} />
       <ThemePicker />
