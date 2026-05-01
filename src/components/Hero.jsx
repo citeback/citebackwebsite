@@ -3,99 +3,35 @@ import { useState, useEffect, useRef } from 'react'
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
-  { value: '7', label: 'Cameras Documented', sub: 'NM · Public records' },
-  { value: '6', label: 'Campaigns Queued', sub: 'Pre-launch' },
-  { value: '0', label: 'Actions Funded', sub: 'Be the first' },
-  { value: 'XMR', label: 'Only Currency', sub: 'Anonymous by design' },
+  { value: '7', label: 'Cameras Documented' },
+  { value: '6', label: 'Campaigns Queued' },
+  { value: '0', label: 'Actions Funded' },
+  { value: 'XMR', label: 'Only Currency' },
 ]
-
-function MagneticButton({ children, onClick, primary }) {
-  const ref = useRef(null)
-
-  const handleMouseMove = (e) => {
-    const btn = ref.current
-    if (!btn) return
-    const rect = btn.getBoundingClientRect()
-    const cx = rect.left + rect.width / 2
-    const cy = rect.top + rect.height / 2
-    const dx = e.clientX - cx
-    const dy = e.clientY - cy
-    const dist = Math.sqrt(dx * dx + dy * dy)
-    const maxDist = 80
-    if (dist < maxDist) {
-      const factor = (maxDist - dist) / maxDist
-      const tx = dx * factor * 0.3
-      const ty = dy * factor * 0.3
-      btn.style.transform = `translate(${tx}px, ${ty}px)`
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (ref.current) ref.current.style.transform = 'translate(0,0)'
-  }
-
-  return (
-    <div onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ display: 'inline-block' }}>
-      <button
-        ref={ref}
-        onClick={onClick}
-        style={{
-          background: primary ? '#111' : 'transparent',
-          color: primary ? '#fff' : 'var(--fg)',
-          border: primary ? 'none' : '1px solid var(--border)',
-          padding: '14px 32px',
-          fontSize: 14,
-          letterSpacing: '0.04em',
-          cursor: 'pointer',
-          fontFamily: 'var(--font)',
-          fontWeight: primary ? 500 : 400,
-          borderRadius: 0,
-          transition: 'transform 0.15s ease, background 0.15s',
-        }}
-        onMouseEnter={e => {
-          if (!primary) e.currentTarget.style.borderColor = 'var(--fg)'
-        }}
-        onMouseLeave={e => {
-          if (!primary) e.currentTarget.style.borderColor = 'var(--border)'
-        }}
-      >
-        {children}
-      </button>
-    </div>
-  )
-}
 
 export default function Hero({ setTab }) {
   const sectionRef = useRef(null)
   const redactedRefs = useRef([])
   const [hintVisible, setHintVisible] = useState(true)
-  const [anyRevealed, setAnyRevealed] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
 
     if (isTouchDevice) {
-      // Touch: tap to toggle individual words
       const handlers = []
       redactedRefs.current.forEach((el) => {
         if (!el) return
         const handler = (e) => {
           e.preventDefault()
           el.classList.toggle('revealed')
-          setAnyRevealed(true)
           setHintVisible(false)
         }
         el.addEventListener('touchstart', handler, { passive: false })
         handlers.push({ el, handler })
       })
-      return () => {
-        handlers.forEach(({ el, handler }) => {
-          el.removeEventListener('touchstart', handler)
-        })
-      }
+      return () => handlers.forEach(({ el, handler }) => el.removeEventListener('touchstart', handler))
     } else {
-      // Desktop: proximity mousemove reveal
       const handleMouseMove = (e) => {
         redactedRefs.current.forEach(el => {
           if (!el) return
@@ -112,166 +48,256 @@ export default function Hero({ setTab }) {
           }
         })
       }
-
       section.addEventListener('mousemove', handleMouseMove)
       return () => section.removeEventListener('mousemove', handleMouseMove)
     }
   }, [])
 
-  const redactedWords = ['surveillance', 'everyone', 'fighting']
-
   return (
     <section
       ref={sectionRef}
       style={{
-        paddingTop: 140,
+        paddingTop: 100,
         paddingBottom: 0,
-        paddingLeft: 24,
-        paddingRight: 24,
-        textAlign: 'center',
-        borderBottom: '1px solid var(--border)',
+        background: 'var(--bg)',
         position: 'relative',
         overflow: 'hidden',
-        background: 'var(--bg)',
       }}
     >
-      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+      {/* Top rule */}
+      <div style={{ borderTop: '3px solid var(--fg)', margin: '0 24px' }} />
 
-        {/* Eyebrow */}
-        <div style={{
-          fontSize: 11,
-          letterSpacing: '0.16em',
-          color: 'var(--red)',
-          textTransform: 'uppercase',
-          marginBottom: 32,
-          fontWeight: 500,
-        }}>
-          Pre-Launch — Campaigns Open for Review
-        </div>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
 
-        {/* Headline with redaction effect */}
-        <h1 style={{
-          fontSize: 'clamp(28px, 5vw, 72px)',
-          fontWeight: 300,
-          letterSpacing: '-0.02em',
-          lineHeight: 1.15,
-          marginBottom: 32,
-          color: 'var(--fg)',
-        }}>
-          The{' '}
-          <span
-            ref={el => redactedRefs.current[0] = el}
-            className="redacted"
-          >
-            surveillance
-          </span>
-          {' '}state watches{' '}
-          <span
-            ref={el => redactedRefs.current[1] = el}
-            className="redacted"
-          >
-            everyone
-          </span>
-          .{' '}We fund the people{' '}
-          <span
-            ref={el => redactedRefs.current[2] = el}
-            className="redacted"
-          >
-            fighting
-          </span>
-          {' '}back.
-        </h1>
-
-        {/* Mobile tap hint */}
-        {isTouchDevice && hintVisible && (
-          <div style={{
-            fontSize: 11,
-            color: 'var(--gray)',
-            letterSpacing: '0.08em',
-            marginTop: -20,
-            marginBottom: 24,
-            opacity: 0.7,
-          }}>
-            Tap to reveal
-          </div>
-        )}
-
-        {/* Sub text */}
-        <p style={{
-          fontSize: 16,
-          color: 'var(--gray)',
-          maxWidth: 520,
-          margin: '0 auto 48px',
-          lineHeight: 1.75,
-          fontWeight: 400,
-        }}>
-          Anonymous funding for surveillance accountability. No account. No identity. No way to stop it.
-        </p>
-
-        {/* CTA Buttons */}
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 80 }}>
-          <MagneticButton primary onClick={() => setTab('campaigns')}>
-            Fund a Campaign
-          </MagneticButton>
-          <MagneticButton onClick={() => setTab('operators')}>
-            Run a Campaign
-          </MagneticButton>
-        </div>
-
-        {/* Stat bar */}
+        {/* Dateline / eyebrow row */}
         <div style={{
           display: 'flex',
-          borderTop: '1px solid var(--border)',
-          marginLeft: -24,
-          marginRight: -24,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 0',
+          borderBottom: '1px solid var(--border)',
+          marginBottom: 40,
+          flexWrap: 'wrap',
+          gap: 8,
         }}>
-          {stats.map((s, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                padding: '28px 20px',
-                borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
-                textAlign: 'center',
-              }}
-            >
+          <div style={{
+            fontSize: 11,
+            letterSpacing: '0.14em',
+            color: 'var(--red)',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+          }}>
+            Pre-Launch — Campaigns Open for Review
+          </div>
+          <div style={{
+            fontSize: 11,
+            letterSpacing: '0.08em',
+            color: 'var(--gray)',
+            textTransform: 'uppercase',
+          }}>
+            Est. 2025 · New Mexico · United States
+          </div>
+        </div>
+
+        {/* Main editorial layout: headline left, side column right */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 280px',
+          gap: '48px 64px',
+          alignItems: 'start',
+        }} className="hero-grid">
+
+          {/* Left: headline + CTA */}
+          <div>
+            <h1 style={{
+              fontSize: 'clamp(32px, 5.5vw, 76px)',
+              fontWeight: 800,
+              lineHeight: 1.05,
+              letterSpacing: '-0.03em',
+              color: 'var(--fg)',
+              marginBottom: 32,
+            }}>
+              The{' '}
+              <span
+                ref={el => redactedRefs.current[0] = el}
+                className="redacted"
+              >
+                surveillance
+              </span>
+              {' '}state<br />
+              watches{' '}
+              <span
+                ref={el => redactedRefs.current[1] = el}
+                className="redacted"
+              >
+                everyone
+              </span>
+              .<br />
+              We fund the people{' '}
+              <span
+                ref={el => redactedRefs.current[2] = el}
+                className="redacted"
+              >
+                fighting
+              </span>
+              {' '}back.
+            </h1>
+
+            {isTouchDevice && hintVisible && (
               <div style={{
-                fontSize: 28,
-                fontWeight: 600,
-                letterSpacing: '-0.02em',
-                color: 'var(--fg)',
-                marginBottom: 4,
+                fontSize: 11,
+                color: 'var(--gray)',
+                letterSpacing: '0.08em',
+                marginTop: -20,
+                marginBottom: 24,
               }}>
-                {s.value}
+                Tap redacted words to reveal
               </div>
-              <div style={{ fontSize: 12, color: 'var(--fg)', fontWeight: 500, marginBottom: 2 }}>
-                {s.label}
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--gray)' }}>
-                {s.sub}
-              </div>
+            )}
+
+            <p style={{
+              fontSize: 17,
+              color: 'var(--gray)',
+              maxWidth: 520,
+              lineHeight: 1.7,
+              fontWeight: 400,
+              marginBottom: 40,
+            }}>
+              Anonymous funding for surveillance accountability. No account. No identity. No way to stop it.
+            </p>
+
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setTab('campaigns')}
+                style={{
+                  background: 'var(--fg)',
+                  color: 'var(--bg)',
+                  border: 'none',
+                  padding: '13px 28px',
+                  fontSize: 13,
+                  letterSpacing: '0.05em',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font)',
+                  transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                Fund a Campaign
+              </button>
+              <button
+                onClick={() => setTab('operators')}
+                style={{
+                  background: 'transparent',
+                  color: 'var(--fg)',
+                  border: '1px solid var(--border)',
+                  padding: '13px 28px',
+                  fontSize: 13,
+                  letterSpacing: '0.05em',
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font)',
+                  transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+              >
+                Run a Campaign
+              </button>
             </div>
-          ))}
+          </div>
+
+          {/* Right: sidebar column */}
+          <div style={{
+            borderLeft: '1px solid var(--border)',
+            paddingLeft: 32,
+          }} className="hero-sidebar">
+            {/* Amendment callout */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{
+                fontSize: 10,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--red)',
+                fontWeight: 600,
+                marginBottom: 10,
+              }}>
+                Fourth Amendment
+              </div>
+              <p style={{
+                fontSize: 13,
+                lineHeight: 1.7,
+                color: 'var(--gray)',
+                fontStyle: 'italic',
+              }}>
+                "The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated…"
+              </p>
+            </div>
+
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
+              <div style={{
+                fontSize: 10,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--gray)',
+                fontWeight: 600,
+                marginBottom: 16,
+              }}>
+                Platform Stats
+              </div>
+              {stats.map((s, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  padding: '8px 0',
+                  borderBottom: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
+                }}>
+                  <span style={{ fontSize: 12, color: 'var(--gray)' }}>{s.label}</span>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', letterSpacing: '-0.02em' }}>{s.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Bottom rule */}
+      <div style={{ borderBottom: '1px solid var(--border)', marginTop: 56 }} />
 
       <style>{`
         .redacted {
           position: relative;
           display: inline-block;
           cursor: default;
+          white-space: nowrap;
         }
         .redacted::after {
           content: '';
           position: absolute;
-          inset: -1px -3px;
-          background: #111;
+          inset: 0px -2px;
+          background: var(--fg);
           opacity: 1;
-          transition: opacity 0.25s ease;
+          transition: opacity 0.3s ease;
           pointer-events: none;
         }
         .redacted.revealed::after {
           opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .hero-sidebar {
+            border-left: none !important;
+            border-top: 1px solid var(--border) !important;
+            padding-left: 0 !important;
+            padding-top: 24px !important;
+          }
         }
       `}</style>
     </section>
