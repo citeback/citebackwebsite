@@ -1,194 +1,239 @@
-import { ArrowRight, Eye, Scale, Landmark, AlertTriangle, Bell } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
-import LaunchTracker from './LaunchTracker'
 
-function NotifyMe() {
-  const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+const stats = [
+  { value: '7', label: 'Cameras Documented', sub: 'NM · Public records' },
+  { value: '6', label: 'Campaigns Queued', sub: 'Pre-launch' },
+  { value: '0', label: 'Actions Funded', sub: 'Be the first' },
+  { value: 'XMR', label: 'Only Currency', sub: 'Anonymous by design' },
+]
 
-  const submit = (e) => {
-    e.preventDefault()
-    if (email) setSent(true)
+function MagneticButton({ children, onClick, primary }) {
+  const ref = useRef(null)
+
+  const handleMouseMove = (e) => {
+    const btn = ref.current
+    if (!btn) return
+    const rect = btn.getBoundingClientRect()
+    const cx = rect.left + rect.width / 2
+    const cy = rect.top + rect.height / 2
+    const dx = e.clientX - cx
+    const dy = e.clientY - cy
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    const maxDist = 80
+    if (dist < maxDist) {
+      const factor = (maxDist - dist) / maxDist
+      const tx = dx * factor * 0.3
+      const ty = dy * factor * 0.3
+      btn.style.transform = `translate(${tx}px, ${ty}px)`
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (ref.current) ref.current.style.transform = 'translate(0,0)'
   }
 
   return (
-    <div style={{
-      marginTop: 16, padding: '20px 24px',
-      background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
-      borderRadius: 12, textAlign: 'center',
-    }}>
-      {sent ? (
-        <p style={{ color: '#6ee7b7', fontWeight: 600, fontSize: 14 }}>
-          ✓ Got it. One notification at launch, nothing else.
-        </p>
-      ) : (
-        <>
-          <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 12 }}>
-            <Bell size={13} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
-            Get one email when wallets go live. That's it — no newsletter, no updates, no tracking.
-          </p>
-          <form onSubmit={submit} style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <input
-              type="email" placeholder="your@email.com" value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={{
-                padding: '9px 14px', borderRadius: 8, border: '1px solid var(--border)',
-                background: 'var(--bg2)', color: 'var(--text)', fontSize: 13,
-                outline: 'none', minWidth: 220,
-              }}
-            />
-            <button type="submit" style={{
-              padding: '9px 18px', borderRadius: 8, border: 'none',
-              background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 600,
-              cursor: 'pointer',
-            }}>Notify me at launch</button>
-          </form>
-        </>
-      )}
+    <div onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ display: 'inline-block' }}>
+      <button
+        ref={ref}
+        onClick={onClick}
+        style={{
+          background: primary ? '#111' : 'transparent',
+          color: primary ? '#fff' : 'var(--fg)',
+          border: primary ? 'none' : '1px solid var(--border)',
+          padding: '14px 32px',
+          fontSize: 14,
+          letterSpacing: '0.04em',
+          cursor: 'pointer',
+          fontFamily: 'var(--font)',
+          fontWeight: primary ? 500 : 400,
+          borderRadius: 0,
+          transition: 'transform 0.15s ease, background 0.15s',
+        }}
+        onMouseEnter={e => {
+          if (!primary) e.currentTarget.style.borderColor = 'var(--fg)'
+        }}
+        onMouseLeave={e => {
+          if (!primary) e.currentTarget.style.borderColor = 'var(--border)'
+        }}
+      >
+        {children}
+      </button>
     </div>
   )
 }
 
-function CountUp({ target, suffix = '' }) {
-  const [val, setVal] = useState(0)
-  const started = useRef(false)
+export default function Hero({ setTab }) {
+  const sectionRef = useRef(null)
+  const redactedRefs = useRef([])
 
   useEffect(() => {
-    if (started.current) return
-    started.current = true
-    const duration = 1800
-    const steps = 50
-    const step = target / steps
-    let current = 0
-    const timer = setInterval(() => {
-      current += step
-      if (current >= target) { setVal(target); clearInterval(timer) }
-      else setVal(Math.floor(current))
-    }, duration / steps)
-    return () => clearInterval(timer)
-  }, [target])
+    const section = sectionRef.current
+    if (!section) return
 
-  return <>{val.toLocaleString()}{suffix}</>
-}
+    const handleMouseMove = (e) => {
+      redactedRefs.current.forEach(el => {
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const cx = rect.left + rect.width / 2
+        const cy = rect.top + rect.height / 2
+        const dx = e.clientX - cx
+        const dy = e.clientY - cy
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < 140) {
+          el.classList.add('revealed')
+        } else {
+          el.classList.remove('revealed')
+        }
+      })
+    }
 
-export default function Hero({ setTab }) {
+    section.addEventListener('mousemove', handleMouseMove)
+    return () => section.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  const redactedWords = ['surveillance', 'everyone', 'fighting']
+
   return (
-    <section style={{
-      padding: '80px 24px 72px',
-      textAlign: 'center',
-      background: 'var(--hero-bg)',
-      borderBottom: '1px solid var(--border)',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Subtle grid background */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.04,
-        backgroundImage: 'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
-        backgroundSize: '40px 40px',
-      }} />
+    <section
+      ref={sectionRef}
+      style={{
+        paddingTop: 140,
+        paddingBottom: 0,
+        paddingLeft: 24,
+        paddingRight: 24,
+        textAlign: 'center',
+        borderBottom: '1px solid var(--border)',
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'var(--bg)',
+      }}
+    >
+      <div style={{ maxWidth: 800, margin: '0 auto' }}>
 
-      <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative' }}>
-
-        {/* Beta banner */}
+        {/* Eyebrow */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          background: 'rgba(243,156,18,0.1)', border: '1px solid rgba(243,156,18,0.3)',
-          borderRadius: 100, padding: '5px 14px', marginBottom: 28,
-          fontSize: 12, fontWeight: 600, color: '#f39c12',
-          letterSpacing: '0.05em', textTransform: 'uppercase',
+          fontSize: 11,
+          letterSpacing: '0.16em',
+          color: 'var(--red)',
+          textTransform: 'uppercase',
+          marginBottom: 32,
+          fontWeight: 500,
         }}>
-          <AlertTriangle size={12} /> Pre-Launch — Campaigns open for review. Wallets activating soon.
+          Pre-Launch — Campaigns Open for Review
         </div>
 
+        {/* Headline with redaction effect */}
         <h1 style={{
-          fontSize: 'clamp(40px, 8vw, 78px)',
-          fontWeight: 900,
-          lineHeight: 1.04,
-          letterSpacing: '-2.5px',
-          marginBottom: 24,
+          fontSize: 'clamp(42px, 5vw, 72px)',
+          fontWeight: 300,
+          letterSpacing: '-0.02em',
+          lineHeight: 1.15,
+          marginBottom: 32,
+          color: 'var(--fg)',
         }}>
-          They Watch You.<br />
-          <span style={{
-            color: 'var(--accent)',
-            backgroundImage: 'linear-gradient(135deg, #e63946, #ff6b6b)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>We Watch Back.</span>
+          The{' '}
+          <span
+            ref={el => redactedRefs.current[0] = el}
+            className="redacted"
+          >
+            surveillance
+          </span>
+          {' '}state watches{' '}
+          <span
+            ref={el => redactedRefs.current[1] = el}
+            className="redacted"
+          >
+            everyone
+          </span>
+          .{' '}We fund the people{' '}
+          <span
+            ref={el => redactedRefs.current[2] = el}
+            className="redacted"
+          >
+            fighting
+          </span>
+          {' '}back.
         </h1>
 
+        {/* Sub text */}
         <p style={{
-          fontSize: 'clamp(15px, 2.5vw, 19px)',
-          color: 'var(--muted)',
-          maxWidth: 540,
-          margin: '0 auto 12px',
+          fontSize: 16,
+          color: 'var(--gray)',
+          maxWidth: 520,
+          margin: '0 auto 48px',
           lineHeight: 1.75,
+          fontWeight: 400,
         }}>
-          Decentralized funding for legal resistance to mass surveillance.
-          Billboards. Lawsuits. FOIA campaigns.
+          Anonymous funding for surveillance accountability. No account. No identity. No way to stop it.
         </p>
 
-        <p style={{
-          fontSize: 13, color: 'var(--muted)', opacity: 0.65,
-          maxWidth: 420, margin: '0 auto 40px', lineHeight: 1.6,
-        }}>
-          Powered by Monero. No accounts. No logs. No tracking. Ever.
-        </p>
-
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => setTab('campaigns')} style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            background: 'var(--accent)', border: 'none', color: '#fff',
-            padding: '14px 30px', borderRadius: 10, fontWeight: 700, fontSize: 16,
-            boxShadow: '0 0 24px rgba(230,57,70,0.3)',
-            transition: 'box-shadow 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 36px rgba(230,57,70,0.5)'}
-          onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 24px rgba(230,57,70,0.3)'}
-          >
-            Fund a Campaign <ArrowRight size={18} />
-          </button>
-          <button onClick={() => setTab('operators')} style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text)',
-            padding: '14px 28px', borderRadius: 10, fontWeight: 600, fontSize: 16,
-            backdropFilter: 'blur(8px)',
-          }}>
+        {/* CTA Buttons */}
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 80 }}>
+          <MagneticButton primary onClick={() => setTab('campaigns')}>
+            Fund a Campaign
+          </MagneticButton>
+          <MagneticButton onClick={() => setTab('operators')}>
             Run a Campaign
-          </button>
+          </MagneticButton>
         </div>
 
-        {/* Launch tracker + notify */}
-        <div style={{ marginTop: 48, maxWidth: 640, margin: '48px auto 0' }}>
-          <LaunchTracker />
-          <NotifyMe />
-        </div>
-
-        {/* Stats */}
+        {/* Stat bar */}
         <div style={{
-          display: 'flex', gap: 0, justifyContent: 'center', marginTop: 64,
-          flexWrap: 'wrap',
-          paddingTop: 48, borderTop: '1px solid var(--border)',
+          display: 'flex',
+          borderTop: '1px solid var(--border)',
+          marginLeft: -24,
+          marginRight: -24,
         }}>
-          {[
-            { icon: <Eye size={18} />, target: 7, suffix: '', label: 'Cameras Documented', sub: 'NM · Public records verified' },
-            { icon: <Landmark size={18} />, target: 6, suffix: '', label: 'Campaigns Queued', sub: 'Pre-launch · Wallets pending' },
-            { icon: <Scale size={18} />, target: 0, suffix: '', label: 'Actions Funded', sub: 'Be the first' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              flex: 1, minWidth: 160, textAlign: 'center', padding: '0 24px',
-              borderRight: i < 2 ? '1px solid var(--border)' : 'none',
-            }}>
-              <div style={{ color: 'var(--accent)', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>{s.icon}</div>
-              <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-2px', lineHeight: 1 }}>
-                <CountUp target={s.target} suffix={s.suffix} />
+          {stats.map((s, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                padding: '28px 20px',
+                borderRight: i < stats.length - 1 ? '1px solid var(--border)' : 'none',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{
+                fontSize: 28,
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
+                color: 'var(--fg)',
+                marginBottom: 4,
+              }}>
+                {s.value}
               </div>
-              <div style={{ color: 'var(--text)', fontSize: 13, fontWeight: 600, marginTop: 6, marginBottom: 2 }}>{s.label}</div>
-              <div style={{ color: 'var(--muted)', fontSize: 11 }}>{s.sub}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg)', fontWeight: 500, marginBottom: 2 }}>
+                {s.label}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--gray)' }}>
+                {s.sub}
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        .redacted {
+          position: relative;
+          display: inline-block;
+          cursor: default;
+        }
+        .redacted::after {
+          content: '';
+          position: absolute;
+          inset: -1px -3px;
+          background: #111;
+          opacity: 1;
+          transition: opacity 0.25s ease;
+          pointer-events: none;
+        }
+        .redacted.revealed::after {
+          opacity: 0;
+        }
+      `}</style>
     </section>
   )
 }

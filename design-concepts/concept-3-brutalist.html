@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOURTHRIGHT — NO KEYS. NO PERSON. NO STOPPING IT.</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --red: #e60000;
+      --mono: 'Courier New', Courier, monospace;
+    }
+
+    html {
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--mono);
+    }
+
+    body {
+      background: var(--white);
+      max-width: 1440px;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    hr {
+      border: none;
+      border-top: 3px solid var(--black);
+      margin: 0;
+    }
+
+    hr.thin {
+      border-top-width: 1px;
+    }
+
+    hr.thick {
+      border-top-width: 6px;
+    }
+
+    hr.red {
+      border-top-color: var(--red);
+      border-top-width: 4px;
+    }
+
+    a {
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--red);
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .site-header {
+      border-bottom: 4px solid var(--black);
+      padding: 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .logo-block {
+      padding: 18px 32px;
+      border-right: 4px solid var(--black);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-size: 52px;
+      font-weight: 900;
+      font-family: var(--mono);
+      letter-spacing: -2px;
+      line-height: 1;
+      color: var(--black);
+    }
+
+    .logo span {
+      color: var(--red);
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .header-date {
+      padding: 8px 24px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--black);
+    }
+
+    .header-tagline-bar {
+      padding: 10px 24px;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: var(--red);
+      border-bottom: 1px solid var(--black);
+    }
+
+    .header-nav {
+      padding: 12px 24px;
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .header-nav a {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 16px 4px 0;
+      margin-right: 16px;
+      border-right: 2px solid var(--black);
+    }
+
+    .header-nav a:last-child {
+      border-right: none;
+    }
+
+    .header-nav a.nav-cta {
+      background: var(--red);
+      color: var(--white);
+      padding: 4px 12px;
+      border: 2px solid var(--black);
+      margin-right: 0;
+    }
+
+    .header-nav a.nav-cta:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      padding: 60px 48px 0 48px;
+      border-bottom: 4px solid var(--black);
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+    }
+
+    .hero-main {
+      padding-right: 48px;
+      border-right: 3px solid var(--black);
+      padding-bottom: 60px;
+    }
+
+    .hero-overline {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .hero-headline {
+      font-size: clamp(48px, 6vw, 88px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      margin-bottom: 32px;
+    }
+
+    .hero-headline .line-red {
+      color: var(--red);
+      display: block;
+    }
+
+    .hero-headline .line-black {
+      color: var(--black);
+      display: block;
+    }
+
+    hr.hero-rule {
+      border-top: 3px solid var(--black);
+      margin: 32px 0;
+    }
+
+    .hero-declaration {
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: bold;
+      letter-spacing: 1px;
+      max-width: 560px;
+    }
+
+    .hero-declaration em {
+      font-style: normal;
+      color: var(--red);
+    }
+
+    .hero-cta-row {
+      margin-top: 40px;
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 18px 32px;
+      border: 3px solid var(--black);
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 18px 32px;
+      border: 3px solid var(--black);
+      cursor: pointer;
+      display: inline-block;
+      margin-left: -3px;
+    }
+
+    .btn-secondary:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* Hero sidebar */
+    .hero-sidebar {
+      padding: 0 0 60px 40px;
+    }
+
+    .sidebar-stat {
+      padding: 28px 0;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .sidebar-stat:last-child {
+      border-bottom: none;
+    }
+
+    .stat-number {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+      font-family: var(--mono);
+    }
+
+    .stat-number.red {
+      color: var(--red);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 6px;
+      line-height: 1.4;
+      font-weight: bold;
+    }
+
+    /* ============================================================
+       THE NUMBERS SECTION
+    ============================================================ */
+    .numbers-section {
+      border-bottom: 4px solid var(--black);
+    }
+
+    .numbers-header {
+      padding: 20px 48px;
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .numbers-header h2 {
+      font-size: 13px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .numbers-header span {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    .numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .number-cell {
+      padding: 48px 40px;
+      border-right: 3px solid var(--black);
+      position: relative;
+    }
+
+    .number-cell:last-child {
+      border-right: none;
+    }
+
+    .number-cell:nth-child(odd) {
+      background: var(--white);
+    }
+
+    .number-cell:nth-child(even) {
+      background: #f5f5f5;
+    }
+
+    .big-number {
+      font-size: clamp(56px, 5vw, 80px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -3px;
+      font-family: var(--mono);
+      display: block;
+    }
+
+    .big-number.red {
+      color: var(--red);
+    }
+
+    .number-unit {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: var(--red);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .number-desc {
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 16px;
+      border-top: 1px solid var(--black);
+      padding-top: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .rotated-label {
+      position: absolute;
+      top: 50%;
+      right: -24px;
+      transform: translateY(-50%) rotate(90deg);
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+      white-space: nowrap;
+      color: #ccc;
+    }
+
+    /* ============================================================
+       ARCHITECTURE GUARANTEE — STATEMENT BAND
+    ============================================================ */
+    .guarantee-band {
+      background: var(--black);
+      color: var(--white);
+      padding: 64px 48px;
+      border-bottom: 4px solid var(--black);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .guarantee-statement {
+      font-size: clamp(32px, 4vw, 60px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+
+    .guarantee-statement .red {
+      color: var(--red);
+    }
+
+    .guarantee-proof {
+      border-left: 4px solid var(--red);
+      padding-left: 28px;
+      max-width: 320px;
+    }
+
+    .guarantee-proof p {
+      font-size: 12px;
+      letter-spacing: 1px;
+      line-height: 1.8;
+      color: #ccc;
+      text-transform: uppercase;
+    }
+
+    .guarantee-proof strong {
+      color: var(--white);
+    }
+
+    /* ============================================================
+       CAMPAIGN TYPES + HOW IT WORKS — TWO COLUMNS
+    ============================================================ */
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 4px solid var(--black);
+    }
+
+    .split-col {
+      padding: 48px;
+    }
+
+    .split-col:first-child {
+      border-right: 3px solid var(--black);
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: var(--red);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      margin-bottom: 32px;
+      line-height: 1.1;
+    }
+
+    /* Campaign type list */
+    .campaign-list {
+      list-style: none;
+    }
+
+    .campaign-list li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--black);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .campaign-list li:last-child {
+      border-bottom: none;
+    }
+
+    .campaign-marker {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: bold;
+      flex-shrink: 0;
+      padding-top: 2px;
+      min-width: 60px;
+    }
+
+    .campaign-name {
+      font-size: 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.3;
+    }
+
+    .campaign-sub {
+      font-size: 11px;
+      color: #555;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+    }
+
+    /* How it works — manual steps */
+    .manual-steps {
+      list-style: none;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--black);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+    }
+
+    .step-num {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+      color: var(--black);
+      flex-shrink: 0;
+      width: 48px;
+    }
+
+    .step-content {}
+
+    .step-title {
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      line-height: 1.7;
+      color: #333;
+      letter-spacing: 0.5px;
+    }
+
+    /* ============================================================
+       PRE / CODE BLOCK — ARCHITECTURE DETAIL
+    ============================================================ */
+    .architecture-section {
+      border-bottom: 4px solid var(--black);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .arch-left {
+      padding: 48px;
+      border-right: 3px solid var(--black);
+    }
+
+    .arch-right {
+      padding: 0;
+      background: #0a0a0a;
+    }
+
+    .arch-right-header {
+      padding: 12px 24px;
+      background: var(--red);
+      color: var(--white);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    pre.code-block {
+      padding: 28px 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.9;
+      color: #eee;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    pre.code-block .comment {
+      color: #666;
+    }
+
+    pre.code-block .key {
+      color: var(--red);
+    }
+
+    pre.code-block .val {
+      color: #4ade80;
+    }
+
+    .arch-left blockquote {
+      border-left: 6px solid var(--red);
+      padding: 20px 24px;
+      margin: 28px 0;
+      background: #f9f9f9;
+    }
+
+    .arch-left blockquote p {
+      font-size: 15px;
+      font-weight: bold;
+      line-height: 1.5;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .arch-left blockquote cite {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--red);
+      margin-top: 10px;
+      font-style: normal;
+      text-transform: uppercase;
+    }
+
+    .arch-list {
+      list-style: none;
+      margin-top: 24px;
+    }
+
+    .arch-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .arch-list li::before {
+      content: '→';
+      color: var(--red);
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       KBD ELEMENT SHOWCASE
+    ============================================================ */
+    .kbd-section {
+      padding: 40px 48px;
+      border-bottom: 4px solid var(--black);
+      background: var(--white);
+    }
+
+    .kbd-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .kbd-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .kbd-divider {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ccc;
+    }
+
+    kbd {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 8px 16px;
+      display: inline-block;
+    }
+
+    kbd.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    kbd.red {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .site-footer {
+      border-top: 6px solid var(--black);
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .footer-col {
+      padding: 40px 36px;
+      border-right: 2px solid var(--black);
+    }
+
+    .footer-col:last-child {
+      border-right: none;
+    }
+
+    .footer-logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .footer-logo span {
+      color: var(--red);
+    }
+
+    .footer-desc {
+      font-size: 12px;
+      line-height: 1.8;
+      color: #444;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-col-title {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: var(--red);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .footer-bottom {
+      padding: 20px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-bottom p {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #666;
+    }
+
+    .footer-bottom .red-text {
+      color: var(--red);
+      font-weight: bold;
+    }
+
+    /* ============================================================
+       ROTATED SIDEBAR LABEL (decorative)
+    ============================================================ */
+    .section-wrapper {
+      position: relative;
+    }
+
+    /* ============================================================
+       ANNOUNCEMENT BAR
+    ============================================================ */
+    .announce-bar {
+      background: var(--red);
+      color: var(--white);
+      padding: 10px 48px;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 2px solid var(--black);
+    }
+
+    /* ============================================================
+       BREAKOUT QUOTE
+    ============================================================ */
+    .breakout-section {
+      padding: 80px 48px;
+      border-bottom: 4px solid var(--black);
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .breakout-mark {
+      font-size: 120px;
+      font-weight: 900;
+      line-height: 0.7;
+      color: var(--red);
+      font-family: var(--mono);
+      user-select: none;
+    }
+
+    .breakout-text {
+      font-size: clamp(22px, 3vw, 40px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+
+    .breakout-attribution {
+      margin-top: 24px;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       ANNOUNCEMENT BAR
+  ============================================================ -->
+  <div class="announce-bar">
+    ⬛ OPEN BETA NOW LIVE — FIRST 500 CAMPAIGNS FREE — NO CREDIT CARD ⬛
+  </div>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="site-header">
+    <div class="header-top">
+      <div class="logo-block">
+        <div class="logo">FOURTH<span>RIGHT</span></div>
+      </div>
+      <div class="header-right">
+        <div class="header-date">CAMPAIGN AUTOMATION INFRASTRUCTURE — EST. 2025</div>
+        <div class="header-tagline-bar">NO KEYS. NO PERSON. NO STOPPING IT.</div>
+        <nav class="header-nav">
+          <a href="#">HOW IT WORKS</a>
+          <a href="#">CAMPAIGNS</a>
+          <a href="#">ARCHITECTURE</a>
+          <a href="#">PRICING</a>
+          <a href="#">DOCS</a>
+          <a href="#" class="nav-cta">START FREE →</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <hr class="thick">
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero">
+    <div class="hero-main">
+      <span class="hero-overline">■ DECENTRALIZED CAMPAIGN AUTOMATION</span>
+      <h1 class="hero-headline">
+        <span class="line-black">NOBODY</span>
+        <span class="line-black">CAN</span>
+        <span class="line-red">SHUT</span>
+        <span class="line-black">YOU DOWN.</span>
+      </h1>
+      <hr class="hero-rule">
+      <p class="hero-declaration">
+        Your campaign runs on 92,000 cameras.
+        <em>No human holds the key.</em>
+        Not us. Not anyone.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#" class="btn-primary">LAUNCH A CAMPAIGN</a>
+        <a href="#" class="btn-secondary">SEE THE ARCHITECTURE</a>
+      </div>
+    </div>
+
+    <aside class="hero-sidebar">
+      <div class="sidebar-stat">
+        <span class="stat-number red">92,000+</span>
+        <div class="stat-label">CAMERAS<br>IN NETWORK</div>
+      </div>
+      <div class="sidebar-stat">
+        <span class="stat-number">0</span>
+        <div class="stat-label">HUMANS WITH<br>KEY ACCESS</div>
+      </div>
+      <div class="sidebar-stat">
+        <span class="stat-number red">100%</span>
+        <div class="stat-label">AUTOMATED<br>EXECUTION</div>
+      </div>
+      <div class="sidebar-stat">
+        <span class="stat-number">∞</span>
+        <div class="stat-label">JURISDICTIONS<br>REACHED</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ============================================================
+       THE NUMBERS SECTION
+  ============================================================ -->
+  <section class="numbers-section section-wrapper">
+    <div class="numbers-header">
+      <h2>THE NUMBERS DON'T LIE</h2>
+      <span>VERIFIED NETWORK STATISTICS — UPDATED LIVE</span>
+    </div>
+    <div class="numbers-grid">
+      <div class="number-cell">
+        <span class="big-number red">92,847</span>
+        <span class="number-unit">CAMERAS ONLINE</span>
+        <p class="number-desc">Active network nodes across six continents. Each one a relay. Each one independent. No single point of failure. No single point of control.</p>
+        <span class="rotated-label">NETWORK SCALE</span>
+      </div>
+      <div class="number-cell">
+        <span class="big-number">0</span>
+        <span class="number-unit">HUMAN KEYHOLDERS</span>
+        <p class="number-desc">Not our CEO. Not our engineers. Not a government request. Zero humans hold cryptographic access to your running campaign. Architecture enforces it.</p>
+        <span class="rotated-label">ACCESS CONTROL</span>
+      </div>
+      <div class="number-cell">
+        <span class="big-number red">4.2ms</span>
+        <span class="number-unit">AVG. RESPONSE TIME</span>
+        <p class="number-desc">Distributed consensus across nodes resolves faster than a blink. Your audience sees your message. The infrastructure does its job and disappears.</p>
+        <span class="rotated-label">PERFORMANCE</span>
+      </div>
+      <div class="number-cell">
+        <span class="big-number">100%</span>
+        <span class="number-unit">UPTIME GUARANTEE</span>
+        <p class="number-desc">When one node goes dark, 91,999 remain. There is no off switch. Redundancy is not a feature — it is the entire point of the architecture.</p>
+        <span class="rotated-label">AVAILABILITY</span>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ============================================================
+       KBD SHOWCASE — KEYSTROKE SIMPLICITY
+  ============================================================ -->
+  <div class="kbd-section">
+    <span class="kbd-label">■ CAMPAIGN DEPLOYED IN THREE STEPS</span>
+    <div class="kbd-row">
+      <kbd class="active">01 &nbsp;DEFINE</kbd>
+      <span class="kbd-divider">—</span>
+      <kbd>Message</kbd>
+      <kbd>Audience</kbd>
+      <kbd>Schedule</kbd>
+      <span class="kbd-divider">—</span>
+      <kbd class="active">02 &nbsp;SIGN</kbd>
+      <span class="kbd-divider">—</span>
+      <kbd>Cryptographic key</kbd>
+      <kbd>One time</kbd>
+      <span class="kbd-divider">—</span>
+      <kbd class="red active">03 &nbsp;RELEASE</kbd>
+      <span class="kbd-divider">—</span>
+      <kbd>It runs itself</kbd>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ARCHITECTURE GUARANTEE — STATEMENT BAND
+  ============================================================ -->
+  <section class="guarantee-band">
+    <div class="guarantee-statement">
+      NO HUMAN<br>HOLDS<br><span class="red">THE KEYS.</span>
+    </div>
+    <div class="guarantee-proof">
+      <p>
+        <strong>THIS IS NOT A POLICY.</strong><br>
+        THIS IS NOT A PROMISE.<br><br>
+        IT IS AN ARCHITECTURAL FACT.<br><br>
+        THE SYSTEM WAS DESIGNED SO THAT<br>
+        <strong>EVEN WE CANNOT STOP IT</strong><br>
+        ONCE YOU HAVE AUTHORIZED<br>
+        YOUR CAMPAIGN.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       BREAKOUT QUOTE
+  ============================================================ -->
+  <div class="breakout-section">
+    <div class="breakout-mark">"</div>
+    <div>
+      <p class="breakout-text">The first time in history a campaign platform was designed so its own founders couldn't shut it down under pressure.</p>
+      <p class="breakout-attribution">— THE FOURTHRIGHT ARCHITECTURE MANIFESTO, 2025</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CAMPAIGN TYPES + HOW IT WORKS
+  ============================================================ -->
+  <section class="split-section">
+    <!-- Campaign Types -->
+    <div class="split-col">
+      <span class="section-label">■ WHAT RUNS ON FOURTHRIGHT</span>
+      <h2 class="section-title">EVERY KIND<br>OF CAMPAIGN.</h2>
+      <hr>
+      <ul class="campaign-list" style="margin-top: 24px;">
+        <li>
+          <span class="campaign-marker">TYPE 01</span>
+          <div>
+            <div class="campaign-name">POLITICAL CAMPAIGNS</div>
+            <div class="campaign-sub">Candidate outreach, voter contact, issue advocacy. Runs automatically. No staffer required after setup.</div>
+          </div>
+        </li>
+        <li>
+          <span class="campaign-marker">TYPE 02</span>
+          <div>
+            <div class="campaign-name">CAUSE ADVOCACY</div>
+            <div class="campaign-sub">Grassroots organizing, petition drives, coalition building. Scales to millions without scaling your team.</div>
+          </div>
+        </li>
+        <li>
+          <span class="campaign-marker">TYPE 03</span>
+          <div>
+            <div class="campaign-name">EMERGENCY ALERTS</div>
+            <div class="campaign-sub">Time-sensitive, high-urgency communications. Pre-authorized and dormant until triggered. Instant activation.</div>
+          </div>
+        </li>
+        <li>
+          <span class="campaign-marker">TYPE 04</span>
+          <div>
+            <div class="campaign-name">WHISTLEBLOWER RELEASE</div>
+            <div class="campaign-sub">Pre-scheduled document releases with cryptographic proof of timing. The information releases whether we want it to or not.</div>
+          </div>
+        </li>
+        <li>
+          <span class="campaign-marker">TYPE 05</span>
+          <div>
+            <div class="campaign-name">COMMERCIAL OUTREACH</div>
+            <div class="campaign-sub">Product launches, drops, customer reactivation. Fully automated. No babysitting the dashboard at 2 AM.</div>
+          </div>
+        </li>
+        <li>
+          <span class="campaign-marker">TYPE 06</span>
+          <div>
+            <div class="campaign-name">CUSTOM PIPELINES</div>
+            <div class="campaign-sub">API-native. Bring your own triggers, your own logic, your own conditions. We provide the infrastructure.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- How It Works -->
+    <div class="split-col">
+      <span class="section-label">■ SYSTEM MANUAL</span>
+      <h2 class="section-title">HOW IT<br>WORKS.</h2>
+      <hr>
+      <ol class="manual-steps" style="margin-top: 24px;">
+        <li class="step">
+          <span class="step-num">01</span>
+          <div class="step-content">
+            <div class="step-title">YOU DEFINE THE CAMPAIGN</div>
+            <div class="step-desc">Specify your audience, message, channels, schedule, and conditions. All parameters locked in during setup. Nothing can be changed later — by you or by us.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">02</span>
+          <div class="step-content">
+            <div class="step-title">YOU SIGN WITH YOUR KEY</div>
+            <div class="step-desc">Your cryptographic signature authorizes the campaign. This is the only moment human action is required. After this, you're done. The system takes over.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">03</span>
+          <div class="step-content">
+            <div class="step-title">NODES RECEIVE THE CONTRACT</div>
+            <div class="step-desc">Your signed campaign contract propagates across 92,000+ network nodes. Consensus achieved. Execution locked. No single node controls the outcome.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">04</span>
+          <div class="step-content">
+            <div class="step-title">IT RUNS. NO INTERVENTION POSSIBLE.</div>
+            <div class="step-desc">On schedule, across channels, to your audience. Automatically. We cannot pause it. You cannot pause it. Nobody can pause it. That is the guarantee.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">05</span>
+          <div class="step-content">
+            <div class="step-title">YOU RECEIVE THE PROOF</div>
+            <div class="step-desc">Cryptographic receipts. Timestamp proofs. Delivery verification from independent nodes. Auditable by anyone. Forever on-chain.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ARCHITECTURE DETAIL
+  ============================================================ -->
+  <section class="architecture-section">
+    <div class="arch-left">
+      <span class="section-label">■ THE ARCHITECTURE EXPLAINED</span>
+      <h2 class="section-title">DESIGNED TO<br>BE UNSTOPPABLE.</h2>
+
+      <blockquote>
+        <p>"We built it this way on purpose. A platform that could be pressured into stopping is a platform that will eventually be stopped."</p>
+        <cite>— FOURTHRIGHT TECHNICAL ARCHITECTURE DOCUMENT, §3.1</cite>
+      </blockquote>
+
+      <ul class="arch-list">
+        <li>Threshold cryptography — no single key = no single point of compromise</li>
+        <li>Smart contract execution — logic is immutable once deployed</li>
+        <li>Distributed consensus — requires network-wide agreement to modify</li>
+        <li>Content-addressed storage — censorship requires deleting every copy</li>
+        <li>Open protocol — forks are legal, encouraged, and unstoppable</li>
+        <li>Zero knowledge proofs — verify without revealing sender identity</li>
+        <li>Permissionless relay nodes — anyone can run one, no approval needed</li>
+      </ul>
+    </div>
+
+    <div class="arch-right">
+      <div class="arch-right-header">CAMPAIGN CONTRACT — PSEUDOCODE EXAMPLE</div>
+      <pre class="code-block"><span class="comment">// FOURTHRIGHT CAMPAIGN CONTRACT v2.1
+// Once deployed, this cannot be modified.
+// Not by you. Not by us. Not by anyone.</span>
+
+<span class="key">contract</span> Campaign {
+
+  <span class="key">address</span>   owner     = <span class="val">msg.sender</span>;
+  <span class="key">bytes32</span>   contentHash;
+  <span class="key">uint256</span>   executeAt;
+  <span class="key">uint256</span>   nodeThreshold = <span class="val">51000</span>; <span class="comment">// 55% of network</span>
+
+  <span class="comment">// IMMUTABLE after deployment</span>
+  <span class="key">function</span> <span class="val">deploy</span>(content, timestamp) {
+    contentHash = hash(content);
+    executeAt   = timestamp;
+    <span class="comment">// No cancel function exists.
+    // No pause function exists.
+    // No override function exists.</span>
+  }
+
+  <span class="comment">// Triggered by network consensus</span>
+  <span class="key">function</span> <span class="val">execute</span>() {
+    <span class="key">require</span>(block.timestamp >= executeAt);
+    <span class="key">require</span>(nodes.confirmed >= nodeThreshold);
+    broadcast(contentHash);
+    <span class="comment">// Done. Irreversible.</span>
+  }
+
+  <span class="comment">// This function does not exist:</span>
+  <span class="comment">// function shutdown() { ... }</span>
+}</pre>
+    </div>
+  </section>
+
+  <hr class="thick">
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-col">
+        <span class="footer-logo">FOURTH<span>RIGHT</span></span>
+        <p class="footer-desc">
+          Campaign automation infrastructure<br>
+          designed to be unstoppable.<br><br>
+          Not a promise. Not a policy.<br>
+          An architectural fact.
+        </p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">PLATFORM</div>
+        <ul class="footer-links">
+          <li><a href="#">HOW IT WORKS</a></li>
+          <li><a href="#">ARCHITECTURE</a></li>
+          <li><a href="#">CAMPAIGN TYPES</a></li>
+          <li><a href="#">PRICING</a></li>
+          <li><a href="#">NETWORK STATUS</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">RESOURCES</div>
+        <ul class="footer-links">
+          <li><a href="#">DOCUMENTATION</a></li>
+          <li><a href="#">API REFERENCE</a></li>
+          <li><a href="#">WHITEPAPER</a></li>
+          <li><a href="#">OPEN PROTOCOL</a></li>
+          <li><a href="#">RUN A NODE</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">COMPANY</div>
+        <ul class="footer-links">
+          <li><a href="#">MANIFESTO</a></li>
+          <li><a href="#">ABOUT</a></li>
+          <li><a href="#">CONTACT</a></li>
+          <li><a href="#">PRESS</a></li>
+          <li><a href="#">LEGAL</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FOURTHRIGHT. <span class="red-text">OPEN PROTOCOL. FORK IT.</span></p>
+      <p>92,847 NODES ONLINE &nbsp;|&nbsp; 0 HUMANS WITH KEY ACCESS &nbsp;|&nbsp; ∞ UPTIME</p>
+    </div>
+  </footer>
+
+</body>
+</html>

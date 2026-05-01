@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fourthright — Fund Surveillance Accountability</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f2f2f0;
+      --off-white: #d9d9d6;
+      --mid-gray: #888885;
+      --dark-gray: #2a2a28;
+      --red: #8B0000;
+      --red-bright: #a50000;
+      --col: calc((100% - 11 * 20px) / 12);
+      --gap: 20px;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID ── */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .grid-12 {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--gap);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--black);
+      border-bottom: 1px solid var(--dark-gray);
+      padding: 0 60px;
+    }
+
+    .nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--red);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--mid-gray);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      background: var(--red) !important;
+      color: var(--white) !important;
+      padding: 10px 20px;
+      font-size: 12px !important;
+      letter-spacing: 0.1em !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--red-bright) !important;
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--red);
+      padding: 8px 0;
+      overflow: hidden;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 60px;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker span {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .ticker-sep {
+      color: rgba(255,255,255,0.4);
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .hero-kicker {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-kicker::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .hero-headline {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(52px, 6.5vw, 96px);
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      max-width: 10ch;
+      margin-bottom: 48px;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--red);
+    }
+
+    .hero-right {
+      padding-top: 12px;
+      border-left: 1px solid var(--dark-gray);
+      padding-left: 40px;
+    }
+
+    .hero-tagline {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--off-white);
+      margin-bottom: 32px;
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 48ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    .btn-primary {
+      background: var(--white);
+      color: var(--black);
+      padding: 14px 32px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .btn-ghost {
+      color: var(--white);
+      padding: 14px 0;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px solid var(--mid-gray);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-ghost:hover {
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    .hero-stat-bar {
+      border-top: 1px solid var(--dark-gray);
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .hero-stat-item {
+      padding: 0 24px;
+      border-right: 1px solid var(--dark-gray);
+    }
+
+    .hero-stat-item:first-child {
+      padding-left: 0;
+    }
+
+    .hero-stat-item:last-child {
+      border-right: none;
+    }
+
+    .hero-stat-num {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    /* ── WHAT WE FUND ── */
+    .what-we-fund {
+      padding: 100px 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .fund-header {
+      grid-column: 1 / 5;
+      position: sticky;
+      top: 80px;
+      align-self: start;
+    }
+
+    .fund-header h2 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(36px, 3.2vw, 52px);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+
+    .fund-header p {
+      font-size: 15px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      max-width: 36ch;
+    }
+
+    .fund-list {
+      grid-column: 6 / 13;
+      padding-left: 40px;
+      border-left: 1px solid var(--dark-gray);
+    }
+
+    .fund-item {
+      padding: 36px 0;
+      border-bottom: 1px solid var(--dark-gray);
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .fund-item:first-child {
+      border-top: 1px solid var(--dark-gray);
+    }
+
+    .fund-num {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 13px;
+      color: var(--red);
+      font-weight: 400;
+      padding-top: 2px;
+    }
+
+    .fund-item-content h3 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .fund-item-content p {
+      font-size: 14px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      max-width: 52ch;
+    }
+
+    .fund-item-tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 3px 8px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-it-works {
+      padding: 100px 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .hiw-intro {
+      grid-column: 1 / 13;
+      margin-bottom: 72px;
+      display: grid;
+      grid-template-columns: 4fr 8fr;
+      gap: var(--gap);
+      align-items: end;
+    }
+
+    .hiw-intro h2 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(36px, 3.2vw, 52px);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+    }
+
+    .hiw-intro p {
+      font-size: 16px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      max-width: 56ch;
+      align-self: end;
+    }
+
+    .steps {
+      grid-column: 1 / 13;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .step {
+      padding: 48px 40px 48px 0;
+      border-right: 1px solid var(--dark-gray);
+    }
+
+    .step:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .step:not(:first-child) {
+      padding-left: 40px;
+    }
+
+    .step-num {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 64px;
+      font-weight: 400;
+      color: var(--dark-gray);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    .step h3 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+    }
+
+    /* ── THE GUARANTEE ── */
+    .guarantee {
+      padding: 100px 0;
+      border-bottom: 1px solid var(--dark-gray);
+      background: var(--black);
+    }
+
+    .guarantee-inner {
+      grid-column: 1 / 13;
+    }
+
+    .guarantee-headline {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(42px, 5vw, 80px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 0;
+      max-width: 16ch;
+      border-top: 2px solid var(--red);
+      padding-top: 48px;
+    }
+
+    .guarantee-headline em {
+      font-style: italic;
+      color: var(--red);
+    }
+
+    .guarantee-body {
+      grid-column: 1 / 13;
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 80px;
+      margin-top: 64px;
+      padding-top: 64px;
+      border-top: 1px solid var(--dark-gray);
+    }
+
+    .guarantee-text p {
+      font-size: 17px;
+      color: var(--off-white);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .guarantee-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .guarantee-text strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .guarantee-facts {
+      border-left: 2px solid var(--red);
+      padding-left: 40px;
+    }
+
+    .guarantee-fact {
+      margin-bottom: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .guarantee-fact:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .guarantee-fact-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .guarantee-fact-text {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.45;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      padding: 100px 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .stats-header {
+      grid-column: 1 / 13;
+      margin-bottom: 80px;
+    }
+
+    .stats-header h2 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(36px, 3.2vw, 52px);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+    }
+
+    .stat-grid {
+      grid-column: 1 / 13;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--dark-gray);
+    }
+
+    .stat-block {
+      padding: 56px 48px 56px 0;
+      border-right: 1px solid var(--dark-gray);
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .stat-block:nth-child(3n) {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .stat-block:nth-child(3n+2),
+    .stat-block:nth-child(3n+3) {
+      padding-left: 48px;
+    }
+
+    .stat-block:nth-last-child(-n+3) {
+      border-bottom: none;
+    }
+
+    .stat-block-num {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(48px, 4vw, 72px);
+      font-weight: 400;
+      color: var(--red);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .stat-block-label {
+      font-size: 14px;
+      color: var(--off-white);
+      line-height: 1.5;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .stat-block-sub {
+      font-size: 12px;
+      color: var(--mid-gray);
+      line-height: 1.6;
+    }
+
+    /* ── MANIFESTO PULL QUOTE ── */
+    .pull-quote {
+      padding: 100px 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .pull-quote-inner {
+      grid-column: 2 / 12;
+      text-align: center;
+    }
+
+    .pull-quote blockquote {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(28px, 3vw, 48px);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.3;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+
+    .pull-quote cite {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+      font-style: normal;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      border-top: 2px solid var(--red);
+      padding: 80px 60px 40px;
+    }
+
+    .footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 3fr 2fr 2fr 2fr;
+      gap: 60px;
+      padding-bottom: 64px;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .footer-brand h3 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand h3 span {
+      color: var(--red);
+    }
+
+    .footer-brand p {
+      font-size: 14px;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      max-width: 34ch;
+      margin-bottom: 28px;
+    }
+
+    .footer-brand .protocol-note {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark-gray);
+      font-weight: 600;
+      border-top: 1px solid var(--dark-gray);
+      padding-top: 20px;
+    }
+
+    .footer-col h4 {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-col ul li a {
+      font-size: 14px;
+      color: var(--mid-gray);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+    }
+
+    .footer-bottom p {
+      font-size: 12px;
+      color: var(--dark-gray);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-bottom .footer-legal {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-bottom .footer-legal a {
+      font-size: 12px;
+      color: var(--dark-gray);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-bottom .footer-legal a:hover {
+      color: var(--mid-gray);
+    }
+
+    /* ── UTILITIES ── */
+    .text-red { color: var(--red); }
+    .border-top-red { border-top: 2px solid var(--red); }
+
+    /* ── HORIZONTAL RULE ── */
+    hr.thick {
+      border: none;
+      border-top: 2px solid var(--white);
+      margin: 0;
+    }
+
+    hr.thin {
+      border: none;
+      border-top: 1px solid var(--dark-gray);
+      margin: 0;
+    }
+
+    /* ── MISSION STRIP ── */
+    .mission-strip {
+      padding: 48px 0;
+      border-bottom: 1px solid var(--dark-gray);
+    }
+
+    .mission-strip-inner {
+      grid-column: 1 / 13;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .mission-word {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark-gray);
+      font-weight: 400;
+    }
+
+    .mission-word.active {
+      color: var(--white);
+    }
+
+    .mission-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--dark-gray);
+    }
+
+    /* ── CAMPAIGN CTA STRIP ── */
+    .cta-strip {
+      padding: 100px 0;
+    }
+
+    .cta-strip-inner {
+      grid-column: 1 / 13;
+      border: 1px solid var(--dark-gray);
+      padding: 72px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .cta-strip-text h2 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(32px, 3vw, 52px);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .cta-strip-text p {
+      font-size: 15px;
+      color: var(--mid-gray);
+      max-width: 50ch;
+      line-height: 1.7;
+    }
+
+    .cta-strip-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span>Fourthright Protocol Active</span>
+      <span class="ticker-sep">—</span>
+      <span>92,000+ Surveillance Cameras Mapped</span>
+      <span class="ticker-sep">—</span>
+      <span>No Human Holds the Keys</span>
+      <span class="ticker-sep">—</span>
+      <span>$2.4M Deployed in Active Campaigns</span>
+      <span class="ticker-sep">—</span>
+      <span>Litigation · Legislation · FOIA · Accountability</span>
+      <span class="ticker-sep">—</span>
+      <span>Fourthright Protocol Active</span>
+      <span class="ticker-sep">—</span>
+      <span>92,000+ Surveillance Cameras Mapped</span>
+      <span class="ticker-sep">—</span>
+      <span>No Human Holds the Keys</span>
+      <span class="ticker-sep">—</span>
+      <span>$2.4M Deployed in Active Campaigns</span>
+      <span class="ticker-sep">—</span>
+      <span>Litigation · Legislation · FOIA · Accountability</span>
+      <span class="ticker-sep">—</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Fourth<span>right</span></a>
+      <ul class="nav-links">
+        <li><a href="#campaigns">Campaigns</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#guarantee">The Guarantee</a></li>
+        <li><a href="#governance">Governance</a></li>
+        <li><a href="#run" class="nav-cta">Run a Campaign</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="grid-12">
+        <div style="grid-column: 1 / 8;">
+          <div class="hero-kicker">Surveillance Accountability Protocol</div>
+          <h1 class="hero-headline">Fund the <em>fight</em> they cannot silence.</h1>
+        </div>
+        <div style="grid-column: 8 / 13;" class="hero-right">
+          <p class="hero-tagline">"No keys to produce. No person to arrest. No way to stop it."</p>
+          <p class="hero-sub">
+            Fourthright is a censorship-resistant funding protocol for campaigns that hold surveillance infrastructure accountable — litigation, ordinances, FOIA, vendor exposure, and counter-databases. Funds release automatically when goals are met. No intermediaries. No off switches.
+          </p>
+          <div class="hero-actions">
+            <a href="#campaigns" class="btn-primary">Browse Campaigns</a>
+            <a href="#how-it-works" class="btn-ghost">How it works</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stat-bar">
+        <div class="hero-stat-item">
+          <div class="hero-stat-num">92,000+</div>
+          <div class="hero-stat-label">Cameras Mapped</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-num">$2.4M</div>
+          <div class="hero-stat-label">Deployed to Campaigns</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-num">47</div>
+          <div class="hero-stat-label">Active Campaigns</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-num">0</div>
+          <div class="hero-stat-label">Keys Held by Humans</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION STRIP -->
+  <section class="mission-strip">
+    <div class="container">
+      <div class="mission-strip-inner">
+        <span class="mission-word active">Litigation</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word active">Legislation</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word active">FOIA</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word active">Vendor Accountability</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word active">Counter-Databases</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word">Ordinances</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word">Pattern Analysis</span>
+        <div class="mission-sep"></div>
+        <span class="mission-word">Technical Audits</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE FUND -->
+  <section class="what-we-fund" id="campaigns">
+    <div class="container">
+      <div class="grid-12">
+        <div class="fund-header">
+          <div class="section-label">What We Fund</div>
+          <h2>Five categories. One purpose.</h2>
+          <p>Every campaign on Fourthright targets a specific failure point in the surveillance accountability ecosystem. Pick your fight.</p>
+        </div>
+        <div class="fund-list">
+
+          <div class="fund-item">
+            <div class="fund-num">01</div>
+            <div class="fund-item-content">
+              <h3>Civil Litigation</h3>
+              <p>Fund lawsuits challenging unlawful surveillance programs, facial recognition deployments, and Fourth Amendment violations. Funds held in escrow and released to legal teams upon verified case filing.</p>
+              <span class="fund-item-tag">High Impact</span>
+            </div>
+          </div>
+
+          <div class="fund-item">
+            <div class="fund-num">02</div>
+            <div class="fund-item-content">
+              <h3>Local Ordinances</h3>
+              <p>Support grassroots campaigns pushing surveillance use-policies, camera registries, and audit requirements through city and county legislative channels. Democracy is a tool — sharpen it.</p>
+              <span class="fund-item-tag">Community</span>
+            </div>
+          </div>
+
+          <div class="fund-item">
+            <div class="fund-num">03</div>
+            <div class="fund-item-content">
+              <h3>FOIA Campaigns</h3>
+              <p>Systematic public records requests targeting surveillance contracts, vendor agreements, and system specs that agencies want buried. Fund the filings, fund the appeals, fund the lawsuits when they refuse.</p>
+              <span class="fund-item-tag">Transparency</span>
+            </div>
+          </div>
+
+          <div class="fund-item">
+            <div class="fund-num">04</div>
+            <div class="fund-item-content">
+              <h3>Vendor Accountability</h3>
+              <p>Target the companies selling surveillance infrastructure — security audits, shareholder pressure campaigns, technical debunking of accuracy claims, and market exposure for bad actors.</p>
+              <span class="fund-item-tag">Corporate</span>
+            </div>
+          </div>
+
+          <div class="fund-item">
+            <div class="fund-num">05</div>
+            <div class="fund-item-content">
+              <h3>Counter-Databases</h3>
+              <p>Build and maintain public infrastructure: camera maps, facial recognition error-rate databases, police surveillance contract repositories, and community alert networks. Information as defense.</p>
+              <span class="fund-item-tag">Infrastructure</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="grid-12">
+        <div class="hiw-intro">
+          <div>
+            <div class="section-label">How It Works</div>
+            <h2>Four steps. No trust required.</h2>
+          </div>
+          <p>The protocol handles everything — escrow, verification, disbursement. No board approval. No donor relations. No choke points. Funds flow when milestones are met, not when someone decides to let them.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num" style="color: var(--red); opacity: 0.6;">01</div>
+            <h3>Propose a Campaign</h3>
+            <p>Any individual or organization submits a campaign with defined goals, target milestones, and a fund recipient address. Proposals are reviewed by the community for legitimacy and scope.</p>
+          </div>
+          <div class="step">
+            <div class="step-num" style="color: var(--red); opacity: 0.6;">02</div>
+            <h3>Community Funds It</h3>
+            <p>Contributors send funds to a smart contract. The contract holds everything in escrow — no individual controls the money. Contributors can withdraw if the campaign doesn't reach its goal.</p>
+          </div>
+          <div class="step">
+            <div class="step-num" style="color: var(--red); opacity: 0.6;">03</div>
+            <h3>Milestones Trigger Release</h3>
+            <p>When verified milestones are reached — lawsuit filed, ordinance introduced, FOIA records received — the contract releases the corresponding tranche automatically.</p>
+          </div>
+          <div class="step">
+            <div class="step-num" style="color: var(--red); opacity: 0.6;">04</div>
+            <h3>Everything Is Public</h3>
+            <p>Every transaction, every milestone verification, every disbursement is on-chain and auditable forever. No financial opacity. No private deals. The ledger is the receipt.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE GUARANTEE -->
+  <section class="guarantee" id="guarantee">
+    <div class="container">
+      <div class="grid-12">
+        <div class="guarantee-inner" style="grid-column: 1 / 13;">
+          <div class="section-label">The Guarantee</div>
+          <h2 class="guarantee-headline">No human holds <em>the keys.</em></h2>
+        </div>
+        <div class="guarantee-body" style="grid-column: 1 / 13;">
+          <div class="guarantee-text">
+            <p>
+              Every surveillance accountability effort that has ever been shut down was shut down the same way: <strong>find the person, find the account, apply pressure.</strong> Freeze the bank account. Threaten the lawyer. Deplatform the fundraiser. It works because there's always a person holding the keys.
+            </p>
+            <p>
+              Fourthright was designed from the ground up to eliminate that attack surface. There is no CEO. There is no bank account. There is no "campaign organizer" who can be arrested and told to hand over the funds. The protocol is the intermediary — and the protocol cannot be interrogated, threatened, or jailed.
+            </p>
+            <p>
+              Funds are held in cryptographically secured escrow contracts. Disbursement logic is written into immutable code. <strong>When the milestone conditions are met, the contract executes.</strong> No human decision required. No human decision possible.
+            </p>
+            <p>
+              This is not a rhetorical claim. It is an architectural one. The people who built Fourthright cannot unlock your campaign funds. Neither can any government, any court order, or any pressure campaign. The code runs, or it doesn't. When it runs, it does exactly what it says.
+            </p>
+          </div>
+          <div class="guarantee-facts">
+            <div class="guarantee-fact">
+              <div class="guarantee-fact-label">No Kill Switch</div>
+              <div class="guarantee-fact-text">The Fourthright Foundation holds no admin keys, override functions, or emergency pause mechanisms on active campaigns.</div>
+            </div>
+            <div class="guarantee-fact">
+              <div class="guarantee-fact-label">No Custodial Risk</div>
+              <div class="guarantee-fact-text">Funds never pass through a custodial account. They move from contributor wallets directly into the campaign contract.</div>
+            </div>
+            <div class="guarantee-fact">
+              <div class="guarantee-fact-label">Full Auditability</div>
+              <div class="guarantee-fact-text">Every line of contract code is published, verified, and independently audited before any campaign goes live.</div>
+            </div>
+            <div class="guarantee-fact">
+              <div class="guarantee-fact-label">Contributor Protection</div>
+              <div class="guarantee-fact-text">If a campaign fails to reach its goal or verification fails, all funds return to contributors automatically.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats" id="stats">
+    <div class="container">
+      <div class="grid-12">
+        <div class="stats-header">
+          <div class="section-label">The Scope</div>
+          <h2>The surveillance state is large.<br>The resistance is growing.</h2>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-block">
+            <div class="stat-block-num">92,000+</div>
+            <div class="stat-block-label">Surveillance cameras mapped</div>
+            <div class="stat-block-sub">Publicly accessible camera locations documented across 340 municipalities in the Fourthright counter-database.</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-num">$2.4M</div>
+            <div class="stat-block-label">Deployed to accountability campaigns</div>
+            <div class="stat-block-sub">Total protocol disbursements since launch. Zero funds frozen. Zero campaigns shut down by external pressure.</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-num">47</div>
+            <div class="stat-block-label">Active campaigns running now</div>
+            <div class="stat-block-sub">Across 22 states. Targeting city surveillance programs, facial recognition vendors, and police AI procurement.</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-num">11</div>
+            <div class="stat-block-label">Ordinances introduced</div>
+            <div class="stat-block-sub">Local surveillance use-policies and camera registry bills introduced as a direct result of funded campaigns.</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-num">218</div>
+            <div class="stat-block-label">FOIA requests filed</div>
+            <div class="stat-block-sub">Public records requests targeting surveillance contracts, vendor agreements, and system specifications.</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-block-num">0</div>
+            <div class="stat-block-label">Campaigns shut down externally</div>
+            <div class="stat-block-sub">No Fourthright campaign has ever been halted by a legal threat, government order, or platform takedown.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PULL QUOTE -->
+  <section class="pull-quote">
+    <div class="container">
+      <div class="grid-12">
+        <div class="pull-quote-inner">
+          <blockquote>"Surveillance infrastructure expands in proportion to the cost of accountability. Fourthright lowers that cost to zero."</blockquote>
+          <cite>From the Fourthright Protocol Whitepaper, Section 1.2</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <section class="cta-strip" id="run">
+    <div class="container">
+      <div class="grid-12">
+        <div class="cta-strip-inner">
+          <div class="cta-strip-text">
+            <h2>There's a surveillance program in your city that no one is watching.</h2>
+            <p>File the FOIA. Fund the lawsuit. Map the cameras. Start with a campaign — the protocol handles the rest.</p>
+          </div>
+          <div class="cta-strip-actions">
+            <a href="#" class="btn-primary" style="text-align: center;">Start a Campaign</a>
+            <a href="#campaigns" class="btn-ghost" style="text-align: center;">Browse Active Campaigns</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3>Fourth<span>right</span></h3>
+          <p>A censorship-resistant funding protocol for surveillance accountability. No keys to produce. No person to arrest. No way to stop it.</p>
+          <div class="protocol-note">Fourthright Protocol v1.4 · Open Source</div>
+        </div>
+        <div class="footer-col">
+          <h4>Campaigns</h4>
+          <ul>
+            <li><a href="#">Browse All</a></li>
+            <li><a href="#">Litigation</a></li>
+            <li><a href="#">Ordinances</a></li>
+            <li><a href="#">FOIA</a></li>
+            <li><a href="#">Vendor Accountability</a></li>
+            <li><a href="#">Counter-Databases</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Protocol</h4>
+          <ul>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Smart Contracts</a></li>
+            <li><a href="#">Security Audits</a></li>
+            <li><a href="#">Whitepaper</a></li>
+            <li><a href="#">Governance</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Camera Map</a></li>
+            <li><a href="#">FOIA Templates</a></li>
+            <li><a href="#">Legal Resources</a></li>
+            <li><a href="#">Press Kit</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Fourthright Foundation. Protocol code is open source under MIT License.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Protocol License</a>
+          <a href="#">Audit Reports</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

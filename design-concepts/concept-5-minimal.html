@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fourthright — Civil Liberties Defense Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --white:   #fafafa;
+      --black:   #111111;
+      --red:     #dc2626;
+      --rule:    #e5e5e5;
+      --mid:     #666666;
+      --unit:    8px;
+    }
+
+    html {
+      font-size: 16px;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    body {
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      background: var(--white);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============================================================
+       GRID SYSTEM — 8px baseline, 1440px max, 120px gutter
+       ============================================================ */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 120px;
+    }
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+    nav {
+      border-bottom: 1px solid var(--rule);
+      padding: calc(var(--unit) * 3) 0;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: calc(var(--unit) * 5);
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--black);
+    }
+
+    .nav-links .nav-accent {
+      color: var(--black);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero {
+      border-bottom: 1px solid var(--rule);
+      padding: calc(var(--unit) * 16) 0 calc(var(--unit) * 14);
+    }
+
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--unit) * 10);
+      align-items: end;
+    }
+
+    .hero-wordmark {
+      font-size: clamp(72px, 8.5vw, 120px);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      color: var(--black);
+    }
+
+    .hero-wordmark span {
+      display: block;
+    }
+
+    .hero-wordmark .mark-accent {
+      color: var(--red);
+    }
+
+    .hero-right {
+      padding-bottom: 8px;
+    }
+
+    .hero-tagline {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--black);
+      max-width: 420px;
+      margin-bottom: calc(var(--unit) * 6);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--unit) * 2);
+    }
+
+    .hero-link {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--black);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-link:hover {
+      color: var(--red);
+    }
+
+    .hero-link .arrow {
+      font-style: normal;
+      transition: transform 0.15s;
+    }
+
+    .hero-link:hover .arrow {
+      transform: translateX(3px);
+    }
+
+    /* ============================================================
+       SECTION BASE
+       ============================================================ */
+    section {
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-inner {
+      padding: calc(var(--unit) * 12) 0;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: calc(var(--unit) * 6);
+    }
+
+    /* ============================================================
+       SECTION 1 — WHAT WE DO
+       ============================================================ */
+    .what-we-do .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: calc(var(--unit) * 10);
+      align-items: start;
+    }
+
+    .what-we-do-heading {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .what-we-do-body {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--black);
+      max-width: 680px;
+    }
+
+    .what-we-do-body em {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    /* ============================================================
+       SECTION 2 — CAMPAIGN TYPES
+       ============================================================ */
+    .campaign-types .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: calc(var(--unit) * 10);
+      align-items: start;
+    }
+
+    .campaign-types-heading {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .campaign-list {
+      list-style: none;
+    }
+
+    .campaign-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: calc(var(--unit) * 3);
+      padding: calc(var(--unit) * 4) 0;
+      border-top: 1px solid var(--rule);
+      align-items: baseline;
+    }
+
+    .campaign-item:last-child {
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .campaign-number {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--mid);
+      padding-top: 2px;
+    }
+
+    .campaign-name {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--black);
+      line-height: 1.45;
+    }
+
+    .campaign-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--mid);
+      line-height: 1.6;
+      margin-top: calc(var(--unit) * 0.5);
+    }
+
+    /* ============================================================
+       SECTION 3 — THE GUARANTEE
+       ============================================================ */
+    .guarantee {
+      background: var(--white);
+    }
+
+    .guarantee .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: calc(var(--unit) * 10);
+      align-items: start;
+    }
+
+    .guarantee-statement {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .guarantee-statement .red-line {
+      color: var(--red);
+      display: block;
+    }
+
+    .guarantee-body {
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.8;
+      color: var(--black);
+    }
+
+    .guarantee-body p + p {
+      margin-top: calc(var(--unit) * 3);
+    }
+
+    /* ============================================================
+       SECTION 4 — STATS
+       ============================================================ */
+    .stats .container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-cell {
+      padding: calc(var(--unit) * 8) 0;
+      border-right: 1px solid var(--rule);
+      padding-right: calc(var(--unit) * 6);
+      padding-left: calc(var(--unit) * 6);
+    }
+
+    .stat-cell:first-child {
+      padding-left: 0;
+    }
+
+    .stat-cell:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .stat-number {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--black);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--mid);
+      margin-top: calc(var(--unit) * 1.5);
+      line-height: 1.45;
+    }
+
+    .stat-cell:first-child .stat-number {
+      color: var(--red);
+    }
+
+    /* ============================================================
+       SECTION 5 — HOW IT WORKS
+       ============================================================ */
+    .how-it-works .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: calc(var(--unit) * 10);
+      align-items: start;
+    }
+
+    .how-heading {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .step {
+      padding: calc(var(--unit) * 5) calc(var(--unit) * 5) calc(var(--unit) * 5) 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .step:nth-child(even) {
+      padding-left: calc(var(--unit) * 5);
+      border-left: 1px solid var(--rule);
+      padding-right: 0;
+    }
+
+    .step:nth-child(3),
+    .step:nth-child(4) {
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: calc(var(--unit) * 2);
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: calc(var(--unit) * 1.5);
+      line-height: 1.3;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       SECTION 6 — DUAL CTA
+       ============================================================ */
+    .dual-cta {
+      border-bottom: none;
+    }
+
+    .dual-cta .container {
+      padding: 0;
+      max-width: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cta-panel {
+      padding: calc(var(--unit) * 14) 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 320px;
+    }
+
+    .cta-panel-red {
+      background: var(--red);
+    }
+
+    .cta-panel-black {
+      background: var(--black);
+    }
+
+    .cta-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: calc(var(--unit) * 4);
+    }
+
+    .cta-heading {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: #fff;
+      max-width: 380px;
+    }
+
+    .cta-link {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: calc(var(--unit) * 6);
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+
+    .cta-link:hover {
+      color: #fff;
+    }
+
+    .cta-link:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    .cta-link .arrow {
+      transition: transform 0.15s;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: calc(var(--unit) * 5) 0;
+    }
+
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--mid);
+    }
+
+    .footer-left strong {
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: calc(var(--unit) * 4);
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover {
+      color: var(--black);
+    }
+
+    .footer-legal {
+      font-size: 12px;
+      color: var(--mid);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
+  <nav>
+    <div class="container">
+      <a href="#" class="nav-logo">Fourthright</a>
+      <ul class="nav-links">
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Campaigns</a></li>
+        <li><a href="#">The guarantee</a></li>
+        <li><a href="#" class="nav-accent">Run a campaign →</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-left">
+        <h1 class="hero-wordmark">
+          <span>Fourth</span>
+          <span class="mark-accent">right.</span>
+        </h1>
+      </div>
+      <div class="hero-right">
+        <p class="hero-tagline">
+          Civil liberties defense, funded and administered by
+          cryptographic code — not organizations, not governments,
+          not individuals.
+        </p>
+        <nav class="hero-actions" aria-label="Primary actions">
+          <a href="#" class="hero-link">
+            Fund a Campaign <span class="arrow">→</span>
+          </a>
+          <a href="#" class="hero-link">
+            Run a Campaign <span class="arrow">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SECTION 1 — WHAT WE DO
+       ============================================================ -->
+  <section class="what-we-do">
+    <div class="container">
+      <div class="section-inner">
+        <p class="section-label">01 — What we do</p>
+        <h2 class="what-we-do-heading">Defense without<br/>compromise.</h2>
+      </div>
+      <div class="section-inner">
+        <p class="what-we-do-body">
+          Fourthright is a campaign infrastructure for civil liberties defense — legal challenges,
+          policy advocacy, and community protection. Every campaign is defined upfront: the goal,
+          the threshold, the beneficiary, the timeline. Smart contracts hold contributions in escrow
+          until conditions are met, then disburse automatically. <em>No discretion. No delay. No diversion.</em>
+          We remove the human bottleneck from the funding chain so that causes are served, not administrators.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 2 — CAMPAIGN TYPES
+       ============================================================ -->
+  <section class="campaign-types">
+    <div class="container">
+      <div class="section-inner">
+        <p class="section-label">02 — Campaign types</p>
+        <h2 class="campaign-types-heading">What can<br/>be defended.</h2>
+      </div>
+      <div class="section-inner">
+        <ul class="campaign-list">
+          <li class="campaign-item">
+            <span class="campaign-number">01</span>
+            <div>
+              <p class="campaign-name">Legal Defense</p>
+              <p class="campaign-desc">Fund attorney fees, court costs, and expert witnesses for individuals facing civil liberties violations.</p>
+            </div>
+          </li>
+          <li class="campaign-item">
+            <span class="campaign-number">02</span>
+            <div>
+              <p class="campaign-name">Policy Challenge</p>
+              <p class="campaign-desc">Finance litigation against unconstitutional laws, regulations, and governmental overreach.</p>
+            </div>
+          </li>
+          <li class="campaign-item">
+            <span class="campaign-number">03</span>
+            <div>
+              <p class="campaign-name">Community Protection</p>
+              <p class="campaign-desc">Organize and fund rapid-response support for communities facing systemic rights violations.</p>
+            </div>
+          </li>
+          <li class="campaign-item">
+            <span class="campaign-number">04</span>
+            <div>
+              <p class="campaign-name">Press Freedom</p>
+              <p class="campaign-desc">Defend journalists, whistleblowers, and publishers against suppression and retaliation.</p>
+            </div>
+          </li>
+          <li class="campaign-item">
+            <span class="campaign-number">05</span>
+            <div>
+              <p class="campaign-name">Digital Rights</p>
+              <p class="campaign-desc">Challenge surveillance overreach, data exploitation, and the erosion of privacy in the digital domain.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 3 — THE GUARANTEE
+       ============================================================ -->
+  <section class="guarantee">
+    <div class="container">
+      <div class="section-inner">
+        <p class="section-label">03 — The guarantee</p>
+        <h2 class="guarantee-statement">
+          No human<br/>
+          <span class="red-line">holds the keys.</span>
+        </h2>
+      </div>
+      <div class="section-inner">
+        <div class="guarantee-body">
+          <p>
+            Every contribution made through Fourthright is governed exclusively by
+            published smart contract code — audited, open-source, and immutable once
+            a campaign is live. No administrator can redirect funds, halt disbursement,
+            or alter conditions after a campaign launches.
+          </p>
+          <p>
+            When a campaign reaches its verified threshold, the contract executes
+            disbursement directly to the registered beneficiary without human intervention
+            or approval at any step. If a campaign does not reach its threshold, every
+            contributor receives an automatic, complete refund.
+          </p>
+          <p>
+            This is not a policy we promise to follow. It is the only outcome the
+            code allows.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 4 — STATS
+       ============================================================ -->
+  <section class="stats">
+    <div class="container">
+      <div class="stat-cell">
+        <span class="stat-number">$4.2M</span>
+        <p class="stat-label">Disbursed to<br/>active defenses</p>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-number">312</span>
+        <p class="stat-label">Campaigns<br/>completed</p>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-number">100%</span>
+        <p class="stat-label">Refund rate on<br/>failed campaigns</p>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-number">0</span>
+        <p class="stat-label">Administrative<br/>overrides. Ever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 5 — HOW IT WORKS
+       ============================================================ -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-inner">
+        <p class="section-label">04 — Process</p>
+        <h2 class="how-heading">How it<br/>works.</h2>
+      </div>
+      <div class="section-inner">
+        <div class="steps-grid">
+          <div class="step">
+            <p class="step-num">Step 01</p>
+            <p class="step-title">Define the campaign</p>
+            <p class="step-desc">Set a precise goal, funding threshold, beneficiary address, and expiration date. Once published, these terms are locked.</p>
+          </div>
+          <div class="step">
+            <p class="step-num">Step 02</p>
+            <p class="step-title">Receive contributions</p>
+            <p class="step-desc">Contributors fund the campaign directly. All assets are held in escrow by the smart contract — not by Fourthright.</p>
+          </div>
+          <div class="step">
+            <p class="step-num">Step 03</p>
+            <p class="step-title">Threshold reached</p>
+            <p class="step-desc">When the campaign hits its goal, disbursement executes automatically to the verified beneficiary. No forms. No delay.</p>
+          </div>
+          <div class="step">
+            <p class="step-num">Step 04</p>
+            <p class="step-title">Full accountability</p>
+            <p class="step-desc">Every transaction is public and verifiable on-chain. Campaign outcomes are published regardless of result.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 6 — DUAL CTA
+       ============================================================ -->
+  <section class="dual-cta">
+    <div class="dual-cta container">
+      <div class="cta-panel cta-panel-red">
+        <div>
+          <p class="cta-label">For supporters</p>
+          <h2 class="cta-heading">Fund a Campaign</h2>
+          <p style="font-size:15px;color:rgba(255,255,255,0.65);margin-top:16px;line-height:1.6;max-width:340px;">
+            Browse active defenses and contribute directly.
+            Every dollar is accountable to code.
+          </p>
+        </div>
+        <a href="#" class="cta-link">
+          Browse campaigns <span class="arrow">→</span>
+        </a>
+      </div>
+      <div class="cta-panel cta-panel-black">
+        <div>
+          <p class="cta-label">For defenders</p>
+          <h2 class="cta-heading">Run a Campaign</h2>
+          <p style="font-size:15px;color:rgba(255,255,255,0.45);margin-top:16px;line-height:1.6;max-width:340px;">
+            Define your case, set your terms, and let the
+            infrastructure do the rest.
+          </p>
+        </div>
+        <a href="#" class="cta-link">
+          Start your campaign <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer>
+    <div class="container">
+      <p class="footer-left">
+        <strong>Fourthright</strong> — Civil liberties defense without compromise.
+      </p>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Audits</a></li>
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <p class="footer-legal">© 2026 Fourthright</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fourthright — Fund the Fight</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fafafa;
+    --fg: #111111;
+    --red: #dc2626;
+    --gray: #999;
+    --border: #e0e0e0;
+    --font: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── SCROLL PROGRESS BAR ─── */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--red);
+    z-index: 1000;
+    transition: width 0.05s linear;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 2px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 64px;
+    background: rgba(250,250,250,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  nav.scrolled { border-bottom-color: var(--border); }
+
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--fg); }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 120px 64px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 140px;
+    padding-bottom: 80px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 40px;
+  }
+
+  .hero-headline {
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+    margin-bottom: 48px;
+  }
+
+  /* Redaction */
+  .redact-word {
+    position: relative;
+    display: inline-block;
+    cursor: default;
+  }
+
+  .redact-bar {
+    position: absolute;
+    top: 6%;
+    left: -3px;
+    right: -3px;
+    bottom: 6%;
+    background: var(--fg);
+    border-radius: 2px;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+
+  .redact-word.revealed .redact-bar {
+    opacity: 0;
+    transform: scaleX(0.92);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--gray);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 64px;
+    font-weight: 300;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  /* ─── MAGNETIC BUTTONS ─── */
+  .btn-magnetic-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border: 1px solid var(--fg);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+    position: relative;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: transparent;
+    color: var(--fg);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border: 1px solid var(--fg);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+    position: relative;
+  }
+
+  .btn-primary:hover { background: var(--red); border-color: var(--red); }
+  .btn-secondary:hover { background: var(--fg); color: var(--bg); }
+
+  /* ─── WHAT WE DO ─── */
+  #what {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 56px;
+  }
+
+  .what-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .what-item h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .what-item p {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ─── HOW IT WORKS (Timeline) ─── */
+  #how {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .how-inner {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 80px;
+  }
+
+  .how-left { padding-top: 4px; }
+
+  .timeline-container {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline-track {
+    position: absolute;
+    left: 7px;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .timeline-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    background: var(--red);
+    transition: height 0.1s linear;
+  }
+
+  .timeline-step {
+    position: relative;
+    margin-bottom: 56px;
+    transition: opacity 0.4s;
+    opacity: 0.35;
+  }
+
+  .timeline-step.active { opacity: 1; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -40px;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    transition: border-color 0.4s, background 0.4s;
+  }
+
+  .timeline-step.active .timeline-dot {
+    border-color: var(--red);
+    background: var(--red);
+  }
+
+  .timeline-step h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .timeline-step p {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ─── CAMPAIGN TYPES ─── */
+  #campaigns {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .campaigns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 56px;
+  }
+
+  .campaign-list {
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .campaign-list li {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .campaign-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 18px 0;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--gray);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+  }
+
+  .campaign-btn:hover { color: var(--fg); }
+
+  .campaign-btn.active {
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  .campaign-btn .arrow {
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    color: var(--red);
+  }
+
+  .campaign-btn.active .arrow,
+  .campaign-btn:hover .arrow { opacity: 1; }
+
+  .campaign-btn.active .arrow { transform: translateX(4px); }
+
+  .campaign-panel {
+    padding: 8px 0;
+  }
+
+  .campaign-panel-inner {
+    display: none;
+    animation: fadeIn 0.15s ease;
+  }
+
+  .campaign-panel-inner.visible { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .campaign-panel-name {
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .campaign-panel-desc {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .campaign-panel-stat {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid rgba(220,38,38,0.25);
+    padding: 6px 14px;
+  }
+
+  /* ─── GUARANTEE ─── */
+  #guarantee {
+    border-bottom: 1px solid var(--border);
+    background: var(--fg);
+    max-width: 100%;
+  }
+
+  #guarantee .inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 120px 64px;
+  }
+
+  #guarantee .section-label { color: rgba(255,255,255,0.35); }
+
+  #guarantee .guarantee-text {
+    font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 300;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #fafafa;
+    max-width: 860px;
+  }
+
+  #guarantee .guarantee-text em {
+    font-style: normal;
+    color: var(--red);
+  }
+
+  /* ─── STATS ─── */
+  #stats {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    margin-top: 56px;
+  }
+
+  .stat-item {
+    padding: 48px 40px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-number {
+    font-size: clamp(36px, 3vw, 52px);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 400;
+  }
+
+  /* Live dot */
+  .live-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-top: 10px;
+  }
+
+  .live-dot-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* ─── CTA FOOTER ─── */
+  #cta {
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .cta-headline {
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+
+  .cta-headline strong {
+    font-weight: 600;
+  }
+
+  footer {
+    padding: 40px 64px;
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--gray);
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── WORD REVEAL ─── */
+  .reveal-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .reveal-word.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Spacer for fixed nav */
+  .nav-spacer { height: 80px; }
+</style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div id="progress-bar"></div>
+
+<!-- Nav -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Fourth<span>right</span></a>
+  <ul class="nav-links">
+    <li><a href="#what">What We Do</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#campaigns">Campaigns</a></li>
+    <li><a href="#stats">Impact</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-eyebrow">Fourthright — Surveillance Accountability</div>
+  <h1 class="hero-headline" id="hero-headline">
+    The <span class="redact-word" data-word="surveillance"><span class="redact-bar"></span>surveillance</span>
+    state watches <span class="redact-word" data-word="everyone"><span class="redact-bar"></span>everyone</span>.
+    We fund the people <span class="redact-word" data-word="fighting"><span class="redact-bar"></span>fighting</span> back.
+  </h1>
+  <p class="hero-sub">Fourthright connects civil liberties campaigns with the funding and infrastructure they need to win. No compromise. No backdoors.</p>
+  <div class="hero-ctas">
+    <div class="btn-magnetic-wrap">
+      <a href="#" class="btn-primary" data-magnetic>Fund a Campaign</a>
+    </div>
+    <div class="btn-magnetic-wrap">
+      <a href="#" class="btn-secondary" data-magnetic>Run a Campaign</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHAT WE DO ─── -->
+<section id="what">
+  <div class="section-label">What We Do</div>
+  <div class="what-grid">
+    <div class="what-item">
+      <h3 class="split-reveal">Infrastructure for resistance.</h3>
+      <p>We build the financial and operational rails that surveillance accountability campaigns run on — funding, legal scaffolding, and public pressure.</p>
+    </div>
+    <div class="what-item">
+      <h3 class="split-reveal">No central point of failure.</h3>
+      <p>Our architecture is designed so that no single person, government, or court order can shut it down. The fight continues regardless.</p>
+    </div>
+    <div class="what-item">
+      <h3 class="split-reveal">Campaigns that actually win.</h3>
+      <p>From FOIA litigation to local ordinances, we fund proven strategies — not petitions. Every dollar goes to campaigns with a path to victory.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how">
+  <div class="how-inner">
+    <div class="how-left">
+      <div class="section-label">How It Works</div>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline-track">
+        <div class="timeline-fill" id="timeline-fill"></div>
+      </div>
+      <div class="timeline-step" data-step="0">
+        <div class="timeline-dot"></div>
+        <h4>Campaign submits.</h4>
+        <p>A civil liberties organization, legal team, or activist group submits a campaign with a defined goal, legal strategy, and success criteria.</p>
+      </div>
+      <div class="timeline-step" data-step="1">
+        <div class="timeline-dot"></div>
+        <h4>Independent audit.</h4>
+        <p>Five independent auditors review the campaign for legal soundness, operational security, and accountability. All five must approve.</p>
+      </div>
+      <div class="timeline-step" data-step="2">
+        <div class="timeline-dot"></div>
+        <h4>Funding flows.</h4>
+        <p>Approved campaigns receive funding through a trustless escrow system. Funds release automatically against milestones — no human gatekeeper.</p>
+      </div>
+      <div class="timeline-step" data-step="3">
+        <div class="timeline-dot"></div>
+        <h4>Public record built.</h4>
+        <p>Every action, document, and outcome is recorded publicly. Win or lose, the record stands permanently — informing the next campaign.</p>
+      </div>
+      <div class="timeline-step" data-step="4">
+        <div class="timeline-dot"></div>
+        <h4>Victory compounds.</h4>
+        <p>Successful campaigns seed the next. Court victories set precedent. Ordinance wins spread city to city. Each win makes the next one easier.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CAMPAIGN TYPES ─── -->
+<section id="campaigns">
+  <div class="section-label">Campaign Types</div>
+  <div class="campaigns-grid">
+    <ul class="campaign-list" id="campaign-list">
+      <li>
+        <button class="campaign-btn active" data-campaign="0">
+          Public Records Litigation
+          <span class="arrow">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="campaign-btn" data-campaign="1">
+          Ordinance Campaigns
+          <span class="arrow">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="campaign-btn" data-campaign="2">
+          Vendor Accountability
+          <span class="arrow">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="campaign-btn" data-campaign="3">
+          Counter-Databases
+          <span class="arrow">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="campaign-btn" data-campaign="4">
+          Insurance Pressure
+          <span class="arrow">→</span>
+        </button>
+      </li>
+    </ul>
+    <div class="campaign-panel" id="campaign-panel">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ─── GUARANTEE ─── -->
+<section id="guarantee">
+  <div class="inner">
+    <div class="section-label">The Guarantee</div>
+    <p class="guarantee-text split-reveal">
+      No human holds the keys. <em>No person to arrest.</em> No keys to produce. <em>No way to stop it.</em>
+    </p>
+  </div>
+</section>
+
+<!-- ─── STATS ─── -->
+<section id="stats">
+  <div class="section-label">By the Numbers</div>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">
+        <span id="camera-counter" data-target="92847">0</span>
+      </div>
+      <div class="live-dot">
+        <span class="live-dot-pulse"></span>
+        Live
+      </div>
+      <div class="stat-label">Cameras documented</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Humans with key access</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">10</div>
+      <div class="stat-label">Campaign types funded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">5</div>
+      <div class="stat-label">Independent audit rounds</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section id="cta">
+  <p class="cta-headline split-reveal">
+    The surveillance state is<br><strong>not going to stop itself.</strong>
+  </p>
+  <div class="hero-ctas" style="justify-content:center;">
+    <div class="btn-magnetic-wrap">
+      <a href="#" class="btn-primary" data-magnetic>Fund a Campaign</a>
+    </div>
+    <div class="btn-magnetic-wrap">
+      <a href="#" class="btn-secondary" data-magnetic>Run a Campaign</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Fourthright. No keys to produce.</span>
+  <span>fourthright.org</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════
+// 1. SCROLL PROGRESS BAR
+// ═══════════════════════════════════════════════════
+const progressBar = document.getElementById('progress-bar');
+const nav = document.getElementById('main-nav');
+
+function updateProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressBar.style.width = pct + '%';
+
+  // Nav border on scroll
+  if (scrollTop > 20) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}
+
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+// ═══════════════════════════════════════════════════
+// 2. REDACTION EFFECT
+// ═══════════════════════════════════════════════════
+const redactWords = document.querySelectorAll('.redact-word');
+const REVEAL_RADIUS = 140;
+const REREVEAL_DELAY = 1400;
+
+let mouseX = -9999, mouseY = -9999;
+const rerevealTimers = new Map();
+
+function getWordCenter(el) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+
+  redactWords.forEach(word => {
+    const center = getWordCenter(word);
+    const dist = Math.hypot(mouseX - center.x, mouseY - center.y);
+
+    if (dist < REVEAL_RADIUS) {
+      word.classList.add('revealed');
+      // Clear any pending re-redact timer
+      if (rerevealTimers.has(word)) {
+        clearTimeout(rerevealTimers.get(word));
+        rerevealTimers.delete(word);
+      }
+    } else if (word.classList.contains('revealed') && !rerevealTimers.has(word)) {
+      const t = setTimeout(() => {
+        word.classList.remove('revealed');
+        rerevealTimers.delete(word);
+      }, REREVEAL_DELAY);
+      rerevealTimers.set(word, t);
+    }
+  });
+}, { passive: true });
+
+// ═══════════════════════════════════════════════════
+// 3. MAGNETIC BUTTONS
+// ═══════════════════════════════════════════════════
+const MAGNETIC_RADIUS = 80;
+const MAGNETIC_STRENGTH = 8;
+
+document.querySelectorAll('[data-magnetic]').forEach(btn => {
+  const wrap = btn.closest('.btn-magnetic-wrap');
+
+  wrap.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < MAGNETIC_RADIUS) {
+      const pull = (1 - dist / MAGNETIC_RADIUS);
+      const tx = dx * pull * (MAGNETIC_STRENGTH / 15);
+      const ty = dy * pull * (MAGNETIC_STRENGTH / 15);
+      btn.style.transform = `translate(${tx}px, ${ty}px)`;
+    }
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    btn.style.transform = 'translate(0,0)';
+    btn.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.2s, color 0.2s';
+    setTimeout(() => { btn.style.transition = ''; }, 500);
+  });
+
+  wrap.addEventListener('mouseenter', () => {
+    btn.style.transition = 'transform 0.1s ease, background 0.2s, color 0.2s';
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// 4. TIMELINE SCROLL DRAW
+// ═══════════════════════════════════════════════════
+const timelineFill = document.getElementById('timeline-fill');
+const timelineContainer = document.querySelector('.timeline-container');
+const timelineSteps = document.querySelectorAll('.timeline-step');
+
+function updateTimeline() {
+  if (!timelineContainer) return;
+  const containerRect = timelineContainer.getBoundingClientRect();
+  const containerTop = containerRect.top;
+  const containerHeight = containerRect.height;
+  const viewH = window.innerHeight;
+
+  // How far have we scrolled through the container?
+  const scrolled = Math.max(0, viewH * 0.6 - containerTop);
+  const pct = Math.min(100, Math.max(0, (scrolled / containerHeight) * 100));
+  timelineFill.style.height = pct + '%';
+
+  // Activate each step when its dot crosses 65% viewport
+  timelineSteps.forEach(step => {
+    const dot = step.querySelector('.timeline-dot');
+    const dotRect = dot.getBoundingClientRect();
+    if (dotRect.top < viewH * 0.7) {
+      step.classList.add('active');
+    } else {
+      step.classList.remove('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateTimeline, { passive: true });
+updateTimeline();
+
+// ═══════════════════════════════════════════════════
+// 5. CAMERA COUNTER
+// ═══════════════════════════════════════════════════
+const counterEl = document.getElementById('camera-counter');
+const TARGET = 92847;
+let counterStarted = false;
+let currentCount = 0;
+
+function animateCounter(start, end, duration) {
+  const startTime = performance.now();
+  function tick(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const ease = 1 - Math.pow(1 - progress, 3);
+    currentCount = Math.round(start + (end - start) * ease);
+    counterEl.textContent = currentCount.toLocaleString();
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      currentCount = end;
+      counterEl.textContent = currentCount.toLocaleString();
+      startLiveTick();
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function startLiveTick() {
+  setInterval(() => {
+    currentCount += 1;
+    counterEl.textContent = currentCount.toLocaleString();
+  }, 3800 + Math.random() * 2400);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !counterStarted) {
+      counterStarted = true;
+      animateCounter(0, TARGET, 2200);
+    }
+  });
+}, { threshold: 0.4 });
+
+counterObserver.observe(counterEl.closest('.stat-item'));
+
+// ═══════════════════════════════════════════════════
+// 6. SPLIT TEXT REVEAL (word by word)
+// ═══════════════════════════════════════════════════
+function wrapWords(el) {
+  const html = el.innerHTML;
+  // Split by word boundaries, preserve HTML tags and whitespace
+  const wrapped = html.replace(/(<[^>]+>)|(\S+)/g, (match, tag, word) => {
+    if (tag) return tag;
+    return `<span class="reveal-word">${word}</span>`;
+  });
+  el.innerHTML = wrapped;
+}
+
+document.querySelectorAll('.split-reveal').forEach(el => {
+  wrapWords(el);
+  const words = el.querySelectorAll('.reveal-word');
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        words.forEach((word, i) => {
+          setTimeout(() => {
+            word.classList.add('revealed');
+          }, i * 55);
+        });
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  revealObserver.observe(el);
+});
+
+// ═══════════════════════════════════════════════════
+// 7. CAMPAIGN TYPE SELECTOR
+// ═══════════════════════════════════════════════════
+const campaigns = [
+  {
+    name: "Public Records Litigation",
+    desc: "Force disclosure through FOIA litigation. Every case builds the record.",
+    stat: "Precedent set in 38 jurisdictions"
+  },
+  {
+    name: "Ordinance Campaigns",
+    desc: "City council campaigns to ban surveillance locally. 50+ cities have succeeded.",
+    stat: "50+ cities passed bans since 2019"
+  },
+  {
+    name: "Vendor Accountability",
+    desc: "Target Clearview, Flock Safety, Palantir directly. Cancel contracts, not just file complaints.",
+    stat: "12 contracts cancelled, 3 pending"
+  },
+  {
+    name: "Counter-Databases",
+    desc: "Map and document surveillance infrastructure. The data that feeds every other campaign.",
+    stat: "92,847+ cameras documented"
+  },
+  {
+    name: "Insurance Pressure",
+    desc: "Document harms to liability insurers. Make surveillance tech uninsurable.",
+    stat: "7 insurers engaged in 2025"
+  }
+];
+
+const panel = document.getElementById('campaign-panel');
+
+function renderCampaign(index) {
+  const c = campaigns[index];
+  panel.innerHTML = `
+    <div class="campaign-panel-inner visible">
+      <div class="campaign-panel-name">${c.name}</div>
+      <div class="campaign-panel-desc">${c.desc}</div>
+      <div class="campaign-panel-stat">${c.stat}</div>
+    </div>`;
+}
+
+renderCampaign(0);
+
+document.querySelectorAll('.campaign-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.campaign-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const idx = parseInt(btn.dataset.campaign, 10);
+    renderCampaign(idx);
+  });
+});
+
+</script>
+</body>
+</html>
