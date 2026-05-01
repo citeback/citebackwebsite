@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fourthright — No keys to produce. No person to arrest.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080c14;
+      --bg-mid: #0d1120;
+      --blue: #3b82f6;
+      --blue-bright: #60a5fa;
+      --blue-dim: #1d4ed8;
+      --white: #ffffff;
+      --white-70: rgba(255,255,255,0.7);
+      --white-50: rgba(255,255,255,0.5);
+      --white-30: rgba(255,255,255,0.3);
+      --white-10: rgba(255,255,255,0.1);
+      --white-06: rgba(255,255,255,0.06);
+      --white-04: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --glass-border-hover: rgba(255,255,255,0.16);
+      --glow-blue: rgba(59, 130, 246, 0.3);
+      --glow-blue-soft: rgba(59, 130, 246, 0.12);
+      --radius-sm: 12px;
+      --radius: 16px;
+      --radius-lg: 24px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Ambient background orbs ─── */
+    .ambient-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.18;
+    }
+
+    .orb-1 {
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, #3b82f6, transparent 70%);
+      top: -200px;
+      left: -200px;
+      animation: drift1 18s ease-in-out infinite alternate;
+    }
+
+    .orb-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #1d4ed8, transparent 70%);
+      bottom: 10%;
+      right: -100px;
+      animation: drift2 22s ease-in-out infinite alternate;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #60a5fa, transparent 70%);
+      top: 50%;
+      left: 40%;
+      animation: drift3 14s ease-in-out infinite alternate;
+      opacity: 0.1;
+    }
+
+    @keyframes drift1 {
+      0%   { transform: translate(0px, 0px); }
+      100% { transform: translate(80px, 60px); }
+    }
+    @keyframes drift2 {
+      0%   { transform: translate(0px, 0px); }
+      100% { transform: translate(-60px, -80px); }
+    }
+    @keyframes drift3 {
+      0%   { transform: translate(0px, 0px); }
+      100% { transform: translate(40px, -40px); }
+    }
+
+    /* ─── Layout Wrapper ─── */
+    .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      background: rgba(8, 12, 20, 0.6);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--blue);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--white-50);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      background: var(--blue);
+      color: var(--white) !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--blue-bright) !important;
+      color: var(--white) !important;
+      transform: translateY(-1px);
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 900px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center, rgba(59,130,246,0.12) 0%, transparent 65%);
+      pointer-events: none;
+      animation: pulse-glow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+      0%   { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 32px;
+      animation: fade-up 0.8s ease both;
+    }
+
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 5.5vw, 76px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 28px;
+      animation: fade-up 0.8s ease 0.1s both;
+    }
+
+    .hero h1 .word-fourth {
+      background: linear-gradient(135deg, #fff 30%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-tagline {
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 400;
+      color: var(--white-70);
+      max-width: 680px;
+      margin: 0 auto 48px;
+      line-height: 1.65;
+      animation: fade-up 0.8s ease 0.2s both;
+    }
+
+    .hero-tagline strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      animation: fade-up 0.8s ease 0.3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(59,130,246,0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(59,130,246,0.5);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white-06);
+      color: var(--white-70);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-ghost:hover {
+      background: var(--white-10);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--white-30);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce-down 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Section Base ─── */
+    section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.12;
+      margin-bottom: 18px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--white-50);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .section-header {
+      margin-bottom: 60px;
+    }
+
+    /* ─── Glass Card Base ─── */
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+    }
+
+    .glass:hover {
+      border-color: var(--glass-border-hover);
+    }
+
+    /* ─── Features Section ─── */
+    .features {
+      background: transparent;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      padding: 40px;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,130,246,0.15);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--white-50);
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Campaigns Section ─── */
+    .campaigns {
+      background: transparent;
+    }
+
+    .campaigns-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .campaign-card {
+      padding: 28px 24px;
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+
+    .campaign-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .campaign-type-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .campaign-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .campaign-card p {
+      font-size: 13px;
+      color: var(--white-50);
+      line-height: 1.6;
+    }
+
+    .campaign-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 100px;
+      padding: 3px 10px;
+      margin-top: 14px;
+    }
+
+    /* ─── How It Works ─── */
+    .how-it-works {
+      background: transparent;
+    }
+
+    .steps-container {
+      position: relative;
+    }
+
+    .steps-line {
+      position: absolute;
+      top: 36px;
+      left: calc(12.5% + 8px);
+      right: calc(12.5% + 8px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4) 20%, rgba(59,130,246,0.4) 80%, transparent);
+      z-index: 0;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 20px;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-mid);
+      border: 1px solid rgba(59,130,246,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--blue-bright);
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(59,130,246,0.15);
+      flex-shrink: 0;
+    }
+
+    .step h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .step p {
+      font-size: 13px;
+      color: var(--white-50);
+      line-height: 1.65;
+    }
+
+    /* ─── Stats ─── */
+    .stats {
+      background: transparent;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .stat-card {
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      opacity: 0.4;
+    }
+
+    .stat-number {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 24px rgba(59,130,246,0.45));
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--white-50);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--white-30);
+    }
+
+    /* ─── Launch Progress ─── */
+    .launch {
+      background: transparent;
+    }
+
+    .launch-panel {
+      padding: 56px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .launch-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5) 30%, rgba(59,130,246,0.5) 70%, transparent);
+    }
+
+    .launch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      gap: 40px;
+    }
+
+    .launch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fbbf24;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+
+    .launch-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fbbf24;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    .launch-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .launch-fraction {
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(59,130,246,0.4));
+    }
+
+    .launch-fraction-label {
+      font-size: 13px;
+      color: var(--white-50);
+      margin-top: 4px;
+    }
+
+    .progress-bar-wrap {
+      margin-bottom: 40px;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 40%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
+      position: relative;
+      box-shadow: 0 0 16px rgba(59,130,246,0.5);
+      animation: fill-bar 1.5s ease-out both;
+    }
+
+    @keyframes fill-bar {
+      from { width: 0%; }
+      to   { width: 40%; }
+    }
+
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: rgba(255,255,255,0.4);
+      filter: blur(4px);
+      border-radius: 100px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      color: var(--white-50);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-label span:last-child {
+      color: var(--blue-bright);
+      font-weight: 600;
+    }
+
+    .prerequisites {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .prereq-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+    }
+
+    .prereq-item.done {
+      border-color: rgba(59,130,246,0.2);
+      background: rgba(59,130,246,0.05);
+    }
+
+    .prereq-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .prereq-item.done .prereq-check {
+      background: rgba(59,130,246,0.2);
+      border: 1px solid rgba(59,130,246,0.4);
+      color: var(--blue-bright);
+    }
+
+    .prereq-item:not(.done) .prereq-check {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--white-30);
+    }
+
+    .prereq-text {
+      flex: 1;
+    }
+
+    .prereq-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .prereq-text span {
+      font-size: 11px;
+      color: var(--white-30);
+    }
+
+    .prereq-item.done .prereq-text strong {
+      color: var(--white-70);
+    }
+
+    .prereq-item:not(.done) .prereq-text strong {
+      color: var(--white-30);
+    }
+
+    /* ─── Manifesto Banner ─── */
+    .manifesto {
+      padding: 80px 0;
+    }
+
+    .manifesto-inner {
+      padding: 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: rgba(59,130,246,0.04);
+      border-color: rgba(59,130,246,0.15);
+    }
+
+    .manifesto-inner::before,
+    .manifesto-inner::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .manifesto-inner::before {
+      background: #3b82f6;
+      top: -80px;
+      left: -80px;
+    }
+
+    .manifesto-inner::after {
+      background: #60a5fa;
+      bottom: -80px;
+      right: -80px;
+    }
+
+    .manifesto-inner blockquote {
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.4;
+      color: var(--white);
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .manifesto-inner blockquote em {
+      font-style: normal;
+      color: var(--blue-bright);
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      padding: 60px 0 40px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      margin-top: 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-name {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand-name span {
+      color: var(--blue);
+    }
+
+    .footer-about {
+      font-size: 14px;
+      color: var(--white-50);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .footer-col h5 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white-30);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+    }
+
+    .footer-col ul li a {
+      color: var(--white-50);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--white-30);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      font-size: 13px;
+      color: var(--white-30);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-legal a:hover {
+      color: var(--white-50);
+    }
+
+    /* ─── Utility ─── */
+    .text-blue { color: var(--blue-bright); }
+    .mt-8 { margin-top: 8px; }
+
+    /* ─── Divider ─── */
+    .section-divider {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+      margin: 20px 0 40px;
+      border-radius: 2px;
+    }
+
+    /* ─── Floating chip ─── */
+    .floating-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--white-50);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      padding: 8px 16px;
+      backdrop-filter: blur(12px);
+      animation: float-chip 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes float-chip {
+      from { transform: translateY(0px); }
+      to   { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="ambient-layer">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="page">
+
+    <!-- Navigation -->
+    <nav>
+      <div class="container">
+        <a href="#" class="nav-logo"><span>Fourth</span>right</a>
+        <ul class="nav-links">
+          <li><a href="#features">How It Works</a></li>
+          <li><a href="#campaigns">Campaigns</a></li>
+          <li><a href="#stats">Impact</a></li>
+          <li><a href="#launch">Launch</a></li>
+          <li><a href="#launch" class="nav-cta">Join Waitlist</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div>
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          Civil Liberties Infrastructure
+        </div>
+        <h1>
+          <span class="word-fourth">Fourthright</span><br>
+          Defends What<br>Matters Most
+        </h1>
+        <p class="hero-tagline">
+          <strong>No keys to produce. No person to arrest. No way to stop it.</strong><br>
+          A censorship-resistant platform where donors stay anonymous,
+          no human holds the kill switch, and the mission is locked in code.
+        </p>
+        <div class="hero-actions">
+          <a href="#launch" class="btn-primary">
+            ✦ Join the Waitlist
+          </a>
+          <a href="#features" class="btn-ghost">
+            Learn How It Works →
+          </a>
+        </div>
+      </div>
+      <div class="hero-scroll-hint">
+        ↓
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Core Principles</div>
+          <h2 class="section-title">Built for the Fights<br>That Actually Matter</h2>
+          <div class="section-divider"></div>
+          <p class="section-sub">Three architectural guarantees that make Fourthright impossible to silence, compromise, or coerce.</p>
+        </div>
+        <div class="features-grid">
+          <div class="glass feature-card">
+            <div class="feature-icon">🫥</div>
+            <h3>Anonymous Donors</h3>
+            <p>Zero personally identifiable information collected at any point. Contributions flow through cryptographically separated channels — no name, no address, no receipt that can be subpoenaed.</p>
+          </div>
+          <div class="glass feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>No Human Key Holders</h3>
+            <p>There is no founder, employee, or administrator who possesses the credentials to freeze funds or redirect campaigns. Authority is distributed — and no single node can be coerced.</p>
+          </div>
+          <div class="glass feature-card">
+            <div class="feature-icon">⚖️</div>
+            <h3>Mission Locked in Code</h3>
+            <p>Campaign logic, disbursement rules, and platform governance are encoded as smart contracts. The mission cannot be quietly amended under political pressure. The code is the law.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Campaign Types -->
+    <section class="campaigns" id="campaigns">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Campaign Types</div>
+          <h2 class="section-title">Fund the Fight<br>You Believe In</h2>
+          <div class="section-divider"></div>
+          <p class="section-sub">From courtrooms to journalists to communities under surveillance — every type of civil liberties defense, one resilient platform.</p>
+        </div>
+        <div class="campaigns-grid">
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">🏛️</span>
+            <h4>Legal Defense</h4>
+            <p>Fund lawyers, court costs, and appeals for people facing politically motivated prosecution.</p>
+            <span class="campaign-tag">Most Active</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">📡</span>
+            <h4>Press Freedom</h4>
+            <p>Support journalists under legal siege, publications facing shutdown, and whistleblower defense.</p>
+            <span class="campaign-tag">High Priority</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">🛡️</span>
+            <h4>Digital Rights</h4>
+            <p>Challenge surveillance overreach, fight for encryption rights, and defend online anonymity.</p>
+            <span class="campaign-tag">Growing</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">✊</span>
+            <h4>Protest Defense</h4>
+            <p>Rapid-response bail funds and legal representation for people arrested while exercising assembly rights.</p>
+            <span class="campaign-tag">Urgent</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">🔬</span>
+            <h4>Academic Freedom</h4>
+            <p>Protect researchers, universities, and institutions facing political interference or funding threats.</p>
+            <span class="campaign-tag">New</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">🏘️</span>
+            <h4>Community Orgs</h4>
+            <p>Sustain civil liberties organizations facing donor pressure to change their mission or messaging.</p>
+            <span class="campaign-tag">Steady</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">📜</span>
+            <h4>Policy & Research</h4>
+            <p>Fund independent constitutional research and policy analysis insulated from political funding.</p>
+            <span class="campaign-tag">Long-term</span>
+          </div>
+          <div class="glass campaign-card">
+            <span class="campaign-type-icon">🌐</span>
+            <h4>Open Infrastructure</h4>
+            <p>Maintain the tools and networks that keep civil society communicating when under pressure.</p>
+            <span class="campaign-tag">Critical</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">The Process</div>
+          <h2 class="section-title">How Fourthright Works</h2>
+          <div class="section-divider"></div>
+          <p class="section-sub">Designed from the ground up so no step in the process creates a pressure point.</p>
+        </div>
+        <div class="steps-container">
+          <div class="steps-line"></div>
+          <div class="steps-grid">
+            <div class="glass step">
+              <div class="step-number">01</div>
+              <h4>Campaign Created</h4>
+              <p>A verified civil liberties cause is proposed and audited by the community. No central authority approves it — the protocol does.</p>
+            </div>
+            <div class="glass step">
+              <div class="step-number">02</div>
+              <h4>Donors Contribute</h4>
+              <p>Anonymous contributions flow in — no KYC, no paper trail, no way to trace back to individuals, even if Fourthright itself were raided.</p>
+            </div>
+            <div class="glass step">
+              <div class="step-number">03</div>
+              <h4>Funds Held in Protocol</h4>
+              <p>Smart contracts escrow all contributions. No human can touch the funds. Disbursement rules are immutable and public.</p>
+            </div>
+            <div class="glass step">
+              <div class="step-number">04</div>
+              <h4>Automatic Disbursement</h4>
+              <p>When campaign milestones are verified on-chain, funds release automatically to the designated recipient — no intermediary, no delay.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats" id="stats">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Impact in Numbers</div>
+          <h2 class="section-title">The Stakes Are Real</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="stats-grid">
+          <div class="glass stat-card">
+            <div class="stat-number">$2.4B</div>
+            <div class="stat-label">Raised for Civil Rights</div>
+            <div class="stat-sub">across existing platforms annually</div>
+          </div>
+          <div class="glass stat-card">
+            <div class="stat-number">847</div>
+            <div class="stat-label">Cases Dropped</div>
+            <div class="stat-sub">when legal defense was funded quickly</div>
+          </div>
+          <div class="glass stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Key Holders</div>
+            <div class="stat-sub">no one to pressure, arrest, or subpoena</div>
+          </div>
+          <div class="glass stat-card">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Jurisdictions</div>
+            <div class="stat-sub">protocol has no nationality, no address</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Launch Progress -->
+    <section class="launch" id="launch">
+      <div class="container">
+        <div class="glass launch-panel">
+          <div class="launch-header">
+            <div>
+              <div class="launch-badge">
+                <span class="launch-badge-dot"></span>
+                In Development
+              </div>
+              <h2 class="section-title" style="margin-bottom: 12px;">Launch Prerequisites</h2>
+              <p style="font-size: 15px; color: var(--white-50); max-width: 480px; line-height: 1.7;">
+                We're not launching until the infrastructure is right.
+                Here's exactly where we stand — no spin, no hype.
+              </p>
+            </div>
+            <div class="launch-right">
+              <div class="launch-fraction">4/10</div>
+              <div class="launch-fraction-label">prerequisites complete</div>
+            </div>
+          </div>
+
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-label">
+              <span>0%</span>
+              <span>40% complete — estimated launch: Q4 2026</span>
+            </div>
+          </div>
+
+          <div class="prerequisites">
+            <div class="prereq-item done">
+              <div class="prereq-check">✓</div>
+              <div class="prereq-text">
+                <strong>Smart Contract Architecture</strong>
+                <span>Core protocol logic designed and reviewed</span>
+              </div>
+            </div>
+            <div class="prereq-item done">
+              <div class="prereq-check">✓</div>
+              <div class="prereq-text">
+                <strong>Anonymous Payment Rails</strong>
+                <span>Zero-knowledge proof layer integrated</span>
+              </div>
+            </div>
+            <div class="prereq-item done">
+              <div class="prereq-check">✓</div>
+              <div class="prereq-text">
+                <strong>Legal Jurisdiction Analysis</strong>
+                <span>Counsel engaged in 6 countries</span>
+              </div>
+            </div>
+            <div class="prereq-item done">
+              <div class="prereq-check">✓</div>
+              <div class="prereq-text">
+                <strong>Governance Protocol Draft</strong>
+                <span>Community voting model specified</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Smart Contract Audit</strong>
+                <span>Independent security firm engaged</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Decentralized Hosting</strong>
+                <span>Frontend on IPFS + redundant nodes</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Campaign Verification Protocol</strong>
+                <span>On-chain milestone oracle system</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Pilot Partner Campaigns</strong>
+                <span>3 verified civil liberties orgs onboarded</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Adversarial Security Testing</strong>
+                <span>Red-team exercise with hostile state model</span>
+              </div>
+            </div>
+            <div class="prereq-item">
+              <div class="prereq-check">○</div>
+              <div class="prereq-text">
+                <strong>Public Beta Launch</strong>
+                <span>Open to waitlist with full audit trail public</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manifesto Banner -->
+    <section class="manifesto">
+      <div class="container">
+        <div class="glass manifesto-inner">
+          <blockquote>
+            "The most effective censorship is the kind that makes
+            funding <em>disappear</em> before anyone notices.
+            Fourthright makes that impossible."
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand-name"><span>Fourth</span>right</div>
+            <p class="footer-about">
+              Civil liberties infrastructure for the people who can't wait for a better political climate.
+              No compromises. No kill switches. No keys to produce.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h5>Platform</h5>
+            <ul>
+              <li><a href="#">How It Works</a></li>
+              <li><a href="#">Campaign Types</a></li>
+              <li><a href="#">Smart Contracts</a></li>
+              <li><a href="#">Roadmap</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Governance</h5>
+            <ul>
+              <li><a href="#">Protocol Docs</a></li>
+              <li><a href="#">Audit Reports</a></li>
+              <li><a href="#">Governance Model</a></li>
+              <li><a href="#">Open Source</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Community</h5>
+            <ul>
+              <li><a href="#">Join Waitlist</a></li>
+              <li><a href="#">Partner Orgs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Press</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-copy">© 2026 Fourthright Protocol. No rights reserved — this is infrastructure.</div>
+          <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+            <a href="#">Security</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- .page -->
+
+</body>
+</html>

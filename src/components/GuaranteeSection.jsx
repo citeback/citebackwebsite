@@ -1,0 +1,100 @@
+const facts = [
+  'Minimum 3 TEE instances across different hardware providers',
+  '2-of-3 threshold signatures required — single compromise impossible',
+  'No human has ever held a wallet key',
+  'Mission locked in code, not governance documents',
+  'Architecture audited across 5 independent review rounds',
+];
+
+export default function GuaranteeSection() {
+  return (
+    <section
+      style={{
+        borderTop: '1px solid var(--border)',
+        padding: '80px 0',
+      }}
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+        {/* Left: text */}
+        <div>
+          <div
+            style={{
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              color: 'var(--red)',
+              fontWeight: 500,
+              marginBottom: '28px',
+            }}
+          >
+            The Guarantee
+          </div>
+
+          <div
+            style={{
+              fontSize: '36px',
+              fontWeight: 300,
+              letterSpacing: '-0.02em',
+              lineHeight: 1.1,
+              color: 'var(--fg)',
+              marginBottom: '36px',
+            }}
+          >
+            No human holds the keys.
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {[
+              'Every campaign wallet lives inside a Trusted Execution Environment — hardware-level isolation. The wallet was created inside. The keys have never left.',
+              'No founder. No operator. No court order. There is no person who can produce what doesn\'t exist outside the enclave.',
+              "This isn't a policy. It isn't a promise. It's the architecture.",
+            ].map((para, i) => (
+              <p
+                key={i}
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--gray)',
+                  fontWeight: 300,
+                  lineHeight: 1.65,
+                  margin: 0,
+                }}
+              >
+                {para}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: facts list */}
+        <div style={{ paddingTop: '56px' }}>
+          {facts.map((fact, i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                padding: '14px 0',
+                borderBottom: '1px solid var(--border)',
+                fontSize: '14px',
+                color: 'var(--fg)',
+                lineHeight: 1.5,
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--red)',
+                  flexShrink: 0,
+                  marginTop: '1px',
+                }}
+              >
+                →
+              </span>
+              <span>{fact}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

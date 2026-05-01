@@ -1,80 +1,82 @@
 export default function Manifesto() {
+  const pairs = [
+    { they: 'Built the cage.', we: 'Document every bar.' },
+    { they: 'Scan without consent.', we: 'Expose without apology.' },
+    { they: 'Share your data freely.', we: 'Fund the litigation to stop it.' },
+    { they: 'Pressure donors to back down.', we: 'Hold no keys. There\'s no one to pressure.' },
+  ]
+
   return (
     <section style={{
-      padding: '80px 24px',
-      background: 'var(--bg2)',
       borderTop: '1px solid var(--border)',
-      borderBottom: '1px solid var(--border)',
+      padding: '80px 64px',
+      maxWidth: 1440,
+      margin: '0 auto',
+      boxSizing: 'border-box',
+      width: '100%',
     }}>
-      <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
-        <div style={{
-          display: 'inline-block',
-          fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
-          color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase',
-          marginBottom: 32,
-        }}>// citeback.com — mission statement</div>
+      <div style={{ display: 'flex', gap: 64, alignItems: 'flex-start' }}>
 
-        <blockquote style={{
-          fontSize: 'clamp(20px, 3vw, 26px)',
-          fontWeight: 700,
-          lineHeight: 1.6,
-          letterSpacing: '-0.3px',
-          marginBottom: 40,
-          color: 'var(--text)',
-        }}>
-          "The right of the people to be secure in their persons, houses, papers, and effects,
-          against unreasonable searches and seizures, shall not be violated."
-        </blockquote>
+        {/* Left column — 40% */}
+        <div style={{ flex: '0 0 40%' }}>
+          <div style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: 'var(--red)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.16em',
+            marginBottom: 48,
+          }}>
+            WHY WE EXIST
+          </div>
 
-        <div style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 48, fontFamily: 'var(--mono)' }}>
-          — Fourth Amendment, United States Constitution
+          <blockquote style={{
+            fontSize: 28,
+            fontWeight: 300,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.5,
+            color: 'var(--fg)',
+            margin: '0 0 16px 0',
+          }}>
+            "Institutions document individuals constantly, at scale, with impunity. We exist to correct that asymmetry."
+          </blockquote>
+
+          <div style={{ fontSize: 13, color: 'var(--gray)' }}>
+            — Fourthright Mission Statement
+          </div>
         </div>
 
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2,
-          textAlign: 'left', marginBottom: 48,
-        }}>
-          {[
-            ['They built the cage.', 'We document every bar.'],
-            ['They scan without consent.', 'We expose without apology.'],
-            ['They share your data freely.', 'We fund the litigation to stop it.'],
-            ['They pressure donors to back down.', 'We hold no keys. There\'s no one to pressure.'],
-          ].map(([them, us], i) => (
-            <div key={i} style={{
-              padding: '20px 24px',
-              background: i % 2 === 0 ? 'rgba(230,57,70,0.05)' : 'var(--bg3)',
-              border: '1px solid var(--border)',
-              borderRadius: i === 0 ? '12px 0 0 0' : i === 1 ? '0 12px 0 0' : i === 2 ? '0 0 0 12px' : '0 0 12px 0',
-            }}>
-              <div style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 6, lineHeight: 1.5 }}>{them}</div>
-              <div style={{ color: 'var(--text)', fontWeight: 700, fontSize: 14, lineHeight: 1.5 }}>{us}</div>
-            </div>
-          ))}
+        {/* Right column — 60% */}
+        <div style={{ flex: '0 0 60%' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 0,
+          }}>
+            {pairs.map((pair, i) => (
+              <div key={i} style={{
+                borderTop: '1px solid var(--border)',
+                padding: '28px 24px 28px 0',
+                paddingRight: i % 2 === 0 ? 24 : 0,
+                paddingLeft: i % 2 === 0 ? 0 : 24,
+              }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  They:
+                </div>
+                <div style={{ fontSize: 16, color: 'var(--fg)', fontWeight: 300, marginBottom: 16, lineHeight: 1.5 }}>
+                  {pair.they}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  We:
+                </div>
+                <div style={{ fontSize: 16, color: 'var(--fg)', fontWeight: 500, lineHeight: 1.5 }}>
+                  {pair.we}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <p style={{
-          color: 'var(--muted)', fontSize: 15, lineHeight: 1.8, maxWidth: 560, margin: '0 auto 32px',
-        }}>
-          Citeback exists because the legal system moves slow and the surveillance state moves fast.
-          We use anonymous Monero funding to put pressure where it hurts — in public, in court, and on the record.
-          No politics. No ideology. Just the Constitution, enforced by the people who live under it.
-        </p>
-
-        <div style={{
-          background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)',
-          borderRadius: 14, padding: '24px 28px', maxWidth: 520, margin: '0 auto',
-          textAlign: 'left',
-        }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>// who runs this?</div>
-          <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-            <strong style={{ color: 'var(--text)' }}>No one.</strong>{' '}
-            Citeback has no founder, no executive team, no corporate structure, and no operator.
-            It is a protocol — a set of verified public records, campaign wallets, and human operators
-            coordinated by the platform itself. There is no one to sue, depose, pressure, or silence.
-            The system runs. The cameras get documented. The billboards go up. The FOIAs get filed.
-            With or without anyone at the helm.
-          </p>
-        </div>
       </div>
     </section>
   )

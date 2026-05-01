@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fourthright — Fund the Fight</title>
+  <style>
+    /* ============================================
+       RESET & BASE
+    ============================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black:    #0d0d0d;
+      --near-black: #111111;
+      --dark:     #1a1a1a;
+      --off-white: #f0ede8;
+      --amber:    #c8a96e;
+      --amber-dim: rgba(200, 169, 110, 0.15);
+      --text-muted: rgba(240, 237, 232, 0.45);
+      --text-mid:   rgba(240, 237, 232, 0.7);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--black);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--black);
+      color: var(--off-white);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ============================================
+       GRAIN / NOISE TEXTURE — SVG filter
+    ============================================ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+    }
+
+    /* ============================================
+       GLOBAL TYPOGRAPHY
+    ============================================ */
+    h1, h2, .display {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: normal;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    p, li, span {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+    }
+
+    /* ============================================
+       SCROLL ANIMATION BASE
+    ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-slow {
+      opacity: 0;
+      transition: opacity 1.4s ease;
+    }
+
+    .reveal-slow.visible {
+      opacity: 1;
+    }
+
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.30s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+    .reveal-delay-4 { transition-delay: 0.60s; }
+    .reveal-delay-5 { transition-delay: 0.75s; }
+
+    /* ============================================
+       SCENE STRUCTURE
+    ============================================ */
+    .scene {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 80px 48px;
+    }
+
+    .scene-inner {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Scene divider — subtle horizontal rule using gradient */
+    .scene + .scene::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,169,110,0.2), transparent);
+    }
+
+    /* ============================================
+       SCENE 1 — OPENING
+    ============================================ */
+    #scene-1 {
+      background: var(--black);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scene-1::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,169,110,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .opening-name {
+      font-family: Georgia, serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: normal;
+      letter-spacing: 0.08em;
+      color: var(--off-white);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    .opening-tagline {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-mid);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      max-width: 560px;
+      margin: 0 auto 3.5rem;
+      line-height: 1.6;
+    }
+
+    .scroll-cue {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .scroll-cue-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--amber), transparent);
+      animation: pulse-line 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-line {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ============================================
+       SCENE 2 — THE PROBLEM
+    ============================================ */
+    #scene-2 {
+      background: var(--near-black);
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: Georgia, serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      color: var(--amber);
+      letter-spacing: -0.04em;
+      display: block;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .stat-label {
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      color: var(--off-white);
+      font-family: Georgia, serif;
+      font-weight: normal;
+      line-height: 1.4;
+      max-width: 640px;
+      margin: 0 auto 2rem;
+    }
+
+    .stat-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       SCENE 3 — THE SOLUTION
+    ============================================ */
+    #scene-3 {
+      background: var(--black);
+    }
+
+    .section-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 2rem;
+      display: block;
+    }
+
+    .solution-heading {
+      font-family: Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      color: var(--off-white);
+      margin-bottom: 3.5rem;
+      max-width: 640px;
+      line-height: 1.2;
+    }
+
+    .solution-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .solution-item {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid rgba(240, 237, 232, 0.06);
+    }
+
+    .solution-item:first-child {
+      border-top: 1px solid rgba(240, 237, 232, 0.06);
+    }
+
+    .solution-num {
+      font-family: Georgia, serif;
+      font-size: 0.8rem;
+      color: var(--amber);
+      min-width: 24px;
+      opacity: 0.7;
+    }
+
+    .solution-text {
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      color: var(--off-white);
+      font-weight: 400;
+    }
+
+    .solution-text strong {
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    /* ============================================
+       SCENE 4 — ARCHITECTURE / THE GUARANTEE
+    ============================================ */
+    #scene-4 {
+      background: var(--near-black);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scene-4::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 40% 60% at 50% 50%, rgba(200,169,110,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .guarantee-statement {
+      font-family: Georgia, serif;
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      color: var(--off-white);
+      margin-bottom: 3rem;
+      line-height: 1.1;
+    }
+
+    .guarantee-statement em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .tee-explanation {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+
+    .tee-explanation strong {
+      color: var(--off-white);
+      font-weight: 500;
+    }
+
+    /* ============================================
+       SCENE 5 — HOW IT WORKS
+    ============================================ */
+    #scene-5 {
+      background: var(--black);
+    }
+
+    .steps-heading {
+      font-family: Georgia, serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      color: var(--off-white);
+      margin-bottom: 4rem;
+      max-width: 480px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+    }
+
+    .step-cell {
+      padding: 3rem;
+      background: var(--near-black);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-cell::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,169,110,0.15), transparent);
+    }
+
+    .step-big-num {
+      font-family: Georgia, serif;
+      font-size: 3.5rem;
+      color: var(--amber);
+      opacity: 0.25;
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+
+    .step-title {
+      font-family: Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--off-white);
+      margin-bottom: 0.8rem;
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    /* ============================================
+       SCENE 6 — CALL TO ACTION
+    ============================================ */
+    #scene-6 {
+      background: var(--black);
+      text-align: center;
+      position: relative;
+    }
+
+    #scene-6::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(200,169,110,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .cta-heading {
+      font-family: Georgia, serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      color: var(--off-white);
+      margin-bottom: 1.5rem;
+      line-height: 1.05;
+    }
+
+    .cta-sub {
+      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      color: var(--text-mid);
+      margin-bottom: 4rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: var(--black);
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: system-ui, sans-serif;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: #d4b880;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--off-white);
+      border: 1px solid rgba(240, 237, 232, 0.25);
+      padding: 1rem 2.5rem;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: system-ui, sans-serif;
+      transition: border-color 0.3s ease, color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .cta-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ============================================
+       SCENE 7 — FOOTER
+    ============================================ */
+    #scene-7 {
+      min-height: auto;
+      padding: 4rem 48px;
+      background: var(--near-black);
+      border-top: 1px solid rgba(240, 237, 232, 0.06);
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .footer-brand {
+      font-family: Georgia, serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: var(--off-white);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-mission {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      max-width: 260px;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--amber);
+    }
+
+    .footer-legal {
+      width: 100%;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(240, 237, 232, 0.05);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       AMBIENT LINE DECORATION
+    ============================================ */
+    .ambient-line {
+      position: absolute;
+      left: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 80px;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--amber), transparent);
+      opacity: 0.3;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 768px) {
+      .scene {
+        padding: 60px 28px;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+
+      #scene-7 {
+        padding: 3rem 28px;
+      }
+
+      .ambient-line {
+        display: none;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .scene-inner {
+        max-width: 1020px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       SCENE 1 — OPENING
+  ============================================ -->
+  <section class="scene" id="scene-1">
+    <div class="scene-inner" style="text-align:center;">
+      <h1 class="opening-name reveal">Fourthright</h1>
+      <p class="opening-tagline reveal reveal-delay-1">
+        The surveillance state watches everyone.<br>
+        We fund the people fighting back.
+      </p>
+      <div class="scroll-cue reveal reveal-delay-2">
+        <div class="scroll-cue-line"></div>
+        <span>Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 2 — THE PROBLEM
+  ============================================ -->
+  <section class="scene" id="scene-2">
+    <div class="scene-inner" style="text-align:center;">
+      <span class="stat-number reveal">92,847</span>
+      <p class="stat-label reveal reveal-delay-1">
+        surveillance cameras — documented, mapped,<br>and funded by no one.
+      </p>
+      <p class="stat-sub reveal reveal-delay-2">Until now.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 3 — THE SOLUTION
+  ============================================ -->
+  <section class="scene" id="scene-3">
+    <div class="scene-inner">
+      <div class="ambient-line"></div>
+      <span class="section-eyebrow reveal">What we fund</span>
+      <h2 class="solution-heading reveal reveal-delay-1">
+        Real campaigns. Real outcomes.<br>Not awareness — action.
+      </h2>
+      <ul class="solution-list">
+        <li class="solution-item reveal reveal-delay-1">
+          <span class="solution-num">01</span>
+          <span class="solution-text"><strong>Anonymous donations</strong> — no name, no trace, no exposure for the giver</span>
+        </li>
+        <li class="solution-item reveal reveal-delay-2">
+          <span class="solution-num">02</span>
+          <span class="solution-text"><strong>Litigation</strong> — fund the lawsuits that end surveillance programs</span>
+        </li>
+        <li class="solution-item reveal reveal-delay-3">
+          <span class="solution-num">03</span>
+          <span class="solution-text"><strong>Ordinances</strong> — bankroll the campaigns banning facial recognition citywide</span>
+        </li>
+        <li class="solution-item reveal reveal-delay-4">
+          <span class="solution-num">04</span>
+          <span class="solution-text"><strong>FOIA requests</strong> — expose what governments are hiding about surveillance contracts</span>
+        </li>
+        <li class="solution-item reveal reveal-delay-5">
+          <span class="solution-num">05</span>
+          <span class="solution-text"><strong>Vendor accountability</strong> — pressure the companies selling the infrastructure</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 4 — THE ARCHITECTURE
+  ============================================ -->
+  <section class="scene" id="scene-4">
+    <div class="scene-inner" style="text-align:center;">
+      <span class="section-eyebrow reveal">The guarantee</span>
+      <h2 class="guarantee-statement reveal reveal-delay-1">
+        No human holds<br><em>the keys.</em>
+      </h2>
+      <p class="tee-explanation reveal reveal-delay-2">
+        Fourthright runs inside a <strong>Trusted Execution Environment</strong> — a sealed hardware enclave
+        that processes donations in isolation. Not us. Not the government. Not a court order.
+        The code is open. The logic is public. The cryptographic proof is verifiable by anyone.
+        We built a system that can't betray you, because we removed ourselves from the equation.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 5 — HOW IT WORKS
+  ============================================ -->
+  <section class="scene" id="scene-5">
+    <div class="scene-inner">
+      <span class="section-eyebrow reveal">How it works</span>
+      <h2 class="steps-heading reveal reveal-delay-1">Four steps.<br>One outcome.</h2>
+      <div class="steps-grid">
+        <div class="step-cell reveal reveal-delay-1">
+          <span class="step-big-num">01</span>
+          <h3 class="step-title">Choose a campaign</h3>
+          <p class="step-desc">Browse active campaigns fighting surveillance — litigation, legislation, investigation. Pick the fight that matters to you.</p>
+        </div>
+        <div class="step-cell reveal reveal-delay-2">
+          <span class="step-big-num">02</span>
+          <h3 class="step-title">Donate anonymously</h3>
+          <p class="step-desc">Contribute via cryptocurrency. Your identity never touches our system. The TEE handles the rest — sealed, cryptographically verified.</p>
+        </div>
+        <div class="step-cell reveal reveal-delay-3">
+          <span class="step-big-num">03</span>
+          <h3 class="step-title">Funds released automatically</h3>
+          <p class="step-desc">When a campaign hits its threshold, the TEE releases funds directly to the verified organization. No human intermediary. No discretion.</p>
+        </div>
+        <div class="step-cell reveal reveal-delay-4">
+          <span class="step-big-num">04</span>
+          <h3 class="step-title">Watch the outcome</h3>
+          <p class="step-desc">Every campaign reports publicly — what the money did, what changed, what's next. The record is permanent and auditable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 6 — CALL TO ACTION
+  ============================================ -->
+  <section class="scene" id="scene-6">
+    <div class="scene-inner" style="text-align:center;">
+      <span class="cta-eyebrow reveal">What comes next</span>
+      <h2 class="cta-heading reveal reveal-delay-1">
+        Fund a campaign.<br>Or run one.
+      </h2>
+      <p class="cta-sub reveal reveal-delay-2">
+        You can give anonymously to fights already underway —
+        or bring your own campaign to the platform.
+      </p>
+      <div class="cta-buttons reveal reveal-delay-3">
+        <a href="#" class="btn-primary">Browse Campaigns</a>
+        <a href="#" class="btn-secondary">Start a Campaign</a>
+      </div>
+      <p class="cta-note reveal reveal-delay-4">
+        No account required to donate. No identity required. Ever.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SCENE 7 — FOOTER
+  ============================================ -->
+  <footer class="scene" id="scene-7">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Fourthright</div>
+        <p class="footer-mission">
+          Anonymous funding infrastructure for surveillance accountability campaigns. Built in the open. Operated by no one.
+        </p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#">How It Works</a>
+        <a href="#">Active Campaigns</a>
+        <a href="#">Open Source</a>
+        <a href="#">Verify the Enclave</a>
+        <a href="#">Press</a>
+        <a href="#">Contact</a>
+      </nav>
+      <div class="footer-legal">
+        Fourthright does not hold, control, or direct donations. All funds are processed within a cryptographically sealed Trusted Execution Environment.
+        No user identity is collected or retained. &copy; 2026 Fourthright Protocol.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       SCROLL REVEAL — IntersectionObserver
+  ============================================ -->
+  <script>
+    (function() {
+      const targets = document.querySelectorAll('.reveal, .reveal-slow');
+
+      if (!('IntersectionObserver' in window)) {
+        targets.forEach(el => el.classList.add('visible'));
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.12,
+          rootMargin: '0px 0px -40px 0px'
+        }
+      );
+
+      targets.forEach(el => observer.observe(el));
+
+      // Trigger visible elements already in viewport on load
+      targets.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('visible');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>
