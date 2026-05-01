@@ -71,18 +71,18 @@ export default function Operators() {
 
       {/* Hard requirements upfront */}
       <div style={{
-        background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)',
+        background: 'rgba(255,245,51,0.04)', border: '1px solid rgba(255,245,51,0.2)',
         borderRadius: 12, padding: '20px 24px', marginBottom: 32,
       }}>
-        <p style={{ fontWeight: 700, color: '#f87171', marginBottom: 12, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          ⚠️ Hard Requirements Before You Apply
+        <p style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 12, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          What You Need to Apply
         </p>
-        <Req ok={false}>You must have a legal entity (LLC, nonprofit, etc.) — you cannot operate anonymously as an operator. The privacy protection is for donors, not operators.</Req>
-        <Req ok={false}>Your legal entity must be able to open a business bank account and pay vendors in fiat. Funds disburse as XMR to your entity wallet — you handle fiat conversion.</Req>
-        <Req ok={false}>You must pass OFAC/sanctions screening during onboarding. Real-name identity data is required (held by the DAO's legal entity, not published publicly).</Req>
-        <Req ok={false}>Campaigns above $25,000 require entity documentation reviewed by DAO legal counsel and $1M liability insurance.</Req>
+        <Req ok={true}>Verify your real identity privately. Your name is never published — it's held by the platform's legal entity solely for accountability if a campaign is challenged. Donors stay anonymous. Operators do not.</Req>
+        <Req ok={true}>Pass OFAC/sanctions screening. One-time, takes minutes. Required before any funds move.</Req>
+        <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
+        <Req ok={true}>Submit a cost breakdown. Every campaign needs a line-item budget. Vague asks don't get funded.</Req>
         <p style={{ marginTop: 12, fontSize: 13, color: 'var(--muted)' }}>
-          These aren't bureaucratic hurdles — they're what makes the platform legally defensible so it stays online.
+          That's it to start. Legal entity requirements kick in automatically as your campaign volume grows — see the tier table below. The structure protects the platform without gatekeeping people before they've done anything wrong.
         </p>
       </div>
 
@@ -105,22 +105,22 @@ export default function Operators() {
       </Accordion>
 
       <Accordion title="Operator has genuine campaign capacity" icon={Building}>
-        <p>You're accountable to the community for execution. Reputation is how you earn higher campaign caps:</p>
+        <p>You're accountable to the community for execution. Reputation is how you earn higher campaign caps. Legal entity requirements scale with the money — not with your application:</p>
         <div style={{ marginTop: 8, fontSize: 13 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
-            <span>Starting cap</span><span style={{ color: 'var(--accent)' }}>$1,000</span>
+            <span>Starting cap</span><span style={{ color: 'var(--accent)' }}>$1,000 — identity verified only</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
-            <span>After $2k completed volume</span><span style={{ color: 'var(--accent)' }}>$5,000</span>
+            <span>After $2k completed volume</span><span style={{ color: 'var(--accent)' }}>$5,000 — entity on file required</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
-            <span>After $10k completed volume</span><span style={{ color: 'var(--accent)' }}>$25,000</span>
+            <span>After $10k completed volume</span><span style={{ color: 'var(--accent)' }}>$25,000 — entity + DAO legal review</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
-            <span>After $50k + entity docs</span><span style={{ color: 'var(--accent)' }}>$100,000</span>
+            <span>After $50k completed volume</span><span style={{ color: 'var(--accent)' }}>$100,000 — entity + legal + $1M insurance</span>
           </div>
         </div>
-        <p style={{ marginTop: 8 }}>Start small. Win. Build reputation. Run bigger campaigns.</p>
+        <p style={{ marginTop: 8 }}>Start small. Win. Build reputation. Run bigger campaigns. The compliance requirements grow with the stakes — not before them.</p>
       </Accordion>
 
       {/* Campaign types */}
