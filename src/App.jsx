@@ -18,7 +18,6 @@ import TrustFAQ from './components/TrustFAQ'
 import Governance from './components/Governance'
 import Operators from './components/Operators'
 import ScrollProgress from './components/ScrollProgress'
-import CameraGlobe from './components/CameraGlobe'
 import ConversationalInterface from './components/ConversationalInterface'
 import LiveFeed from './components/LiveFeed'
 // ARCameraOverlay removed — too complex to debug cross-platform
@@ -36,7 +35,6 @@ export default function App() {
 
       {tab === 'home' && (
         <>
-          <CameraGlobe compact />
           <Hero setTab={setTab} />
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
@@ -48,8 +46,6 @@ export default function App() {
       )}
       {tab === 'campaigns' && <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />}
       {tab === 'map' && <CameraMap />}
-      {tab === 'globe' && <CameraGlobe />}
-
       {tab === 'registry' && <HumanRegistry />}
       {tab === 'transparency' && <Transparency />}
       {tab === 'trust' && <TrustFAQ />}
