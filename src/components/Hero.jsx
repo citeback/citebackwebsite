@@ -40,8 +40,11 @@ export default function Hero({ setTab }) {
           const cy = rect.top + rect.height / 2
           const dx = e.clientX - cx
           const dy = e.clientY - cy
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < 140) {
+          // Check if cursor overlaps or is near the element bounds
+          const rect2 = el.getBoundingClientRect()
+          const inBox = e.clientX >= rect2.left - 60 && e.clientX <= rect2.right + 60
+            && e.clientY >= rect2.top - 40 && e.clientY <= rect2.bottom + 40
+          if (inBox) {
             el.classList.add('revealed')
           } else {
             el.classList.remove('revealed')
@@ -271,20 +274,20 @@ export default function Hero({ setTab }) {
       <style>{`
         .redacted {
           position: relative;
-          display: inline-block;
+          display: inline;
           cursor: default;
-          white-space: nowrap;
         }
-        .redacted::after {
+        .redacted::before {
           content: '';
           position: absolute;
-          inset: 0px -2px;
-          background: var(--fg);
+          inset: -3px -4px;
+          background: #0d0d0d;
           opacity: 1;
-          transition: opacity 0.3s ease;
+          transition: opacity 0.2s ease;
           pointer-events: none;
+          z-index: 2;
         }
-        .redacted.revealed::after {
+        .redacted.revealed::before {
           opacity: 0;
         }
 
