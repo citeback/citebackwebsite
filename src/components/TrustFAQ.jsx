@@ -103,6 +103,17 @@ const sections = [
     ],
   },
   {
+    icon: <Shield size={20} />,
+    label: 'Donor Rules',
+    color: '#5dade2',
+    questions: [
+      {
+        q: 'Can anyone donate?',
+        a: `Donations from individuals or entities on OFAC sanctions lists are strictly prohibited by our Terms of Use. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise sanctioned party. While Monero's privacy properties prevent on-chain screening, this prohibition is a binding condition of platform use.`,
+      },
+    ],
+  },
+  {
     icon: <AlertTriangle size={20} />,
     label: 'Risks & Limits',
     color: '#e67e22',

@@ -1,21 +1,40 @@
 import { useState, useEffect, useRef } from 'react'
 
-const steps = [
+const donorSteps = [
   {
-    title: 'Propose a Campaign',
-    desc: 'Submit a FOIA lawsuit, surveillance ordinance challenge, vendor accountability campaign, or counter-database project. Anyone can propose. The community votes on what gets funded.',
+    title: 'Browse Campaigns',
+    desc: 'Find a cause that needs funding — FOIA lawsuits, surveillance ordinance challenges, vendor accountability campaigns, or counter-database projects.',
   },
   {
-    title: 'Fund Anonymously',
-    desc: 'Send Monero to a campaign wallet. No account. No identity. No trail. The wallet is TEE-secured — no human holds the keys, including us.',
+    title: 'Send XMR or ZANO',
+    desc: 'No account. No identity. No trail. Send directly to the campaign wallet. The wallet is TEE-secured — no human holds the keys, including us.',
   },
   {
     title: 'Track It Publicly',
     desc: 'Every transaction is on-chain. Every expenditure verified before release. Every outcome documented. The record is permanent and public.',
   },
   {
-    title: 'Win on Record',
+    title: 'Watch It Win',
     desc: 'Operators submit verified proof of outcomes — court filings, ordinance text, database takedowns. The campaign closes with receipts.',
+  },
+]
+
+const operatorSteps = [
+  {
+    title: 'Propose a Campaign',
+    desc: 'Name a specific target, submit a cost breakdown. A real program, agency, vendor, or jurisdiction — not a vague cause. Anyone can propose. The community votes on what gets funded.',
+  },
+  {
+    title: 'Get Funded',
+    desc: 'Community votes and sends XMR or ZANO anonymously. No donor identity. No paper trail. Funds held in TEE-secured wallets until milestones are met.',
+  },
+  {
+    title: 'Execute and Document',
+    desc: 'Submit milestone proof as work happens — court filing numbers, signed retainers, photo evidence with GPS tags. Disbursements release after 48-hour community review.',
+  },
+  {
+    title: 'Close with Receipts',
+    desc: 'Court filings, ordinance text, database takedowns. The campaign closes with a permanent, public outcome record.',
   },
 ]
 
@@ -25,6 +44,9 @@ export default function HowItWorks() {
   const lineRef = useRef(null)
   const stepRefs = useRef([])
   const [activeSteps, setActiveSteps] = useState([])
+  const [track, setTrack] = useState('donor')
+
+  const steps = track === 'donor' ? donorSteps : operatorSteps
 
   useEffect(() => {
     const section = sectionRef.current
@@ -77,6 +99,46 @@ export default function HowItWorks() {
         background: 'var(--bg)',
       }}
     >
+      {/* Track toggle */}
+      <div style={{ maxWidth: 1100, margin: '0 auto 48px', display: 'flex', gap: 8 }}>
+        <button
+          onClick={() => { setTrack('donor'); setActiveSteps([]) }}
+          style={{
+            padding: '9px 20px',
+            borderRadius: 999,
+            border: '1px solid',
+            cursor: 'pointer',
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: 'var(--font)',
+            background: track === 'donor' ? 'var(--fg)' : 'transparent',
+            color: track === 'donor' ? 'var(--bg)' : 'var(--gray)',
+            borderColor: track === 'donor' ? 'var(--fg)' : 'var(--border)',
+            transition: 'all 0.15s',
+          }}
+        >
+          I want to fund a campaign
+        </button>
+        <button
+          onClick={() => { setTrack('operator'); setActiveSteps([]) }}
+          style={{
+            padding: '9px 20px',
+            borderRadius: 999,
+            border: '1px solid',
+            cursor: 'pointer',
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: 'var(--font)',
+            background: track === 'operator' ? 'var(--fg)' : 'transparent',
+            color: track === 'operator' ? 'var(--bg)' : 'var(--gray)',
+            borderColor: track === 'operator' ? 'var(--fg)' : 'var(--border)',
+            transition: 'all 0.15s',
+          }}
+        >
+          I want to run a campaign
+        </button>
+      </div>
+
       <div style={{
         maxWidth: 1100,
         margin: '0 auto',
