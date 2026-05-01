@@ -412,30 +412,31 @@ export default function ARCameraOverlay({ onClose }) {
           <span style={{ opacity: 0.6 }}>1km</span>
         </div>
       </div>
-
-      {/* Camera list for desktop / no-compass mode */}
-      <div style={{
-        position: 'absolute', bottom: 80, left: 0, right: 0,
-        maxHeight: 180, overflowY: 'auto',
-        padding: '0 20px',
-        display: 'flex', flexDirection: 'column', gap: 1,
-      }}>
-        {nearbyCameras.slice(0, 8).map((cam, i) => (
-          <div key={i} style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '8px 12px',
-            background: 'rgba(0,0,0,0.6)',
-            borderLeft: `3px solid ${typeColor(cam.type)}`,
-            fontSize: 12, fontFamily: 'monospace', color: '#fff',
-          }}>
-            <span>{cam.type}</span>
-            <span style={{ color: '#aaa' }}>{cam.location || 'Unknown location'}</span>
-            <span style={{ color: typeColor(cam.type) }}>{formatDistance(cam.distance)}</span>
-          </div>
-        ))}
-      </div>
     );
   };
+
+  const RadarCameraList = () => (
+    <div style={{
+      position: 'absolute', bottom: 80, left: 0, right: 0,
+      maxHeight: 180, overflowY: 'auto',
+      padding: '0 20px',
+      display: 'flex', flexDirection: 'column', gap: 1,
+    }}>
+      {nearbyCameras.slice(0, 8).map((cam, i) => (
+        <div key={i} style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '8px 12px',
+          background: 'rgba(0,0,0,0.6)',
+          borderLeft: `3px solid ${typeColor(cam.type)}`,
+          fontSize: 12, fontFamily: 'monospace', color: '#fff',
+        }}>
+          <span>{cam.type}</span>
+          <span style={{ color: '#aaa' }}>{cam.location || 'Unknown location'}</span>
+          <span style={{ color: typeColor(cam.type) }}>{formatDistance(cam.distance)}</span>
+        </div>
+      ))}
+    </div>
+  );
 
   // ─────────────────────────────────────────────
   // AR overlay labels
@@ -528,6 +529,7 @@ export default function ARCameraOverlay({ onClose }) {
 
       {/* Radar fallback */}
       {status === 'radar' && <RadarView />}
+      {status === 'radar' && <RadarCameraList />}
 
       {/* AR labels */}
       {status === 'ar' && <ARLabels />}
