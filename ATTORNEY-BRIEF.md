@@ -1,0 +1,196 @@
+# ATTORNEY BRIEF
+## Citeback / Fourthright — Surveillance Accountability Crowdfunding Platform
+### Pre-Launch Legal Review Request
+
+**Prepared by:** Platform Operators, Citeback / Fourthright  
+**Date:** April 30, 2026  
+**Status:** Pre-launch — No live wallets or active campaigns  
+**Repository:** github.com/citeback/citebackwebsite  
+**Confidentiality:** Attorney-Client Privileged — Prepared in Anticipation of Legal Counsel
+
+---
+
+## EXECUTIVE SUMMARY
+
+Citeback (operating name: Fourthright) is a pre-launch anonymous crowdfunding platform designed to fund surveillance accountability campaigns — including FOIA litigation, legal defense funds, billboard campaigns, and legislative advocacy — targeting government surveillance programs and their contracted vendors. The platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively; donors are fully anonymous by architectural design, and wallet keys are held in a Trusted Execution Environment (TEE) with no human access. We are seeking comprehensive pre-launch legal review across nine distinct legal risk areas before any wallets go live or public access is granted. The urgency is high: several of these issues — particularly FinCEN/MSB classification, OFAC compliance gaps, and potential 18 U.S.C. § 1960 exposure — carry federal criminal liability, and no operational activity should commence until written legal guidance is in hand.
+
+---
+
+## PLATFORM OVERVIEW
+
+Citeback is an anonymous crowdfunding infrastructure platform built to finance civil liberties campaigns focused on government surveillance accountability. The platform enables donors to contribute Monero (XMR) or Zano (ZANO) cryptocurrency to per-campaign wallet addresses without creating accounts, providing identity, or undergoing any KYC process. Campaign operators — individuals or organizations running qualifying campaigns — are privately identity-verified by the platform's legal entity, but their identities are never published publicly. Funds accumulate in TEE-secured wallets and disburse to operators milestone-by-milestone upon submission and verification of cryptographic proof of outcomes. The platform charges a 1% fee to an operations wallet (also TEE-secured), operates under community governance weighted by proof-of-donation, and publishes all governance logic as open-source code. Qualifying campaign types include FOIA lawsuits, legal defense funds, billboard campaigns, ordinance advocacy, and counter-database projects.
+
+The platform restricts campaign targets to government entities and government-contracted surveillance vendors only; campaigns targeting private individuals are prohibited. Named vendor targets in the current taxonomy include Clearview AI, Flock Safety, and Palantir. Governance is documented in GOVERNANCE.md (v0.7 Active) and GOVERNANCE-SUPPLEMENTS.md. The platform is currently pre-launch: no wallets are live, no campaigns are active, and no public access has been granted. The operators have identified nine areas of legal concern and have taken documented good-faith steps prior to engaging counsel, which are enumerated in the Self-Assessment section below.
+
+---
+
+## LEGAL QUESTIONS FOR ATTORNEY REVIEW
+
+### 1. MSB / FinCEN Classification
+
+**Issue:**  
+The platform accepts cryptocurrency, holds funds in a TEE-secured wallet, and disburses those funds to operators upon milestone verification. This operational model may constitute "money transmission" under 31 CFR § 1010.100(ff)(5), making the platform a Money Services Business (MSB) subject to FinCEN registration, a written AML program, suspicious activity report (SAR) filing obligations, and recordkeeping requirements under the Bank Secrecy Act (BSA). Operating an unregistered MSB is a federal criminal offense under 18 U.S.C. § 1960, carrying up to five years imprisonment. The platform's TEE architecture is specifically designed so that no human operator ever holds, accesses, or controls private keys — disbursement is fully automated and governed by cryptographic proof of milestone completion. FinCEN's 2019 guidance on convertible virtual currencies (FIN-2019-G001) acknowledged that some automated, non-custodial systems may fall outside traditional money transmission, but the guidance did not resolve the TEE-custody question.
+
+**Key Question:**  
+Does the TEE architecture — in which no human being at any point holds, accesses, or controls wallet private keys, and disbursement is automated via cryptographic proof — eliminate or materially reduce the money transmission nexus under 31 CFR § 1010.100(ff)? Does the platform qualify for the payment processor exemption, the agent of the payee exemption, or any other FinCEN safe harbor? If the platform is deemed an MSB, what AML program structure is required given that donor anonymity is an architectural constraint that cannot be modified without destroying the platform's core function?
+
+**What We Need:**  
+A written legal opinion on MSB classification under current FinCEN guidance and BSA regulations. If registration is required, specific guidance on the registration process, minimum AML program elements, and whether any variance or accommodation exists for anonymous-architecture platforms. If an exemption applies, a documented legal basis sufficient to withstand regulatory scrutiny. This opinion should address whether the platform's operators, directors, or technical contributors face personal liability under § 1960 during the pre-launch period.
+
+---
+
+### 2. State Money Transmission Licenses (MTLs)
+
+**Issue:**  
+Forty-nine or more states require separate money transmission licenses for entities operating within their jurisdictions, and most state MTL regimes now expressly cover cryptocurrency. New York's BitLicense (23 NYCRR Part 200) is among the most demanding, requiring a $5,000 application fee, surety bond, capital requirements, and extensive disclosure. California's DFPI administers the Money Transmission Act (Cal. Fin. Code § 2030 et seq.) and has issued guidance extending it to virtual currency. Texas (Tex. Fin. Code § 151) and Florida (Fla. Stat. § 560) similarly require licensure for virtual currency transmission. Because the platform's donor model is fully anonymous and technically cannot geoblock any U.S. state, donors from all fifty states could contribute to any campaign, potentially triggering licensure obligations in every jurisdiction simultaneously. Penalties for unlicensed money transmission include criminal prosecution at the state level in addition to federal exposure.
+
+**Key Question:**  
+Does the TEE-custody or non-custodial architecture, or the Monero-only contribution model (given Monero's untraceable transaction design), materially alter the MTL analysis under state law? Is there a viable multi-state compliance path that preserves the platform's anonymous architecture? Are there states where the TEE model would be treated as non-custodial and therefore exempt? Does the platform's restriction to cryptocurrency (no fiat handling) affect the MTL analysis in states with narrower statutory definitions?
+
+**What We Need:**  
+A written analysis of MTL exposure across New York, California, Texas, Florida, and Illinois as primary jurisdictions, with a summary assessment of the remaining state landscape. A recommended compliance path or, if multi-state licensure is not feasible concurrent with the anonymous architecture, a structural recommendation (including potential alternative legal structures or jurisdictional approaches) that achieves compliance without abandoning donor anonymity.
+
+---
+
+### 3. OFAC Compliance — Anonymous Donor Architecture
+
+**Issue:**  
+The Office of Foreign Assets Control (OFAC) administers sanctions programs that prohibit U.S. persons from receiving funds from Specially Designated Nationals (SDNs) and blocked persons, regardless of intent. OFAC enforcement is strict liability for certain violations — good faith is a mitigating factor but not a complete defense. The platform cannot screen donors for SDN status because Monero transactions are cryptographically untraceable: sender identity, transaction amount, and transaction history are all concealed by default at the protocol level. If an SDN donates to a campaign, the platform, the operator, and potentially the platform's legal entity and officers could face OFAC civil or criminal liability. The platform has added Terms of Service language explicitly prohibiting donations from OFAC-sanctioned individuals and entities, but ToS language alone has never been recognized by OFAC as a sufficient compliance mechanism.
+
+**Key Question:**  
+Does ToS-based prohibition of SDN donors constitute adequate good-faith compliance under OFAC's enforcement framework, given that technical screening is architecturally impossible with Monero? Are there zero-knowledge proof (ZKP) mechanisms — such as ZK-SNARK-based SDN screening that verifies non-SDN status without revealing donor identity — that OFAC would recognize as compliant? Does incorporating the platform's legal entity outside U.S. jurisdiction meaningfully reduce OFAC exposure for the platform entity itself (as distinct from U.S.-person operators and donors)? What is the current OFAC enforcement posture toward anonymous cryptocurrency platforms?
+
+**What We Need:**  
+A written assessment of OFAC exposure given the anonymous architecture, including the maximum potential civil penalty exposure per transaction. A recommended mitigation strategy that takes the Monero-only model as a constraint (not subject to change). A specific opinion on whether the current ToS prohibition language constitutes legally cognizable good-faith compliance. If ZKP-based screening is legally viable and operationally feasible, a description of the compliance standard it would need to meet.
+
+---
+
+### 4. Defamation Exposure — Named Surveillance Vendors
+
+**Issue:**  
+The platform's campaign taxonomy explicitly names Clearview AI, Flock Safety, and Palantir as permissible targets for vendor accountability campaigns. Qualifying campaign types include billboard campaigns that may make public factual claims about these companies' surveillance practices. The platform requires operator attestation of factual accuracy for billboard campaigns but does not independently investigate or verify campaign content prior to funding. Clearview AI, Flock Safety, and Palantir are private companies with substantial legal resources; Clearview AI in particular has demonstrated willingness to pursue aggressive litigation against critics. A billboard campaign making a false factual claim about one of these vendors could expose the platform to defamation liability (libel per se if the claim is facially defamatory). The platform's role — accepting and funding operator-submitted campaigns — is the central question for Section 230 analysis and direct defamation exposure.
+
+**Key Question:**  
+Does Section 230 of the Communications Decency Act (47 U.S.C. § 230) protect the platform from defamation liability for content submitted by operators and funded by the platform? Does the platform's review and funding-approval process (as distinct from mere passive hosting) constitute "development" of third-party content sufficient to defeat Section 230 protection under the "material contribution" test of *Fair Housing Council v. Roommates.com*? What specific attestation language in operator agreements would strengthen the platform's Section 230 posture? What is the functional distinction between protected opinion and actionable defamatory fact in the surveillance accountability context?
+
+**What We Need:**  
+A Section 230 analysis specific to the funding-platform model (as distinct from a traditional hosting or publishing model). Recommended attestation language for operator campaign submission agreements that maximizes Section 230 coverage and shifts liability to operators. Bright-line guidance on what campaign content — specific claim types, phrasing structures, factual allegations — creates defamation exposure versus what is clearly protected. An assessment of whether the platform should implement a legal review step for billboard content before funding is released.
+
+---
+
+### 5. Money Laundering Risk — Disbursement Chain
+
+**Issue:**  
+The complete disbursement chain is: anonymous XMR/ZANO donations → TEE-secured platform wallet → operator's personal/organizational wallet → fiat conversion by the operator using a method of their choice. This chain could be characterized by DOJ or FinCEN as a money laundering typology under 18 U.S.C. § 1956 (laundering of monetary instruments) or § 1957 (engaging in monetary transactions in criminally derived property), even where the underlying campaign is entirely legitimate. The platform previously included recommendations for specific fiat conversion services — including RetoSwap, a peer-to-peer, no-KYC exchange. All such recommendations have been removed from platform documentation. The platform now takes a neutral stance on operator conversion methods and places conversion responsibility entirely on operators. However, the structural chain itself — anonymous funds flowing through a TEE to an identified operator who then converts — may still present a facially suspicious typology.
+
+**Key Question:**  
+Does placing fiat conversion responsibility on operators, with the platform adopting a neutral stance on conversion methodology and removing all conversion-service recommendations, adequately separate the platform from money laundering exposure under 18 U.S.C. § 1956? What additional documentation, policy, or operational control would further strengthen this separation? Is the disbursement chain itself — absent any fraudulent or criminal source — sufficient to trigger a § 1956 prosecution theory, and if so, what is the platform's best-available defense?
+
+**What We Need:**  
+A written assessment of platform exposure under 18 U.S.C. §§ 1956 and 1957, distinguishing platform-level exposure from operator-level exposure. A recommended operator disbursement policy that preserves maximum privacy for operators while minimizing platform liability for the downstream conversion step. Specific documentation and policy language the platform should maintain regarding the removal of conversion-service recommendations and the operator's independent responsibility for compliance.
+
+---
+
+### 6. Section 230 Safe Harbor — Scope and Limits
+
+**Issue:**  
+The platform hosts, reviews, and funds operator-submitted campaign content, including FOIA target lists, billboard claims, and legal strategy descriptions. Section 230 of the CDA provides broad immunity to interactive computer services (ICS) for third-party content, but that immunity has defined limits. Section 230(e) expressly excludes federal criminal statutes, intellectual property claims, and ECPA violations from the safe harbor. Additionally, the "development" exception established in *Roommates.com* removes Section 230 protection when a platform materially contributes to the unlawful nature of content — not merely hosting it passively but actively shaping it. The platform reviews campaigns before approval, verifies operator identity, reviews cost breakdowns, and approves campaign types against the permitted taxonomy. This active review posture raises the question of whether the platform is a passive ICS or an active content developer.
+
+**Key Question:**  
+Does the platform's pre-funding review process — including operator identity verification, cost breakdown review, campaign type approval against the permitted taxonomy, and milestone-based disbursement — constitute "development" of content under the *Roommates.com* material contribution standard, thereby reducing or eliminating Section 230 protection? What specific review procedures preserve maximum Section 230 coverage (i.e., what can the platform review without crossing into development)? What categories of claims — OFAC violations, federal criminal statutes — remain unprotected regardless of Section 230?
+
+**What We Need:**  
+A Section 230 analysis specific to the campaign review and funding-approval model. A recommended review process design that maintains meaningful quality control (to satisfy governance obligations) while preserving maximum Section 230 protection. An enumeration of the specific federal statutes and claim types for which Section 230 provides no protection, so that the platform can maintain separate compliance procedures for those categories.
+
+---
+
+### 7. Legislative Advocacy Campaigns — LDA / FARA
+
+**Issue:**  
+The platform's permitted campaign taxonomy includes legislative advocacy: funding operator participation in public testimony, drafting and distributing model bills, submitting public comments to administrative agencies, and coordinating public comment campaigns. Depending on the scope of activities and funding, operators may trigger registration obligations under the Lobbying Disclosure Act (2 U.S.C. § 1603), which requires registration for individuals who spend more than 20% of their time on lobbying activities for a client and receive more than $3,000 in compensation in a quarterly period, among other thresholds. Additionally, the Foreign Agents Registration Act (22 U.S.C. § 611 et seq.) requires registration for persons acting at the direction or control of foreign principals engaged in political activities in the United States. Because the platform cannot screen donors for nationality, foreign contributions to legislative advocacy campaigns cannot be identified or blocked — creating a FARA exposure gap that the platform cannot close architecturally.
+
+**Key Question:**  
+At what point does platform-funded legislative advocacy activity trigger LDA registration obligations for the operator, and does the operator's funding source (anonymous cryptocurrency) affect the LDA analysis? Does the anonymous foreign donor gap — the platform's inability to screen out or identify foreign contributions to legislative advocacy campaigns — create FARA exposure for operators, for the platform, or for both? Is there a campaign-design or governance mechanism that would reduce FARA exposure without requiring donor identity disclosure?
+
+**What We Need:**  
+A threshold analysis of LDA applicability to operators funded through the platform's campaign model. A FARA exposure assessment given the architectural impossibility of screening for foreign donor involvement. Recommended governance controls or campaign-type restrictions — if any are legally necessary — that would reduce FARA exposure.
+
+---
+
+### 8. Operator Identity — Compelled Disclosure Risk
+
+**Issue:**  
+Operator identities are verified by the platform's legal entity and held in private storage that is not publicly disclosed. This creates a single compelled-disclosure risk point: a government agency could serve a subpoena, a FISA order (50 U.S.C. § 1881a), or a National Security Letter (NSL) (18 U.S.C. § 2709) on the platform's legal entity to obtain operator identity records. NSLs carry mandatory gag orders prohibiting the recipient from disclosing the existence of the NSL to any person, including the affected operator — meaning the platform could be compelled to produce operator identities while legally prohibited from warning them. FISA orders are similarly gag-restricted. This structure creates a genuine risk that operators could be identified to government agencies without their knowledge, potentially exposing them to retaliation for campaigns targeting those same agencies. This risk is particularly acute given that the platform's express purpose is adversarial to government surveillance programs.
+
+**Key Question:**  
+What corporate structure — including jurisdiction of incorporation, attorney-as-verifier arrangements (to extend privilege over identity records), or offshore entity structures — would minimize compelled-disclosure risk while preserving the legal entity's ability to operate? Is a warrant canary (a public notice that is removed upon receipt of a gag-order legal process) legally viable under current case law, and does it provide meaningful protection? What is the recommended NSL and FISA response policy for the platform's legal entity? What is the safest jurisdiction for the platform's legal entity given its adversarial relationship with U.S. government surveillance programs?
+
+**What We Need:**  
+A structural recommendation for minimizing compelled operator identity disclosure, including jurisdiction of incorporation analysis and attorney-privilege-based verification options. A written legal opinion on warrant canary viability under current Ninth Circuit and federal precedent. A recommended NSL/FISA response policy, including whether to proactively retain specialized national security counsel. An assessment of whether the legal entity's officers face personal contempt or criminal exposure for refusing to comply with gag-restricted legal process.
+
+---
+
+### 9. Insurance Requirements — Coverage Type
+
+**Issue:**  
+The platform's governance documentation requires operators running campaigns above the $100,000 cap to maintain $1,000,000 in general liability insurance. The current documentation does not specify the type of coverage required, the required endorsements, or whether the platform must be named as an additional insured. Standard general liability (CGL) policies routinely exclude intentional acts, defamation, civil rights claims, and professional liability — all of which are categories of risk directly associated with the platform's campaign types. An operator running a billboard campaign alleging surveillance misconduct by Clearview AI, for example, would face potential defamation liability that a standard CGL policy might not cover. Similarly, civil rights campaign activity may require civil rights or errors-and-omissions coverage that is not standard in a CGL form. Operators who obtain technically compliant insurance that does not actually cover their campaign activities would be inadequately protected.
+
+**Key Question:**  
+What specific insurance coverage types are necessary and appropriate for operators running surveillance accountability campaigns above the $100,000 threshold, given the actual risk profile (defamation, civil rights claims, intentional act allegations)? What standard policy exclusions would leave operators — and potentially the platform — exposed despite nominally compliant coverage? Should the platform require itself to be named as an additional insured on operator policies, and if so, what are the implications?
+
+**What We Need:**  
+A minimum coverage specification for the $100,000-and-above operator tier, including required coverage types (CGL, E&O, media liability, umbrella, etc.), minimum limits, and required endorsements. An identification of standard policy exclusions that would render operator coverage inadequate for the platform's campaign risk profile. Recommended contractual language requiring the platform as an additional insured on operator policies. Guidance on whether the platform itself should carry media liability, directors and officers (D&O), or other institutional coverage given its role in funding potentially contentious campaigns.
+
+---
+
+## SELF-ASSESSMENT — GOOD FAITH STEPS TAKEN PRIOR TO ATTORNEY ENGAGEMENT
+
+The platform has taken the following documented steps prior to launching operations or engaging legal counsel:
+
+1. **Removed all fiat conversion service recommendations.** All references to specific fiat conversion services, including RetoSwap (a P2P, no-KYC exchange), have been removed from all platform documentation and governance materials. The platform takes a neutral, non-directive stance on operator conversion methods.
+
+2. **Added OFAC ToS prohibition.** The platform's Terms of Service explicitly prohibits donations from OFAC-sanctioned individuals and entities. The platform acknowledges this is a partial measure and not a substitute for technical screening.
+
+3. **Implemented private operator identity verification.** Operators are verified by the platform's legal entity with identity records stored privately. Identity is never publicly disclosed. The platform acknowledges the compelled-disclosure risk this creates.
+
+4. **Restricted campaign targets.** Campaign targets are restricted to government entities and government-contracted surveillance vendors. Campaigns targeting private individuals are expressly prohibited and enforced at the governance level.
+
+5. **Implemented tiered operator requirements.** Operator requirements scale with campaign size: higher tiers require legal entity status and $1M liability insurance. The platform acknowledges the insurance specification is incomplete pending attorney guidance.
+
+6. **Open-sourced all governance logic.** Governance documentation (GOVERNANCE.md v0.7, GOVERNANCE-SUPPLEMENTS.md) is publicly available for community review. No governance changes are made unilaterally by operators.
+
+7. **Documented unresolved legal questions in governance materials.** The platform has not represented to any party that it is legally compliant. All known unresolved legal questions are documented in GOVERNANCE.md prior to launch.
+
+8. **Deferred launch.** No wallets are live. No public access has been granted. No campaigns are active. The platform has withheld launch specifically pending this legal review.
+
+---
+
+## RECOMMENDED ATTORNEY SPECIALIZATIONS
+
+Given the breadth and depth of the issues described above, the platform recommends engagement with counsel holding experience in one or more of the following areas:
+
+- **FinCEN / Bank Secrecy Act / MSB law** — Primary; FinCEN registration, AML program design, § 1960 criminal exposure (ideally with cryptocurrency-specific practice experience post-2019 FinCEN guidance)
+- **State money transmission licensing** — Multi-state MTL analysis; experience with NY BitLicense, CA DFPI, and similar regimes
+- **OFAC and sanctions compliance** — Experience with voluntary self-disclosure, anonymous-architecture platforms, and cryptocurrency sanctions enforcement
+- **Section 230 / Internet law** — Familiarity with post-*Roommates.com* development doctrine and modern platform liability cases
+- **First Amendment / defamation** — Experience with media liability, public-figure defamation standards, and surveillance accountability litigation
+- **National security law / FISA / NSL** — Experience with NSL gag orders, warrant canary legality, and compelled disclosure defense
+- **Lobbying disclosure / FARA** — Experience with LDA thresholds and FARA exposure for domestically-operated advocacy platforms
+- **Corporate structure / offshore entities** — Jurisdiction analysis for compelled-disclosure minimization
+
+A single firm with a multidisciplinary practice covering FinCEN/BSA, OFAC, and Section 230 would be preferred. National security counsel may need to be engaged separately given the specialized nature of FISA/NSL issues.
+
+---
+
+## CONTACT
+
+**Platform:** Citeback / Fourthright  
+**Repository:** github.com/citeback/citebackwebsite  
+**Governance Documentation:** GOVERNANCE.md (v0.7 Active), GOVERNANCE-SUPPLEMENTS.md  
+**Primary Contact:** [PLACEHOLDER — Insert name, email, and preferred contact method]  
+**Preferred Response Format:** Written legal opinion letters for each numbered issue, suitable for retention in platform compliance records  
+**Urgency:** High — No launch activity will proceed until written guidance is received on Items 1 (MSB/FinCEN) and 3 (OFAC) at minimum
+
+---
+
+*This document was prepared by platform operators in anticipation of legal counsel and is intended to be attorney-client privileged upon transmission to retained counsel. It does not constitute legal advice and should not be relied upon as such.*
