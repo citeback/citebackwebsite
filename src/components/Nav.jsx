@@ -7,7 +7,6 @@ const links = [
   { id: 'trust', label: 'How It Works' },
   { id: 'operators', label: 'Run a Campaign' },
   { id: 'transparency', label: 'Transparency' },
-  { id: 'globe', label: '3D Globe' },
 ]
 
 export default function Nav({ tab, setTab }) {
