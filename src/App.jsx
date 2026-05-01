@@ -53,16 +53,17 @@ export default function App() {
       {tab === 'operators' && <Operators />}
 
       {showAI && <ConversationalInterface onClose={() => setShowAI(false)} />}
-      {/* Floating action buttons */}
+      {/* Floating chatbot button */}
       {!showAI && (
         <button onClick={() => setShowAI(true)} style={{
-          position: 'fixed', bottom: 28, left: 28, zIndex: 800,
+          position: 'fixed', bottom: 24, right: 24, zIndex: 999,
           padding: '12px 20px',
           background: 'var(--fg)', color: 'var(--bg)',
           border: 'none', fontSize: 13, fontWeight: 500,
           letterSpacing: '0.04em', cursor: 'pointer',
+          borderRadius: 999,
           boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        }}>Talk to Fourthright</button>
+        }}>💬 Ask Fourthright</button>
       )}
 
       <Footer setTab={setTab} />

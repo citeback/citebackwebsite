@@ -6,7 +6,7 @@ const stats = [
   { value: '7', label: 'Cameras Documented' },
   { value: '6', label: 'Campaigns Queued' },
   { value: '0', label: 'Actions Funded' },
-  { value: 'XMR', label: 'Only Currency' },
+  { value: 'XMR+ZANO', label: 'Accepted Currencies' },
 ]
 
 export default function Hero({ setTab }) {
@@ -93,7 +93,7 @@ export default function Hero({ setTab }) {
             textTransform: 'uppercase',
             fontWeight: 600,
           }}>
-            Pre-Launch — Campaigns Open for Review
+            v0.7 Active — Campaigns Under Community Review
           </div>
           <div style={{
             fontSize: 11,
@@ -161,6 +161,17 @@ export default function Hero({ setTab }) {
                 Tap redacted words to reveal
               </div>
             )}
+            {!isTouchDevice && hintVisible && (
+              <div style={{
+                fontSize: 11,
+                color: 'var(--gray)',
+                letterSpacing: '0.08em',
+                marginTop: -20,
+                marginBottom: 24,
+              }}>
+                Hover redacted words to reveal
+              </div>
+            )}
 
             <p style={{
               fontSize: 17,
@@ -170,7 +181,7 @@ export default function Hero({ setTab }) {
               fontWeight: 400,
               marginBottom: 40,
             }}>
-              Anonymous funding for surveillance accountability. No account. No identity. No way to stop it.
+              Anonymous crowdfunding for FOIA lawsuits, legal funds, and billboard campaigns — paid in XMR + ZANO. No account. No identity. Censorship-resistant by design.
             </p>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -281,6 +292,10 @@ export default function Hero({ setTab }) {
           display: inline;
           cursor: default;
         }
+        @keyframes redactedPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.75; }
+        }
         .redacted::before {
           content: '';
           position: absolute;
@@ -293,8 +308,10 @@ export default function Hero({ setTab }) {
           transition: opacity 0.2s ease;
           pointer-events: none;
           z-index: 2;
+          animation: redactedPulse 2s ease-in-out 3;
         }
         .redacted.revealed::before {
+          animation: none;
           opacity: 0;
         }
         @media (max-width: 768px) {

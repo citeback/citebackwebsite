@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle, AlertTriangle, Scale, FileText, Building, Shield, ChevronDown, ChevronRight, ExternalLink, Coins } from 'lucide-react'
+import { CheckCircle, AlertTriangle, Scale, FileText, Building, Shield, ChevronDown, ChevronRight, ExternalLink, Coins, Globe } from 'lucide-react'
 
 function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
@@ -81,6 +81,7 @@ export default function Operators() {
         <Req ok={true}>Pass OFAC/sanctions screening. One-time, takes minutes. Required before any funds move.</Req>
         <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
         <Req ok={true}>Submit a cost breakdown. Every campaign needs a line-item budget. Vague asks don't get funded.</Req>
+        <Req ok={true}>Your campaign must target a government entity, government program, or government-contracted surveillance vendor — not a private individual. Campaigns targeting individuals are prohibited regardless of tier.</Req>
         <p style={{ marginTop: 12, fontSize: 13, color: 'var(--muted)' }}>
           That's it to start. Legal entity requirements kick in automatically as your campaign volume grows — see the tier table below. The structure protects the platform without gatekeeping people before they've done anything wrong.
         </p>
@@ -159,7 +160,7 @@ export default function Operators() {
           <div>
             <p style={{ fontWeight: 700, color: '#6ee7b7', marginBottom: 8 }}>How Disbursement Works</p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-              Funds disburse as XMR from the TEE to your entity wallet. You convert to fiat using <strong style={{ color: 'var(--text)' }}>RetoSwap</strong> (P2P, no KYC, Tor-based) or similar P2P exchanges, then pay vendors normally through your business account.
+              Funds disburse as XMR or ZANO from the TEE to your operator wallet. Converting to fiat is your responsibility — use any exchange or P2P platform that complies with applicable law in your jurisdiction. The platform does not recommend specific conversion methods.
             </p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, marginTop: 8 }}>
               The platform disburses XMR. What you do with it after is your business — you're operating for your own account, not as an intermediary. This keeps the platform legally clean and keeps you in control.
@@ -167,6 +168,18 @@ export default function Operators() {
           </div>
         </div>
       </div>
+
+      <Accordion title="What happens after you submit" icon={FileText}>
+        <ol style={{ paddingLeft: 18, lineHeight: 2 }}>
+          <li>Submission reviewed within 5–7 business days</li>
+          <li>Identity verified and OFAC screened privately</li>
+          <li>Tier assigned based on campaign scope and budget</li>
+          <li>Campaign published — community begins funding</li>
+          <li>Funds disburse milestone-by-milestone as proof is submitted and verified</li>
+          <li>Campaign closes with a public outcome record</li>
+        </ol>
+        <p style={{ marginTop: 12 }}>If your campaign isn’t funded within its deadline, unspent funds are returned to the donor pool or rolled into a similar active campaign — never held by the platform.</p>
+      </Accordion>
 
       {/* CTA */}
       <div style={{

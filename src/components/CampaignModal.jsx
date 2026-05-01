@@ -291,9 +291,9 @@ export default function CampaignModal({ campaign, onClose }) {
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
                 {currency === 'XMR' ? (
                   <><strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
-                  Get XMR at <a href="https://www.kraken.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Kraken</a> or{' '}
-                  <a href="https://localmonero.co" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>LocalMonero</a> (no KYC).
-                  Use <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> on mobile.</>
+                  Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (iOS/Android) or{' '}
+                  <a href="https://getmonero.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Monero GUI</a> (desktop).{' '}
+                  Buy XMR at <a href="https://localmonero.co" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>LocalMonero</a> or any major exchange.</>
                 ) : (
                   <><strong style={{ color: 'var(--text)' }}>New to Zano?</strong>{' '}
                   Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Zano Wallet</a> (desktop) or{' '}

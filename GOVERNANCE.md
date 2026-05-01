@@ -90,7 +90,7 @@
 11. **AI Ensemble:** Minimum 3 models deployed, adversarial benchmark suite ratified.
 12. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
 13. **Misconduct Bond & Staking Systems:** Operationally tested.
-14. **Operator Insurance Framework:** Certificate collection and verification operational before first $25k+ campaign.
+14. **Operator Insurance Framework:** Certificate collection and verification operational before first $100k+ campaign.
 15. **Founder Address Registry:** TEE-encoded, deployed, attestation published.
 16. **Campaign Quality Advisory Board:** Minimum 2 domain experts (civil liberties attorney + surveillance accountability practitioner) available to review early campaigns before community votes. Addresses the domain expertise gap governance cannot solve.
 
@@ -124,10 +124,12 @@ Anyone who sends Monero to a campaign wallet is a donor. No registration require
 
 ### 2.2 Operators
 Operators create and manage campaigns. They must:
-- Register with Nostr public key (preferred) or Monero address
-- Pass OFAC/sanctions screening with real-name identity data (held by DAO legal entity, not published on-chain)
-- Maintain reputation score governing campaign size limits
-- Submit verified proof of work to trigger disbursement
+1. Verify real identity privately (held by DAO legal entity — never published on-chain)
+2. Pass OFAC/sanctions screening
+3. Campaign must target a government entity, government program, or government-contracted surveillance vendor — not a private individual
+4. Submit a specific, itemized cost breakdown
+
+Operators are **not** required to have a legal entity to apply. Entity requirements scale with tier (see §4.2).
 
 **Operators are independent contractors, not agents or employees.** Platform approval of a campaign does not constitute endorsement, partnership, or joint liability. The platform's primary liability insulation is §230 intermediary status where applicable (§3.5); independent contractor status is a secondary layer.
 
@@ -229,11 +231,16 @@ Requires clean challenge record AND cumulative volume:
 ### 4.4 OFAC Screening
 Real-name identity data. Third-party API. Continuous monitoring, 30-day cycle.
 
-### 4.5 KYC Above $25k Cap
-Entity name, jurisdiction, registration number. DAO legal counsel review required.
+### 4.5 KYC / Entity Requirements by Tier
+- **$1k cap:** Identity verified only
+- **$5k cap:** Legal entity on file required (after $2k completed volume)
+- **$25k cap:** Entity + DAO legal review (after $10k completed volume)
+- **$100k cap:** Entity + legal review + $1M liability insurance (after $50k completed volume)
+
+Entity name, jurisdiction, and registration number required when applicable. DAO legal counsel review required at $25k+ tier.
 
 ### 4.6 Liability Insurance
-Campaigns above $25k: minimum $1M per-occurrence, coverage type specified by DAO counsel (must cover civil rights claims, defamation, and intentional acts). DAO legal entity named as additional insured.
+Campaigns above $100k cap: minimum $1M per-occurrence, coverage type specified by DAO counsel (must cover civil rights claims, defamation, and intentional acts). DAO legal entity named as additional insured.
 
 ---
 

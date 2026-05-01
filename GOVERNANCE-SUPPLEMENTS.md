@@ -110,7 +110,7 @@ The TEE not recording donor identities is real. However:
 - **IP leakage at broadcast:** When a donor broadcasts a Monero transaction, their IP can be logged by nodes they connect to — unless they use Tor/I2P
 - **View key exposure:** If the TEE uses a view key for amount verification, that key reveals incoming amounts to whoever holds it
 
-**Recommendation for donors:** Always acquire XMR via RetoSwap or atomic swaps (not KYC'd exchanges) and broadcast over Tor.
+**Recommendation for donors:** Acquire XMR or ZANO via privacy-preserving methods and broadcast over Tor where possible. The platform does not recommend specific exchanges or services.
 
 ### The Action Log
 
@@ -148,7 +148,6 @@ FinCEN's "own account" doctrine (2013 guidance, still controlling): an entity th
 This is legally equivalent to a foundation making a grant to a grantee organization. The grantee spends at their own discretion within grant terms. The platform never touches fiat.
 
 **Operator requirements:**
-- Must have a genuine legal entity (LLC, nonprofit, etc.) — not anonymous
 - Treat received XMR as income/revenue (tax event)
 - Keep records of vendor payments
 - Not in the business of transmitting money for third parties → not an MSB
@@ -158,14 +157,7 @@ This is legally equivalent to a foundation making a grant to a grantee organizat
 
 ### XMR → USD Conversion for Operators
 
-**Primary: RetoSwap (Haveno DEX)**
-- Live on mainnet since May 2024
-- P2P XMR ↔ USD via ACH, bank transfer, CashApp, cash — no KYC
-- Runs over Tor, cannot be deplatformed (distributed protocol)
-- ~$2M/month volume as of early 2026
-- Best for amounts under ~$10-20k per tranche
-
-**For larger amounts:** Combine multiple RetoSwap trades over time + direct vendor crypto acceptance where possible
+The platform does not recommend specific off-ramp services. Operators are responsible for fiat conversion using exchanges or services that comply with applicable law in their jurisdiction.
 
 **What was ruled out:**
 - Offshore foundations (Swiss/Panama/Cayman): single chokepoint, VASP registration required, $20-80k setup cost
@@ -277,7 +269,7 @@ Hash-linked log entries (SHA-256 chain). Daily hash anchored to Monero's blockch
 
 | Option | Status | KYC | Best For |
 |---|---|---|---|
-| **RetoSwap (Haveno DEX)** | ✅ Live since May 2024 | None | Primary recommendation — P2P, Tor, non-custodial |
+| **Operator's choice** | Operator's responsibility | Varies | Platform does not prescribe conversion method |
 | **COMIT atomic swaps** | ✅ Live (xmrswap.me) | None | BTC holders wanting trustless swap |
 | **Cake Wallet in-app** | ✅ iOS/Android/Desktop | None direct (underlying services may) | Easiest UX for non-technical donors |
 | **ChangeNow/StealthEX** | ✅ Active | None below ~$2-10k | Fast small swaps |
@@ -290,14 +282,13 @@ Hash-linked log entries (SHA-256 chain). Daily hash anchored to Monero's blockch
 Buying XMR via a KYC'd exchange (Kraken, Coinbase, etc.) and sending directly to campaign wallets creates a deanonymization risk: law enforcement can subpoena the exchange for withdrawal records and use blockchain timing analysis to link the donor to the donation.
 
 **Recommended donor path for maximum privacy:**
-1. Acquire XMR via RetoSwap (P2P, no KYC, runs on Tor) or COMIT atomic swap from BTC
+1. Acquire XMR or ZANO via a method compliant with applicable law in your jurisdiction
 2. Broadcast the donation transaction over Tor (Tor Browser or Tails OS)
 3. Do not reuse Monero addresses
 
 ### Platform Recommendation Page
 
 The site should include a "How to Donate Privately" guide linking to:
-- RetoSwap setup guide
 - xmrswap.me for BTC→XMR atomic swaps
 - Cake Wallet for easiest UX
 - Tor Browser download

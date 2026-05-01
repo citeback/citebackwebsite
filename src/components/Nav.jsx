@@ -1,23 +1,43 @@
-import { Menu, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { Menu, X, ChevronDown } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 
-const links = [
+const primaryLinks = [
   { id: 'home', label: 'Home' },
   { id: 'campaigns', label: 'Campaigns' },
+  { id: 'map', label: 'Camera Map' },
   { id: 'trust', label: 'How It Works' },
-  { id: 'operators', label: 'Run a Campaign' },
   { id: 'transparency', label: 'Transparency' },
+]
+
+const moreLinks = [
+  { id: 'operators', label: 'Run a Campaign' },
+  { id: 'registry', label: 'Human Registry' },
+  { id: 'trust', label: 'Trust FAQ' },
+  { id: 'governance', label: 'Governance' },
 ]
 
 export default function Nav({ tab, setTab }) {
   const [open, setOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const moreRef = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const handleClickOutside = (e) => {
+      if (moreRef.current && !moreRef.current.contains(e.target)) {
+        setMoreOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [moreOpen])
 
   return (
     <nav style={{
@@ -62,7 +82,7 @@ export default function Nav({ tab, setTab }) {
 
         {/* Desktop Nav */}
         <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-          {links.map(l => (
+          {primaryLinks.map(l => (
             <button
               key={l.id}
               onClick={() => setTab(l.id)}
@@ -82,6 +102,69 @@ export default function Nav({ tab, setTab }) {
               {l.label}
             </button>
           ))}
+          {/* More dropdown */}
+          <div ref={moreRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setMoreOpen(o => !o)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 13,
+                letterSpacing: '0.04em',
+                color: moreOpen ? 'var(--fg)' : 'var(--gray)',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                transition: 'color 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)' }}
+              onMouseLeave={e => { if (!moreOpen) e.currentTarget.style.color = 'var(--gray)' }}
+            >
+              More <ChevronDown size={12} />
+            </button>
+            {moreOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: 8,
+                background: 'rgba(250,250,250,0.98)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                padding: '8px 0',
+                minWidth: 160,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+                zIndex: 200,
+              }}>
+                {moreLinks.map(l => (
+                  <button
+                    key={l.id}
+                    onClick={() => { setTab(l.id); setMoreOpen(false) }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 13,
+                      letterSpacing: '0.03em',
+                      color: tab === l.id ? 'var(--fg)' : 'var(--gray)',
+                      padding: '8px 16px',
+                      fontFamily: 'var(--font)',
+                      transition: 'color 0.15s, background 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = 'var(--fg)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'none'; if (tab !== l.id) e.currentTarget.style.color = 'var(--gray)' }}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setTab('campaigns')}
             style={{
@@ -131,7 +214,7 @@ export default function Nav({ tab, setTab }) {
           gap: 4,
           background: 'rgba(250,250,250,0.98)',
         }}>
-          {links.map(l => (
+          {[...primaryLinks, ...moreLinks].filter((l, i, arr) => arr.findIndex(x => x.id === l.id) === i).map(l => (
             <button
               key={l.id}
               onClick={() => { setTab(l.id); setOpen(false) }}
