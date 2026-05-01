@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 
+const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
+
 const stats = [
   { value: '7', label: 'Cameras Documented', sub: 'NM · Public records' },
   { value: '6', label: 'Campaigns Queued', sub: 'Pre-launch' },
@@ -66,30 +68,54 @@ function MagneticButton({ children, onClick, primary }) {
 export default function Hero({ setTab }) {
   const sectionRef = useRef(null)
   const redactedRefs = useRef([])
+  const [hintVisible, setHintVisible] = useState(true)
+  const [anyRevealed, setAnyRevealed] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
 
-    const handleMouseMove = (e) => {
-      redactedRefs.current.forEach(el => {
+    if (isTouchDevice) {
+      // Touch: tap to toggle individual words
+      const handlers = []
+      redactedRefs.current.forEach((el) => {
         if (!el) return
-        const rect = el.getBoundingClientRect()
-        const cx = rect.left + rect.width / 2
-        const cy = rect.top + rect.height / 2
-        const dx = e.clientX - cx
-        const dy = e.clientY - cy
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 140) {
-          el.classList.add('revealed')
-        } else {
-          el.classList.remove('revealed')
+        const handler = (e) => {
+          e.preventDefault()
+          el.classList.toggle('revealed')
+          setAnyRevealed(true)
+          setHintVisible(false)
         }
+        el.addEventListener('touchstart', handler, { passive: false })
+        handlers.push({ el, handler })
       })
-    }
+      return () => {
+        handlers.forEach(({ el, handler }) => {
+          el.removeEventListener('touchstart', handler)
+        })
+      }
+    } else {
+      // Desktop: proximity mousemove reveal
+      const handleMouseMove = (e) => {
+        redactedRefs.current.forEach(el => {
+          if (!el) return
+          const rect = el.getBoundingClientRect()
+          const cx = rect.left + rect.width / 2
+          const cy = rect.top + rect.height / 2
+          const dx = e.clientX - cx
+          const dy = e.clientY - cy
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 140) {
+            el.classList.add('revealed')
+          } else {
+            el.classList.remove('revealed')
+          }
+        })
+      }
 
-    section.addEventListener('mousemove', handleMouseMove)
-    return () => section.removeEventListener('mousemove', handleMouseMove)
+      section.addEventListener('mousemove', handleMouseMove)
+      return () => section.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   const redactedWords = ['surveillance', 'everyone', 'fighting']
@@ -125,7 +151,7 @@ export default function Hero({ setTab }) {
 
         {/* Headline with redaction effect */}
         <h1 style={{
-          fontSize: 'clamp(42px, 5vw, 72px)',
+          fontSize: 'clamp(28px, 5vw, 72px)',
           fontWeight: 300,
           letterSpacing: '-0.02em',
           lineHeight: 1.15,
@@ -155,6 +181,20 @@ export default function Hero({ setTab }) {
           </span>
           {' '}back.
         </h1>
+
+        {/* Mobile tap hint */}
+        {isTouchDevice && hintVisible && (
+          <div style={{
+            fontSize: 11,
+            color: 'var(--gray)',
+            letterSpacing: '0.08em',
+            marginTop: -20,
+            marginBottom: 24,
+            opacity: 0.7,
+          }}>
+            Tap to reveal
+          </div>
+        )}
 
         {/* Sub text */}
         <p style={{
