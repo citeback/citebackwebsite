@@ -7,7 +7,7 @@ Citeback is an open-source platform that funds community-driven legal action aga
 ## What It Does
 
 - **Maps** ALPR cameras submitted by the community (92,000+ cameras loaded from OpenStreetMap)
-- **Funds campaigns** — billboards, FOIA requests, legal funds — via dedicated Monero wallets
+- **Funds campaigns** — billboards, FOIA requests, legal funds — via dedicated Monero (XMR) and Zano (ZANO) wallets
 - **Operates transparently** — every disbursement logged publicly, every rule open source
 - **Requires no accounts** — donate, vote, and participate with just a Monero address
 
@@ -25,7 +25,7 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) and [GOVERNANCE.md](./GOVERNANCE.md) fo
 ## Stack
 
 - Vite + React
-- Monero (XMR) — privacy-by-default donations
+- Monero (XMR) + Zano (ZANO) — privacy-by-default donations
 - Leaflet — camera map
 - Ollama — local AI chatbot (optional)
 
