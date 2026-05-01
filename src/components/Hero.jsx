@@ -59,12 +59,15 @@ export default function Hero({ setTab }) {
   return (
     <section
       ref={sectionRef}
+      className="hero-section"
       style={{
         paddingTop: 100,
         paddingBottom: 0,
         background: 'var(--bg)',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
       }}
     >
       {/* Top rule */}
@@ -108,6 +111,7 @@ export default function Hero({ setTab }) {
           gridTemplateColumns: '1fr 280px',
           gap: '48px 64px',
           alignItems: 'start',
+          minWidth: 0,
         }} className="hero-grid">
 
           {/* Left: headline + CTA */}
@@ -280,7 +284,10 @@ export default function Hero({ setTab }) {
         .redacted::before {
           content: '';
           position: absolute;
-          inset: -3px -4px;
+          top: -3px;
+          bottom: -3px;
+          left: -4px;
+          right: -4px;
           background: #0d0d0d;
           opacity: 1;
           transition: opacity 0.2s ease;
@@ -290,16 +297,31 @@ export default function Hero({ setTab }) {
         .redacted.revealed::before {
           opacity: 0;
         }
+        @media (max-width: 768px) {
+          .redacted {
+            display: inline-block;
+          }
+          .redacted::before {
+            top: 0;
+            bottom: 0;
+            left: -2px;
+            right: -2px;
+          }
+        }
 
         @media (max-width: 768px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
+            gap: 32px !important;
           }
           .hero-sidebar {
             border-left: none !important;
             border-top: 1px solid var(--border) !important;
             padding-left: 0 !important;
             padding-top: 24px !important;
+          }
+          .hero-section {
+            overflow-x: hidden !important;
           }
         }
       `}</style>
