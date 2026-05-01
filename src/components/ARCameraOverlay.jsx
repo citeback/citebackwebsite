@@ -253,7 +253,20 @@ export default function ARCameraOverlay({ onClose }) {
       }
     }
 
-    setStatus(videoStarted ? 'ar' : 'radar');
+    // If video started but we set ar mode, check for compass after 2s
+    // On desktop (no compass), auto-switch to radar
+    if (videoStarted) {
+      setStatus('ar');
+      setTimeout(() => {
+        setStatus(prev => {
+          // If heading is still null after 2s, force radar
+          if (prev === 'ar') return 'radar';
+          return prev;
+        });
+      }, 2000);
+    } else {
+      setStatus('radar');
+    }
   }, []);
 
   // ── Cleanup on unmount ──────────────────────────────────────────────
@@ -324,7 +337,9 @@ export default function ARCameraOverlay({ onClose }) {
 
     return (
       <div style={styles.radarContainer}>
-        <div style={styles.radarLabel}>📡 Radar Mode — Point device to orient</div>
+        <div style={styles.radarLabel}>
+          {heading !== null ? '📡 Radar Mode — Rotate device to orient' : '📡 Camera Map — 50 cameras within 1km of your location'}
+        </div>
         <svg
           width={size}
           height={size}
@@ -396,6 +411,28 @@ export default function ARCameraOverlay({ onClose }) {
           <span style={{ opacity: 0.4 }}>750m</span>
           <span style={{ opacity: 0.6 }}>1km</span>
         </div>
+      </div>
+
+      {/* Camera list for desktop / no-compass mode */}
+      <div style={{
+        position: 'absolute', bottom: 80, left: 0, right: 0,
+        maxHeight: 180, overflowY: 'auto',
+        padding: '0 20px',
+        display: 'flex', flexDirection: 'column', gap: 1,
+      }}>
+        {nearbyCameras.slice(0, 8).map((cam, i) => (
+          <div key={i} style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '8px 12px',
+            background: 'rgba(0,0,0,0.6)',
+            borderLeft: `3px solid ${typeColor(cam.type)}`,
+            fontSize: 12, fontFamily: 'monospace', color: '#fff',
+          }}>
+            <span>{cam.type}</span>
+            <span style={{ color: '#aaa' }}>{cam.location || 'Unknown location'}</span>
+            <span style={{ color: typeColor(cam.type) }}>{formatDistance(cam.distance)}</span>
+          </div>
+        ))}
       </div>
     );
   };
