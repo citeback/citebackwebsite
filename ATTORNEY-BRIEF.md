@@ -6,13 +6,13 @@
 **Date:** April 30, 2026  
 **Status:** Pre-launch — No live wallets or active campaigns  
 **Repository:** github.com/citeback/citebackwebsite  
-**Confidentiality:** Attorney-Client Privileged — Prepared in Anticipation of Legal Counsel
+**Confidentiality:** Confidential — Prepared in Anticipation of Attorney Engagement; Privilege and Work Product Protection Claimed Upon Retention
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-Citeback (operating name: Fourthright) is a pre-launch anonymous crowdfunding platform designed to fund surveillance accountability campaigns — including FOIA litigation, legal defense funds, billboard campaigns, and legislative advocacy — targeting government surveillance programs and their contracted vendors. The platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively; donors are fully anonymous by architectural design, and wallet keys are held in a Trusted Execution Environment (TEE) with no human access. We are seeking comprehensive pre-launch legal review across nine distinct legal risk areas before any wallets go live or public access is granted. The urgency is high: several of these issues — particularly FinCEN/MSB classification, OFAC compliance gaps, and potential 18 U.S.C. § 1960 exposure — carry federal criminal liability, and no operational activity should commence until written legal guidance is in hand.
+Citeback (operating name: Fourthright) is a pre-launch anonymous crowdfunding platform designed to fund surveillance accountability campaigns — including FOIA litigation, legal defense funds, billboard campaigns, and legislative advocacy — targeting government surveillance programs and their contracted vendors. The platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively; donors are fully anonymous by architectural design, and wallet keys are held in a Trusted Execution Environment (TEE) with no human access. We are seeking comprehensive pre-launch legal review across twelve distinct legal risk areas before any wallets go live or public access is granted. The urgency is high: several of these issues — particularly FinCEN/MSB classification, OFAC compliance gaps, and potential 18 U.S.C. § 1960 exposure — carry federal criminal liability, and no operational activity should commence until written legal guidance is in hand.
 
 ---
 
@@ -143,6 +143,45 @@ A minimum coverage specification for the $100,000-and-above operator tier, inclu
 
 ---
 
+### 10. Securities Law — Proof-of-Donation Governance Rights
+
+**Issue:**  
+The platform's governance model grants donors weighted voting rights proportional to their contributions (0.5%–20% of campaign goal, with diminishing returns above 8%). If these governance rights have exchange value, confer influence over platform operations, or create any expectation of profit, the DOJ or SEC could characterize them as securities under the *Howey* test (*SEC v. W.J. Howey Co.*, 328 U.S. 293 (1946)) or the *Reves* "family resemblance" test for notes. The SEC has aggressively applied *Howey* to cryptocurrency governance tokens. Unregistered securities offerings carry serious civil and criminal liability under the Securities Act of 1933 (15 U.S.C. § 77a et seq.) and the Securities Exchange Act of 1934.
+
+**Key Question:**  
+Do proof-of-donation governance rights constitute a security under *Howey* or *Reves*? If so, does any exemption apply (Regulation D, Regulation CF, or another)? Can the governance structure be modified to clearly fall outside the securities definition without compromising the platform's decentralization model?
+
+**What We Need:**  
+A written opinion on whether the governance model creates securities exposure. If exposure exists, recommended structural modifications. If an exemption applies, the documented legal basis for that exemption.
+
+---
+
+### 11. State Charitable Solicitation Registration Laws
+
+**Issue:**  
+Forty-plus states require organizations to register with the state attorney general before soliciting charitable contributions from residents of that state. Many apply this requirement regardless of whether the organization holds 501(c)(3) status. The platform's mission — funding civil liberties and public accountability campaigns — has the surface appearance of charitable activity, even if the platform does not seek tax-exempt status. Because donors are anonymous and the platform cannot geoblock any state, it may be soliciting charitable contributions in all 50 states simultaneously. Violations are strict liability in many states.
+
+**Key Question:**  
+Does the platform's crowdfunding model constitute charitable solicitation under applicable state laws? If so, which states' registration requirements apply, and is multi-state registration feasible alongside the platform's anonymous architecture? Does the platform's for-profit fee model (1% operational fee) affect the charitable solicitation analysis?
+
+**What We Need:**  
+An assessment of charitable solicitation exposure across at minimum NY, CA, TX, FL, and IL. A recommended compliance path or structural recommendation to avoid triggering registration requirements.
+
+---
+
+### 12. Tax Treatment, Entity Structure, and Constructive Receipt
+
+**Issue:**  
+The platform currently lacks a disclosed legal entity structure. This creates several tax exposure points: (a) the 1% operational fee collected by the platform constitutes taxable income — without a legal entity, this income may be attributed to the founder personally as self-employment income; (b) TEE-held funds may create constructive receipt issues if the IRS determines that the platform's legal entity exercises sufficient control over the TEE to be considered in receipt of the funds; (c) if any campaign type is structured to allow donors to claim charitable deductions, 501(c)(3) status and IRS compliance are required — operating without this status while donors take deductions creates donor-side and platform-side liability; (d) operators receiving XMR or ZANO disbursements have cryptocurrency income reporting obligations under IRS Notice 2014-21 and subsequent guidance, regardless of whether conversion to fiat occurs.
+
+**Key Question:**  
+What legal entity structure is recommended for the platform given its operational model and the need to receive the 1% fee? Does the TEE custody model create constructive receipt issues for the platform entity? Should the platform explicitly disclaim charitable status in donor communications to avoid 501(c)(3)-adjacent expectations?
+
+**What We Need:**  
+A recommended entity structure for the platform's legal entity. A constructive receipt analysis for TEE-held funds. Template disclaimer language for donor communications regarding tax deductibility of contributions.
+
+---
+
 ## SELF-ASSESSMENT — GOOD FAITH STEPS TAKEN PRIOR TO ATTORNEY ENGAGEMENT
 
 The platform has taken the following documented steps prior to launching operations or engaging legal counsel:
@@ -177,6 +216,8 @@ Given the breadth and depth of the issues described above, the platform recommen
 - **National security law / FISA / NSL** — Experience with NSL gag orders, warrant canary legality, and compelled disclosure defense
 - **Lobbying disclosure / FARA** — Experience with LDA thresholds and FARA exposure for domestically-operated advocacy platforms
 - **Corporate structure / offshore entities** — Jurisdiction analysis for compelled-disclosure minimization
+- **Securities / crypto law** — Howey/Reves analysis for governance token structures; SEC enforcement experience
+- **Tax / entity structure** — Constructive receipt analysis for TEE-held funds; entity formation for anonymous-architecture platforms; charitable solicitation compliance
 
 A single firm with a multidisciplinary practice covering FinCEN/BSA, OFAC, and Section 230 would be preferred. National security counsel may need to be engaged separately given the specialized nature of FISA/NSL issues.
 
@@ -193,4 +234,4 @@ A single firm with a multidisciplinary practice covering FinCEN/BSA, OFAC, and S
 
 ---
 
-*This document was prepared by platform operators in anticipation of legal counsel and is intended to be attorney-client privileged upon transmission to retained counsel. It does not constitute legal advice and should not be relied upon as such.*
+*This document was prepared by platform operators in anticipation of attorney engagement. Work product protection is claimed as of the date of preparation. Attorney-client privilege attaches upon formal retention of counsel. This document does not constitute legal advice and should not be relied upon as such.*
