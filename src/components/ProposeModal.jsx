@@ -9,9 +9,9 @@ const types = [
   { id: 'other', label: '🛠 Other Action', desc: 'Any other legal, public-facing resistance action' },
 ]
 
-export default function ProposeModal({ onClose }) {
+export default function ProposeModal({ onClose, prefill = {} }) {
   const [step, setStep] = useState(1)
-  const [form, setForm] = useState({ type: '', title: '', location: '', description: '', goal: '', contact: '' })
+  const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '', contact: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
 

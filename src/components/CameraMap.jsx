@@ -1153,13 +1153,13 @@ export default function CameraMap() {
               <CircleMarker
                 key={`${layer.id}-${i}`}
                 center={[agency.lat, agency.lng]}
-                radius={7}
+                radius={agency.status === 'terminated' ? 8 : 7}
                 pathOptions={{
-                  fillColor: layer.color,
-                  fillOpacity: 0.75,
-                  color: layer.color,
-                  weight: 1.5,
-                  opacity: 0.6,
+                  fillColor: agency.status === 'terminated' ? '#2ecc71' : layer.color,
+                  fillOpacity: agency.status === 'terminated' ? 0.9 : 0.75,
+                  color: agency.status === 'terminated' ? '#27ae60' : layer.color,
+                  weight: agency.status === 'terminated' ? 2 : 1.5,
+                  opacity: agency.status === 'terminated' ? 0.9 : 0.6,
                 }}
               >
                 <Popup>
@@ -1170,6 +1170,9 @@ export default function CameraMap() {
                         {layer.label.toUpperCase()}
                       </span>
                     </div>
+                    {agency.status === 'terminated' && (
+                      <div style={{ fontSize: 10, fontWeight: 700, color: '#2ecc71', background: 'rgba(46,204,113,0.1)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 4, padding: '2px 7px', marginBottom: 6, display: 'inline-block', letterSpacing: '0.08em' }}>✓ PROGRAM TERMINATED</div>
+                    )}
                     <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{agency.name}</div>
                     <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
                       📍 {agency.city}, {agency.state}

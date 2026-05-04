@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
 import LaunchTracker from './components/LaunchTracker'
@@ -17,6 +17,7 @@ import GuaranteeSection from './components/GuaranteeSection'
 import Transparency from './components/Transparency'
 import Footer from './components/Footer'
 import CampaignModal from './components/CampaignModal'
+import ProposeModal from './components/ProposeModal'
 import ChatBot from './components/ChatBot'
 import TrustFAQ from './components/TrustFAQ'
 import Governance from './components/Governance'
@@ -31,6 +32,13 @@ export default function App() {
   const [tab, setTab] = useState('home')
   const [selectedCampaign, setSelectedCampaign] = useState(null)
   const [showAI, setShowAI] = useState(false)
+  const [proposePrefill, setProposePrefill] = useState(null)
+
+  useEffect(() => {
+    const handler = (e) => setProposePrefill(e.detail || {})
+    window.addEventListener('openPropose', handler)
+    return () => window.removeEventListener('openPropose', handler)
+  }, [])
 
 
   return (
@@ -81,6 +89,9 @@ export default function App() {
 
       {selectedCampaign && (
         <CampaignModal campaign={selectedCampaign} onClose={() => setSelectedCampaign(null)} />
+      )}
+      {proposePrefill && (
+        <ProposeModal prefill={proposePrefill} onClose={() => setProposePrefill(null)} />
       )}
     </div>
   )
