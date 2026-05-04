@@ -559,7 +559,7 @@ const EFF_LAYERS = [
     sourceUrl: 'https://openstreetmap.org',
     active: true,
     live: true,
-    description: '200,000+ automatic license plate readers mapped nationally',
+    description: '92,000+ automatic license plate readers mapped nationally via OpenStreetMap',
   },
   {
     id: 'facial',
@@ -768,7 +768,7 @@ export default function CameraMap() {
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Surveillance Camera Map</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, lineHeight: 1.6, maxWidth: 480 }}>
-            Live ALPR data from OpenStreetMap — the same 200,000+ cameras mapped by DeFlock.
+            Live ALPR data from OpenStreetMap — 92,000+ cameras mapped by contributors worldwide.
             Zoom in to load cameras in any area. Every pin has a source.
           </p>
         </div>
@@ -897,11 +897,11 @@ export default function CameraMap() {
       }}>
         <CheckCircle size={14} style={{ color: '#5dade2', flexShrink: 0, marginTop: 1 }} />
         <span>
-          Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — 200,000+ ALPR cameras mapped nationally.
+          Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — 92,000+ ALPR cameras mapped nationally.
           Zoom in to load cameras in any area.
         </span>
-        <a href="https://deflock.me" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          Contribute to DeFlock <ExternalLink size={11} />
+        <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          Add cameras to OpenStreetMap <ExternalLink size={11} />
         </a>
       </div>
 
@@ -1161,7 +1161,7 @@ export default function CameraMap() {
           <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{verifiedCameras.length}</span> Citeback-verified ·{' '}
           <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{osmCameras.length.toLocaleString()}</span> loaded · Zoom into any city for full detail
         </span>
-        <span>Data: OpenStreetMap contributors (ODbL) · 200,000+ mapped nationally</span>
+        <span>Data: OpenStreetMap contributors (ODbL) · 92,000+ mapped nationally</span>
       </div>
     </section>
   )
