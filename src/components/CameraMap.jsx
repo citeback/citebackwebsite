@@ -640,7 +640,7 @@ const LAYER_BLURBS = {
   predictive: 'Algorithms that score residents as future criminals, directing police based on bias-amplifying data.',
 }
 
-function LayerToggles({ activeLayers, setActiveLayers }) {
+function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVictories }) {
   const [expandedBlurb, setExpandedBlurb] = useState(null)
 
   const toggle = (id) => {
@@ -722,6 +722,36 @@ function LayerToggles({ activeLayers, setActiveLayers }) {
           </div>
         )
       })}
+
+      {/* Victories divider */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '8px 0 6px' }} />
+      <button
+        onClick={() => setShowVictories(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: showVictories ? 'rgba(46,204,113,0.1)' : 'transparent',
+          border: `1px solid ${showVictories ? 'rgba(46,204,113,0.4)' : 'rgba(255,255,255,0.06)'}`,
+          borderRadius: 8, padding: '8px 10px',
+          cursor: 'pointer', width: '100%', textAlign: 'left',
+          transition: 'all 0.15s',
+        }}
+      >
+        <span style={{ fontSize: 14 }}>✊</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: showVictories ? '#2ecc71' : '#6b7280', lineHeight: 1.2 }}>Community Victories</div>
+          <div style={{ fontSize: 10, color: '#2ecc71', marginTop: 2, opacity: 0.8 }}>Programs terminated by community action</div>
+        </div>
+        <div style={{
+          width: 10, height: 10, borderRadius: '50%',
+          background: showVictories ? '#2ecc71' : 'rgba(255,255,255,0.12)',
+          flexShrink: 0, transition: 'background 0.15s',
+        }} />
+      </button>
+      {showVictories && (
+        <div style={{ fontSize: 11, color: '#86efac', lineHeight: 1.55, padding: '6px 10px', background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 6, marginTop: 2 }}>
+          ✅ Green dots = programs the community successfully shut down. Proof that resistance works.
+        </div>
+      )}
     </div>
   )
 }
@@ -730,6 +760,7 @@ function LayerToggles({ activeLayers, setActiveLayers }) {
 export default function CameraMap() {
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
   const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr']))
+  const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false })
   const [submitted, setSubmitted] = useState(false)
@@ -1149,7 +1180,7 @@ export default function CameraMap() {
 
           {/* Non-ALPR surveillance overlay layers */}
           {EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data && activeLayers.has(l.id)).map(layer =>
-            layer.data.map((agency, i) => (
+            layer.data.filter(a => a.status !== 'terminated').map((agency, i) => (
               <CircleMarker
                 key={`${layer.id}-${i}`}
                 center={[agency.lat, agency.lng]}
@@ -1274,7 +1305,7 @@ export default function CameraMap() {
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
-              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} />
+              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} />
 
               <div style={{
                 marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)',
@@ -1300,6 +1331,30 @@ export default function CameraMap() {
             </div>
           )}
         </div>
+
+          {/* Community Victories overlay — shown only when toggled on */}
+          {showVictories && EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data).map(layer =>
+            layer.data.filter(a => a.status === 'terminated').map((agency, i) => (
+              <CircleMarker
+                key={`victory-${layer.id}-${i}`}
+                center={[agency.lat, agency.lng]}
+                radius={9}
+                pathOptions={{ fillColor: '#2ecc71', fillOpacity: 0.92, color: '#27ae60', weight: 2, opacity: 1 }}
+              >
+                <Popup>
+                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 240, maxWidth: 300, padding: 4 }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#2ecc71', background: 'rgba(46,204,113,0.12)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 4, padding: '2px 7px', marginBottom: 8, display: 'inline-block', letterSpacing: '0.08em' }}>✊ COMMUNITY VICTORY</div>
+                    <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{agency.name}</div>
+                    <div style={{ fontSize: 12, color: '#666', marginBottom: 6 }}>📍 {agency.city}, {agency.state}</div>
+                    <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><strong>Was:</strong> {layer.label}</div>
+                    {agency.vendor && <div style={{ fontSize: 11, color: '#555', marginBottom: 6 }}><strong>Vendor:</strong> {agency.vendor}</div>}
+                    {agency.notes && <div style={{ fontSize: 11, color: '#444', background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.5 }}>{agency.notes}</div>}
+                    {agency.url && <a href={agency.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#2ecc71', fontWeight: 600, textDecoration: 'none' }}>View source →</a>}
+                  </div>
+                </Popup>
+              </CircleMarker>
+            ))
+          )}
 
         {/* Map attribution bar */}
         <div style={{
