@@ -439,7 +439,16 @@ Screening operates at two distinct points:
 
 The pre-screening by the platform entity is the primary OFAC compliance layer for operators. The TEE disbursement screening checks operator wallet addresses against the SDN list at the time of each disbursement.
 
-**Limitation (attorney must address):** OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it technically impossible to link an incoming donation to an SDN-list identity. Wallet-level TEE screening applies to operator disbursement destinations (identifiable addresses) — not to anonymous incoming donor transactions. This gap is documented as an Open Question requiring attorney analysis before launch (see §Open Questions #1 and #3). The ToS prohibition on SDN donations (donor side) and the human pre-screening of operators (operator side) are the current mitigation posture.
+> **⚠️ OFAC LIMITATION — ATTORNEY MUST ADDRESS BEFORE LAUNCH:**
+>
+> OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it **technically impossible** to link an incoming donation to an SDN-list identity — sender address, amount, and transaction history are all concealed at the protocol level. Wallet-level TEE screening applies to operator disbursement destinations (identifiable addresses) only — it **cannot screen anonymous incoming donor transactions**.
+>
+> This is a structural gap in OFAC compliance on the donor side that cannot be closed without destroying Monero's privacy guarantees. It is documented as an Open Question requiring attorney analysis before any live wallet accepts funds (see §Open Questions #1 and #3).
+>
+> **Current mitigation posture (not a substitute for attorney guidance):**
+> - ToS explicitly prohibits donations from OFAC-sanctioned individuals and entities
+> - Human OFAC pre-screening of operators (operator side) before any campaign wallet is created
+> - No donor-side screening is possible — this limitation must be disclosed to and assessed by DAO counsel before launch
 
 ### 9.4 Campaign Proposal Review Process
 

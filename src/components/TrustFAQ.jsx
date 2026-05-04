@@ -56,7 +56,7 @@ const sections = [
       },
       {
         q: 'What happens if Citeback itself disappears?',
-        a: `The code is open source (GitHub). Any community member can fork it and redeploy on new infrastructure.\n\nThere's no domain lock-in, no proprietary backend, no secret sauce. If Citeback the organization disappears, Citeback the platform lives on in whoever wants to run it.\n\nThis is by design. Surveillance doesn't stop. The tools to resist it shouldn't either.`,
+        a: `The platform is designed to survive its own operators. Here's what that means concretely:\n\n• The GitHub repo (github.com/citeback/citebackwebsite) is public and forkable — anyone can deploy a full copy of the platform without permission or coordination with us.\n• The governance spec, campaign taxonomy, and campaign data are all in the repo. A fork doesn't start from zero — it starts with the full operational context intact.\n• The domain isn't the platform. citeback.com can be re-pointed, replaced, or abandoned. Whoever runs the fork picks their own domain. The platform isn't tied to any URL.\n• Active wallet balances are governed by the TEE rules, not the operator. A platform shutdown doesn't affect funds held in live campaign wallets — the TEE enclaves continue to enforce disbursement rules until campaigns close or the community votes on wind-down via the fork/recovery path (GOVERNANCE.md §13).\n\nIf Citeback disappears, the tools don't. This is by design. Surveillance doesn't stop. Neither should the ability to fund accountability work.`,
       },
     ],
   },

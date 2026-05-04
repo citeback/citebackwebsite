@@ -268,8 +268,8 @@ A single firm with a multidisciplinary practice covering FinCEN/BSA, OFAC, and S
 
 **Platform:** Citeback / Fourthright  
 **Repository:** github.com/citeback/citebackwebsite  
-**Governance Documentation:** GOVERNANCE.md (v0.7 Active), GOVERNANCE-SUPPLEMENTS.md  
-**Primary Contact:** [PLACEHOLDER — Insert name, email, and preferred contact method]  
+**Governance Documentation:** GOVERNANCE.md (v0.8 Active), GOVERNANCE-SUPPLEMENTS.md  
+**Primary Contact:** citeback@proton.me — pseudonymous platform contact address; personal identities of operators are maintained privately by the Wyoming DAO LLC and available to legal counsel under NDA on request  
 **Preferred Response Format:** Written legal opinion letters for each numbered issue, suitable for retention in platform compliance records  
 **Urgency:** High — No launch activity will proceed until written guidance is received on Items 1 (MSB/FinCEN) and 3 (OFAC) at minimum
 

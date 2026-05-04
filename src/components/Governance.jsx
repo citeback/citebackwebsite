@@ -7,7 +7,7 @@ const sections = [
   { id: 'campaigns', label: 'Campaign Types', icon: Scale },
   { id: 'voting', label: 'Voting Mechanics', icon: CheckCircle },
   { id: 'disbursement', label: 'Disbursement', icon: Lock },
-  { id: 'ai', label: 'AI Ensemble', icon: Cpu },
+  { id: 'human-operator', label: 'Human Operator Layer', icon: Users },
   { id: 'tee', label: 'TEE Architecture', icon: Lock },
   { id: 'bootstrapping', label: 'Bootstrapping', icon: Users },
   { id: 'immutables', label: 'Immutables', icon: AlertTriangle },
@@ -168,7 +168,7 @@ export default function Governance({ setTab }) {
             { label: 'Donors', color: '#6ee7b7', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative donations.' },
             { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
-            { label: 'AI Ensemble', color: '#f59e0b', desc: 'Monitoring only — never moves money, never advises governance decisions. Can flag anomalies for human operator review. Minimum 3 independent models.' },
+            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator — manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (TEE-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
           ].map(p => (
             <div key={p.label} style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${p.color}` }}>
               <strong style={{ color: p.color }}>{p.label}</strong>
@@ -246,16 +246,24 @@ export default function Governance({ setTab }) {
         />
       </Section>
 
-      <Section id="ai" title="AI Ensemble" icon={Cpu}>
-        <p>The AI system has two <strong style={{ color: '#fff' }}>strictly separated layers:</strong></p>
+      <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC — §9)" icon={Users}>
+        <p>Citeback is operated by the <strong style={{ color: '#fff' }}>Wyoming DAO LLC</strong> (the “platform entity”) — an active operator, not a passive relay. The platform entity handles all human-judgment functions; the TEE handles all financial execution.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: '3px solid #6ee7b7' }}>
-            <strong style={{ color: '#6ee7b7' }}>Execution Layer — deterministic only</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>No AI model is in the path of any action that moves money or changes the live site. It either satisfies coded conditions or it doesn't.</p>
+            <strong style={{ color: '#6ee7b7' }}>What the platform entity does</strong>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Campaign proposal review (legal judgment); operator onboarding and OFAC pre-screening; site content and documentation; community communications; legal compliance and DAO counsel engagement.</p>
           </div>
-          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: '3px solid #a78bfa' }}>
-            <strong style={{ color: '#a78bfa' }}>Monitoring Ensemble — detection only</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Minimum 3 independent models. Can flag anomalies for human operator review — never execute, never advise governance decisions. AI is not in the monitoring, approval, or advisory governance path. Confirmed anomalies surface to the human operator, who decides any response.</p>
+          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', borderLeft: '3px solid #f87171' }}>
+            <strong style={{ color: '#f87171' }}>What the platform entity cannot do</strong>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Access wallet private keys or key shares (TEE-enforced, immutable). Approve or block disbursements outside community-voted rules. Override community governance votes. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges.</p>
+          </div>
+          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', borderLeft: '3px solid #a78bfa' }}>
+            <strong style={{ color: '#a78bfa' }}>OFAC Screening — Two Layers (§9.3)</strong>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: '#fff' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: '#fff' }}>Layer 2:</strong> TEE automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO donor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
+          </div>
+          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: '3px solid #60a5fa' }}>
+            <strong style={{ color: '#60a5fa' }}>Community accountability for the platform entity (§9.2)</strong>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Misconduct reports (§8); governance proposals constraining operator conduct; campaign rejection appeals (Major-tier community vote can overrule); fork right — if the community loses confidence in the platform entity, a fork is always available.</p>
           </div>
         </div>
       </Section>
