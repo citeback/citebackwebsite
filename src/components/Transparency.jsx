@@ -33,6 +33,67 @@ export default function Transparency() {
         ))}
       </div>
 
+      {/* Data Sources */}
+      <div style={{ marginBottom: 40 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+          Data Sources
+        </div>
+        <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.6, marginBottom: 20, maxWidth: 560 }}>
+          Citeback is built on public data. Here's exactly where it comes from.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 48 }}>
+          {[
+            {
+              name: 'OpenStreetMap Contributors',
+              url: 'https://www.openstreetmap.org',
+              what: '92,008 ALPR camera locations mapped by volunteers worldwide.',
+              note: 'Public dataset — © OpenStreetMap contributors, ODbL',
+            },
+            {
+              name: 'EFF Atlas of Surveillance',
+              url: 'https://atlasofsurveillance.org',
+              what: 'Surveillance technology deployed by law enforcement agencies across the US.',
+              note: 'Public API and dataset',
+            },
+            {
+              name: 'CourtListener / RECAP',
+              url: 'https://www.courtlistener.com',
+              what: 'Active surveillance litigation — federal and state court filings.',
+              note: 'Public API and dataset',
+            },
+            {
+              name: 'USASpending.gov',
+              url: 'https://www.usaspending.gov',
+              what: 'Federal contracts with surveillance vendors — amounts, agencies, award dates.',
+              note: 'Public federal dataset',
+            },
+            {
+              name: 'OpenStates',
+              url: 'https://openstates.org',
+              what: 'State surveillance legislation — bills, status, sponsors, and votes.',
+              note: 'Public API and dataset',
+            },
+            {
+              name: 'Footnote4a',
+              url: 'https://footnote4a.org',
+              what: 'ALPR journalism and investigative reporting sourced in the Activity Ticker.',
+              note: 'Journalism attribution',
+            },
+          ].map((src, i) => (
+            <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: 20 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--muted)', opacity: 0.5, marginBottom: 12 }} />
+              <h3 style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fg)', textDecoration: 'none', borderBottom: '1px solid var(--border)' }}>
+                  {src.name} <ExternalLink size={11} style={{ verticalAlign: 'middle', opacity: 0.5 }} />
+                </a>
+              </h3>
+              <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.6, marginBottom: 8 }}>{src.what}</p>
+              <p style={{ color: 'var(--muted)', fontSize: 11, opacity: 0.6, fontFamily: 'var(--mono)' }}>{src.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* What if we don't launch */}
       <div style={{
         background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)',

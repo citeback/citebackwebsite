@@ -1,15 +1,15 @@
 // Real events — sourced from public records and verified news reporting
 const events = [
-  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025' },
-  { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
-  { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
-  { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
-  { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing' },
-  { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026' },
-  { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
-  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },
-  { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026' },
-  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' },
+  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025', source: 'Footnote4a' },
+  { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025', source: 'Footnote4a' },
+  { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025', source: 'KOB 4 Investigates' },
+  { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present', source: 'Public Record' },
+  { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing', source: 'Public Record' },
+  { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026', source: 'NM Senate' },
+  { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing', source: 'Public Record' },
+  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025', source: 'Footnote4a' },
+  { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026', source: 'NM Senate' },
+  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025', source: 'ACLU' },
 ]
 
 export default function ActivityTicker() {
@@ -57,6 +57,19 @@ export default function ActivityTicker() {
               <span style={{ color: 'var(--text)', fontWeight: 500 }}>{e.text}</span>
               <span style={{ margin: '0 8px', color: 'var(--border)' }}>·</span>
               <span style={{ color: 'var(--accent)', fontSize: 11, fontFamily: 'var(--mono)' }}>{e.time}</span>
+              {e.source && (
+                <span style={{
+                  marginLeft: 8,
+                  fontSize: 10,
+                  color: 'var(--muted)',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 4,
+                  padding: '1px 5px',
+                  fontFamily: 'var(--mono)',
+                  opacity: 0.75,
+                }}>{e.source}</span>
+              )}
             </span>
           ))}
         </div>
