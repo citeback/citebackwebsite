@@ -1170,7 +1170,7 @@ export default function CameraMap() {
                   {c.notes && <div style={{ fontSize: 12, color: '#555', marginBottom: 8, lineHeight: 1.5 }}>{c.notes}</div>}
                   <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>Reported: {c.reported}</div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.confirmed ? '#2ecc71' : '#f39c12', marginBottom: 6 }}>
-                    {c.confirmed ? '✓ Citeback verified — public records' : '⚠ Unverified — under review'}
+                    {c.confirmed ? '✓ Confirmed — public records' : '⚠ Unverified — under review'}
                   </div>
                   {c.source && <div style={{ fontSize: 10, color: '#777', lineHeight: 1.4 }}>Source: {c.source}</div>}
                 </div>

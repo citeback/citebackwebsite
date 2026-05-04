@@ -57,9 +57,9 @@ export default function GuaranteeSection() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
-              'Every campaign wallet lives inside a Trusted Execution Environment — hardware-level isolation. The wallet was created inside. The keys have never left.',
-              'No founder. No operator. No court order. There is no person who can produce what doesn\'t exist outside the enclave.',
-              "This isn't a policy. It isn't a promise. It's the architecture.",
+              'The target architecture: every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are created inside and never leave.',
+              'No founder. No operator. No court order. No person will be able to produce keys that exist only inside the enclave.',
+              "This isn't a policy. It isn't a promise. It's the architecture — and the code is public now for anyone to audit before launch.",
             ].map((para, i) => (
               <p
                 key={i}

@@ -5,10 +5,10 @@ import FollowTheMoney from './FollowTheMoney'
 const disbursements = []
 
 const principles = [
-  { title: 'One Wallet Per Campaign', body: 'Every campaign has dedicated Monero (XMR) and Zano (ZANO) wallets created inside a hardware-secured TEE enclave. Funds cannot be commingled. You know exactly where your crypto goes.' },
+  { title: 'One Wallet Per Campaign', body: 'Every campaign will have dedicated Monero (XMR) and Zano (ZANO) wallets created inside a hardware-secured TEE enclave at launch. Funds cannot be commingled. No wallet addresses are published until all launch prerequisites are met.' },
   { title: 'Receipt Before Release', body: 'Operators submit vendor receipts and photo proof before any disbursement is triggered. A 48-hour public challenge window follows — the community can contest any release.' },
-  { title: 'TEE-Secured — No Human Keyholders', body: 'No human holds wallet keys — not operators, not the community council, not the founder. Funds live in a Trusted Execution Environment. Rules are code. Code is public.' },
-  { title: 'Full Public Record', body: 'Every completed campaign, receipt, disbursement, and governance action is logged permanently. Signed by the TEE attestation key. Nothing is hidden.' },
+  { title: 'TEE-Secured — No Human Keyholders', body: 'The target architecture: no human holds wallet keys — not operators, not the council, not the founder. Wallets will live in a Trusted Execution Environment. The TEE code is public and open for review now. Wallets activate at Phase 2 launch.' },
+  { title: 'Full Public Record', body: 'Once live, every campaign receipt, disbursement, and governance action will be logged permanently and signed by the TEE attestation key. The governance rules governing this process are public now.' },
   { title: 'Graduated Platform Fee', body: 'A platform fee funds operations — infrastructure, Monero and Zano nodes. Fees are graduated by operator volume: 5% (under $10k), 4.5% ($10k–$25k), 4% ($25k–$50k), 3% (above $50k). See GOVERNANCE.md §7.3 for the full schedule. Ops wallets are TEE-secured with public view keys. Any surplus goes to a community vote.' },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. The founder has no special access post-launch. Same permissions as everyone else.' },
 ]

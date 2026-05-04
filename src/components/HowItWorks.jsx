@@ -22,7 +22,7 @@ const donorSteps = [
 const operatorSteps = [
   {
     title: 'Propose a Campaign',
-    desc: 'Name a specific target, submit a cost breakdown. A real program, agency, vendor, or jurisdiction — not a vague cause. Anyone can propose. The community votes on what gets funded.',
+    desc: 'Name a specific target, submit a cost breakdown. A real program, agency, vendor, or jurisdiction — not a vague cause. Anyone can propose. Once governance is live, the community votes on what gets funded — during pre-launch, proposals are reviewed by the operator team.',
   },
   {
     title: 'Get Funded',
