@@ -157,8 +157,9 @@ export default function HumanRegistry() {
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Expert Directory</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, maxWidth: 480, lineHeight: 1.6 }}>
-            Vetted operators who execute funded campaigns — attorneys, billboard operators, FOIA specialists.
-            Verified by peer vouching, not identity documents. No names. No dox. Just track records.
+            Vetted operators who execute funded campaigns — attorneys, billboard operators, FOIA specialists,
+            and technical contributors. Verified by peer vouching, not identity documents.
+            No names. No dox. Just track records. Technical contributors may register pseudonymously via XMR or ZANO address.
           </p>
         </div>
         <button onClick={() => setShowApply(true)} style={{
@@ -183,9 +184,10 @@ export default function HumanRegistry() {
           Funds are released only after campaign completion and receipt submission.
           Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
         </p>
-        <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8, lineHeight: 1.6, fontStyle: 'italic' }}>
-          Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.
-        </p>
+        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8, lineHeight: 1.6 }}>
+          <p style={{ margin: '0 0 4px', fontStyle: 'italic' }}>Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
+          <p style={{ margin: 0, fontStyle: 'italic' }}>Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
+        </div>
       </div>
 
       {/* Role slots */}

@@ -1,5 +1,6 @@
 import { CheckCircle, ExternalLink, FileText, Coins, Shield } from 'lucide-react'
 import { ThreatDisclosure } from './VerificationTiers'
+import FollowTheMoney from './FollowTheMoney'
 
 const disbursements = []
 
@@ -116,6 +117,9 @@ export default function Transparency() {
       </div>
 
       <ThreatDisclosure />
+
+      {/* Follow the Money — federal surveillance vendor contracts */}
+      <FollowTheMoney />
 
       {/* Disbursement log */}
       <div>
