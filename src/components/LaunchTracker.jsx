@@ -1,14 +1,14 @@
 import { CheckCircle, Circle, Clock } from 'lucide-react'
 
 const milestones = [
-  { done: true,    label: 'Governance specification published and active' },
-  { done: true,    label: 'Surveillance camera database operational (92,000+ cameras)' },
+  { done: true,    label: 'Governance framework published' },
+  { done: true,    label: 'Surveillance camera database live (92,000+ cameras)' },
   { done: true,    label: 'Expert directory seeded with attorneys and operators' },
   { done: true,    label: 'Campaign proposals open for community review' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
-  { done: false,   label: 'FinCEN/MSB attorney written opinion obtained' },
-  { done: false,   label: 'TEE deployment live (3 instances, 2-of-3 threshold signatures)' },
-  { done: false,   label: 'TEE attestation published and verifiable' },
+  { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
+  { done: false,   label: 'TEE wallets live — 3 nodes, 2-of-3 threshold signatures' },
+  { done: false,   label: 'TEE remote attestation published and verifiable' },
   { done: false,   label: 'Automated OFAC screening — no manual review, no PII stored' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
@@ -32,7 +32,7 @@ export default function LaunchTracker() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
           <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Launch Progress</p>
-          <p style={{ color: 'var(--muted)', fontSize: 13 }}>We go live when all prerequisites are met — not before.</p>
+          <p style={{ color: 'var(--muted)', fontSize: 13 }}>We go live when every prerequisite is met — not before.</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--accent)' }}>{pct}%</div>

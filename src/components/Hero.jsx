@@ -181,7 +181,7 @@ export default function Hero({ setTab }) {
               fontWeight: 400,
               marginBottom: 40,
             }}>
-              Anonymous crowdfunding for FOIA lawsuits, legal funds, and billboard campaigns — paid in XMR + ZANO. No account. No identity. Censorship-resistant by design.
+              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — paid in XMR + ZANO. No account. No identity. No trail.
             </p>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

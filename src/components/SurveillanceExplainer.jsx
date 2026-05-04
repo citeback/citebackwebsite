@@ -281,7 +281,7 @@ function AccordionCard({ item, defaultOpen = false }) {
             display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap',
           }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>Fund the fight</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>Take action</div>
               <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.6 }}>{item.sections.cta}</p>
             </div>
           </div>
@@ -332,11 +332,10 @@ export default function SurveillanceExplainer() {
             marginBottom: 16,
           }}>Know What You're Fighting</div>
           <h2 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 12 }}>
-            6 Types of Surveillance Tech Explained
+            6 Surveillance Technologies. Plain Language.
           </h2>
           <p style={{ color: 'var(--muted)', fontSize: 15, maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
-            Plain-language breakdowns of the technology being used to track you — what it is,
-            why it's a problem, and what communities have done to push back.
+            What each technology does, why it matters, and what cities have already done to stop it.
           </p>
         </div>
 
@@ -358,7 +357,7 @@ export default function SurveillanceExplainer() {
           </div>
           <p style={{ color: 'var(--muted)', fontSize: 14, maxWidth: 480, margin: '0 auto 20px', lineHeight: 1.7 }}>
             Every unchallenged contract is a green light for more surveillance.
-            Citeback makes it easy to fund and file public records requests in any city.
+            Fund the litigation, the ordinance fight, or the FOIA request — anonymously, in XMR or ZANO.
           </p>
           <a
             href="https://citeback.com"

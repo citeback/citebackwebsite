@@ -2,8 +2,8 @@ export default function Manifesto() {
   const pairs = [
     { they: 'Built the cage.', we: 'Document every bar.' },
     { they: 'Scan without consent.', we: 'Expose without apology.' },
-    { they: 'Share your data freely.', we: 'Fund the litigation to stop it.' },
-    { they: 'Pressure donors to back down.', we: 'Hold no keys to the wallets. No one can redirect the funds.' },
+    { they: 'Sell your data to anyone who pays.', we: 'Fund the litigation to stop it.' },
+    { they: 'Pressure donors to back down.', we: 'Hold no keys. The TEE controls the money — not us.' },
   ]
 
   return (

@@ -3,38 +3,38 @@ import { useState, useEffect, useRef } from 'react'
 const donorSteps = [
   {
     title: 'Browse Campaigns',
-    desc: 'Find a cause that needs funding — FOIA lawsuits, surveillance ordinance challenges, vendor accountability campaigns, or counter-database projects.',
+    desc: 'Find a fight worth funding — FOIA lawsuits, ordinance campaigns, vendor accountability, or surveillance mapping bounties.',
   },
   {
     title: 'Send XMR or ZANO',
-    desc: 'No account. No identity. No trail. Send directly to the campaign wallet. The wallet is TEE-secured — no human holds the keys, including us.',
+    desc: 'No account. No identity. No trail. Send directly to the campaign wallet. The operator manages the campaign — the TEE holds the funds. No human has the keys, including the operator.',
   },
   {
     title: 'Track It Publicly',
-    desc: 'Donor transactions stay private by design — XMR and ZANO leave no trace. What is public: every campaign milestone, every verified expenditure, every outcome. The accountability record is permanent.',
+    desc: 'Your donation stays private — XMR and ZANO leave no trace. What is public: every milestone, every verified disbursement, every outcome. The accountability record is permanent.',
   },
   {
     title: 'Watch It Win',
-    desc: 'Operators submit verified proof of outcomes — court filings, ordinance text, database takedowns. The campaign closes with receipts.',
+    desc: 'Operators submit verified proof of outcomes — court filings, ordinance text, database takedowns. Every campaign closes with a public receipt.',
   },
 ]
 
 const operatorSteps = [
   {
     title: 'Propose a Campaign',
-    desc: 'Name a specific target, submit a cost breakdown. A real program, agency, vendor, or jurisdiction — not a vague cause. Anyone can propose. Once governance is live, the community votes on what gets funded — during pre-launch, proposals are reviewed by the operator team.',
+    desc: 'Name a specific target. Submit a cost breakdown. A real agency, vendor, or jurisdiction — not a vague cause. Anyone can propose. Once governance is live, the community votes. During pre-launch, proposals are reviewed by the operator team.',
   },
   {
     title: 'Get Funded',
-    desc: 'Donors vote and fund anonymously in XMR or ZANO. No donor identity. No paper trail. Funds held in TEE-secured wallets until milestones are met.',
+    desc: 'Donors fund anonymously in XMR or ZANO. No donor identity. No paper trail. The TEE holds funds in escrow until milestones are verified — you can manage the campaign, not the money.',
   },
   {
     title: 'Execute and Document',
-    desc: 'Submit milestone proof as work happens — court filing numbers, signed retainers, photo evidence with GPS tags. Disbursements release after 48-hour community review.',
+    desc: 'Submit milestone proof as work happens — court filing numbers, signed retainers, GPS-tagged photos. Funds release after a 48-hour community review window.',
   },
   {
     title: 'Close with Receipts',
-    desc: 'Court filings, ordinance text, database takedowns. The campaign closes with a permanent, public outcome record.',
+    desc: 'Court filings, ordinance text, database takedowns. Every campaign closes with a permanent, public outcome record.',
   },
 ]
 
@@ -161,7 +161,7 @@ export default function HowItWorks() {
             How It Works
           </div>
           <p style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.7 }}>
-            Four steps from idea to funded action.
+            Simple. Private. Accountable.
           </p>
         </div>
 

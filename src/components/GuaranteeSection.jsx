@@ -1,8 +1,8 @@
 const facts = [
-  'Minimum 3 TEE instances across different hardware providers',
-  '2-of-3 threshold signatures required — single compromise impossible',
+  'Minimum 3 TEE instances across independent hardware providers',
+  '2-of-3 threshold signatures required — one compromised node cannot unlock funds',
   'No human has ever held a wallet key — not operators, not the founder',
-  'Operated transparently by a Wyoming DAO LLC — financials governed by code',
+  'Operated by a Wyoming DAO LLC — spending governed by code, not humans',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
   'Mission locked in code, not governance documents',
   'Architecture audited across 5 independent review rounds',
@@ -58,9 +58,9 @@ export default function GuaranteeSection() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
-              'The target architecture: every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are created inside and never leave.',
-              'The platform is operated — transparently, by a Wyoming DAO LLC. What no one can do is touch the money. No founder, no operator, no court order can produce keys that exist only inside the enclave.',
-              "This isn't a policy. It isn't a promise. It's the architecture — and the code is public now for anyone to audit before launch.",
+              'Every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are generated inside the enclave and never leave.',
+              'The platform has two layers: the operator manages campaigns, and the TEE manages money. What no one can do — no founder, no operator, no court order — is produce keys that exist only inside the enclave.',
+              "This isn't a policy. It isn't a promise. It's the architecture — and the code is public for anyone to audit before launch.",
             ].map((para, i) => (
               <p
                 key={i}
