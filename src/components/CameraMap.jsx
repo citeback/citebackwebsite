@@ -759,7 +759,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
 // ─── Main CameraMap component ─────────────────────────────────────────────────
 export default function CameraMap() {
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
-  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr']))
+  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive']))
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false })
