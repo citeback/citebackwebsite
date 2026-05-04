@@ -4,8 +4,8 @@
 const vendorProfiles = {
   palantir: {
     name: 'Palantir Technologies',
-    tagline: 'CIA-backed data analytics company. ICE\'s primary deportation tool.',
-    flag: 'Co-founded by Peter Thiel. Started with CIA seed funding. Built the \'deportation machine\' for ICE. Operates in 20+ countries. $3.8B+ in US government contracts.',
+    tagline: 'CIA venture-backed data analytics company. ICE\'s primary deportation tool.',
+    flag: 'Co-founded by Peter Thiel. Received early investment from In-Q-Tel, the CIA\'s venture arm. Built the \'deportation machine\' for ICE. Operates in 20+ countries. $3.8B+ in US government contracts.',
     founded: 2003,
     revenue: '$2.2B (2023)',
     contracts: '$3.8B+ in US government contracts including ICE, US Army, NHS (UK)',
@@ -20,13 +20,13 @@ const vendorProfiles = {
 
   clearview: {
     name: 'Clearview AI',
-    tagline: 'Scraped 30 billion faces without consent. Sells access to 3,000+ law enforcement agencies.',
+    tagline: 'Reportedly scraped 30+ billion faces without consent. Sells access to 3,000+ law enforcement agencies.',
     flag: 'Built a facial recognition database from photos scraped from Facebook, LinkedIn, Venmo — without permission. Banned in Canada, Australia, UK, France, Italy. Settled ACLU lawsuit in Illinois.',
     founded: 2017,
     revenue: 'Private (est. $30M+)',
     contracts: '3,000+ law enforcement agencies including federal, state, and local police',
     controversies: [
-      '30B+ photos scraped from social media without consent or knowledge',
+      '30B+ photos reportedly scraped from social media without consent or knowledge (Clearview CEO claim, 2023)',
       'Sold to 600+ law enforcement agencies before being exposed by BuzzFeed in 2020',
       'Banned in multiple countries for GDPR/biometric law violations',
       'Hoan Ton-That, CEO, has ties to far-right networks',
@@ -42,7 +42,7 @@ const vendorProfiles = {
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
     controversies: [
-      '~70% of alerts lead to no evidence of gunfire (academic studies)',
+      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP “Shots Fired” investigation 2021 confirmed pattern)',
       'Modified audio evidence in a Chicago murder trial — documented by The Intercept',
       'Chicago paid $33M+ for the system',
       'Rebranded as \'SoundThinking\' to escape negative press coverage',
@@ -59,7 +59,7 @@ const vendorProfiles = {
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
     controversies: [
-      '~70% of alerts lead to no evidence of gunfire (academic studies)',
+      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP “Shots Fired” investigation 2021 confirmed pattern)',
       'Modified audio evidence in a Chicago murder trial — documented by The Intercept',
       'Chicago paid $33M+ for the system',
       'Rebranded as \'SoundThinking\' to escape negative press coverage',

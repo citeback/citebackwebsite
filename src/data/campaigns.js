@@ -4,7 +4,11 @@
 
 // Platform rules (enforced by TEE wallet agent)
 export const platformRules = {
-  platformFeePercent: 1,          // 1% of all donations → ops wallet
+  // IMPORTANT: platformFeePercent below is a pre-launch placeholder.
+  // The published graduated fee schedule (Governance §7.3 / Transparency page) governs:
+  //   5% on rolling volume $0–$10k | 4.5% $10k–$25k | 4% $25k–$50k | 3% above $50k
+  // Update this value to 5 (and switch to graduated logic) before wallets go live.
+  platformFeePercent: 5,          // 5% base rate — see graduated schedule in GOVERNANCE.md §7.3
   feeBufferPercent: 2,            // 2% added to campaign goals for tx fee variance
   xmrTxFeeEstimate: 0.01,        // ~$0.01 per transaction (USD) — Monero fees set by RandomX PoW network
   zanoTxFeeEstimate: 0.01,       // ~$0.01 per transaction (USD) — Zano fees on hybrid PoW+PoS network
@@ -53,7 +57,7 @@ export const campaigns = [
     id: 2,
     type: 'billboard',
     title: 'Billboard — Taos Plaza, 18 Cameras Since 2023',
-    description: 'Public records confirm 18 Flock cameras installed near Taos Plaza and along residential streets since 2023. Residents have no idea. A billboard at the plaza\'s main entrance will change that — directly notifying thousands of tourists and locals that their plates are being scanned and stored.',
+    description: 'Public records confirm 18 Flock cameras installed near Taos Plaza and along residential streets since 2023 — without a public disclosure process or community notification. A billboard at the plaza\'s main entrance will change that — directly notifying thousands of tourists and locals that their plates are being scanned and stored.',
     location: 'Taos, NM',
     goal: 750,
     raised: 0,
