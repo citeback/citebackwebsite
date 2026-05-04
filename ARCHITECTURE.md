@@ -1,7 +1,8 @@
 # Citeback — System Architecture
 
 > Status: Pre-launch design specification  
-> Last updated: 2026-05-04
+> Last updated: 2026-05-04  
+> Operational model: Split — Wyoming DAO LLC (human operator) + Autonomous TEE (financial operations)
 
 ---
 
@@ -15,11 +16,12 @@ This document describes the full technical architecture, from wallet management 
 
 ## Design Principles
 
-1. **No trusted parties** — Trust is placed in open source code and cryptographic proofs, not people.
-2. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
-3. **Privacy-preserving** — Donors are anonymous. Operators earn reputation without revealing identity.
-4. **Self-sustaining** — The platform funds its own operations from a 1% platform fee. No founder dependency.
-5. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
+1. **No trusted parties for financial operations** — Trust in financial execution is placed in open source code and cryptographic proofs, not people. The TEE enclave holds all private keys; no human — including the Wyoming DAO LLC operator — can access or extract wallet keys.
+2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the TEE governs only financial execution.
+3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
+4. **Privacy-preserving** — Donors are anonymous. Operators earn reputation without revealing identity.
+5. **Self-sustaining** — The platform funds its own operations from a 1% platform fee. No founder dependency.
+6. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
 
@@ -30,18 +32,23 @@ This document describes the full technical architecture, from wallet management 
 │                    FOURTHRIGHT SYSTEM                    │
 │                                                         │
 │  ┌──────────────────────────────────────────────────┐   │
-│  │              TEE ENCLAVE (VPS)                   │   │
+│  │    OPERATIONAL LAYER  (Wyoming DAO LLC)           │   │
 │  │                                                  │   │
-│  │  ┌─────────────────┐  ┌──────────────────────┐  │   │
-│  │  │  Wallet Agent   │  │    Site Agent        │  │   │
-│  │  │                 │  │                      │  │   │
-│  │  │ Monero RPC      │  │ GitHub PR reviewer   │  │   │
-│  │  │ Campaign rules  │  │ Netlify deployer     │  │   │
-│  │  │ Disbursements   │  │ Code auditor         │  │   │
-│  │  │ Fee collection  │  │                      │  │   │
-│  │  └────────┬────────┘  └──────────┬───────────┘  │   │
-│  │           │                      │              │   │
-│  │           └──────────┬───────────┘              │   │
+│  │  Site management · Campaign proposal review      │   │
+│  │  Operator onboarding + OFAC pre-screening        │   │
+│  │  Legal compliance · Content editorial judgment   │   │
+│  └──────────────────────┬───────────────────────────┘   │
+│                         │ (approved campaigns)           │
+│  ┌──────────────────────▼───────────────────────────┐   │
+│  │    TEE ENCLAVE (VPS)  [Financial Operations]     │   │
+│  │                                                  │   │
+│  │  ┌─────────────────────────────────────────┐    │   │
+│  │  │  Wallet Agent                           │    │   │
+│  │  │                                         │    │   │
+│  │  │  XMR/ZANO RPC   · Wallet creation       │    │   │
+│  │  │  Fund custody   · Disbursements         │    │   │
+│  │  │  Fee collection · Attestation           │    │   │
+│  │  └───────────────────┬─────────────────────┘    │   │
 │  │                      │                          │   │
 │  │              ┌───────▼────────┐                 │   │
 │  │              │  Action Logger │                 │   │
@@ -59,6 +66,39 @@ This document describes the full technical architecture, from wallet management 
 │  └─────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
+---
+
+## 0. Operational Layer (Wyoming DAO LLC)
+
+### What It Is
+
+The Wyoming DAO LLC is the identified human operator of the Fourthright platform. It serves as the legal entity responsible for governance and compliance functions that require human editorial judgment and documented legal process. The LLC does **not** have access to wallet private keys at any point; financial execution is delegated entirely to the TEE.
+
+### Responsibilities
+
+| Function | Owner |
+|---|---|
+| Site management and content updates | Wyoming DAO LLC |
+| Campaign proposal review and approval | Wyoming DAO LLC |
+| Operator onboarding and identity verification | Wyoming DAO LLC |
+| OFAC SDN pre-screening of operators | Wyoming DAO LLC |
+| Legal compliance and regulatory response | Wyoming DAO LLC |
+| Campaign taxonomy enforcement (editorial) | Wyoming DAO LLC |
+| Wallet creation | TEE (triggered after LLC approval) |
+| Fund custody and private key management | TEE only |
+| Automated disbursements | TEE only |
+| Attestation | TEE only |
+
+### What the Operational Layer Cannot Do
+
+- It cannot access or extract TEE wallet private keys
+- It cannot force disbursements outside governance rules
+- It cannot modify the TEE's attestation-verified code unilaterally
+- It cannot retroactively alter the append-only action log
+
+### Legal Significance
+
+The Wyoming DAO LLC's role creates an identifiable legal entity for regulatory purposes (FinCEN registration, OFAC compliance documentation, §230 platform status, MSB AML program) while keeping financial custody in the TEE where no single human actor can misappropriate funds.
 
 ---
 
@@ -72,7 +112,7 @@ A TEE is a hardware-level secure enclave where code runs in an isolated, tamper-
 
 ### Why Fourthright Uses It
 
-Without a TEE, the founder controls the VPS and therefore the wallets. A TEE removes this attack surface entirely. The founder bootstraps the enclave, then has no more access than any other community member.
+Without a TEE, whoever controls the VPS controls the wallets. A TEE removes this attack surface entirely. The Wyoming DAO LLC bootstraps the enclave, then has no more access to wallet keys than any other party. This is the security guarantee that separates financial custody from operational governance.
 
 ### TEE Providers (target)
 
@@ -182,22 +222,24 @@ Extension requests are logged publicly with reasoning. Community can see the ful
 
 ---
 
-## 3. Site Agent
+## 3. Site Agent (Human-Operated)
+
+Under the split model, site management functions are performed by the Wyoming DAO LLC (human operator) rather than an autonomous TEE agent. The TEE's former Site Agent responsibilities — GitHub PR review, Netlify deployment, code auditing — are now human-executed operations governed by the same change classification rules below.
 
 ### Responsibilities
 
 - Monitors the GitHub repository for approved PRs
-- Deploys approved changes to Netlify via CLI
-- Enforces merge rules encoded in open source configuration
+- Deploys approved changes to Netlify
+- Enforces merge rules encoded in open source configuration (human applies)
 - Cannot merge PRs that haven't met community vote threshold
 - Logs every deployment with commit hash and timestamp
 
-### What the Site Agent Cannot Do
+### What the Site Operator Cannot Do
 
-- It cannot merge PRs unilaterally
-- It cannot push code without a qualifying vote
-- It cannot modify the governance rules without the time-lock expiring
-- It cannot access the wallet agent
+- Cannot merge PRs unilaterally without meeting vote thresholds
+- Cannot push code without a qualifying community vote
+- Cannot modify governance rules without the time-lock expiring
+- Cannot access or direct the TEE Wallet Agent
 
 ### Deployment Flow
 
