@@ -1,7 +1,7 @@
 import { CheckCircle, Circle, Clock } from 'lucide-react'
 
 const milestones = [
-  { done: true,    label: 'Governance specification published (v0.7 Active)' },
+  { done: true,    label: 'Governance specification published and active' },
   { done: true,    label: 'Surveillance camera database operational (92,000+ cameras)' },
   { done: true,    label: 'Expert directory seeded with attorneys and operators' },
   { done: true,    label: 'Campaign proposals open for community review' },
@@ -75,7 +75,7 @@ export default function LaunchTracker() {
         fontSize: 12, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 6,
       }}>
         <Clock size={12} />
-        No funds accepted until all 10 prerequisites are met and publicly verifiable.
+        No wallet addresses will be published until all 10 prerequisites are met and publicly verifiable. No address means nowhere to send.
       </div>
     </div>
   )

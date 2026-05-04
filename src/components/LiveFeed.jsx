@@ -19,7 +19,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'GOVERNANCE',
-    text: 'Governance v0.7 published — 5 audit rounds, zero critical issues',
+    text: 'Governance specification published — community ratification required before mainnet',
   },
   {
     category: 'SURVEILLANCE',

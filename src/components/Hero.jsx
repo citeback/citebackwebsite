@@ -93,7 +93,7 @@ export default function Hero({ setTab }) {
             textTransform: 'uppercase',
             fontWeight: 600,
           }}>
-            v0.7 Active — Campaigns Under Community Review
+            Pre-Launch — Campaigns Under Community Review
           </div>
           <div style={{
             fontSize: 11,

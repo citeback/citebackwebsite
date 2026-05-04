@@ -109,7 +109,7 @@ export default function Governance() {
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Governance Specification</h1>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-          <Tag>v0.7 Active</Tag>
+          <Tag>Active</Tag>
           <Tag color="#a78bfa">Updated 2026-04-30</Tag>
         </div>
         <p style={{ color: 'var(--text-secondary, rgba(255,255,255,0.6))', maxWidth: 600, lineHeight: 1.7 }}>
@@ -351,7 +351,7 @@ export default function Governance() {
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
         fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center'
       }}>
-        This is a living document. Version 0.7 — Active. Community ratification required before mainnet.{' '}
+        This is a living document. Community ratification required before mainnet.{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #6ee7b7)' }}>
           View full specification on GitHub →
         </a>

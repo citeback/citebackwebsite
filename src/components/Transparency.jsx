@@ -107,7 +107,7 @@ export default function Transparency() {
               What happens if Citeback doesn't launch?
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
-              Campaign wallets are controlled by the TEE — not by us. If the platform shuts down before wallets activate, no funds have been accepted and there is nothing to return. We won't accept a single XMR or ZANO until the launch prerequisites are fully met.
+              Campaign wallets are controlled by the TEE — not by us. No wallet addresses will be published until launch prerequisites are fully met. No published address means there is nowhere to send — and nothing to return.
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }}>
               Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the TEE can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.

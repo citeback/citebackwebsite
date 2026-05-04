@@ -68,10 +68,10 @@ export default function Footer({ setTab }) {
         gap: 16,
       }}>
         <div style={{ fontSize: 13, color: 'var(--gray)' }}>
-          Pre-launch — no funds accepted until all prerequisites are met.
+          Pre-launch — no wallet addresses published until all prerequisites are met.
         </div>
         <div style={{ fontSize: 13, color: 'var(--gray)' }}>
-          v0.7 Governance —{' '}
+          Governance —{' '}
           <a
             href="https://github.com"
             target="_blank"

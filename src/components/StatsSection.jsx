@@ -62,9 +62,9 @@ export default function StatsSection() {
       label: 'humans with wallet key access',
     },
     {
-      value: '5',
+      value: '10',
       isLive: false,
-      label: 'governance audit rounds completed',
+      label: 'launch prerequisites before wallets activate',
     },
     {
       value: 'XMR + ZANO',
