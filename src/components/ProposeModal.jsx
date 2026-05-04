@@ -70,8 +70,8 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Proposal Submitted</h3>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 24px' }}>
-              Your campaign proposal is in the queue. Community review takes 24–72 hours.
-              If approved, dedicated Monero (XMR) and Zano (ZANO) wallets will be generated and the campaign goes live.
+              Your campaign proposal is in the queue. During pre-launch, proposals are reviewed by the operator team within 24–72 hours. Once governance goes live, community votes will govern approvals.
+              If approved, dedicated Monero (XMR) and Zano (ZANO) wallets will be generated and the campaign opens for funding.
             </p>
             <button onClick={onClose} style={{
               background: 'var(--accent)', border: 'none', color: '#fff',

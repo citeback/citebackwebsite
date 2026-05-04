@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
-  { value: '7', label: 'Campaign Targets' },
+  { value: '7', label: 'NM Cameras (Verified)' },
   { value: '6', label: 'Campaigns Queued' },
   { value: '0', label: 'Actions Funded' },
   { value: 'XMR+ZANO', label: 'Accepted Currencies' },

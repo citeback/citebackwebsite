@@ -29,7 +29,8 @@ const vendorProfiles = {
       '30B+ photos reportedly scraped from social media without consent or knowledge (Clearview CEO claim, 2023)',
       'Sold to 600+ law enforcement agencies before being exposed by BuzzFeed in 2020',
       'Banned in multiple countries for GDPR/biometric law violations',
-      'Hoan Ton-That, CEO, has ties to far-right networks',
+      // LEGAL NOTE: "ties to far-right networks" is a characterization. Softened to documented, sourced fact.
+      'CEO Hoan Ton-That had prior associations with far-right media figures including Milo Yiannopoulos before founding Clearview — reported by The New York Times (Jan 2020)',
     ],
     url: 'https://www.nytimes.com/2020/01/18/technology/clearview-privacy-facial-recognition.html',
   },
@@ -70,8 +71,13 @@ const vendorProfiles = {
 
   flock: {
     name: 'Flock Safety',
-    tagline: 'America\'s fastest-growing ALPR company. Sharing your plate data with ICE.',
-    flag: 'Privately held, valued at $3.8B (2022). Deployed 90,000+ cameras in 4,000+ communities. Shares data with federal agencies including ICE. Granted FBI access despite \'no federal access\' promise.',
+    tagline: 'America\'s fastest-growing ALPR company. Quietly granted federal law enforcement access.',
+    // LEGAL NOTE: Prior tagline "Sharing your plate data with ICE" and flag statement
+    // "Shares data with federal agencies including ICE" removed. Source
+    // (footnote4a.org/news/fbi-access) documents FBI access specifically.
+    // ICE access may exist via fusion center sharing but lacks a citable primary source.
+    // Restore only with a direct, verifiable citation. Potential defamation risk.
+    flag: 'Privately held, valued at $3.8B (2022 funding round — current valuation unconfirmed). Deployed 90,000+ cameras in 4,000+ communities. Granted FBI access despite publicly promising no federal contracts — documented by Footnote4a (2023).',
     founded: 2017,
     revenue: 'Private (est. $150M+)',
     contracts: '4,000+ communities, 90,000+ cameras across the US',
@@ -79,7 +85,7 @@ const vendorProfiles = {
       'Quietly granted FBI access after promising communities it had no federal contracts (Footnote4a 2023)',
       'A Bernalillo County deputy was caught misusing ALPR data — given only a written reprimand',
       'Flock\'s \'Nova\' product combines plate data with commercial databases and breach records',
-      'Taos Plaza: 18 cameras installed without resident knowledge since 2023',
+      'Taos Plaza: 18 cameras installed without a public disclosure process or community notification (2023)',
     ],
     url: 'https://footnote4a.org/news/fbi-access',
   },
@@ -126,7 +132,7 @@ const vendorProfiles = {
     controversies: [
       'Identified in Georgetown Law \'The Perpetual Line-Up\' as one of the primary vendors with zero public oversight',
       'Integration with state DMV databases means your driver\'s license photo is in a searchable biometric database',
-      'No public accountability, no published accuracy audits',
+      'No publicly known accuracy audits — no independent assessment published as of last known public record',
     ],
     url: 'https://www.perpetuallineup.org',
   },
