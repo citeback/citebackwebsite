@@ -23,6 +23,7 @@ import Operators from './components/Operators'
 import ScrollProgress from './components/ScrollProgress'
 import ConversationalInterface from './components/ConversationalInterface'
 import LiveFeed from './components/LiveFeed'
+import SurveillanceFeed from './components/SurveillanceFeed'
 // ARCameraOverlay removed — too complex to debug cross-platform
 
 export default function App() {
@@ -56,6 +57,7 @@ export default function App() {
       {tab === 'trust' && <TrustFAQ />}
       {tab === 'governance' && <Governance />}
       {tab === 'operators' && <Operators />}
+      {tab === 'feed' && <SurveillanceFeed />}
 
       {showAI && <ConversationalInterface onClose={() => setShowAI(false)} />}
       {/* Floating chatbot button */}

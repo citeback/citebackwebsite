@@ -13,6 +13,7 @@ const moreLinks = [
   { id: 'operators', label: 'Run a Campaign' },
   { id: 'registry', label: 'Expert Directory' },
   { id: 'governance', label: 'Governance' },
+  { id: 'feed', label: 'Intelligence Feed' },
 ]
 
 export default function Nav({ tab, setTab }) {
