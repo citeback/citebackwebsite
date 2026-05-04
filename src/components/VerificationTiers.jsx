@@ -3,7 +3,7 @@
  *
  * Tier 0: OSM Community  — community-mapped, coordinates verified physically by someone
  * Tier 1: Submitted      — community submission pending review
- * Tier 2: Consensus      — 3-of-3 Human Registry verifiers confirmed independently
+ * Tier 2: Consensus      — 3-of-3 Expert Directory verifiers confirmed independently
  * Tier 3: C2PA Gold      — cryptographic photo proof, impossible to fake with AI
  *
  * Adversarial threat model:
@@ -31,7 +31,7 @@ export const TIERS = {
     color: '#f39c12',
     colorRaw: '243,156,18',
     icon: '⏳',
-    description: 'Community submission pending 3-of-3 Human Registry verification.',
+    description: 'Community submission pending 3-of-3 Expert Directory verification.',
     trust: 'Pending — under review',
   },
   consensus: {
@@ -40,7 +40,7 @@ export const TIERS = {
     color: '#2ecc71',
     colorRaw: '46,204,113',
     icon: '✅',
-    description: 'Three independent Human Registry verifiers confirmed this camera on-site.',
+    description: 'Three independent Expert Directory verifiers confirmed this camera on-site.',
     trust: 'Strong — consensus verified',
   },
   c2pa: {
@@ -97,7 +97,7 @@ export function ThreatDisclosure() {
         {[
           { icon: <Eye size={14} />, title: 'AI Photo Spoofing', body: 'Generative AI can produce photorealistic fake camera images. Defense: C2PA cryptographic authentication from real camera hardware.' },
           { icon: <Lock size={14} />, title: 'GPS Metadata Forgery', body: 'EXIF data is trivially editable. Defense: C2PA embeds GPS at capture time, cryptographically signed and tamper-evident.' },
-          { icon: <Shield size={14} />, title: 'Sybil Attacks', body: 'One actor, multiple fake verifier identities. Defense: Human Registry reputation stake — fraud costs real XMR.' },
+          { icon: <Shield size={14} />, title: 'Sybil Attacks', body: 'One actor, multiple fake verifier identities. Defense: Expert Directory reputation stake — fraud costs real XMR.' },
           { icon: <CheckCircle size={14} />, title: 'Our Response', body: 'Tiered verification, economic staking, C2PA authentication, and public disclosure of all verification methods.' },
         ].map((item, i) => (
           <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14 }}>

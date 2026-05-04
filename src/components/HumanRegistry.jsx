@@ -153,7 +153,7 @@ export default function HumanRegistry() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Human Registry</h2>
+          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Expert Directory</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, maxWidth: 480, lineHeight: 1.6 }}>
             Vetted operators who execute funded campaigns — attorneys, billboard operators, FOIA specialists.
             Verified by peer vouching, not identity documents. No names. No dox. Just track records.

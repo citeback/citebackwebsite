@@ -918,7 +918,7 @@ export default function CameraMap() {
                   </button>
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
-                  C2PA photos receive gold-tier verification status. Standard submissions go through 3-of-3 Human Registry review.
+                  C2PA photos receive gold-tier verification status. Standard submissions go through 3-of-3 Expert Directory review.
                 </div>
               </div>
             </>

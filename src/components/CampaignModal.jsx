@@ -175,7 +175,7 @@ export default function CampaignModal({ campaign, onClose }) {
 
               <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, padding: '0 2px' }}>
                 Wallets pending activation. Fund this campaign to open the bounty pool.
-                Verifiers apply through the Human Registry. All payouts in XMR — anonymous, instant, no bank required.
+                Verifiers apply through the Expert Directory. All payouts in XMR — anonymous, instant, no bank required.
               </div>
 
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, textAlign: 'center' }}>

@@ -11,7 +11,7 @@ const primaryLinks = [
 
 const moreLinks = [
   { id: 'operators', label: 'Run a Campaign' },
-  { id: 'registry', label: 'Human Registry' },
+  { id: 'registry', label: 'Expert Directory' },
   { id: 'trust', label: 'Trust FAQ' },
   { id: 'governance', label: 'Governance' },
 ]
