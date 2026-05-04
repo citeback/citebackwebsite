@@ -4,7 +4,7 @@ import { themes } from './themes'
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('citeback-theme') || 'PRESS')
+  const [theme, setTheme] = useState(() => localStorage.getItem('citeback-theme') || 'COLD')
 
   useEffect(() => {
     const t = themes[theme]
