@@ -1,10 +1,23 @@
 # GOVERNANCE.md — Citeback / Fourthright Platform
 
-**Version:** 0.7 — Active
+**Version:** 0.8 — Active
 **Status:** Pre-launch governance specification
-**Last Updated:** 2026-04-30
+**Last Updated:** 2026-05-04
 
 ---
+
+## Changelog: v0.7 → v0.8
+
+- **Split operational model adopted:** Platform now reflects a human operator layer + autonomous TEE financial layer
+- **§9 AI Monitoring Ensemble removed:** Replaced with Human Operator Layer (§9) — AI is not in the monitoring, approval, or advisory path
+- **TEE scope narrowed:** TEE handles wallet creation, fund custody, disbursement execution per rules, attestation, and OFAC screening at disbursement — not content monitoring or editorial judgment
+- **Human operator responsibilities defined (§9):** Campaign proposal review (legal judgment), operator onboarding, OFAC pre-screening, site content, community communications
+- **Community accountability for platform entity added (§9.2):** Misconduct reports, governance proposals, campaign rejection appeals, and fork right apply to operator conduct
+- **§12 Emergency Pause:** AI ensemble trigger removed; triggers simplified to platform entity, TEE anomaly, and community member
+- **§6.2:** AI ensemble oversight removed from Governance-tier canonical list
+- **Launch Prerequisites:** AI Ensemble requirement removed; Operator Accountability Protocol added
+- **Language:** "No one holds the keys" framing adopted throughout; platform is explicitly operated by Wyoming DAO LLC
+- **§2.4 Platform Entity added:** Wyoming DAO LLC named as an active participant with defined scope and accountability mechanisms
 
 ## Changelog: v0.6 → v0.7
 
@@ -87,7 +100,7 @@
 8. **TEE Deployment:** Minimum 3 TEE instances across different hardware providers, live with 2-of-3 threshold signatures.
 9. **TEE Threat Model:** Written, published, and community-ratified.
 10. **OFAC Integration:** Third-party screening with continuous monitoring protocol. Real-name identity data required.
-11. **AI Ensemble:** Minimum 3 models deployed, adversarial benchmark suite ratified.
+11. **Operator Accountability Protocol:** Documented process for community challenges to operator decisions (campaign approvals, operator onboarding denials), with SLA and escalation path. Published before launch.
 12. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
 13. **Misconduct Bond & Staking Systems:** Operationally tested.
 14. **Operator Insurance Framework:** Certificate collection and verification operational before first $100k+ campaign.
@@ -113,6 +126,8 @@ This platform exists to correct that asymmetry. It enables anonymous, coordinati
 
 **On Legal Defensibility:** The platform operates within law, maintains required legal registrations, and funds only lawful activities. The goal is accountability, not impunity.
 
+**On Operational Structure:** Citeback is operated by the Wyoming DAO LLC. The platform entity manages site content, reviews campaign proposals, onboards operators, and communicates with the community. What the operator cannot do — ever — is access wallet keys. The wallet architecture exists solely within the TEE (§10); no operator, court order, or government directive can extract those keys. Community governance provides accountability for both operator decisions and the financial layer.
+
 **On Entity Protection:** Wyoming DAO LLC provides civil liability protection. It does not limit federal enforcement exposure. Federal civil or criminal actions against the platform or its participants remain possible regardless of entity form.
 
 ---
@@ -136,7 +151,12 @@ Operators are **not** required to have a legal entity to apply. Entity requireme
 ### 2.3 The Community
 Active donors who participate in governance votes. No membership list, no token. Governance power flows from economic participation.
 
-### 2.4 Identity: Nostr Preferred
+### 2.4 Platform Entity (Wyoming DAO LLC)
+The Wyoming DAO LLC is the platform operator — an active participant, not a passive relay. The entity reviews campaign proposals before publication, onboards operators, maintains the platform, and communicates with the community. It is accountable to the community through the misconduct system (§8) and the fork right (§16).
+
+The platform entity has **no access to wallet keys** (TEE-enforced, §10, immutable §15) and **cannot direct disbursements** outside community-approved rules.
+
+### 2.5 Identity: Nostr Preferred
 Nostr public keys preferred — verifiable without exposing personal data, cross-platform portable.
 
 ---
@@ -319,7 +339,6 @@ Disbursements above $10,000 require approving votes from voters with **less than
 - Fund movement logic or TEE execution rules
 - Voting weight calculation or quorum thresholds
 - Disbursement approval/block thresholds
-- AI ensemble oversight or upgrade process
 - Reputation cap thresholds
 - The Immutables list (§15)
 - The minimum_threshold floor
@@ -383,30 +402,72 @@ Report filed + bond posted
 
 ---
 
-## 9. AI Monitoring Ensemble
+## 9. Human Operator Layer
 
-### 9.1 Architecture
-Execution Layer: deterministic only, no AI in money-movement path.
-Monitoring Ensemble: minimum 3 independent models (2-model prohibited), consensus required for protective action, advisory only.
+### 9.1 Role of the Platform Entity
+Citeback is operated by the Wyoming DAO LLC (the "platform entity"). The platform entity is an active operator — not a passive relay. It manages the site, reviews campaign proposals, onboards operators, and communicates with the community.
 
-### 9.2 Ensemble Actions
-| Signal | Outcome |
-|---|---|
-| 1-of-3 | Elevated monitoring |
-| 2-of-3 | Advisory flag + community notification |
-| 3-of-3 | Protective action proposed to community |
+**What the platform entity does:**
+- **Campaign proposal review:** Evaluate proposals against platform guidelines before publishing. Review includes legal judgment — campaign type eligibility, target legitimacy, documentation adequacy. The platform entity may reject proposals that violate published guidelines, but may not suppress lawful campaigns for political or competitive reasons.
+- **Operator onboarding:** Collect and verify identity documents, execute operator agreements, conduct OFAC pre-screening before any operator may create campaigns.
+- **Site content:** Manage platform text, FAQ, documentation, and public-facing communications.
+- **Community communications:** Publish governance announcements, respond to community inquiries, escalate novel legal questions to DAO counsel.
+- **Legal compliance:** Maintain entity registrations, file required disclosures, and engage DAO counsel on edge cases.
 
-### 9.3 Model Upgrades
-Benchmark outperformance (including adversarial tests) AND 60% community vote after 7-day review. 30-day shadow probation.
+**What the platform entity cannot do:**
+- Access wallet private keys or key shares — TEE-enforced, immutable (§15)
+- Approve or block disbursements outside community-voted rules — TEE-enforced
+- Override community governance votes
+- Suppress lawful campaigns that meet published guidelines
+- Use emergency pause (§12) to block governance votes or community challenges
 
-**Emergency rollback:** 60% supermajority (precautionary principle — removing a confirmed-harmful model should be easier than installing one). Non-emergency model removal retains 75% threshold.
+### 9.2 Community Accountability for the Platform Entity
+The community holds the platform entity accountable through:
 
-### 9.4 Wallet Blacklisting Limitation
-Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour donation age, logarithmic weighting, challenge eligibility, ensemble monitoring.
+- **Misconduct reports (§8):** Any community member may file a misconduct report against the platform entity for abuse of operator privileges — e.g., selective campaign rejection, manipulated OFAC pre-screening, or governance interference.
+- **Governance proposals (§6):** Community may propose and vote on binding rules constraining operator conduct via standard governance tiers.
+- **Campaign rejection appeals:** An operator who believes a proposal was improperly rejected may publish the rejection notice and grounds to the community governance interface. A Major-tier community vote (§6.1) may overrule the platform entity's decision. This prevents selective suppression of lawful campaigns.
+- **Fork right (§16):** If the community loses confidence in the platform entity, fork is always available. The community's ultimate check on operator conduct is exit.
+
+### 9.3 OFAC Screening — Two Layers
+Screening operates at two distinct points:
+
+| Layer | Who | When | Scope |
+|---|---|---|---|
+| Pre-screening | Platform entity | Operator onboarding | Identity-level, before any campaign is created |
+| Disbursement screening | TEE (automated) | Every disbursement | Wallet-level, continuous 30-day cycle |
+
+The pre-screening by the platform entity is a first-line check. It does not substitute for TEE-level monitoring — the TEE verifies compliance at every disbursement regardless of prior onboarding status.
+
+### 9.4 Campaign Proposal Review Process
+
+**Standard path:**
+1. Operator submits proposal
+2. Platform entity reviews (target eligibility, documentation, campaign type guidelines) — 72-hour SLA
+3. If approved: campaign published; community review period begins per §3.7
+4. If rejected: operator receives written reason; may resubmit with corrections or invoke appeal path
+
+**Appeal path:** An operator may publish a rejection notice to the community governance interface. A Major-tier community vote may overrule the platform entity's decision.
+
+**Platform entity may not reject based on:**
+- Political valence of the campaign target
+- Potential embarrassment to specific governments, corporations, or individuals in power
+- Controversy alone, provided the campaign meets published guidelines
+
+### 9.5 Wallet Blacklisting Limitation
+Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour donation age, logarithmic weighting, and challenge eligibility.
 
 ---
 
 ## 10. TEE Architecture
+
+**TEE Scope:** The TEE layer is narrowly scoped to financial custody and execution functions. It does not monitor content, make editorial judgments, or advise on governance. Human operator judgment handles those functions (§9).
+
+- Wallet keypair generation (XMR + ZANO) — inside the enclave only
+- Fund receipt and custody
+- Disbursement execution per community-approved rules
+- Cryptographic attestation of execution
+- OFAC screening at disbursement time (§10.4)
 
 ### 10.1 Multi-TEE (3 Instances, 2-of-3)
 Minimum 3 TEE instances on different hardware providers. **2-of-3 threshold signatures.** Single compromise cannot release funds. Governance immutable (§15).
@@ -437,10 +498,12 @@ Published and community-ratified before launch. Must address side-channel risks,
 ## 12. Emergency Pause
 
 ### 12.1 Triggers
-Any **2-of-3:**
-- **(a)** Ensemble majority flags active attack
-- **(b)** Statistical evidence: p<0.05 AND Cohen's h ≥ 0.5 AND n ≥ 20 (all three required)
-- **(c)** Attack pattern confirmed ongoing
+Emergency pause may be triggered by:
+- **(a)** Platform entity identifies active technical exploitation, legal emergency, or critical system failure requiring immediate halt
+- **(b)** TEE anomaly: 2+ TEE instances report threshold signature failures or attestation errors
+- **(c)** Community member trigger (§12.2)
+
+The platform entity's pause authority under (a) is limited to 72 hours. Extension requires a Major-tier community vote. The platform entity cannot use emergency pause to suppress governance votes or community challenges.
 
 ### 12.2 Human-Observable Trigger
 Reputation ≥ 25 member submits Pause Request → 12-hour provisional pause. At hour 12: auto-expires unless confirmed by 25-voter simple majority. Safe default: resumption (not escalation). Per-address cooldown: 72 hours between Pause Requests.
@@ -480,6 +543,8 @@ All three must be met:
 - [ ] Governance doc ratified
 - [ ] Founder address registry encoded and attested
 - [ ] Founder publicly removes any special access
+- [ ] Operator onboarding framework tested (identity verification, OFAC pre-screening, operator agreement execution)
+- [ ] Operator accountability protocol published and community-reviewed
 
 ---
 
@@ -512,14 +577,13 @@ Fork option is always available. Community's ultimate check is exit.
 1. **Monero + AML legal question** *(Attorney required)* — Monero's privacy features create higher AML risk than other crypto. Attorney must address compatibility with the OFAC/KYC framework before launch.
 2. **TEE attestation evidentiary treatment** — If subpoenaed, TEE logs may be primary evidence. Chain-of-custody, data retention obligations, and compromised-instance posture need attorney analysis before launch.
 3. **Fiat disbursement pathway** *(Highest operational priority)* — Lawyers get paid in dollars. Billboard vendors require entity names. How do campaigns deploy funds without exposing participants? Requires legal + operational design: privacy-preserving foundation, licensed intermediary, or equivalent. This is not solved by governance — it requires Phase 2 design work.
-2. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible donor pool size significantly.
-3. **TEE provider selection** — Phala vs Marlin vs other; requires technical evaluation
-4. **GitHub repo governance during bootstrap** — Founder controls; community fork right guaranteed from day 1
-5. **Legislative advocacy compliance mechanism** — Attorney must resolve before type goes live
-6. **Initial benchmark suite** — Must be drafted and ratified before any model upgrade vote
-7. **XMR price oracle** — 30-day rolling average; specific oracle source to be selected
-8. **Voting diversity overlap calculation** — Technical specification for 180-day overlap calculation needed
-9. **"Accountability vs. extortion" bright line policy** — Attorney must produce an operational definition of where accountability campaigns cross into Hobbs Act territory; operators need decision criteria
+4. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible donor pool size significantly.
+5. **TEE provider selection** — Phala vs Marlin vs other; requires technical evaluation
+6. **GitHub repo governance during bootstrap** — Founder controls; community fork right guaranteed from day 1
+7. **Legislative advocacy compliance mechanism** — Attorney must resolve before type goes live
+8. **XMR price oracle** — 30-day rolling average; specific oracle source to be selected
+9. **Voting diversity overlap calculation** — Technical specification for 180-day overlap calculation needed
+10. **"Accountability vs. extortion" bright line policy** — Attorney must produce an operational definition of where accountability campaigns cross into Hobbs Act territory; operators need decision criteria
 
 ---
 
