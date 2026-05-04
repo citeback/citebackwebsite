@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 const primaryLinks = [
   { id: 'home', label: 'Home' },
   { id: 'campaigns', label: 'Campaigns' },
-  { id: 'map', label: 'Camera Map' },
+  { id: 'map', label: 'Surveillance Map' },
   { id: 'trust', label: 'How It Works' },
   { id: 'transparency', label: 'Transparency' },
 ]

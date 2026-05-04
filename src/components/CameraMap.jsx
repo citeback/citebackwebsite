@@ -905,7 +905,7 @@ export default function CameraMap() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Surveillance Camera Map</h2>
+          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Surveillance Map</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, lineHeight: 1.6, maxWidth: 480 }}>
             Live ALPR data from OpenStreetMap — 92,000+ cameras mapped by contributors worldwide.
             Zoom in to load cameras in any area. Every pin has a source.

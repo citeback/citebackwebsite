@@ -33,7 +33,7 @@ HOW TO DONATE:
 - Get Zano (ZANO) at Zano Trade (zano.org/trade) or supported exchanges — use Zano desktop/mobile wallet
 
 HOW TO HELP:
-- Submit a camera location on the Camera Map (no account required)
+- Submit a camera location on the Surveillance Map (no account required)
 - Apply to the Expert Directory as an attorney, billboard operator, or FOIA specialist
 - Propose a new campaign in any state
 - Contribute to OpenStreetMap to add more ALPR cameras to the dataset
