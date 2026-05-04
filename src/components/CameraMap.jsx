@@ -5,6 +5,13 @@ import L from 'leaflet'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield } from 'lucide-react'
 import { C2PAExplainer, ThreatDisclosure } from './VerificationTiers'
+import {
+  facialRecognitionAgencies,
+  stingrays,
+  shotspotter,
+  policeDrones,
+  predictivePolicing,
+} from '../data/surveillanceLayers'
 
 // Hardcoded verified NM cameras (our own sourced data)
 const verifiedCameras = [
@@ -559,6 +566,7 @@ const EFF_LAYERS = [
     sourceUrl: 'https://openstreetmap.org',
     active: true,
     live: true,
+    data: null,
     description: '92,000+ automatic license plate readers mapped nationally via OpenStreetMap',
   },
   {
@@ -566,55 +574,60 @@ const EFF_LAYERS = [
     label: 'Facial Recognition',
     icon: '👁️',
     color: '#a855f7',
-    source: 'EFF Atlas of Surveillance',
+    source: 'Georgetown Law / EFF / ACLU / Clearview AI leak',
     sourceUrl: 'https://atlasofsurveillance.org',
     active: false,
-    live: false,
-    description: 'Agencies using facial recognition systems by city',
+    live: true,
+    data: facialRecognitionAgencies,
+    description: `${facialRecognitionAgencies.length} confirmed agencies — facial recognition deployments from Georgetown Law, EFF Atlas, ACLU trackers, and investigative reporting`,
   },
   {
     id: 'stingray',
     label: 'Cell-Site Simulators',
     icon: '📡',
     color: '#f97316',
-    source: 'EFF Atlas of Surveillance',
-    sourceUrl: 'https://atlasofsurveillance.org',
+    source: 'ACLU / EFF Atlas of Surveillance',
+    sourceUrl: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices',
     active: false,
-    live: false,
-    description: 'Stingray / IMSI catcher deployments by agency',
+    live: true,
+    data: stingrays,
+    description: `${stingrays.length} confirmed agencies — Stingray/IMSI catcher deployments from ACLU national tracker, EFF Atlas, and FOIA records`,
   },
   {
     id: 'shotspotter',
     label: 'ShotSpotter',
     icon: '🔊',
     color: '#eab308',
-    source: 'EFF Atlas of Surveillance',
-    sourceUrl: 'https://atlasofsurveillance.org',
+    source: 'AP Investigation / MacArthur Justice Ctr / USASpending',
+    sourceUrl: 'https://apnews.com/article/shotspotter-gunfire-detection-9ee0e1935bc7d8eef5c7afc3a5b36c3c',
     active: false,
-    live: false,
-    description: 'Gunshot detection microphone networks',
+    live: true,
+    data: shotspotter,
+    description: `${shotspotter.length} confirmed cities — gunshot detection microphone networks from AP investigation, city contracts, and USASpending`,
   },
   {
     id: 'drones',
     label: 'Police Drones',
     icon: '🚁',
     color: '#06b6d4',
-    source: 'EFF Atlas of Surveillance',
-    sourceUrl: 'https://atlasofsurveillance.org',
+    source: 'Bard College Drone Center / EFF Atlas / FAA',
+    sourceUrl: 'https://dronecenter.bard.edu',
     active: false,
-    live: false,
-    description: 'Law enforcement aerial surveillance drone programs',
+    live: true,
+    data: policeDrones,
+    description: `${policeDrones.length} confirmed agencies — drone programs from Bard College Drone Center, EFF Atlas, FAA records, and FOIA`,
   },
   {
     id: 'predictive',
     label: 'Predictive Policing',
     icon: '🧠',
     color: '#ec4899',
-    source: 'EFF Atlas of Surveillance',
-    sourceUrl: 'https://atlasofsurveillance.org',
+    source: 'PredPol client lists / The Markup / Brennan Center',
+    sourceUrl: 'https://themarkup.org/prediction-bias/2021/12/02/crime-prediction-software-promised-to-be-free-of-bias',
     active: false,
-    live: false,
-    description: 'Algorithmic predictive policing software deployments',
+    live: true,
+    data: predictivePolicing,
+    description: `${predictivePolicing.length} confirmed deployments — algorithmic policing from PredPol client lists, Palantir contracts, The Markup, and Brennan Center`,
   },
 ]
 
@@ -1038,6 +1051,50 @@ export default function CameraMap() {
           ))}
 
           {filteredCameras.length > 0 && activeLayers.has('alpr') && <OSMCanvasLayer cameras={filteredCameras} />}
+
+          {/* Non-ALPR surveillance overlay layers */}
+          {EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data && activeLayers.has(l.id)).map(layer =>
+            layer.data.map((agency, i) => (
+              <CircleMarker
+                key={`${layer.id}-${i}`}
+                center={[agency.lat, agency.lng]}
+                radius={7}
+                pathOptions={{
+                  fillColor: layer.color,
+                  fillOpacity: 0.75,
+                  color: layer.color,
+                  weight: 1.5,
+                  opacity: 0.6,
+                }}
+              >
+                <Popup>
+                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 240, padding: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                      <span style={{ fontSize: 16 }}>{layer.icon}</span>
+                      <span style={{ fontWeight: 800, fontSize: 13, color: layer.color }}>
+                        {layer.label.toUpperCase()}
+                      </span>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{agency.name}</div>
+                    <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                      📍 {agency.city}, {agency.state}
+                    </div>
+                    {agency.vendor && (
+                      <div style={{ fontSize: 12, color: '#555', marginBottom: 4 }}>
+                        <strong>Vendor/System:</strong> {agency.vendor}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 11, fontWeight: 700, color: agency.confirmed ? '#10b981' : '#f59e0b', marginBottom: 6 }}>
+                      {agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#777', lineHeight: 1.5, borderTop: '1px solid #eee', paddingTop: 6 }}>
+                      <strong>Source:</strong> {agency.source}
+                    </div>
+                  </div>
+                </Popup>
+              </CircleMarker>
+            ))
+          )}
         </MapContainer>
 
         {/* Surveillance overlay toggle panel */}
@@ -1105,9 +1162,13 @@ export default function CameraMap() {
                         <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? '#f0f0f0' : '#6b7280', lineHeight: 1.2 }}>
                           {layer.label}
                         </div>
-                        {!layer.live && (
+                        {layer.data && layer.data.length > 0 ? (
+                          <div style={{ fontSize: 10, color: layer.color, marginTop: 2, opacity: 0.8 }}>
+                            {layer.data.length} confirmed deployments
+                          </div>
+                        ) : !layer.live ? (
                           <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 2 }}>Activating soon — EFF Atlas data loading</div>
-                        )}
+                        ) : null}
                       </div>
                       <div style={{
                         width: 10, height: 10, borderRadius: '50%',
@@ -1121,14 +1182,24 @@ export default function CameraMap() {
 
               <div style={{
                 marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)',
-                fontSize: 10, color: '#4b5563', lineHeight: 1.5,
+                fontSize: 10, color: '#4b5563', lineHeight: 1.6,
               }}>
-                Non-ALPR data:{' '}
+                Sources:{' '}
                 <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
-                >
-                  EFF Atlas of Surveillance
-                </a>
+                >EFF Atlas</a>
+                {' · '}
+                <a href="https://georgetownlawtechreview.org/the-perpetual-line-up-unregulated-police-face-recognition-in-america/GLTR-10-2016/" target="_blank" rel="noopener noreferrer"
+                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                >Georgetown Law</a>
+                {' · '}
+                <a href="https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices" target="_blank" rel="noopener noreferrer"
+                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                >ACLU</a>
+                {' · '}
+                <a href="https://dronecenter.bard.edu" target="_blank" rel="noopener noreferrer"
+                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                >Bard Drone Ctr</a>
               </div>
             </div>
           )}
