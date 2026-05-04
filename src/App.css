@@ -114,3 +114,19 @@ img {
     padding: 20px 16px !important;
   }
 }
+
+/* ── Camera Map — Cluster Marker Brand Colors ─────────────── */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(230, 57, 70, 0.18) !important;
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: rgba(230, 57, 70, 0.85) !important;
+  color: #fff !important;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+}
