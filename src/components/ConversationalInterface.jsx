@@ -35,7 +35,7 @@ const STATIC_RESPONSES = {
   'What is Citeback?':
     'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Donations arrive in Monero or Zano; a Trusted Execution Environment manages every wallet so no human can touch the keys. The platform is operated by a Wyoming DAO LLC.',
   'How do I donate anonymously?':
-    'Send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets are managed by a TEE enclave — no operator, no employee, and no government subpoena can extract the keys.',
+    'Send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets are managed by a TEE enclave — the architecture is designed to make key extraction technically infeasible, including under legal compulsion. No software patch or subpoena produces keys that exist only in hardware.',
   'What currencies do you accept?':
     'Citeback accepts Monero (XMR) and Zano (ZANO). Monero uses ring signatures, stealth addresses, and RingCT to obscure sender, receiver, and amount. Zano is private-by-default at the protocol level — it also hides asset type — and supports Ionic Swaps for atomic peer-to-peer exchange.',
   'Who controls the wallets?':

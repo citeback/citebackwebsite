@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
-  { value: '7', label: 'NM Cameras (Public Records)' },
+  { value: '7', label: 'NM Cameras (via FOIA)' },
   { value: '6', label: 'Campaigns Queued' },
   { value: '0', label: 'Actions Funded' },
   { value: 'XMR+ZANO', label: 'Accepted Currencies' },
@@ -101,7 +101,7 @@ export default function Hero({ setTab }) {
             color: 'var(--gray)',
             textTransform: 'uppercase',
           }}>
-            Est. 2025 · New Mexico · United States
+            Est. 2026 · New Mexico · United States
           </div>
         </div>
 

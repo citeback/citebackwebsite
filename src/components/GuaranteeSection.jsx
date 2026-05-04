@@ -1,10 +1,10 @@
 const facts = [
   'Minimum 3 TEE instances across independent hardware providers',
   '2-of-3 threshold signatures required — one compromised node cannot unlock funds',
-  'No human has ever held a wallet key — not operators, not the founder',
-  'Operated by a Wyoming DAO LLC — spending governed by code, not humans',
+  'No human will ever hold a wallet key — keys are generated inside the TEE enclave and never leave',
+  'Being structured as a Wyoming DAO LLC — spending governed by code, not humans',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
-  'Mission locked in code, not governance documents',
+  'Mission encoded in TEE code — not governance documents that can be quietly amended',
   'Architecture specification published — open for community audit before launch',
 ];
 

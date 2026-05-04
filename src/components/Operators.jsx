@@ -40,7 +40,7 @@ function Req({ ok, children }) {
 const campaignTypes = [
   { tier: 1, label: 'Tier 1 - Highest Impact', color: '#6ee7b7', types: [
     { name: 'Public Records Litigation', desc: 'Force disclosure via FOIA litigation and injunctions. Produces permanent citable records.' },
-    { name: 'Ordinance Campaigns', desc: 'City council campaigns to ban or regulate surveillance locally. 50+ cities have succeeded.' },
+    { name: 'Ordinance Campaigns', desc: 'City council campaigns to ban or regulate surveillance locally. Proven playbook across dozens of cities.' },
     { name: 'Counter-Database Projects', desc: 'Accountability mapping of surveillance infrastructure. Feeds litigation, journalism, legislation.' },
     { name: 'FOIA Campaigns', desc: 'High-volume records requests. Low cost, feeds every other campaign type.' },
     { name: 'Journalist Partnerships', desc: 'Fund investigative reporting on specific surveillance deployments.' },
