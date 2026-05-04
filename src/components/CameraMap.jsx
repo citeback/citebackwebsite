@@ -631,6 +631,101 @@ const EFF_LAYERS = [
   },
 ]
 
+// ─── Inline layer blurbs for non-ALPR types ─────────────────────────────────
+const LAYER_BLURBS = {
+  facial: 'AI that matches your face against a police database — often without your knowledge.',
+  stingray: 'Fake cell towers that force every phone in range to reveal its identity and location.',
+  shotspotter: 'Microphones that claim to detect gunshots — ~70% of alerts find no evidence of gunfire.',
+  drones: 'Unmanned aircraft that can carry cameras, thermal sensors, and even Stingrays.',
+  predictive: 'Algorithms that score residents as future criminals, directing police based on bias-amplifying data.',
+}
+
+function LayerToggles({ activeLayers, setActiveLayers }) {
+  const [expandedBlurb, setExpandedBlurb] = useState(null)
+
+  const toggle = (id) => {
+    setActiveLayers(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else {
+        next.add(id)
+        // Auto-expand blurb when turning on a non-ALPR layer
+        if (id !== 'alpr') setExpandedBlurb(id)
+      }
+      return next
+    })
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {EFF_LAYERS.map(layer => {
+        const isOn = activeLayers.has(layer.id)
+        const blurb = LAYER_BLURBS[layer.id]
+        const blurbOpen = expandedBlurb === layer.id
+        return (
+          <div key={layer.id}>
+            <button
+              onClick={() => toggle(layer.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                background: isOn ? `${layer.color}14` : 'transparent',
+                border: `1px solid ${isOn ? `${layer.color}40` : 'rgba(255,255,255,0.06)'}`,
+                borderRadius: blurbOpen ? '8px 8px 0 0' : 8, padding: '8px 10px',
+                cursor: 'pointer', width: '100%', textAlign: 'left',
+                transition: 'all 0.15s',
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{layer.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? '#f0f0f0' : '#6b7280', lineHeight: 1.2 }}>
+                  {layer.label}
+                </div>
+                {layer.data && layer.data.length > 0 ? (
+                  <div style={{ fontSize: 10, color: layer.color, marginTop: 2, opacity: 0.8 }}>
+                    {layer.data.length} confirmed deployments
+                  </div>
+                ) : !layer.live ? (
+                  <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 2 }}>Activating soon — EFF Atlas data loading</div>
+                ) : null}
+              </div>
+              <div style={{
+                width: 10, height: 10, borderRadius: '50%',
+                background: isOn ? layer.color : 'rgba(255,255,255,0.12)',
+                flexShrink: 0, transition: 'background 0.15s',
+              }} />
+            </button>
+
+            {/* Inline blurb for non-ALPR layers */}
+            {blurb && isOn && blurbOpen && (
+              <div style={{
+                background: `${layer.color}0e`,
+                border: `1px solid ${layer.color}30`,
+                borderTop: 'none',
+                borderRadius: '0 0 8px 8px',
+                padding: '8px 10px 10px',
+              }}>
+                <div style={{ fontSize: 11, color: '#c0bdb8', lineHeight: 1.55, marginBottom: 6 }}>
+                  ℹ️ {blurb}
+                </div>
+                <button
+                  onClick={() => setExpandedBlurb(null)}
+                  style={{
+                    background: 'none', border: 'none',
+                    color: layer.color, fontSize: 11, fontWeight: 600,
+                    cursor: 'pointer', padding: 0,
+                  }}
+                >
+                  Learn more ↗
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ─── Main CameraMap component ─────────────────────────────────────────────────
 export default function CameraMap() {
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
@@ -1176,49 +1271,7 @@ export default function CameraMap() {
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {EFF_LAYERS.map(layer => {
-                  const isOn = activeLayers.has(layer.id)
-                  return (
-                    <button
-                      key={layer.id}
-                      onClick={() => setActiveLayers(prev => {
-                        const next = new Set(prev)
-                        if (next.has(layer.id)) next.delete(layer.id)
-                        else next.add(layer.id)
-                        return next
-                      })}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        background: isOn ? `${layer.color}14` : 'transparent',
-                        border: `1px solid ${isOn ? `${layer.color}40` : 'rgba(255,255,255,0.06)'}`,
-                        borderRadius: 8, padding: '8px 10px',
-                        cursor: 'pointer', width: '100%', textAlign: 'left',
-                        transition: 'all 0.15s',
-                      }}
-                    >
-                      <span style={{ fontSize: 14 }}>{layer.icon}</span>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? '#f0f0f0' : '#6b7280', lineHeight: 1.2 }}>
-                          {layer.label}
-                        </div>
-                        {layer.data && layer.data.length > 0 ? (
-                          <div style={{ fontSize: 10, color: layer.color, marginTop: 2, opacity: 0.8 }}>
-                            {layer.data.length} confirmed deployments
-                          </div>
-                        ) : !layer.live ? (
-                          <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 2 }}>Activating soon — EFF Atlas data loading</div>
-                        ) : null}
-                      </div>
-                      <div style={{
-                        width: 10, height: 10, borderRadius: '50%',
-                        background: isOn ? layer.color : 'rgba(255,255,255,0.12)',
-                        flexShrink: 0, transition: 'background 0.15s',
-                      }} />
-                    </button>
-                  )
-                })}
-              </div>
+              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} />
 
               <div style={{
                 marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)',

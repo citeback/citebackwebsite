@@ -11,6 +11,7 @@ import CameraMap from './components/CameraMap'
 import HowItWorks from './components/HowItWorks'
 import HumanRegistry from './components/HumanRegistry'
 import ALPRExplainer from './components/ALPRExplainer'
+import SurveillanceExplainer from './components/SurveillanceExplainer'
 import Manifesto from './components/Manifesto'
 import GuaranteeSection from './components/GuaranteeSection'
 import Transparency from './components/Transparency'
@@ -45,6 +46,8 @@ export default function App() {
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
           <HowItWorks />
+          <ALPRExplainer />
+          <SurveillanceExplainer />
           <Manifesto />
           <GuaranteeSection />
           <LiveFeed />
