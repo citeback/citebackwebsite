@@ -14,6 +14,10 @@ const CL_QUERIES = [
 // Set VITE_OPENSTATES_KEY in your .env file
 const OPENSTATES_KEY = import.meta.env.VITE_OPENSTATES_KEY || ''
 
+// ── Congress.gov — DEMO_KEY works for dev (30 req/hr) ────────────────────────
+// Set VITE_CONGRESS_KEY in your .env for a full key
+const CONGRESS_KEY = import.meta.env.VITE_CONGRESS_KEY || 'DEMO_KEY'
+
 // Mock legislative data shown when no OpenStates key is configured
 const MOCK_BILLS = [
   {
@@ -63,6 +67,50 @@ const MOCK_BILLS = [
   },
 ]
 
+// Static fallback bills shown when Congress.gov returns no surveillance matches
+const FEDERAL_BILLS_FALLBACK = [
+  {
+    id: 'S.1265-119',
+    title: 'Fourth Amendment Is Not For Sale Act',
+    congress: 119,
+    status: 'Introduced',
+    lastAction: 'Read twice and referred to the Committee on the Judiciary',
+    date: '2025-03-27',
+    url: 'https://www.congress.gov/bill/119th-congress/senate-bill/1265',
+    isFallback: true,
+  },
+  {
+    id: 'HR.776-119',
+    title: 'American Data Privacy and Protection Act',
+    congress: 119,
+    status: 'Introduced',
+    lastAction: 'Referred to the House Committee on Energy and Commerce',
+    date: '2025-01-28',
+    url: 'https://www.congress.gov/bill/119th-congress/house-bill/776',
+    isFallback: true,
+  },
+  {
+    id: 'S.509-119',
+    title: 'Facial Recognition and Biometric Technology Moratorium Act',
+    congress: 119,
+    status: 'Introduced',
+    lastAction: 'Read twice and referred to the Committee on Commerce, Science, and Transportation',
+    date: '2025-02-11',
+    url: 'https://www.congress.gov/bill/119th-congress/senate-bill/509',
+    isFallback: true,
+  },
+  {
+    id: 'S.744-119',
+    title: 'Location Privacy Protection Act',
+    congress: 119,
+    status: 'Introduced',
+    lastAction: 'Read twice and referred to the Committee on Commerce, Science, and Transportation',
+    date: '2025-02-27',
+    url: 'https://www.congress.gov/bill/119th-congress/senate-bill/744',
+    isFallback: true,
+  },
+]
+
 function StatusBadge({ status }) {
   const color =
     /signed|enacted|law/i.test(status) ? 'var(--accent)' :
@@ -90,10 +138,13 @@ function StatusBadge({ status }) {
 export default function SurveillanceFeed() {
   const [cases, setCases] = useState([])
   const [bills, setBills] = useState([])
+  const [federalBills, setFederalBills] = useState([])
   const [casesLoading, setCasesLoading] = useState(true)
   const [billsLoading, setBillsLoading] = useState(true)
+  const [federalLoading, setFederalLoading] = useState(true)
   const [casesError, setCasesError] = useState(null)
   const [billsError, setBillsError] = useState(null)
+  const [federalError, setFederalError] = useState(null)
 
   // ── Fetch CourtListener cases ─────────────────────────────────────────────
   useEffect(() => {
@@ -134,6 +185,49 @@ export default function SurveillanceFeed() {
       }
       setCasesLoading(false)
     })
+
+    return () => { cancelled = true }
+  }, [])
+
+  // ── Fetch Congress.gov federal bills ───────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false
+    setFederalLoading(true)
+    setFederalError(null)
+
+    const SURVEILLANCE_TERMS = /surveillance|license plate|privacy|tracking|biometric|facial recognition|ALPR|fourth amendment/i
+
+    fetch(
+      `https://api.congress.gov/v3/bill/119?format=json&limit=20&api_key=${CONGRESS_KEY}&sort=updateDate+desc`
+    )
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        if (cancelled) return
+        const matched = (data.bills || []).filter(b => SURVEILLANCE_TERMS.test(b.title || ''))
+        if (matched.length === 0) {
+          setFederalBills(FEDERAL_BILLS_FALLBACK)
+        } else {
+          setFederalBills(matched.slice(0, 5).map(b => {
+            const typeSlug = b.type === 'HR' ? 'house-bill' : b.type === 'S' ? 'senate-bill' : (b.type || '').toLowerCase()
+            return {
+              id: `${b.type}${b.number}-${b.congress}`,
+              title: b.title,
+              congress: b.congress,
+              status: b.latestAction?.text || 'Unknown',
+              lastAction: b.latestAction?.text || '',
+              date: b.latestAction?.actionDate || '',
+              url: `https://www.congress.gov/bill/${b.congress}th-congress/${typeSlug}/${b.number}`,
+            }
+          }))
+        }
+        setFederalLoading(false)
+      })
+      .catch(err => {
+        if (cancelled) return
+        setFederalBills(FEDERAL_BILLS_FALLBACK)
+        setFederalError(`API unavailable (${err}) — showing known legislation`)
+        setFederalLoading(false)
+      })
 
     return () => { cancelled = true }
   }, [])
@@ -514,6 +608,168 @@ export default function SurveillanceFeed() {
             </div>
           </div>
         </div>
+
+        {/* ── Federal Bills ─────────────────────────────── */}
+        <div style={{ marginTop: 40 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingBottom: 12,
+            borderBottom: '2px solid var(--fg)',
+            marginBottom: 0,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--fg)',
+              }}>
+                Federal Bills
+              </span>
+              <span style={{
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--accent)',
+                border: '1px solid var(--accent)',
+                padding: '2px 6px',
+                opacity: 0.85,
+              }}>
+                Federal
+              </span>
+              {federalBills.some(b => b.isFallback) && (
+                <span style={{
+                  fontSize: 9,
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: 'var(--muted)',
+                  border: '1px solid var(--border)',
+                  padding: '2px 5px',
+                }}>
+                  Sample
+                </span>
+              )}
+            </div>
+            <a
+              href="https://www.congress.gov/search?q=%7B%22source%22%3A%22legislation%22%2C%22search%22%3A%22surveillance%22%7D"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 11,
+                color: 'var(--muted)',
+                textDecoration: 'none',
+                letterSpacing: '0.04em',
+              }}
+            >
+              View all →
+            </a>
+          </div>
+
+          {federalLoading ? (
+            <FederalBillsSkeleton />
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+              gap: 0,
+            }}>
+              {federalBills.slice(0, 4).map((b, i) => (
+                <a
+                  key={b.id}
+                  href={b.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'block',
+                    textDecoration: 'none',
+                    padding: '16px 0',
+                    borderBottom: '1px solid var(--border)',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg2)'; e.currentTarget.style.marginLeft = '-12px'; e.currentTarget.style.paddingLeft = '12px'; e.currentTarget.style.marginRight = '-12px'; e.currentTarget.style.paddingRight = '12px' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.marginLeft = '0'; e.currentTarget.style.paddingLeft = '0'; e.currentTarget.style.marginRight = '0'; e.currentTarget.style.paddingRight = '0' }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                    marginBottom: 6,
+                  }}>
+                    <span style={{
+                      flexShrink: 0,
+                      fontSize: 9,
+                      fontWeight: 700,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'var(--accent)',
+                      border: '1px solid var(--accent)',
+                      padding: '3px 6px',
+                      marginTop: 1,
+                      opacity: 0.8,
+                    }}>
+                      {b.congress}th
+                    </span>
+                    <div style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: 'var(--fg)',
+                      lineHeight: 1.4,
+                    }}>
+                      {b.title}
+                    </div>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    flexWrap: 'wrap',
+                    paddingLeft: 40,
+                  }}>
+                    <StatusBadge status={b.status} />
+                    {b.date && (
+                      <span style={{
+                        fontSize: 11,
+                        color: 'var(--muted)',
+                        fontFamily: 'var(--mono)',
+                      }}>
+                        {b.date}
+                      </span>
+                    )}
+                    {b.lastAction && b.lastAction !== b.status && (
+                      <span style={{
+                        fontSize: 11,
+                        color: 'var(--muted)',
+                        lineHeight: 1.4,
+                      }}>
+                        {b.lastAction.length > 80 ? b.lastAction.slice(0, 80) + '…' : b.lastAction}
+                      </span>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {federalError && (
+            <div style={{ marginTop: 8, fontSize: 11, color: 'var(--muted)' }}>
+              {federalError}
+            </div>
+          )}
+
+          <div style={{
+            marginTop: 16,
+            fontSize: 10,
+            color: 'var(--muted)',
+            letterSpacing: '0.04em',
+          }}>
+            Source: Congress.gov API · 119th Congress
+          </div>
+        </div>
+
       </div>
 
       <style>{`
@@ -546,6 +802,23 @@ function BillsSkeleton() {
         <div key={i} style={{ padding: '16px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
           <div style={{ height: 14, background: 'var(--bg2)', borderRadius: 2, marginBottom: 8, width: `${55 + (i % 3) * 15}%` }} />
           <div style={{ height: 11, background: 'var(--bg2)', borderRadius: 2, width: '45%' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function FederalBillsSkeleton() {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+      paddingTop: 8,
+    }}>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ height: 14, background: 'var(--bg2)', borderRadius: 2, marginBottom: 8, width: `${50 + (i % 3) * 18}%` }} />
+          <div style={{ height: 11, background: 'var(--bg2)', borderRadius: 2, width: '55%' }} />
         </div>
       ))}
     </div>
