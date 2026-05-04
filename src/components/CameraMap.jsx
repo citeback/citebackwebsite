@@ -12,6 +12,7 @@ import {
   policeDrones,
   predictivePolicing,
 } from '../data/surveillanceLayers'
+import { getVendorProfile } from '../data/vendorProfiles'
 
 // Hardcoded verified NM cameras (our own sourced data)
 const verifiedCameras = [
@@ -1213,6 +1214,32 @@ export default function CameraMap() {
                         <strong>Vendor/System:</strong> {agency.vendor}
                       </div>
                     )}
+                    {(() => {
+                      const vendorProfile = getVendorProfile(agency.vendor)
+                      return vendorProfile ? (
+                        <div style={{
+                          background: 'rgba(220,38,38,0.06)',
+                          border: '1px solid rgba(220,38,38,0.2)',
+                          borderRadius: 6, padding: '8px 10px', marginBottom: 8
+                        }}>
+                          <div style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', marginBottom: 3 }}>
+                            🚩 {vendorProfile.name}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#888', marginBottom: 4, lineHeight: 1.4 }}>
+                            {vendorProfile.tagline}
+                          </div>
+                          <div style={{ fontSize: 10, color: '#666', lineHeight: 1.5 }}>
+                            {vendorProfile.controversies[0]}
+                          </div>
+                          {vendorProfile.url && (
+                            <a href={vendorProfile.url} target="_blank" rel="noopener noreferrer"
+                              style={{ fontSize: 10, color: '#ef4444', fontWeight: 600, display: 'block', marginTop: 4 }}>
+                              Investigate {vendorProfile.name} →
+                            </a>
+                          )}
+                        </div>
+                      ) : null
+                    })()}
                     <div style={{ fontSize: 11, fontWeight: 700, color: agency.confirmed ? '#10b981' : '#f59e0b', marginBottom: 6 }}>
                       {agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}
                     </div>
