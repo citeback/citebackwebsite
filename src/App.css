@@ -71,3 +71,46 @@ img, svg {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ─── Global Mobile Fixes ─────────────────────────────────────────────────── */
+
+/* Prevent horizontal scroll on all screens */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Sections and containers must not overflow */
+section, .container {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fluid images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Map mobile fixes ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Reduce map height on small screens */
+  .leaflet-container {
+    height: 360px !important;
+  }
+
+  /* Shrink hero padding on mobile */
+  .hero-section {
+    padding-top: 80px !important;
+  }
+
+  /* Stack filter toolbar items */
+  .map-toolbar {
+    flex-wrap: wrap;
+  }
+
+  /* Ensure launch tracker padding is comfortable */
+  .launch-tracker {
+    padding: 20px 16px !important;
+  }
+}

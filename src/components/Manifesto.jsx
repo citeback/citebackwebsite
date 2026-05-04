@@ -7,7 +7,7 @@ export default function Manifesto() {
   ]
 
   return (
-    <section style={{
+    <section className="manifesto-section" style={{
       borderTop: '1px solid var(--border)',
       padding: '80px 64px',
       maxWidth: 1440,
@@ -15,10 +15,21 @@ export default function Manifesto() {
       boxSizing: 'border-box',
       width: '100%',
     }}>
-      <div style={{ display: 'flex', gap: 64, alignItems: 'flex-start' }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .manifesto-outer { flex-direction: column !important; gap: 32px !important; padding: 0 !important; }
+          .manifesto-left { flex: 1 1 100% !important; }
+          .manifesto-right { flex: 1 1 100% !important; }
+          .manifesto-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .manifesto-section { padding: 48px 24px !important; }
+        }
+      `}</style>
+      <div className="manifesto-outer" style={{ display: 'flex', gap: 64, alignItems: 'flex-start' }}>
 
         {/* Left column — 40% */}
-        <div style={{ flex: '0 0 40%' }}>
+        <div className="manifesto-left" style={{ flex: '0 0 40%' }}>
           <div style={{
             fontSize: 11,
             fontWeight: 700,
@@ -47,8 +58,8 @@ export default function Manifesto() {
         </div>
 
         {/* Right column — 60% */}
-        <div style={{ flex: '0 0 60%' }}>
-          <div style={{
+        <div className="manifesto-right" style={{ flex: '0 0 60%' }}>
+          <div className="manifesto-grid" style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: 0,

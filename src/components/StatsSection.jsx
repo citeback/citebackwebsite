@@ -81,18 +81,13 @@ export default function StatsSection() {
         padding: '80px 0',
       }}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-        }}
-      >
+      <div className="stats-grid">
         {stats.map((stat, i) => (
           <div
             key={i}
+            className="stats-cell"
             style={{
               padding: '0 48px',
-              borderLeft: i > 0 ? '1px solid var(--border)' : 'none',
             }}
           >
             <div
@@ -162,6 +157,37 @@ export default function StatsSection() {
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(0.75); }
+        }
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .stats-cell {
+          border-left: none;
+        }
+        .stats-cell + .stats-cell {
+          border-left: 1px solid var(--border);
+        }
+        @media (max-width: 700px) {
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .stats-cell {
+            padding: 24px 20px !important;
+            border-left: none !important;
+            border-bottom: 1px solid var(--border);
+          }
+          .stats-cell:nth-child(even) {
+            border-left: 1px solid var(--border) !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+          .stats-cell:nth-child(even) {
+            border-left: none !important;
+          }
         }
       `}</style>
     </section>

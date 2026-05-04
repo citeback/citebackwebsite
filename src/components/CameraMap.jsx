@@ -3,7 +3,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock } from 'lucide-react'
+import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield } from 'lucide-react'
 import { C2PAExplainer, ThreatDisclosure } from './VerificationTiers'
 
 // Hardcoded verified NM cameras (our own sourced data)
@@ -548,8 +548,80 @@ function ZoomToState({ target }) {
   return null
 }
 
+// ─── EFF Atlas Overlay Definitions ──────────────────────────────────────────
+const EFF_LAYERS = [
+  {
+    id: 'alpr',
+    label: 'ALPR Cameras',
+    icon: '📷',
+    color: '#e63946',
+    source: 'OpenStreetMap',
+    sourceUrl: 'https://openstreetmap.org',
+    active: true,
+    live: true,
+    description: '200,000+ automatic license plate readers mapped nationally',
+  },
+  {
+    id: 'facial',
+    label: 'Facial Recognition',
+    icon: '👁️',
+    color: '#a855f7',
+    source: 'EFF Atlas of Surveillance',
+    sourceUrl: 'https://atlasofsurveillance.org',
+    active: false,
+    live: false,
+    description: 'Agencies using facial recognition systems by city',
+  },
+  {
+    id: 'stingray',
+    label: 'Cell-Site Simulators',
+    icon: '📡',
+    color: '#f97316',
+    source: 'EFF Atlas of Surveillance',
+    sourceUrl: 'https://atlasofsurveillance.org',
+    active: false,
+    live: false,
+    description: 'Stingray / IMSI catcher deployments by agency',
+  },
+  {
+    id: 'shotspotter',
+    label: 'ShotSpotter',
+    icon: '🔊',
+    color: '#eab308',
+    source: 'EFF Atlas of Surveillance',
+    sourceUrl: 'https://atlasofsurveillance.org',
+    active: false,
+    live: false,
+    description: 'Gunshot detection microphone networks',
+  },
+  {
+    id: 'drones',
+    label: 'Police Drones',
+    icon: '🚁',
+    color: '#06b6d4',
+    source: 'EFF Atlas of Surveillance',
+    sourceUrl: 'https://atlasofsurveillance.org',
+    active: false,
+    live: false,
+    description: 'Law enforcement aerial surveillance drone programs',
+  },
+  {
+    id: 'predictive',
+    label: 'Predictive Policing',
+    icon: '🧠',
+    color: '#ec4899',
+    source: 'EFF Atlas of Surveillance',
+    sourceUrl: 'https://atlasofsurveillance.org',
+    active: false,
+    live: false,
+    description: 'Algorithmic predictive policing software deployments',
+  },
+]
+
 // ─── Main CameraMap component ─────────────────────────────────────────────────
 export default function CameraMap() {
+  const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
+  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr']))
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false })
   const [submitted, setSubmitted] = useState(false)
@@ -927,7 +999,7 @@ export default function CameraMap() {
       )}
 
       {/* Map */}
-      <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', height: 520 }}>
+      <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', height: 520, position: 'relative' }}>
         <MapContainer center={[38.5, -96.5]} zoom={4} style={{ height: '100%', width: '100%' }} zoomControl>
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -960,8 +1032,128 @@ export default function CameraMap() {
             </CircleMarker>
           ))}
 
-          {filteredCameras.length > 0 && <OSMCanvasLayer cameras={filteredCameras} />}
+          {filteredCameras.length > 0 && activeLayers.has('alpr') && <OSMCanvasLayer cameras={filteredCameras} />}
         </MapContainer>
+
+        {/* Surveillance overlay toggle panel */}
+        <div style={{
+          position: 'absolute', top: 10, right: 10, zIndex: 800,
+          display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6,
+        }}>
+          <button
+            onClick={() => setOverlayPanelOpen(o => !o)}
+            title="Surveillance layer toggles"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: overlayPanelOpen ? '#1a1a2e' : 'rgba(20,18,16,0.9)',
+              border: `1px solid ${overlayPanelOpen ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.12)'}`,
+              color: overlayPanelOpen ? '#a855f7' : '#e2e8f0',
+              padding: '7px 12px', borderRadius: 8,
+              fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+            }}
+          >
+            <Layers size={13} />
+            Layers
+            <span style={{
+              background: 'rgba(168,85,247,0.25)', color: '#a855f7',
+              borderRadius: 4, padding: '1px 6px', fontSize: 10, fontWeight: 700,
+            }}>{activeLayers.size}</span>
+          </button>
+
+          {overlayPanelOpen && (
+            <div style={{
+              background: 'rgba(14,12,10,0.96)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 12, padding: 14, width: 260,
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+                <Shield size={13} style={{ color: '#a855f7' }} />
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {EFF_LAYERS.map(layer => {
+                  const isOn = activeLayers.has(layer.id)
+                  return (
+                    <button
+                      key={layer.id}
+                      onClick={() => setActiveLayers(prev => {
+                        const next = new Set(prev)
+                        if (next.has(layer.id)) next.delete(layer.id)
+                        else next.add(layer.id)
+                        return next
+                      })}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        background: isOn ? `${layer.color}14` : 'transparent',
+                        border: `1px solid ${isOn ? `${layer.color}40` : 'rgba(255,255,255,0.06)'}`,
+                        borderRadius: 8, padding: '8px 10px',
+                        cursor: 'pointer', width: '100%', textAlign: 'left',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      <span style={{ fontSize: 14 }}>{layer.icon}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? '#f0f0f0' : '#6b7280', lineHeight: 1.2 }}>
+                          {layer.label}
+                        </div>
+                        {!layer.live && (
+                          <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 2 }}>Activating soon — EFF Atlas data loading</div>
+                        )}
+                      </div>
+                      <div style={{
+                        width: 10, height: 10, borderRadius: '50%',
+                        background: isOn ? layer.color : 'rgba(255,255,255,0.12)',
+                        flexShrink: 0, transition: 'background 0.15s',
+                      }} />
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div style={{
+                marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)',
+                fontSize: 10, color: '#4b5563', lineHeight: 1.5,
+              }}>
+                Non-ALPR data:{' '}
+                <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer"
+                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                >
+                  EFF Atlas of Surveillance
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Map attribution bar */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 800,
+          background: 'rgba(8,6,4,0.75)',
+          backdropFilter: 'blur(4px)',
+          padding: '5px 12px',
+          display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap',
+          fontSize: 10, color: 'rgba(200,196,190,0.7)',
+          pointerEvents: 'auto',
+        }}>
+          <span>Camera data:</span>
+          <a href="https://openstreetmap.org" target="_blank" rel="noopener noreferrer"
+            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+          >OpenStreetMap contributors</a>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span>Surveillance tech:</span>
+          <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer"
+            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+          >EFF Atlas of Surveillance</a>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span>Density:</span>
+          <a href="https://deflock.me" target="_blank" rel="noopener noreferrer"
+            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+          >DeFlock</a>
+        </div>
       </div>
 
       <div style={{ marginTop: 12, fontSize: 12, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>

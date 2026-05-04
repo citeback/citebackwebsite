@@ -47,6 +47,7 @@ export const campaigns = [
     deadline: '2026-06-15',
     tags: ['FOIA', 'ALPR', 'Bernalillo County', 'New Mexico'],
     source: 'https://www.kob.com/new-mexico/4-investigates-the-push-to-regulate-new-mexicos-mass-surveillance-tools/',
+    contractContext: 'Flock Safety (FLOCK GROUP INC) has $252K in federal contracts on record — local police deals are untracked and far larger. Source: USASpending.gov',
   },
   {
     id: 2,
@@ -63,6 +64,7 @@ export const campaigns = [
     deadline: '2026-06-01',
     tags: ['billboard', 'ALPR', 'Taos', 'New Mexico'],
     source: 'https://progressnownm.org/privacy-first-heres-how-nm-can-set-guardrails-on-flock-cameras-and-surveillance-tech/',
+    contractContext: 'Flock Safety holds federal contracts with US Park Police in DC metro. Taos and other NM deployments are local contracts not captured in federal data. Source: USASpending.gov',
   },
   {
     id: 3,
@@ -79,6 +81,7 @@ export const campaigns = [
     deadline: '2026-06-20',
     tags: ['billboard', 'ALPR', 'PTZ', 'Las Cruces', 'New Mexico'],
     source: 'https://progressnownm.org/privacy-first-heres-how-nm-can-set-guardrails-on-flock-cameras-and-surveillance-tech/',
+    contractContext: 'Axon Enterprise holds $353M+ in federal contracts for body cameras and digital evidence platforms used by federal law enforcement. Local PTZ deployments are separate. Source: USASpending.gov',
   },
   {
     id: 4,
@@ -95,6 +98,7 @@ export const campaigns = [
     deadline: '2026-09-01',
     tags: ['legal', 'legislation', 'New Mexico', 'Fourth Amendment'],
     source: 'https://www.kob.com/new-mexico/4-investigates-the-push-to-regulate-new-mexicos-mass-surveillance-tools/',
+    contractContext: 'Palantir ($3.8B+ in federal contracts) and Clearview AI ($8.9M) both have active DHS/ICE relationships — federal data-sharing with NM law enforcement is a real risk this bill would constrain. Source: USASpending.gov',
   },
   {
     id: 5,
@@ -111,6 +115,7 @@ export const campaigns = [
     deadline: '2026-06-30',
     tags: ['FOIA', 'ALPR', 'Albuquerque', 'data retention', 'New Mexico'],
     source: 'https://www.kob.com/new-mexico/4-investigates-the-push-to-regulate-new-mexicos-mass-surveillance-tools/',
+    contractContext: 'Flock Safety (FLOCK GROUP INC) holds federal ALPR contracts. APD\'s 365-day retention exposes residents to federal data-sharing requests under agreements we\'re fighting to expose. Source: USASpending.gov',
   },
   {
     id: 6,
@@ -127,6 +132,7 @@ export const campaigns = [
     deadline: '2026-05-20',
     tags: ['FOIA', 'ALPR', 'Otero County', 'New Mexico'],
     source: 'https://progressnownm.org/privacy-first-heres-how-nm-can-set-guardrails-on-flock-cameras-and-surveillance-tech/',
+    contractContext: 'Flock Safety has federal contracts on record; Otero County (near Holloman AFB) deployments may overlap with federal surveillance infrastructure. Source: USASpending.gov',
   },
 
   // Verification Bounty Campaign

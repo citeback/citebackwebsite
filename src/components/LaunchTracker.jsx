@@ -19,13 +19,15 @@ const pct = Math.round((done / total) * 100)
 
 export default function LaunchTracker() {
   return (
-    <div style={{
+    <div className="launch-tracker" style={{
       background: 'var(--bg2)',
       border: '1px solid var(--border)',
       borderRadius: 16,
       padding: '28px 32px',
       maxWidth: 640,
       margin: '0 auto',
+      boxSizing: 'border-box',
+      width: '100%',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>

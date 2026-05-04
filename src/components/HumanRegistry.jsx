@@ -1,4 +1,4 @@
-import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X } from 'lucide-react'
+import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu } from 'lucide-react'
 import { useState } from 'react'
 
 const typeConfig = {
@@ -6,6 +6,7 @@ const typeConfig = {
   billboard: { icon: <Megaphone size={20} />, color: '#ff6b6b', colorRaw: '255,107,107', label: 'Billboard Operator' },
   foia: { icon: <FileSearch size={20} />, color: '#bb8fce', colorRaw: '187,143,206', label: 'FOIA Specialist' },
   verifier: { icon: <Shield size={20} />, color: '#f39c12', colorRaw: '243,156,18', label: 'Camera Verifier' },
+  technical: { icon: <Cpu size={20} />, color: '#2ecc71', colorRaw: '46,204,113', label: 'Technical Contributor' },
 }
 
 const roles = [
@@ -13,6 +14,7 @@ const roles = [
   { id: 'billboard', label: '📋 Billboard Operator', desc: 'Billboard rental, vendor relationships, placement' },
   { id: 'foia', label: '🗂 FOIA Specialist', desc: 'Public records requests, tracking, escalation' },
   { id: 'verifier', label: '📸 Camera Verifier', desc: 'Physical verification of ALPR cameras with GPS-tagged photos' },
+  { id: 'technical', label: '🖥 Technical Contributor', desc: 'TEE engineering, Zano/XMR RPC integration, frontend dev, FOIA automation — pseudonymous OK' },
   { id: 'other', label: '🛠 Other', desc: 'Any other skill useful to funded campaigns' },
 ]
 
@@ -203,9 +205,18 @@ export default function HumanRegistry() {
             }}>{cfg.icon}</div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{cfg.label}</div>
-              <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
-                No verified operators yet. Be the first.
-              </div>
+              {key === 'technical' ? (
+                <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
+                  TEE engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
+                  <span style={{ display: 'block', marginTop: 6, color: `rgba(${cfg.colorRaw},0.9)`, fontWeight: 600 }}>
+                    🔒 Pseudonymous — XMR or ZANO address as identity. No real name required.
+                  </span>
+                </div>
+              ) : (
+                <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
+                  No verified operators yet. Be the first.
+                </div>
+              )}
             </div>
             <button onClick={() => setShowApply(true)} style={{
               background: 'var(--bg3)', border: '1px solid var(--border)',

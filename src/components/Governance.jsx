@@ -113,7 +113,7 @@ export default function Governance() {
           <Tag color="#a78bfa">Updated 2026-04-30</Tag>
         </div>
         <p style={{ color: 'var(--text-secondary, rgba(255,255,255,0.6))', maxWidth: 600, lineHeight: 1.7 }}>
-          This document defines how Citeback/Fourthright is governed — how decisions are made, 
+          This document defines how Citeback is governed — how decisions are made, 
           how funds are disbursed, what can never be changed, and what must be in place before 
           a single dollar is accepted.
         </p>
