@@ -41,23 +41,24 @@ export default function CampaignModal({ campaign, onClose }) {
     <div onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 1000,
       background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
         background: 'var(--bg2)', border: '1px solid var(--border)',
         borderRadius: 20, maxWidth: 560, width: '100%',
         maxHeight: '92vh', overflowY: 'auto',
+        overflowX: 'hidden',
         display: 'flex', flexDirection: 'column',
       }}>
         {/* Header */}
-        <div style={{ padding: '24px 28px 20px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px) 20px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
             <span style={{
               background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text,
               padding: '4px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: '0.06em',
             }}>{tc.label}</span>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
+            <button onClick={onClose} aria-label="Close campaign details" style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <X size={20} />
             </button>
           </div>
@@ -75,7 +76,7 @@ export default function CampaignModal({ campaign, onClose }) {
         </div>
 
         {/* Progress */}
-        <div style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
+        <div style={{ padding: '18px clamp(16px, 5vw, 28px)', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-1px' }}>
@@ -108,7 +109,7 @@ export default function CampaignModal({ campaign, onClose }) {
         </div>
 
         {/* Body */}
-        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px)', display: 'flex', flexDirection: 'column', gap: 18 }}>
 
           {campaign.type === 'verify' ? (
             /* Verification Bounty — full game theory breakdown */
@@ -140,7 +141,7 @@ export default function CampaignModal({ campaign, onClose }) {
               {/* Anti-fraud stack */}
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 12, padding: 16 }}>
                 <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>Anti-Fraud Stack</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div className="anti-fraud-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   {[
                     'Commit-reveal scheme',
                     'GPS metadata required',
@@ -322,6 +323,13 @@ export default function CampaignModal({ campaign, onClose }) {
           </div>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .anti-fraud-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

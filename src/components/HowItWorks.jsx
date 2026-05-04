@@ -139,7 +139,7 @@ export default function HowItWorks({ setTab }) {
         </button>
       </div>
 
-      <div style={{
+      <div className="hiw-grid" style={{
         maxWidth: 1100,
         margin: '0 auto',
         display: 'grid',
@@ -149,7 +149,7 @@ export default function HowItWorks({ setTab }) {
       }}>
 
         {/* Left sticky label */}
-        <div style={{ position: 'sticky', top: 100 }}>
+        <div className="hiw-sidebar" style={{ position: 'sticky', top: 100 }}>
           <div style={{
             fontSize: 11,
             letterSpacing: '0.16em',
@@ -297,12 +297,13 @@ export default function HowItWorks({ setTab }) {
 
       <style>{`
         @media (max-width: 700px) {
-          section > div {
+          .hiw-grid {
             grid-template-columns: 1fr !important;
+            gap: 0 !important;
           }
-          section > div > div:first-child {
+          .hiw-sidebar {
             position: static !important;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
           }
         }
       `}</style>

@@ -135,6 +135,23 @@ function StatusBadge({ status }) {
   )
 }
 
+// Helper: fetch with one automatic retry on failure
+async function fetchWithRetry(url, attempts = 2, delayMs = 1200) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const r = await fetch(url)
+      if (r.ok) return r
+      throw new Error(`HTTP ${r.status}`)
+    } catch (err) {
+      if (i < attempts - 1) {
+        await new Promise(res => setTimeout(res, delayMs))
+      } else {
+        throw err
+      }
+    }
+  }
+}
+
 export default function SurveillanceFeed({ setTab }) {
   const [cases, setCases] = useState([])
   const [bills, setBills] = useState([])
@@ -145,6 +162,9 @@ export default function SurveillanceFeed({ setTab }) {
   const [casesError, setCasesError] = useState(null)
   const [billsError, setBillsError] = useState(null)
   const [federalError, setFederalError] = useState(null)
+  const [casesRetrying, setCasesRetrying] = useState(false)
+  const [federalRetrying, setFederalRetrying] = useState(false)
+  const [billsRetrying, setBillsRetrying] = useState(false)
 
   // ── Fetch CourtListener cases ─────────────────────────────────────────────
   useEffect(() => {
@@ -152,23 +172,34 @@ export default function SurveillanceFeed({ setTab }) {
     setCasesLoading(true)
     setCasesError(null)
 
-    // Fetch two queries in parallel and merge, deduplicated by cluster_id
-    const fetches = [
-      '"license plate reader"',
-      '"Clearview AI" OR "ShotSpotter" OR "ALPR" surveillance',
-    ].map(q =>
-      fetch(
+    // Fetch three queries in parallel and merge, deduplicated by cluster_id
+    const queries = [
+      '"license plate reader" OR "ALPR" surveillance',
+      '"Clearview AI" OR "facial recognition" fourth amendment',
+      '"ShotSpotter" OR "Flock Safety" OR "biometric" surveillance',
+    ]
+    const fetches = queries.map(q =>
+      fetchWithRetry(
         `https://www.courtlistener.com/api/rest/v4/search/?q=${encodeURIComponent(q)}&type=o&format=json&order_by=dateFiled+desc`
-      ).then(r => r.ok ? r.json() : Promise.reject(r.status))
+      )
+        .then(r => r.json())
+        .catch(() => null)
     )
 
-    Promise.allSettled(fetches).then(results => {
+    // Show retrying state after first attempt delay
+    const retryTimer = setTimeout(() => {
+      if (!cancelled) setCasesRetrying(true)
+    }, 1300)
+
+    Promise.all(fetches).then(results => {
+      clearTimeout(retryTimer)
+      if (!cancelled) setCasesRetrying(false)
       if (cancelled) return
       const seen = new Set()
       const merged = []
       for (const r of results) {
-        if (r.status === 'fulfilled' && r.value?.results) {
-          for (const item of r.value.results) {
+        if (r?.results) {
+          for (const item of r.results) {
             if (!seen.has(item.cluster_id)) {
               seen.add(item.cluster_id)
               merged.push(item)
@@ -184,9 +215,15 @@ export default function SurveillanceFeed({ setTab }) {
         setCases(merged.slice(0, 5))
       }
       setCasesLoading(false)
+    }).catch(() => {
+      if (!cancelled) {
+        setCasesRetrying(false)
+        setCasesError('CourtListener unreachable after retry')
+        setCasesLoading(false)
+      }
     })
 
-    return () => { cancelled = true }
+    return () => { cancelled = true; clearTimeout(retryTimer) }
   }, [])
 
   // ── Fetch Congress.gov federal bills ───────────────────────────────────────
@@ -197,12 +234,20 @@ export default function SurveillanceFeed({ setTab }) {
 
     const SURVEILLANCE_TERMS = /surveillance|license plate|privacy|tracking|biometric|facial recognition|ALPR|fourth amendment/i
 
-    fetch(
-      `https://api.congress.gov/v3/bill/119?format=json&limit=20&api_key=${CONGRESS_KEY}&sort=updateDate+desc`
+    // Show retrying state after first attempt delay
+    const federalRetryTimer = setTimeout(() => {
+      if (!cancelled) setFederalRetrying(true)
+    }, 1300)
+
+    // Fetch a larger batch to improve odds of matching surveillance-relevant bills
+    fetchWithRetry(
+      `https://api.congress.gov/v3/bill/119?format=json&limit=50&api_key=${CONGRESS_KEY}&sort=updateDate+desc`
     )
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(r => r.json())
       .then(data => {
+        clearTimeout(federalRetryTimer)
         if (cancelled) return
+        setFederalRetrying(false)
         const matched = (data.bills || []).filter(b => SURVEILLANCE_TERMS.test(b.title || ''))
         if (matched.length === 0) {
           setFederalBills(FEDERAL_BILLS_FALLBACK)
@@ -223,13 +268,15 @@ export default function SurveillanceFeed({ setTab }) {
         setFederalLoading(false)
       })
       .catch(err => {
+        clearTimeout(federalRetryTimer)
         if (cancelled) return
+        setFederalRetrying(false)
         setFederalBills(FEDERAL_BILLS_FALLBACK)
         setFederalError(`API unavailable (${err}) — showing known legislation`)
         setFederalLoading(false)
       })
 
-    return () => { cancelled = true }
+    return () => { cancelled = true; clearTimeout(federalRetryTimer) }
   }, [])
 
   // ── Fetch OpenStates bills (or show mock) ─────────────────────────────────
@@ -244,12 +291,21 @@ export default function SurveillanceFeed({ setTab }) {
     setBillsLoading(true)
     setBillsError(null)
 
-    fetch(
-      `https://v3.openstates.org/bills?q=license+plate+reader+surveillance&include=abstracts&sort=updated_desc&per_page=5&apikey=${OPENSTATES_KEY}`
+    // Show retrying state after first attempt delay
+    const billsRetryTimer = setTimeout(() => {
+      if (!cancelled) setBillsRetrying(true)
+    }, 1300)
+
+    const stateQuery = 'license+plate+reader+surveillance'
+
+    fetchWithRetry(
+      `https://v3.openstates.org/bills?q=${stateQuery}&include=abstracts&sort=updated_desc&per_page=8&apikey=${OPENSTATES_KEY}`
     )
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(r => r.json())
       .then(data => {
+        clearTimeout(billsRetryTimer)
         if (cancelled) return
+        setBillsRetrying(false)
         const results = (data.results || []).map(b => ({
           id: b.id,
           title: b.title,
@@ -262,13 +318,15 @@ export default function SurveillanceFeed({ setTab }) {
         setBillsLoading(false)
       })
       .catch(err => {
+        clearTimeout(billsRetryTimer)
         if (cancelled) return
+        setBillsRetrying(false)
         setBills(MOCK_BILLS)
         setBillsError(`API error (${err}) — showing sample data`)
         setBillsLoading(false)
       })
 
-    return () => { cancelled = true }
+    return () => { cancelled = true; clearTimeout(billsRetryTimer) }
   }, [])
 
   return (
@@ -315,7 +373,7 @@ export default function SurveillanceFeed({ setTab }) {
         {/* Two-column grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(380px, 100%), 1fr))',
           gap: 32,
           alignItems: 'start',
         }}>
@@ -364,6 +422,11 @@ export default function SurveillanceFeed({ setTab }) {
 
             {casesLoading ? (
               <CasesSkeleton />
+            ) : casesRetrying ? (
+              <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+                Retrying CourtListener…
+              </div>
             ) : casesError && cases.length === 0 ? (
               <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13 }}>
                 CourtListener unavailable — check back shortly.
@@ -499,7 +562,12 @@ export default function SurveillanceFeed({ setTab }) {
               </a>
             </div>
 
-            {billsLoading ? (
+            {billsLoading && billsRetrying ? (
+              <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+                Retrying OpenStates…
+              </div>
+            ) : billsLoading ? (
               <BillsSkeleton />
             ) : (
               <div>
@@ -669,12 +737,17 @@ export default function SurveillanceFeed({ setTab }) {
             </a>
           </div>
 
-          {federalLoading ? (
+          {federalLoading && federalRetrying ? (
+            <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+              Retrying Congress.gov…
+            </div>
+          ) : federalLoading ? (
             <FederalBillsSkeleton />
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))',
               gap: 0,
             }}>
               {federalBills.slice(0, 4).map((b, i) => (
@@ -840,7 +913,7 @@ function FederalBillsSkeleton() {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))',
       paddingTop: 8,
     }}>
       {[...Array(4)].map((_, i) => (

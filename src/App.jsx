@@ -9,6 +9,7 @@ import CampaignSelector from './components/CampaignSelector'
 import CampaignList from './components/CampaignList'
 import CameraMap from './components/CameraMap'
 import HowItWorks from './components/HowItWorks'
+import BuildWithUs from './components/BuildWithUs'
 import HumanRegistry from './components/HumanRegistry'
 import ALPRExplainer from './components/ALPRExplainer'
 import SurveillanceExplainer from './components/SurveillanceExplainer'
@@ -53,6 +54,7 @@ export default function App() {
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
           <HowItWorks setTab={setTab} />
+          <BuildWithUs setTab={setTab} />
           <ALPRExplainer setTab={setTab} />
           <SurveillanceExplainer />
           <Manifesto />
@@ -67,7 +69,7 @@ export default function App() {
       {tab === 'trust' && <TrustFAQ setTab={setTab} />}
       {tab === 'governance' && <Governance setTab={setTab} />}
       {tab === 'operators' && <Operators />}
-      {tab === 'feed' && <SurveillanceFeed />}
+      {tab === 'feed' && <SurveillanceFeed setTab={setTab} />}
 
       {showAI && <ConversationalInterface onClose={() => setShowAI(false)} />}
       {/* Floating chatbot button */}

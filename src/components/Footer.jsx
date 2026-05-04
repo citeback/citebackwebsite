@@ -7,7 +7,7 @@ export default function Footer({ setTab }) {
   ]
 
   return (
-    <footer style={{
+    <footer className="site-footer" style={{
       marginTop: 'auto',
       borderTop: '2px solid var(--fg)',
       padding: '48px 64px',
@@ -20,6 +20,8 @@ export default function Footer({ setTab }) {
         justifyContent: 'space-between',
         alignItems: 'baseline',
         marginBottom: 24,
+        flexWrap: 'wrap',
+        gap: 12,
       }}>
         {/* Wordmark */}
         <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.01em' }}>
@@ -39,7 +41,8 @@ export default function Footer({ setTab }) {
         borderBottom: '1px solid var(--border)',
         padding: '16px 0',
         display: 'flex',
-        gap: 40,
+        gap: 24,
+        flexWrap: 'wrap',
       }}>
         {navLinks.map(({ label, tab }) => (
           <span
@@ -63,9 +66,10 @@ export default function Footer({ setTab }) {
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingTop: 24,
         gap: 16,
+        flexWrap: 'wrap',
       }}>
         <div style={{ fontSize: 13, color: 'var(--gray)' }}>
           Pre-launch — no wallet addresses published until all prerequisites are met.
@@ -102,6 +106,13 @@ export default function Footer({ setTab }) {
         Campaign sources individually cited.
       </div>
 
+      <style>{`
+        @media (max-width: 768px) {
+          .site-footer {
+            padding: 32px 24px !important;
+          }
+        }
+      `}</style>
     </footer>
   )
 }

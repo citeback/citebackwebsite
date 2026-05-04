@@ -191,13 +191,19 @@ export default function Nav({ tab, setTab }) {
         <button
           className="nav-mobile-btn"
           onClick={() => setOpen(!open)}
+          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={open}
           style={{
             background: 'none',
             border: 'none',
             color: 'var(--fg)',
             cursor: 'pointer',
             display: 'none',
-            padding: 4,
+            padding: 8,
+            minWidth: 44,
+            minHeight: 44,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           {open ? <X size={20} /> : <Menu size={20} />}

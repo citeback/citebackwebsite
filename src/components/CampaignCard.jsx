@@ -56,7 +56,7 @@ export default function CampaignCard({ campaign, onClick }) {
           {funded && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--green)', fontSize: 12, fontWeight: 600 }}><CheckCircle size={13} /> Funded</span>}
           {prelaunch && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Rocket size={12} /> Pre-Launch</span>}
           {urgent && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Flame size={12} /> {daysLeft}d left</span>}
-          <button onClick={handleShare} style={{ background: 'none', border: 'none', color: shared ? 'var(--green)' : 'var(--muted)', cursor: 'pointer', padding: 2, display: 'flex' }}>
+          <button onClick={handleShare} aria-label={shared ? 'Link copied' : 'Copy campaign link'} style={{ background: 'none', border: 'none', color: shared ? 'var(--green)' : 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 36, minHeight: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {shared ? <CheckCircle size={14} /> : <Share2 size={14} />}
           </button>
         </div>

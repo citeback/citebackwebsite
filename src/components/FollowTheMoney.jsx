@@ -4,6 +4,7 @@ import { ExternalLink, DollarSign, AlertCircle, Briefcase, Loader } from 'lucide
 // Static data pulled from USASpending.gov API (2025-10-01 to present, via keyword search)
 // Source: https://api.usaspending.gov — no auth required, public federal spending records
 // Last refreshed: 2026-05-04
+const DATA_FRESHNESS = 'May 2026'
 const VENDOR_DATA = [
   {
     name: 'Palantir',
@@ -144,9 +145,16 @@ export default function FollowTheMoney() {
     <div style={{ marginTop: 48 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
           <DollarSign size={20} style={{ color: 'var(--accent)' }} />
           <h3 style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.3px' }}>Follow the Money</h3>
+          <span style={{
+            fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+            color: 'var(--muted)', border: '1px solid var(--border)', padding: '2px 7px',
+            marginLeft: 4,
+          }}>
+            USASpending.gov · Last verified {DATA_FRESHNESS}
+          </span>
         </div>
         <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65, maxWidth: 600 }}>
           Federal taxpayer dollars flowing to surveillance vendors — contracts from{' '}
@@ -190,10 +198,21 @@ export default function FollowTheMoney() {
                 transition: 'border-color 0.2s',
               }}
             >
-              {/* Vendor name + color dot */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: v.color, flexShrink: 0 }} />
-                <span style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</span>
+              {/* Vendor name + color dot + source link */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: v.color, flexShrink: 0 }} />
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</span>
+                </div>
+                <a
+                  href={`https://www.usaspending.gov/search/?object_class=&recipient_search_text=${encodeURIComponent(v.recipients[0])}&award_type_codes=A,B,C,D`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ fontSize: 10, color: 'var(--muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0, opacity: 0.7 }}
+                >
+                  Source <ExternalLink size={9} />
+                </a>
               </div>
 
               {/* Two-column stats: Federal Contracts + Lobbying */}

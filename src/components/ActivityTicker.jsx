@@ -16,12 +16,13 @@ const staticEvents = [
 
 export default function ActivityTicker() {
   const [events, setEvents] = useState(staticEvents)
+  const [isLiveActive, setIsLiveActive] = useState(false)
 
   useEffect(() => {
     // Pull the 3 most recent CourtListener opinions on ALPR/surveillance topics
     // and prepend them to the ticker. Falls back to static events on any error.
     fetch(
-      'https://www.courtlistener.com/api/rest/v4/search/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22&type=o&format=json&order_by=dateFiled+desc'
+      'https://www.courtlistener.com/api/rest/v4/search/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22+OR+%22facial+recognition%22&type=o&format=json&order_by=dateFiled+desc'
     )
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
       .then(data => {
@@ -32,10 +33,12 @@ export default function ActivityTicker() {
         }))
         if (live.length) {
           setEvents([...live, ...staticEvents])
+          setIsLiveActive(true)
         }
       })
       .catch(() => {
         // Silently fall back to static events — no disruption to UI
+        setIsLiveActive(false)
       })
   }, [])
 
@@ -64,11 +67,23 @@ export default function ActivityTicker() {
         whiteSpace: 'nowrap',
       }}>
         Surveillance Intel
-        <span style={{
-          width: 7, height: 7, borderRadius: '50%',
-          background: 'var(--accent)',
-          animation: 'pulse 1.5s infinite',
-        }} />
+        {isLiveActive ? (
+          <span style={{
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: '0.12em',
+            color: '#22c55e',
+            border: '1px solid #22c55e',
+            padding: '1px 5px',
+            marginLeft: 2,
+          }}>LIVE</span>
+        ) : (
+          <span style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: 'var(--accent)',
+            animation: 'pulse 1.5s infinite',
+          }} />
+        )}
       </div>
 
       <div style={{ overflow: 'hidden', flex: 1 }}>

@@ -42,12 +42,12 @@ export default function ProposeModal({ onClose, prefill = {} }) {
     <div onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 1000,
       background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
         background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 18, padding: 32, maxWidth: 560, width: '100%',
-        maxHeight: '90vh', overflowY: 'auto',
+        borderRadius: 18, padding: 'clamp(20px, 5vw, 32px)', maxWidth: 560, width: '100%',
+        maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden',
       }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
@@ -55,7 +55,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <h2 style={{ fontWeight: 800, fontSize: 20 }}>Propose a Campaign</h2>
             <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>Step {step} of 2</div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)' }}>
+          <button onClick={onClose} aria-label="Close proposal form" style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
