@@ -1068,7 +1068,7 @@ export default function CameraMap() {
                 }}
               >
                 <Popup>
-                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 240, padding: 4 }}>
+                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 260, maxWidth: 320, padding: 4 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                       <span style={{ fontSize: 16 }}>{layer.icon}</span>
                       <span style={{ fontWeight: 800, fontSize: 13, color: layer.color }}>
@@ -1087,9 +1087,49 @@ export default function CameraMap() {
                     <div style={{ fontSize: 11, fontWeight: 700, color: agency.confirmed ? '#10b981' : '#f59e0b', marginBottom: 6 }}>
                       {agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}
                     </div>
-                    <div style={{ fontSize: 10, color: '#777', lineHeight: 1.5, borderTop: '1px solid #eee', paddingTop: 6 }}>
+                    {agency.notes && (
+                      <div style={{
+                        fontSize: 11, color: '#444', lineHeight: 1.55,
+                        background: '#f8f6f2', border: '1px solid #e5e0d8',
+                        borderRadius: 6, padding: '6px 8px', marginBottom: 8,
+                      }}>
+                        ℹ️ {agency.notes}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 10, color: '#777', lineHeight: 1.5, borderTop: '1px solid #eee', paddingTop: 6, marginBottom: 8 }}>
                       <strong>Source:</strong> {agency.source}
                     </div>
+                    {agency.url && (
+                      <div style={{ marginBottom: 8 }}>
+                        <a
+                          href={agency.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                            fontSize: 11, fontWeight: 600, color: layer.color,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          View source →
+                        </a>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => window.dispatchEvent(new CustomEvent('openPropose', {
+                        detail: { agency: agency.name, location: agency.city + ', ' + agency.state }
+                      }))}
+                      style={{
+                        width: '100%', padding: '7px 10px',
+                        background: 'transparent',
+                        border: `1px solid ${layer.color}`,
+                        borderRadius: 6, color: layer.color,
+                        fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+                      }}
+                    >
+                      📋 Propose FOIA →
+                    </button>
                   </div>
                 </Popup>
               </CircleMarker>
