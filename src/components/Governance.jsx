@@ -110,7 +110,7 @@ export default function Governance() {
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
           <Tag>Active</Tag>
-          <Tag color="#a78bfa">Updated 2026-04-30</Tag>
+          <Tag color="#a78bfa">Updated 2026-05-04</Tag>
         </div>
         <p style={{ color: 'var(--text-secondary, rgba(255,255,255,0.6))', maxWidth: 600, lineHeight: 1.7 }}>
           This document defines how Citeback is governed — how decisions are made, 
@@ -168,7 +168,7 @@ export default function Governance() {
             { label: 'Donors', color: '#6ee7b7', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative donations.' },
             { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
-            { label: 'AI Ensemble', color: '#f59e0b', desc: 'Monitoring only — never moves money. Advisory signals, never execution. Minimum 3 independent models.' },
+            { label: 'AI Ensemble', color: '#f59e0b', desc: 'Monitoring only — never moves money, never advises governance decisions. Can flag anomalies for human operator review. Minimum 3 independent models.' },
           ].map(p => (
             <div key={p.label} style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${p.color}` }}>
               <strong style={{ color: p.color }}>{p.label}</strong>
@@ -255,7 +255,7 @@ export default function Governance() {
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', borderLeft: '3px solid #a78bfa' }}>
             <strong style={{ color: '#a78bfa' }}>Monitoring Ensemble — detection only</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Minimum 3 independent models. Can flag, propose, and recommend — never execute. Consensus required for protective action. Advisory only.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Minimum 3 independent models. Can flag anomalies for human operator review — never execute, never advise governance decisions. AI is not in the monitoring, approval, or advisory governance path. Confirmed anomalies surface to the human operator, who decides any response.</p>
           </div>
         </div>
       </Section>
@@ -330,7 +330,6 @@ export default function Governance() {
             'Minimum 3 TEE instances across different hardware providers, live with 2-of-3 threshold signatures',
             'TEE threat model written, published, and community-ratified',
             'OFAC integration with continuous monitoring',
-            'AI ensemble deployed — minimum 3 models, adversarial benchmark suite ratified',
             'Governance document ratified via bootstrapping governance process',
             'Misconduct bond and staking systems operationally tested',
             'Operator insurance framework operational',
