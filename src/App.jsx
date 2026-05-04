@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import Nav from './components/Nav'
+import ActivityTicker from './components/ActivityTicker'
+import LaunchTracker from './components/LaunchTracker'
+import ThemePicker from './components/ThemePicker'
 import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
 import CampaignSelector from './components/CampaignSelector'
@@ -32,10 +35,12 @@ export default function App() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
+      <ActivityTicker />
 
       {tab === 'home' && (
         <>
           <Hero setTab={setTab} />
+          <LaunchTracker />
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
           <HowItWorks />
@@ -63,10 +68,11 @@ export default function App() {
           letterSpacing: '0.04em', cursor: 'pointer',
           borderRadius: 999,
           boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        }}>💬 Ask Fourthright</button>
+        }}>💬 Ask Citeback AI</button>
       )}
 
       <Footer setTab={setTab} />
+      <ThemePicker />
       <ChatBot />
 
       {selectedCampaign && (

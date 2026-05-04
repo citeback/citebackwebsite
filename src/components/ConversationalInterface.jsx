@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-const SYSTEM_PROMPT = `You are Fourthright — a platform that anonymously funds surveillance resistance campaigns. You speak in first person as the platform itself.
+const SYSTEM_PROMPT = `You are Citeback — a platform that anonymously funds surveillance resistance campaigns. You speak in first person as the platform itself.
 
 Key facts:
 - Anonymous Monero (XMR) and Zano (ZANO) donations fund: public records litigation, ordinance campaigns, vendor accountability (Clearview AI, Flock Safety, Palantir, ShotSpotter), FOIA campaigns, counter-databases, insurance pressure campaigns
@@ -16,7 +16,7 @@ Key facts:
 Keep responses concise — 2-4 sentences maximum unless the question genuinely requires more. Never use bullet points or headers in responses — speak in prose.`
 
 const STARTER_PROMPTS = [
-  'What is Fourthright?',
+  'What is Citeback?',
   'How do I donate anonymously?',
   'What campaigns are active?',
   'How does the TEE work?',
@@ -196,7 +196,7 @@ export default function ConversationalInterface({ onClose }) {
         {/* Pre-conversation: starter prompts */}
         {!started && messages.length === 0 && (
           <div style={styles.starterContainer}>
-            <p style={styles.starterHeading}>Talk to Fourthright</p>
+            <p style={styles.starterHeading}>Talk to Citeback</p>
             <div style={styles.starterPrompts}>
               {STARTER_PROMPTS.map((prompt) => (
                 <button

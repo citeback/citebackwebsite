@@ -42,7 +42,7 @@ export default function Manifesto() {
           </blockquote>
 
           <div style={{ fontSize: 13, color: 'var(--gray)' }}>
-            — Fourthright Mission Statement
+            — Citeback Mission Statement
           </div>
         </div>
 
