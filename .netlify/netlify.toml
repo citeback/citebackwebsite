@@ -7,10 +7,9 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "dist"
-publishOrigin = "ui"
-commandOrigin = "ui"
-base = ""
+publish = "/Users/scotthughes/.openclaw/workspace/deflect/dist"
+publishOrigin = "config"
+commandOrigin = "config"
 command = "npm run build"
 
 [build.environment]

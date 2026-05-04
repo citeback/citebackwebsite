@@ -43,7 +43,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
             {full ? 'All Campaigns' : 'Active Campaigns'}
           </h2>
           <p style={{ color: 'var(--muted)', marginTop: 4, fontSize: 14 }}>
-            Each campaign has its own Monero wallet. 100% anonymous. 100% transparent.
+            Each campaign has its own Monero (XMR) and Zano (ZANO) wallets. 100% anonymous. 100% transparent.
           </p>
         </div>
         <button onClick={() => setProposing(true)} style={{

@@ -71,7 +71,7 @@ export default function ProposeModal({ onClose }) {
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Proposal Submitted</h3>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 24px' }}>
               Your campaign proposal is in the queue. Community review takes 24–72 hours.
-              If approved, a dedicated Monero wallet will be generated and the campaign goes live.
+              If approved, dedicated Monero (XMR) and Zano (ZANO) wallets will be generated and the campaign goes live.
             </p>
             <button onClick={onClose} style={{
               background: 'var(--accent)', border: 'none', color: '#fff',
@@ -141,7 +141,7 @@ export default function ProposeModal({ onClose }) {
                 value={form.goal} onChange={e => set('goal', e.target.value)} />
             </div>
             <div>
-              <label style={labelStyle}>Contact (optional — Monero address or Signal handle)</label>
+              <label style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle)</label>
               <input style={inputStyle} placeholder="For follow-up questions. Never shared publicly."
                 value={form.contact} onChange={e => set('contact', e.target.value)} />
             </div>

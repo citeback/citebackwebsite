@@ -163,7 +163,7 @@ export default function Operators() {
               Funds disburse as XMR or ZANO from the TEE to your operator wallet. Converting to fiat is your responsibility — use any exchange or P2P platform that complies with applicable law in your jurisdiction. The platform does not recommend specific conversion methods.
             </p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, marginTop: 8 }}>
-              The platform disburses XMR. What you do with it after is your business — you're operating for your own account, not as an intermediary. This keeps the platform legally clean and keeps you in control.
+              The platform disburses XMR or ZANO. What you do with it after is your business — you're operating for your own account, not as an intermediary. This keeps the platform legally clean and keeps you in control.
             </p>
           </div>
         </div>

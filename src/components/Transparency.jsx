@@ -4,11 +4,11 @@ import { ThreatDisclosure } from './VerificationTiers'
 const disbursements = []
 
 const principles = [
-  { title: 'One Wallet Per Campaign', body: 'Every campaign has a dedicated Monero wallet created inside a hardware-secured TEE enclave. Funds cannot be commingled. You know exactly where your XMR goes.' },
+  { title: 'One Wallet Per Campaign', body: 'Every campaign has dedicated Monero (XMR) and Zano (ZANO) wallets created inside a hardware-secured TEE enclave. Funds cannot be commingled. You know exactly where your crypto goes.' },
   { title: 'Receipt Before Release', body: 'Operators submit vendor receipts and photo proof before any disbursement is triggered. A 48-hour public challenge window follows — the community can contest any release.' },
   { title: 'TEE-Secured — No Human Keyholders', body: 'No human holds wallet keys — not operators, not the community council, not the founder. Funds live in a Trusted Execution Environment. Rules are code. Code is public.' },
   { title: 'Full Public Record', body: 'Every completed campaign, receipt, disbursement, and governance action is logged permanently. Signed by the TEE attestation key. Nothing is hidden.' },
-  { title: '1% Platform Fee', body: '1% of every donation funds platform operations (infrastructure, Monero node). The ops wallet is also TEE-secured with a public view key. Any surplus is put to a community vote.' },
+  { title: '1% Platform Fee', body: '1% of every donation funds platform operations (infrastructure, Monero and Zano nodes). The ops wallets are also TEE-secured with public view keys. Any surplus is put to a community vote.' },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. The founder has no special access post-launch. Same permissions as everyone else.' },
 ]
 
@@ -45,7 +45,7 @@ export default function Transparency() {
               What happens if Citeback doesn't launch?
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
-              Campaign wallets are controlled by the TEE — not by us. If the platform shuts down before wallets activate, no funds have been accepted and there is nothing to return. We won't accept a single XMR until the launch prerequisites are fully met.
+              Campaign wallets are controlled by the TEE — not by us. If the platform shuts down before wallets activate, no funds have been accepted and there is nothing to return. We won't accept a single XMR or ZANO until the launch prerequisites are fully met.
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }}>
               Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the TEE can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.

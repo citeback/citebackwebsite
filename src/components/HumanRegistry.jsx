@@ -110,7 +110,7 @@ function ApplyModal({ onClose }) {
             </div>
 
             <div>
-              <label style={labelStyle}>Contact (optional — Monero address, Signal handle, or ProtonMail)</label>
+              <label style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle, or ProtonMail)</label>
               <input style={inputStyle} placeholder="How to reach you if approved. Never shared publicly."
                 value={form.contact} onChange={e => set('contact', e.target.value)} />
             </div>
