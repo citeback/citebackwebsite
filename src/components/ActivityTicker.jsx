@@ -1,18 +1,44 @@
+import { useState, useEffect } from 'react'
+
 // Real events — sourced from public records and verified news reporting
-const events = [
-  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025', source: 'Footnote4a' },
-  { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025', source: 'Footnote4a' },
-  { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025', source: 'KOB 4 Investigates' },
-  { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present', source: 'Public Record' },
-  { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing', source: 'Public Record' },
-  { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026', source: 'NM Senate' },
-  { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing', source: 'Public Record' },
-  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025', source: 'Footnote4a' },
-  { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026', source: 'NM Senate' },
-  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025', source: 'ACLU' },
+const staticEvents = [
+  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025' },
+  { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
+  { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
+  { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
+  { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing' },
+  { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026' },
+  { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
+  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },
+  { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026' },
+  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' },
 ]
 
 export default function ActivityTicker() {
+  const [events, setEvents] = useState(staticEvents)
+
+  useEffect(() => {
+    // Pull the 3 most recent CourtListener opinions on ALPR/surveillance topics
+    // and prepend them to the ticker. Falls back to static events on any error.
+    fetch(
+      'https://www.courtlistener.com/api/rest/v4/search/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22&type=o&format=json&order_by=dateFiled+desc'
+    )
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        const live = (data.results || []).slice(0, 3).map(c => ({
+          text: `New case: ${c.caseName} — ${c.court_citation_string || c.court}`,
+          time: c.dateFiled || 'recent',
+          isLive: true,
+        }))
+        if (live.length) {
+          setEvents([...live, ...staticEvents])
+        }
+      })
+      .catch(() => {
+        // Silently fall back to static events — no disruption to UI
+      })
+  }, [])
+
   return (
     <div style={{
       background: 'var(--bg2)',
@@ -54,22 +80,22 @@ export default function ActivityTicker() {
         }}>
           {[...events, ...events].map((e, i) => (
             <span key={i} style={{ fontSize: 12, flexShrink: 0 }}>
+              {e.isLive && (
+                <span style={{
+                  fontSize: 9,
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: 'var(--accent)',
+                  border: '1px solid var(--accent)',
+                  padding: '1px 4px',
+                  marginRight: 6,
+                  opacity: 0.9,
+                }}>LIVE</span>
+              )}
               <span style={{ color: 'var(--text)', fontWeight: 500 }}>{e.text}</span>
               <span style={{ margin: '0 8px', color: 'var(--border)' }}>·</span>
               <span style={{ color: 'var(--accent)', fontSize: 11, fontFamily: 'var(--mono)' }}>{e.time}</span>
-              {e.source && (
-                <span style={{
-                  marginLeft: 8,
-                  fontSize: 10,
-                  color: 'var(--muted)',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 4,
-                  padding: '1px 5px',
-                  fontFamily: 'var(--mono)',
-                  opacity: 0.75,
-                }}>{e.source}</span>
-              )}
             </span>
           ))}
         </div>
