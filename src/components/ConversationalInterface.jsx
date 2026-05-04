@@ -21,10 +21,54 @@ Keep responses concise — 2-4 sentences maximum unless the question genuinely r
 const STARTER_PROMPTS = [
   'What is Citeback?',
   'How do I donate anonymously?',
-  'What campaigns are active?',
-  'How does the TEE work?',
-  'What surveillance cameras are near me?',
+  'What currencies do you accept?',
+  'Who controls the wallets?',
+  'Is this legal?',
+  'When do wallets go live?',
+  'What is a Stingray?',
+  'What is ShotSpotter?',
+  'How do I propose a campaign?',
 ]
+
+// Static FAQ responses for when Ollama is unavailable
+const STATIC_RESPONSES = {
+  'What is Citeback?':
+    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Donations arrive in Monero or Zano; a Trusted Execution Environment manages every wallet so no human can touch the keys. The platform is operated by a Wyoming DAO LLC.',
+  'How do I donate anonymously?':
+    'Send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets are managed by a TEE enclave — no operator, no employee, and no government subpoena can extract the keys.',
+  'What currencies do you accept?':
+    'Citeback accepts Monero (XMR) and Zano (ZANO). Monero uses ring signatures, stealth addresses, and RingCT to obscure sender, receiver, and amount. Zano is private-by-default at the protocol level — it also hides asset type — and supports Ionic Swaps for atomic peer-to-peer exchange.',
+  'Who controls the wallets?':
+    'No human does. Wallet keys are generated inside a Trusted Execution Environment (Intel TDX or ARM TrustZone) and never leave it. A minimum of three geographically separate enclave instances hold 2-of-3 threshold key shares. Cryptographic attestation lets anyone verify enclave integrity independently.',
+  'Is this legal?':
+    'Yes. Funding FOIA litigation, billboard campaigns, and legal defense funds is protected activity under the First Amendment. The platform is structured as a Wyoming DAO LLC. Monero and Zano are legal to hold and transmit in the United States. No campaign on Citeback funds illegal activity.',
+  'When do wallets go live?':
+    'Wallets are activating soon. Governance prerequisites are being completed and community ratification is required before mainnet. Follow the Transparency and Governance tabs for real-time status updates.',
+  'What is a Stingray?':
+    'A Stingray is an IMSI catcher — a device that mimics a cell tower to force nearby phones to connect to it, exposing device identifiers, location, and sometimes call content. Law enforcement agencies use them without warrants in many jurisdictions. Citeback funds campaigns to require warrant disclosure and ban warrantless use.',
+  'What is ShotSpotter?':
+    'ShotSpotter (now SoundThinking) is an acoustic gunshot detection system deployed across dozens of US cities. Independent audits have found high false-positive rates and the system has been used to justify stops with little evidence. Citeback funds vendor accountability campaigns targeting ShotSpotter contracts.',
+  'How do I propose a campaign?':
+    'Go to the "Run a Campaign" section and submit a proposal. The Wyoming DAO LLC operator reviews proposals for legal viability and alignment with the platform mission. Once approved, a TEE-managed wallet is provisioned and the campaign goes live. You never need to identify yourself to propose.',
+}
+
+function getStaticResponse(userText) {
+  const normalized = userText.trim()
+  // Exact match first
+  if (STATIC_RESPONSES[normalized]) return STATIC_RESPONSES[normalized]
+  // Fuzzy keyword match
+  const lower = normalized.toLowerCase()
+  if (lower.includes('what is citeback') || lower.includes('what\'s citeback')) return STATIC_RESPONSES['What is Citeback?']
+  if (lower.includes('donat') && lower.includes('anon')) return STATIC_RESPONSES['How do I donate anonymously?']
+  if (lower.includes('currenc') || lower.includes('accept') || lower.includes('xmr') || lower.includes('zano') || lower.includes('monero')) return STATIC_RESPONSES['What currencies do you accept?']
+  if (lower.includes('wallet') && (lower.includes('control') || lower.includes('who') || lower.includes('tee') || lower.includes('key'))) return STATIC_RESPONSES['Who controls the wallets?']
+  if (lower.includes('legal') || lower.includes('illegal') || lower.includes('law')) return STATIC_RESPONSES['Is this legal?']
+  if (lower.includes('go live') || lower.includes('launch') || lower.includes('when') || lower.includes('mainnet')) return STATIC_RESPONSES['When do wallets go live?']
+  if (lower.includes('stingray') || lower.includes('imsi')) return STATIC_RESPONSES['What is a Stingray?']
+  if (lower.includes('shotspotter') || lower.includes('gunshot') || lower.includes('acoustic')) return STATIC_RESPONSES['What is ShotSpotter?']
+  if (lower.includes('propos') || lower.includes('campaign') || lower.includes('submit') || lower.includes('run a')) return STATIC_RESPONSES['How do I propose a campaign?']
+  return null
+}
 
 const PRIMARY_MODEL = 'qwen2.5:14b'
 const FALLBACK_MODEL = 'llama3.2'
@@ -36,10 +80,21 @@ export default function ConversationalInterface({ onClose }) {
   const [isStreaming, setIsStreaming] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
   const [started, setStarted] = useState(false)
+  // null = unknown, true = available, false = unavailable
+  const [ollamaAvailable, setOllamaAvailable] = useState(null)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const abortControllerRef = useRef(null)
+
+  // Probe Ollama availability once on mount
+  useEffect(() => {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 3000)
+    fetch('http://localhost:11434/api/tags', { signal: controller.signal })
+      .then(r => { clearTimeout(timer); setOllamaAvailable(r.ok) })
+      .catch(() => { clearTimeout(timer); setOllamaAvailable(false) })
+  }, [])
 
   // Scroll to bottom whenever messages change
   useEffect(() => {
@@ -67,11 +122,29 @@ export default function ConversationalInterface({ onClose }) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
+  const sendStaticResponse = useCallback((userText) => {
+    const userMessage = { role: 'user', content: userText.trim() }
+    const staticAnswer = getStaticResponse(userText)
+    const aiMessage = {
+      role: 'assistant',
+      content: staticAnswer ||
+        'That question isn\'t in my static FAQ yet. For detailed answers, check the Transparency and Governance tabs — or ask again once Ollama is running locally.',
+      isStatic: true,
+    }
+    setMessages(prev => [...prev, userMessage, aiMessage])
+    setInput('')
+  }, [])
+
   const sendMessage = useCallback(async (userText) => {
     if (!userText.trim() || isStreaming) return
 
-    const userMessage = { role: 'user', content: userText.trim() }
+    // If Ollama is known offline, use static responses immediately
+    if (ollamaAvailable === false) {
+      sendStaticResponse(userText)
+      return
+    }
 
+    const userMessage = { role: 'user', content: userText.trim() }
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsStreaming(true)
@@ -140,6 +213,7 @@ export default function ConversationalInterface({ onClose }) {
 
     try {
       await tryModel(PRIMARY_MODEL)
+      setOllamaAvailable(true)
     } catch (primaryErr) {
       if (primaryErr.name === 'AbortError') {
         setIsStreaming(false)
@@ -154,20 +228,34 @@ export default function ConversationalInterface({ onClose }) {
           return updated
         })
         await tryModel(FALLBACK_MODEL)
+        setOllamaAvailable(true)
       } catch (fallbackErr) {
         if (fallbackErr.name === 'AbortError') {
           setIsStreaming(false)
           return
         }
-        setIsOffline(true)
+        // Both models failed — mark offline and fall back to static
+        setOllamaAvailable(false)
         // Remove the empty assistant message
         setMessages(prev => prev.filter((_, i) => i !== prev.length - 1))
+        // Deliver static response instead
+        const staticAnswer = getStaticResponse(userText)
+        setMessages(prev => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: staticAnswer ||
+              'Ollama is unavailable. Check the Transparency and Governance tabs for detailed answers, or install Ollama locally to enable full AI responses.',
+            isStatic: true,
+          }
+        ])
+        setIsOffline(true)
       }
     } finally {
       setIsStreaming(false)
       abortControllerRef.current = null
     }
-  }, [messages, isStreaming])
+  }, [messages, isStreaming, ollamaAvailable, sendStaticResponse])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -180,6 +268,8 @@ export default function ConversationalInterface({ onClose }) {
     setStarted(true)
     sendMessage(prompt)
   }
+
+  const offlineMode = ollamaAvailable === false
 
   return (
     <div style={styles.overlay}>
@@ -199,7 +289,16 @@ export default function ConversationalInterface({ onClose }) {
         {/* Pre-conversation: starter prompts */}
         {!started && messages.length === 0 && (
           <div style={styles.starterContainer}>
-            <p style={styles.starterHeading}>Talk to Citeback</p>
+            <p style={styles.starterHeading}>
+              {offlineMode
+                ? 'Common questions — local AI unavailable'
+                : 'Talk to Citeback'}
+            </p>
+            {offlineMode && (
+              <p style={styles.offlineBanner}>
+                Local AI is offline. These questions use pre-written answers.
+              </p>
+            )}
             <div style={styles.starterPrompts}>
               {STARTER_PROMPTS.map((prompt) => (
                 <button
@@ -229,15 +328,19 @@ export default function ConversationalInterface({ onClose }) {
                 {msg.role === 'assistant' && !msg.content && isStreaming && idx === messages.length - 1 && (
                   <TypingIndicator />
                 )}
+                {/* Static badge */}
+                {msg.isStatic && (
+                  <span style={styles.staticBadge}>pre-written</span>
+                )}
               </div>
             ))}
 
-            {/* Offline error */}
+            {/* Offline notice — shown after first static response */}
             {isOffline && (
               <div style={styles.offlineMessage}>
-                🧠 The AI assistant requires <strong>Ollama</strong> running locally at localhost:11434.
-                {' '}<a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#c0392b' }}>Install Ollama</a>,
-                then run <code style={{ fontFamily: 'monospace', fontSize: 12 }}>ollama pull qwen2.5:14b</code>.
+                Local AI (Ollama) is not running — answering from pre-written FAQ.{' '}
+                <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#c0392b' }}>Install Ollama</a>,
+                then run <code style={{ fontFamily: 'monospace', fontSize: 12 }}>ollama pull qwen2.5:14b</code> for live responses.
               </div>
             )}
 
@@ -258,7 +361,7 @@ export default function ConversationalInterface({ onClose }) {
                 if (!started) setStarted(true)
               }}
               onFocus={() => !started && setStarted(true)}
-              placeholder="Ask anything…"
+              placeholder={offlineMode ? 'Ask anything — pre-written answers only…' : 'Ask anything…'}
               style={styles.input}
               disabled={isStreaming}
               autoComplete="off"
@@ -344,8 +447,15 @@ const styles = {
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: '#aaa',
-    marginBottom: '32px',
+    marginBottom: '12px',
     fontWeight: 400,
+  },
+  offlineBanner: {
+    fontSize: '13px',
+    color: '#c0392b',
+    marginBottom: '24px',
+    fontWeight: 400,
+    lineHeight: 1.5,
   },
   starterPrompts: {
     display: 'flex',
@@ -392,13 +502,25 @@ const styles = {
     maxWidth: '100%',
     minHeight: '24px',
   },
+  staticBadge: {
+    display: 'inline-block',
+    marginLeft: '10px',
+    fontSize: '10px',
+    color: '#bbb',
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    verticalAlign: 'middle',
+    fontWeight: 400,
+  },
   offlineMessage: {
     alignSelf: 'flex-start',
-    color: '#c0392b',
-    fontSize: '14px',
+    color: '#999',
+    fontSize: '13px',
     fontWeight: 400,
     lineHeight: 1.6,
     fontStyle: 'italic',
+    borderTop: '1px solid #e8e6e3',
+    paddingTop: '12px',
   },
   inputArea: {
     position: 'fixed',

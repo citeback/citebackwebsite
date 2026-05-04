@@ -4,15 +4,15 @@ import { useState, useEffect, useRef } from 'react'
 const primaryLinks = [
   { id: 'home', label: 'Home' },
   { id: 'campaigns', label: 'Campaigns' },
-  { id: 'map', label: 'Surveillance Map' },
+  { id: 'map', label: 'Map' },
   { id: 'trust', label: 'How It Works' },
   { id: 'transparency', label: 'Transparency' },
+  { id: 'governance', label: 'Governance' },
 ]
 
 const moreLinks = [
   { id: 'operators', label: 'Run a Campaign' },
   { id: 'registry', label: 'Expert Directory' },
-  { id: 'governance', label: 'Governance' },
   { id: 'feed', label: 'Intelligence Feed' },
 ]
 

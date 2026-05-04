@@ -78,7 +78,7 @@ export default function CampaignSelector({ setTab }) {
         Six Ways to Push Back
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+      <div className="campaign-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
         {/* Left: list */}
         <div>
           {campaigns.map((c, i) => (
@@ -203,6 +203,12 @@ export default function CampaignSelector({ setTab }) {
         @keyframes campaignFadeIn {
           from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 640px) {
+          .campaign-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
         }
       `}</style>
     </section>

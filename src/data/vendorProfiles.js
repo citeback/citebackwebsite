@@ -91,14 +91,20 @@ const vendorProfiles = {
     // (footnote4a.org/news/fbi-access) documents FBI access specifically.
     // ICE access may exist via fusion center sharing but lacks a citable primary source.
     // Restore only with a direct, verifiable citation. Potential defamation risk.
-    flag: 'Privately held, valued at $3.8B (2022 funding round - current valuation unconfirmed). Deployed 90,000+ cameras in 4,000+ communities. Granted FBI access despite publicly promising no federal contracts - documented by Footnote4a (2023).',
+    // SOURCE: 90,000+ cameras / 4,000+ communities figure consistent with ProgressNow NM
+    // and TechCrunch reporting as of 2025. Primary flocksafety.com company fact sheet
+    // (flocksafety.com/company) also cites comparable scale; figure may update quarterly.
+    flag: 'Privately held, valued at $3.8B (2022 funding round - current valuation unconfirmed). Deployed 90,000+ cameras in 4,000+ communities (2025 estimate, per company and press reporting). Granted FBI access despite publicly promising no federal contracts - documented by Footnote4a (2023).',
     founded: 2017,
     revenue: 'Private (est. $150M+)',
-    contracts: '4,000+ communities, 90,000+ cameras across the US',
+    contracts: '4,000+ communities, 90,000+ cameras across the US (2025 estimate)',
     controversies: [
       'Quietly granted FBI access after promising communities it had no federal contracts (Footnote4a 2023)',
       'A Bernalillo County deputy was caught misusing ALPR data - given only a written reprimand',
-      'Flock Nova™ product (confirmed on flocksafety.com) integrates agency systems for investigations; 404 Media reporting links it to external commercial data sources — \'breach records\' claim needs primary source citation before asserting',
+      // SOURCE: Flock Nova product confirmed at flocksafety.com. "Breach records" claim
+      // lacked a verifiable primary source URL at time of review (2025-05-04).
+      // Softened to "commercial data enrichment" pending primary source confirmation.
+      'Flock Nova™ product (confirmed on flocksafety.com) integrates multiple agency systems for investigations and reportedly draws on external commercial data enrichment sources (2025)',
       'Taos Plaza: 18 cameras installed without a public disclosure process or community notification (2023)',
     ],
     url: 'https://footnote4a.org/news/fbi-access',
