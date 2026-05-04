@@ -15,7 +15,7 @@ const vendorProfiles = {
       'ICE deportation workflows — documented by The Intercept',
       'IPO\'d on NYSE 2020 despite repeated civil liberties violations',
     ],
-    url: 'https://www.theguardian.com/us-news/2017/mar/02/palantir-software-peter-thiel-immigration-deportation',
+    url: 'https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained',
   },
 
   clearview: {
@@ -37,7 +37,7 @@ const vendorProfiles = {
   shotspotter: {
     name: 'ShotSpotter / SoundThinking',
     tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded when scrutiny got too hot.',
-    flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP investigation found alerts led Chicago police to innocent people 40,000+ times in one year.',
+    flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP/MacArthur Justice Center investigation found 40,000+ ShotSpotter alerts in Chicago over 21 months led to no evidence of a gun crime.',
     founded: 1996,
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
@@ -48,13 +48,13 @@ const vendorProfiles = {
       'Rebranded as \'SoundThinking\' to escape negative press coverage',
       'Acquired HunchLab predictive policing — now does both surveillance AND prediction',
     ],
-    url: 'https://theintercept.com/2021/01/12/shotspotter-chicago-murder-acoustic-evidence/',
+    url: 'https://endpolicesurveillance.com',
   },
 
   soundthinking: {
     name: 'ShotSpotter / SoundThinking',
     tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded when scrutiny got too hot.',
-    flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP investigation found alerts led Chicago police to innocent people 40,000+ times in one year.',
+    flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP/MacArthur Justice Center investigation found 40,000+ ShotSpotter alerts in Chicago over 21 months led to no evidence of a gun crime.',
     founded: 1996,
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
@@ -65,7 +65,7 @@ const vendorProfiles = {
       'Rebranded as \'SoundThinking\' to escape negative press coverage',
       'Acquired HunchLab predictive policing — now does both surveillance AND prediction',
     ],
-    url: 'https://theintercept.com/2021/01/12/shotspotter-chicago-murder-acoustic-evidence/',
+    url: 'https://endpolicesurveillance.com',
   },
 
   flock: {
@@ -97,7 +97,7 @@ const vendorProfiles = {
       'Sold to dozens of cities with no peer-reviewed evidence of effectiveness',
       'Filed for bankruptcy in 2023',
     ],
-    url: 'https://themarkup.org/series/prediction-bias',
+    url: 'https://themarkup.org/prediction-bias/2023/10/02/predictive-policing-software-terrible-at-predicting-crimes',
   },
 
   geolitica: {
@@ -113,7 +113,7 @@ const vendorProfiles = {
       'Sold to dozens of cities with no peer-reviewed evidence of effectiveness',
       'Filed for bankruptcy in 2023',
     ],
-    url: 'https://themarkup.org/series/prediction-bias',
+    url: 'https://themarkup.org/prediction-bias/2023/10/02/predictive-policing-software-terrible-at-predicting-crimes',
   },
 
   dataworks: {
@@ -158,7 +158,7 @@ const vendorProfiles = {
       'Devices used without warrants in hundreds of documented cases',
       'NDAs have caused prosecutors to DROP CHARGES rather than disclose Stingray use in court',
     ],
-    url: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices',
+    url: 'https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers',
   },
 
   stingray: {
@@ -173,7 +173,7 @@ const vendorProfiles = {
       'Devices used without warrants in hundreds of documented cases',
       'NDAs have caused prosecutors to DROP CHARGES rather than disclose Stingray use in court',
     ],
-    url: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices',
+    url: 'https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers',
   },
 }
 

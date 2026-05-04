@@ -47,8 +47,7 @@ const TYPES = [
       cta: 'FOIA your local police department\'s facial recognition contracts and use policies.',
     },
     links: [
-      { label: 'Georgetown "Perpetual Line-Up" study', url: 'https://georgetownlawtechreview.org/the-perpetual-line-up-unregulated-police-face-recognition-in-america/GLTR-10-2016/' },
-      { label: 'ACLU face recognition tracker', url: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/face-recognition-technology' },
+      { label: 'Georgetown "Perpetual Line-Up" study', url: 'https://www.law.georgetown.edu/privacy-technology-center/publications/the-perpetual-line-up/' },
     ],
   },
   {
@@ -72,8 +71,7 @@ const TYPES = [
       cta: 'FOIA whether your local or county law enforcement owns a cell-site simulator. Many departments deny it.',
     },
     links: [
-      { label: 'ACLU Stingray tracker', url: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices' },
-      { label: 'EFF cell-site simulator explainer', url: 'https://www.eff.org/pages/cell-site-simulators-imsi-catchers' },
+      { label: 'EFF Street Level Surveillance: Cell-Site Simulators', url: 'https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers' },
     ],
   },
   {
@@ -97,8 +95,7 @@ const TYPES = [
       cta: 'Ask your city council whether they have a ShotSpotter (or SoundThinking) contract. If they do, ask for the false-alert rate data.',
     },
     links: [
-      { label: 'AP investigation: ShotSpotter false alerts', url: 'https://apnews.com/article/shotspotter-gunfire-detection-9ee0e1935bc7d8eef5c7afc3a5b36c3c' },
-      { label: 'MacArthur Justice Center analysis', url: 'https://www.macarthurjustice.org/our-work/technology-and-policing/' },
+      { label: 'End Police Surveillance: ShotSpotter data', url: 'https://endpolicesurveillance.com' },
     ],
   },
   {
@@ -122,8 +119,7 @@ const TYPES = [
       cta: 'FOIA whether your city or county has drones, what payloads they carry, and what the deployment policy is.',
     },
     links: [
-      { label: 'Bard College Drone Center tracker', url: 'https://dronecenter.bard.edu' },
-      { label: 'ACLU model drone legislation', url: 'https://www.aclu.org/report/protecting-privacy-aerial-surveillance' },
+      { label: 'Bard College: Drones in Public Safety tracker', url: 'https://dronecenter.bard.edu/projects/public-safety-drones-project/' },
     ],
   },
   {
@@ -147,7 +143,7 @@ const TYPES = [
       cta: 'FOIA your city\'s predictive policing contracts with Palantir, ShotSpotter, Axon, or any risk-scoring vendor.',
     },
     links: [
-      { label: 'The Markup: prediction bias investigation', url: 'https://themarkup.org/prediction-bias/2021/12/02/crime-prediction-software-promised-to-be-free-of-bias' },
+      { label: 'The Markup: Predictive Policing Software Terrible At Predicting Crimes', url: 'https://themarkup.org/prediction-bias/2023/10/02/predictive-policing-software-terrible-at-predicting-crimes' },
       { label: 'Brennan Center: predictive policing explainer', url: 'https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained' },
     ],
   },

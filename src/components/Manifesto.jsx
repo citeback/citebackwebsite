@@ -49,7 +49,7 @@ export default function Manifesto() {
             color: 'var(--fg)',
             margin: '0 0 16px 0',
           }}>
-            "Institutions document individuals constantly, at scale, with impunity. We exist to correct that asymmetry."
+            "Institutions document individuals constantly, at scale, with impunity. We exist to reverse that."
           </blockquote>
 
           <div style={{ fontSize: 13, color: 'var(--gray)' }}>

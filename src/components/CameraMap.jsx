@@ -576,7 +576,7 @@ const EFF_LAYERS = [
     icon: '👁️',
     color: '#a855f7',
     source: 'Georgetown Law / EFF / ACLU / Clearview AI leak',
-    sourceUrl: 'https://atlasofsurveillance.org',
+    sourceUrl: 'https://atlasofsurveillance.org/search',
     active: false,
     live: true,
     data: facialRecognitionAgencies,
@@ -588,7 +588,7 @@ const EFF_LAYERS = [
     icon: '📡',
     color: '#f97316',
     source: 'ACLU / EFF Atlas of Surveillance',
-    sourceUrl: 'https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices',
+    sourceUrl: 'https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers',
     active: false,
     live: true,
     data: stingrays,
@@ -600,7 +600,7 @@ const EFF_LAYERS = [
     icon: '🔊',
     color: '#eab308',
     source: 'AP Investigation / MacArthur Justice Ctr / USASpending',
-    sourceUrl: 'https://apnews.com/article/shotspotter-gunfire-detection-9ee0e1935bc7d8eef5c7afc3a5b36c3c',
+    sourceUrl: 'https://endpolicesurveillance.com',
     active: false,
     live: true,
     data: shotspotter,
@@ -612,7 +612,7 @@ const EFF_LAYERS = [
     icon: '🚁',
     color: '#06b6d4',
     source: 'Bard College Drone Center / EFF Atlas / FAA',
-    sourceUrl: 'https://dronecenter.bard.edu',
+    sourceUrl: 'https://dronecenter.bard.edu/projects/public-safety-drones-project/',
     active: false,
     live: true,
     data: policeDrones,
@@ -624,7 +624,7 @@ const EFF_LAYERS = [
     icon: '🧠',
     color: '#ec4899',
     source: 'PredPol client lists / The Markup / Brennan Center',
-    sourceUrl: 'https://themarkup.org/prediction-bias/2021/12/02/crime-prediction-software-promised-to-be-free-of-bias',
+    sourceUrl: 'https://themarkup.org/prediction-bias/2023/10/02/predictive-policing-software-terrible-at-predicting-crimes',
     active: false,
     live: true,
     data: predictivePolicing,
@@ -708,16 +708,17 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
                 <div style={{ fontSize: 11, color: '#c0bdb8', lineHeight: 1.55, marginBottom: 6 }}>
                   ℹ️ {blurb}
                 </div>
-                <button
-                  onClick={() => setExpandedBlurb(null)}
+                <a
+                  href={layer.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
-                    background: 'none', border: 'none',
                     color: layer.color, fontSize: 11, fontWeight: 600,
-                    cursor: 'pointer', padding: 0,
+                    textDecoration: 'none', display: 'inline-block',
                   }}
                 >
                   Learn more ↗
-                </button>
+                </a>
               </div>
             )}
           </div>
@@ -1339,19 +1340,19 @@ export default function CameraMap() {
                 fontSize: 10, color: '#4b5563', lineHeight: 1.6,
               }}>
                 Sources:{' '}
-                <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer"
+                <a href="https://atlasofsurveillance.org/search" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
                 >EFF Atlas</a>
                 {' · '}
-                <a href="https://georgetownlawtechreview.org/the-perpetual-line-up-unregulated-police-face-recognition-in-america/GLTR-10-2016/" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.law.georgetown.edu/privacy-technology-center/publications/the-perpetual-line-up/" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
                 >Georgetown Law</a>
                 {' · '}
-                <a href="https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices" target="_blank" rel="noopener noreferrer"
+                <a href="https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
-                >ACLU</a>
+                >EFF/ACLU CSS</a>
                 {' · '}
-                <a href="https://dronecenter.bard.edu" target="_blank" rel="noopener noreferrer"
+                <a href="https://dronecenter.bard.edu/projects/public-safety-drones-project/" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
                 >Bard Drone Ctr</a>
               </div>

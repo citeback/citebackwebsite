@@ -15,7 +15,18 @@ export default function GuaranteeSection() {
         padding: '80px 0',
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+      <style>{`
+        @media (max-width: 700px) {
+          .guarantee-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+          .guarantee-facts {
+            padding-top: 0 !important;
+          }
+        }
+      `}</style>
+      <div className="guarantee-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
         {/* Left: text */}
         <div>
           <div
@@ -67,7 +78,7 @@ export default function GuaranteeSection() {
         </div>
 
         {/* Right: facts list */}
-        <div style={{ paddingTop: '56px' }}>
+        <div className="guarantee-facts" style={{ paddingTop: '56px' }}>
           {facts.map((fact, i) => (
             <div
               key={i}

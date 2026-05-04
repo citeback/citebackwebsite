@@ -1,7 +1,7 @@
 export default function Footer({ setTab }) {
   const navLinks = [
     { label: 'Campaigns', tab: 'campaigns' },
-    { label: 'How It Works', tab: 'home' },
+    { label: 'How It Works', tab: 'trust' },
     { label: 'Governance', tab: 'governance' },
     { label: 'Run a Campaign', tab: 'operators' },
   ]

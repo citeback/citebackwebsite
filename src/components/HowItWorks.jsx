@@ -26,7 +26,7 @@ const operatorSteps = [
   },
   {
     title: 'Get Funded',
-    desc: 'Community votes and sends XMR or ZANO anonymously. No donor identity. No paper trail. Funds held in TEE-secured wallets until milestones are met.',
+    desc: 'Donors vote and fund anonymously in XMR or ZANO. No donor identity. No paper trail. Funds held in TEE-secured wallets until milestones are met.',
   },
   {
     title: 'Execute and Document',
