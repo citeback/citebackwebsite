@@ -75,7 +75,6 @@ export default function App() {
 
       <Footer setTab={setTab} />
       <ThemePicker />
-      <ChatBot />
 
       {selectedCampaign && (
         <CampaignModal campaign={selectedCampaign} onClose={() => setSelectedCampaign(null)} />
