@@ -900,9 +900,14 @@ export default function CameraMap() {
           Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — 92,000+ ALPR cameras mapped nationally.
           Zoom in to load cameras in any area.
         </span>
-        <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-          Add cameras to OpenStreetMap <ExternalLink size={11} />
-        </a>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+          <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+            Add a camera <ExternalLink size={11} />
+          </a>
+          <a href="https://donate.openstreetmap.org/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+            Support OSM <ExternalLink size={11} />
+          </a>
+        </div>
       </div>
 
       {/* Loading bar */}
