@@ -63,8 +63,8 @@ export default function App() {
       {tab === 'campaigns' && <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />}
       {tab === 'map' && <CameraMap />}
       {tab === 'registry' && <HumanRegistry />}
-      {tab === 'transparency' && <Transparency />}
-      {tab === 'trust' && <TrustFAQ />}
+      {tab === 'transparency' && <Transparency setTab={setTab} />}
+      {tab === 'trust' && <TrustFAQ setTab={setTab} />}
       {tab === 'governance' && <Governance setTab={setTab} />}
       {tab === 'operators' && <Operators />}
       {tab === 'feed' && <SurveillanceFeed />}

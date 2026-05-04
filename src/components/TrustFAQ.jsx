@@ -163,7 +163,7 @@ function FAQItem({ q, a }) {
   )
 }
 
-export default function TrustFAQ() {
+export default function TrustFAQ({ setTab }) {
   const [activeSection, setActiveSection] = useState(0)
 
   return (
@@ -275,6 +275,50 @@ export default function TrustFAQ() {
           </div>
         </div>
       </div>
+
+      {/* CTA row */}
+      {setTab && (
+        <div style={{
+          marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap', paddingTop: 24,
+          borderTop: '1px solid var(--border)',
+        }}>
+          <button
+            onClick={() => setTab('campaigns')}
+            style={{
+              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+              padding: '13px 28px', fontSize: 13, fontWeight: 600,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              cursor: 'pointer', fontFamily: 'var(--font)',
+            }}
+          >
+            Browse Campaigns →
+          </button>
+          <button
+            onClick={() => setTab('operators')}
+            style={{
+              background: 'transparent', color: 'var(--fg)',
+              border: '1px solid var(--border)', padding: '13px 28px',
+              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'var(--font)',
+            }}
+          >
+            Run a Campaign →
+          </button>
+          <button
+            onClick={() => setTab('governance')}
+            style={{
+              background: 'transparent', color: 'var(--fg)',
+              border: '1px solid var(--border)', padding: '13px 28px',
+              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'var(--font)',
+            }}
+          >
+            Governance Spec →
+          </button>
+        </div>
+      )}
     </section>
   )
 }

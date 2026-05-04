@@ -14,7 +14,7 @@ const principles = [
   { title: 'Transparent Operator', body: 'The platform is operated by a Wyoming DAO LLC. Operator identity, responsibilities, and limitations are published in the governance spec. The operator manages the platform and reviews campaign proposals — the operator cannot touch wallet keys. Those are in the TEE.' },
 ]
 
-export default function Transparency() {
+export default function Transparency({ setTab }) {
   return (
     <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       <div style={{ marginBottom: 40 }}>
@@ -142,6 +142,45 @@ export default function Transparency() {
           <span style={{ fontSize: 12, opacity: 0.65 }}>Every completed campaign will be logged here with receipt and XMR transaction ID. Forever.</span>
         </div>
       </div>
+
+      {/* CTA */}
+      {setTab && (
+        <div style={{
+          marginTop: 32, padding: '24px', borderRadius: 12,
+          background: 'var(--bg2)', border: '1px solid var(--border)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 20,
+        }}>
+          <div>
+            <p style={{ fontWeight: 700, fontSize: 14, margin: '0 0 4px' }}>Transparency only means something if campaigns exist.</p>
+            <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>Browse the campaigns that will create this public record.</p>
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setTab('campaigns')}
+              style={{
+                background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+                padding: '10px 22px', fontSize: 13, fontWeight: 600,
+                letterSpacing: '0.03em', cursor: 'pointer',
+                fontFamily: 'var(--font)', flexShrink: 0,
+              }}
+            >
+              Browse Campaigns →
+            </button>
+            <button
+              onClick={() => setTab('governance')}
+              style={{
+                background: 'transparent', color: 'var(--fg)',
+                border: '1px solid var(--border)', padding: '10px 22px',
+                fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                fontFamily: 'var(--font)', flexShrink: 0,
+              }}
+            >
+              How Disbursement Works →
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
