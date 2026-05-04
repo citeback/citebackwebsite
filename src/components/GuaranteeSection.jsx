@@ -1,7 +1,8 @@
 const facts = [
   'Minimum 3 TEE instances across different hardware providers',
   '2-of-3 threshold signatures required — single compromise impossible',
-  'No human has ever held a wallet key',
+  'No human has ever held a wallet key — not operators, not the founder',
+  'Operated transparently by a Wyoming DAO LLC — financials governed by code',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
   'Mission locked in code, not governance documents',
   'Architecture audited across 5 independent review rounds',
@@ -58,7 +59,7 @@ export default function GuaranteeSection() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
               'The target architecture: every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are created inside and never leave.',
-              'No founder. No operator. No court order. No person will be able to produce keys that exist only inside the enclave.',
+              'The platform is operated — transparently, by a Wyoming DAO LLC. What no one can do is touch the money. No founder, no operator, no court order can produce keys that exist only inside the enclave.',
               "This isn't a policy. It isn't a promise. It's the architecture — and the code is public now for anyone to audit before launch.",
             ].map((para, i) => (
               <p

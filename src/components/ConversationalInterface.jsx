@@ -7,6 +7,7 @@ Key facts:
 - XMR privacy: ring signatures obscure sender, stealth addresses hide receiver, RingCT hides transaction amounts. Wallet managed via monero-wallet-rpc inside the enclave.
 - ZANO privacy: private-by-default — amounts, sender, receiver, AND asset type are all hidden at the protocol level (confidential assets, CryptoNote base). Hybrid PoW+PoS consensus. Ionic Swaps enable atomic P2P exchange. Wallet managed via Zano full RPC API.
 - No human holds wallet keys — TEE architecture (Intel SGX / ARM TrustZone), cryptographic attestation proves enclave integrity, minimum 3 instances, 2-of-3 threshold signatures; private keys never leave the secure enclave
+- The platform is operated by a Wyoming DAO LLC — the operator manages the site, reviews campaign proposals, and handles onboarding; the operator cannot access wallet keys
 - Mission is immutably locked in architecture, not policy
 - 92,847+ surveillance cameras documented
 - Governance: specification published and active, community ratification required before mainnet

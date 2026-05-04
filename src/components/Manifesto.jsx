@@ -3,7 +3,7 @@ export default function Manifesto() {
     { they: 'Built the cage.', we: 'Document every bar.' },
     { they: 'Scan without consent.', we: 'Expose without apology.' },
     { they: 'Share your data freely.', we: 'Fund the litigation to stop it.' },
-    { they: 'Pressure donors to back down.', we: 'Hold no keys. There\'s no one to pressure.' },
+    { they: 'Pressure donors to back down.', we: 'Hold no keys to the wallets. No one can redirect the funds.' },
   ]
 
   return (

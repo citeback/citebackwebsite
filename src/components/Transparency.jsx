@@ -11,6 +11,7 @@ const principles = [
   { title: 'Full Public Record', body: 'Once live, every campaign receipt, disbursement, and governance action will be logged permanently and signed by the TEE attestation key. The governance rules governing this process are public now.' },
   { title: 'Graduated Platform Fee', body: 'A platform fee funds operations — infrastructure, Monero and Zano nodes. Fees are graduated by operator volume: 5% (under $10k), 4.5% ($10k–$25k), 4% ($25k–$50k), 3% (above $50k). See GOVERNANCE.md §7.3 for the full schedule. Ops wallets are TEE-secured with public view keys. Any surplus goes to a community vote.' },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. The founder has no special access post-launch. Same permissions as everyone else.' },
+  { title: 'Transparent Operator', body: 'The platform is operated by a Wyoming DAO LLC. Operator identity, responsibilities, and limitations are published in the governance spec. The operator manages the platform and reviews campaign proposals — the operator cannot touch wallet keys. Those are in the TEE.' },
 ]
 
 export default function Transparency() {

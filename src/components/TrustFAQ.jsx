@@ -9,7 +9,7 @@ const sections = [
     questions: [
       {
         q: 'Who controls the campaign wallets?',
-        a: `No human does — including the founder.\n\nEvery campaign wallet lives inside a Trusted Execution Environment (TEE): a hardware-level secure enclave where code runs in complete isolation. Even the server owner cannot extract keys, inspect memory, or alter what's running without invalidating a cryptographic proof.\n\nThe AI agent inside the enclave creates wallets, receives donations, and disburses funds according to the open source rules. Nobody bypasses this.`,
+        a: `The TEE does — no human can override it, including the founder or the platform operator.\n\nEvery campaign wallet lives inside a Trusted Execution Environment (TEE): a hardware-level secure enclave where code runs in complete isolation. Even the server owner cannot extract keys, inspect memory, or alter what's running without invalidating a cryptographic proof.\n\nThe platform is operated by a Wyoming DAO LLC — the operator manages campaigns, reviews proposals, and handles onboarding. What the operator cannot do is access wallet keys. Those exist only inside the TEE. Nobody bypasses this.`,
       },
       {
         q: 'What is a Trusted Execution Environment (TEE)?',
@@ -40,7 +40,7 @@ const sections = [
     questions: [
       {
         q: 'Who runs Citeback?',
-        a: `The community runs Citeback. The founder built it and will formally step back after Phase 2 launch (when the TEE wallet agent goes live).\n\nAfter handoff, the founder's account has identical permissions to any other community participant. No veto, no special access, no back door.\n\nThe platform is run by its open source code, enforced by the TEE, governed by community vote.`,
+        a: `Citeback is operated by a Wyoming DAO LLC. The operator manages the platform, reviews campaign proposals, and handles operator onboarding.\n\nWhat the operator CANNOT do is touch wallet keys — those are held exclusively in the TEE. The operator has no ability to redirect funds, access campaign wallets, or override disbursement rules. Community governance holds the operator accountable.\n\nAfter Phase 2 launch, the founder's account has identical permissions to any other community participant. No veto, no special access, no back door.`,
       },
       {
         q: 'How does community voting work?',
@@ -52,7 +52,7 @@ const sections = [
       },
       {
         q: 'Can the founder change the rules or take back control?',
-        a: `No.\n\nAfter Phase 2 launch:\n• Wallet keys exist only inside the TEE — inaccessible to everyone including the founder\n• Site changes require community votes that the founder cannot unilaterally pass\n• Governance rules have 75% supermajority + 14-day time-lock requirements\n• The TEE attestation is publicly verifiable — any tampering is immediately detectable\n\nThe founder bootstrapped the system. The system no longer needs the founder.`,
+        a: `No.\n\nA human operator (Wyoming DAO LLC) runs the platform — but the operator cannot access funds. After Phase 2 launch:\n• Wallet keys exist only inside the TEE — inaccessible to everyone, including the operator and the founder\n• Site changes require community votes that no individual can unilaterally pass\n• Governance rules have 75% supermajority + 14-day time-lock requirements\n• The TEE attestation is publicly verifiable — any tampering is immediately detectable\n\nThe founder bootstrapped the system. The operator keeps it running. The TEE holds the keys. Nobody can redirect the money.`,
       },
       {
         q: 'What happens if Citeback itself disappears?',

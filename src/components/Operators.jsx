@@ -65,7 +65,10 @@ export default function Operators() {
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Run a Campaign</h1>
         </div>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 15 }}>
-          Operators are the people who make campaigns happen - lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
+          Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
+        </p>
+        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, marginTop: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px 16px' }}>
+          <strong style={{ color: 'var(--text)' }}>How this works:</strong> The platform is operated by a Wyoming DAO LLC — you’ll work with a real person during onboarding and proposal review. Once your campaign is funded and milestones are met, disbursements are handled automatically by the TEE. No human — including the platform operator — can access campaign wallet keys or redirect funds.
         </p>
       </div>
 
@@ -171,8 +174,8 @@ export default function Operators() {
 
       <Accordion title="What happens after you submit" icon={FileText}>
         <ol style={{ paddingLeft: 18, lineHeight: 2 }}>
-          <li>Submission reviewed within 5-7 business days</li>
-          <li>Identity verified and OFAC screened privately</li>
+          <li>Submission reviewed within 5-7 business days by the platform operator (Wyoming DAO LLC)</li>
+          <li>Identity verified and OFAC screened privately by the operator — never published</li>
           <li>Tier assigned based on campaign scope and budget</li>
           <li>Campaign published - community begins funding</li>
           <li>Funds disburse milestone-by-milestone as proof is submitted and verified</li>
