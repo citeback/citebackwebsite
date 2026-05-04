@@ -4,7 +4,7 @@ const events = [
   { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
   { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
   { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
-  { text: 'Las Cruces NM: 37 cameras including PTZ units that track faces in real time', time: 'ongoing' },
+  { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing' },
   { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026' },
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
   { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },

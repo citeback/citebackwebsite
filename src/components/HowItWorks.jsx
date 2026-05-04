@@ -11,7 +11,7 @@ const donorSteps = [
   },
   {
     title: 'Track It Publicly',
-    desc: 'Every transaction is on-chain. Every expenditure verified before release. Every outcome documented. The record is permanent and public.',
+    desc: 'Donor transactions stay private by design — XMR and ZANO leave no trace. What is public: every campaign milestone, every verified expenditure, every outcome. The accountability record is permanent.',
   },
   {
     title: 'Watch It Win',

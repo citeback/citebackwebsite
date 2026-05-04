@@ -43,7 +43,7 @@ export default function ALPRExplainer() {
             The Surveillance Network Explained
           </h2>
           <p style={{ color: 'var(--muted)', fontSize: 15, maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
-            Flock Safety has deployed over 200,000 cameras across the US. Most people have no idea they're being scanned.
+            Flock Safety has deployed over 90,000 cameras across the US, with more coming online daily. Most people have no idea they're being scanned.
           </p>
         </div>
 

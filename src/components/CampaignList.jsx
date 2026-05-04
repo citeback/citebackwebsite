@@ -40,10 +40,10 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>
-            {full ? 'All Campaigns' : 'Active Campaigns'}
+            {full ? 'All Campaigns' : 'Campaigns'}
           </h2>
           <p style={{ color: 'var(--muted)', marginTop: 4, fontSize: 14 }}>
-            Each campaign has its own Monero (XMR) and Zano (ZANO) wallets. 100% anonymous. 100% transparent.
+            Each campaign has its own Monero (XMR) and Zano (ZANO) wallets — created inside the TEE, keys never leave. 100% anonymous. 100% transparent.
           </p>
         </div>
         <button onClick={() => setProposing(true)} style={{
