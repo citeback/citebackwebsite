@@ -98,7 +98,7 @@ function Code({ children }) {
   )
 }
 
-export default function Governance() {
+export default function Governance({ setTab }) {
   return (
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 20px 80px' }}>
 
@@ -355,6 +355,49 @@ export default function Governance() {
           View full specification on GitHub →
         </a>
       </div>
+
+      {/* CTA */}
+      {setTab && (
+        <div style={{
+          marginTop: 32, padding: '24px', borderRadius: 12,
+          background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 20,
+        }}>
+          <div>
+            <p style={{ fontWeight: 700, color: 'var(--accent, #6ee7b7)', margin: '0 0 4px', fontSize: 14 }}>
+              Governed by code. Funded anonymously.
+            </p>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.5 }}>
+              Browse the campaigns this governance structure protects.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setTab('campaigns')}
+              style={{
+                background: 'var(--accent, #6ee7b7)', color: '#000', border: 'none',
+                padding: '10px 22px', fontSize: 13, fontWeight: 700,
+                letterSpacing: '0.03em', cursor: 'pointer',
+                fontFamily: 'var(--font)', borderRadius: 6, flexShrink: 0,
+              }}
+            >
+              Browse Campaigns →
+            </button>
+            <button
+              onClick={() => setTab('operators')}
+              style={{
+                background: 'transparent', color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.2)', padding: '10px 22px',
+                fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                fontFamily: 'var(--font)', borderRadius: 6, flexShrink: 0,
+              }}
+            >
+              Run a Campaign →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { CheckCircle, Circle, Clock } from 'lucide-react'
 const milestones = [
   { done: true,    label: 'Governance framework published' },
   { done: true,    label: 'Surveillance camera database live (92,000+ cameras)' },
-  { done: true,    label: 'Expert directory seeded with attorneys and operators' },
+  { done: true,    label: 'Expert directory launched — applications open for attorneys, FOIA specialists, and technical contributors' },
   { done: true,    label: 'Campaign proposals open for community review' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },

@@ -5,10 +5,10 @@ const facts = [
   'Operated by a Wyoming DAO LLC — spending governed by code, not humans',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
   'Mission locked in code, not governance documents',
-  'Architecture audited across 5 independent review rounds',
+  'Architecture specification published — open for community audit before launch',
 ];
 
-export default function GuaranteeSection() {
+export default function GuaranteeSection({ setTab }) {
   return (
     <section
       style={{
@@ -78,7 +78,7 @@ export default function GuaranteeSection() {
           </div>
         </div>
 
-        {/* Right: facts list */}
+        {/* Right: facts + CTA */}
         <div className="guarantee-facts" style={{ paddingTop: '56px' }}>
           {facts.map((fact, i) => (
             <div
@@ -106,6 +106,38 @@ export default function GuaranteeSection() {
               <span>{fact}</span>
             </div>
           ))}
+          {setTab && (
+            <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setTab('campaigns')}
+                style={{
+                  background: 'var(--fg)', color: 'var(--bg)',
+                  border: 'none', padding: '12px 24px',
+                  fontSize: 13, letterSpacing: '0.05em', fontWeight: 600,
+                  textTransform: 'uppercase', cursor: 'pointer',
+                  fontFamily: 'var(--font)', transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                Browse Campaigns →
+              </button>
+              <button
+                onClick={() => setTab('trust')}
+                style={{
+                  background: 'transparent', color: 'var(--fg)',
+                  border: '1px solid var(--border)', padding: '12px 24px',
+                  fontSize: 13, letterSpacing: '0.05em', fontWeight: 500,
+                  textTransform: 'uppercase', cursor: 'pointer',
+                  fontFamily: 'var(--font)', transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+              >
+                How It Works →
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

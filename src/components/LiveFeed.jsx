@@ -71,7 +71,7 @@ function formatAge(ms) {
 
 let eventCursor = 4 // start after the 4 pre-loaded items
 
-export default function LiveFeed() {
+export default function LiveFeed({ setTab }) {
   const now = Date.now()
 
   const [items, setItems] = useState(() =>
@@ -168,7 +168,7 @@ export default function LiveFeed() {
         </div>
 
         {/* Feed */}
-        <div style={{ paddingBottom: 8 }}>
+        <div style={{ paddingBottom: setTab ? 0 : 8 }}>
           {items.map((item) => (
             <div
               key={item.id}
@@ -220,6 +220,41 @@ export default function LiveFeed() {
             </div>
           ))}
         </div>
+
+        {/* CTA after feed */}
+        {setTab && (
+          <div style={{ padding: '24px 0', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <p style={{ fontSize: 13, color: 'var(--gray)', margin: 0, lineHeight: 1.6 }}>
+              Every item above is a target. Fund the people fighting back.
+            </p>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', flexShrink: 0 }}>
+              <button
+                onClick={() => setTab('campaigns')}
+                style={{
+                  background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+                  padding: '10px 22px', fontSize: 12, fontWeight: 600,
+                  letterSpacing: '0.05em', textTransform: 'uppercase',
+                  cursor: 'pointer', fontFamily: 'var(--font)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Fund a Campaign →
+              </button>
+              <button
+                onClick={() => setTab('feed')}
+                style={{
+                  background: 'transparent', color: 'var(--gray)',
+                  border: '1px solid var(--border)', padding: '10px 22px',
+                  fontSize: 12, fontWeight: 500, letterSpacing: '0.05em',
+                  textTransform: 'uppercase', cursor: 'pointer',
+                  fontFamily: 'var(--font)', whiteSpace: 'nowrap',
+                }}
+              >
+                Full Intelligence Feed →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <style>{`

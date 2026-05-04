@@ -38,7 +38,7 @@ const operatorSteps = [
   },
 ]
 
-export default function HowItWorks() {
+export default function HowItWorks({ setTab }) {
   const sectionRef = useRef(null)
   const lineTrackRef = useRef(null)
   const lineRef = useRef(null)
@@ -266,6 +266,34 @@ export default function HowItWorks() {
           </div>
         </div>
       </div>
+
+      {setTab && (
+        <div style={{ maxWidth: 1100, margin: '48px auto 0', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setTab('campaigns')}
+            style={{
+              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+              padding: '12px 28px', fontSize: 13, fontWeight: 600,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              cursor: 'pointer', fontFamily: 'var(--font)',
+            }}
+          >
+            {track === 'donor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
+          </button>
+          <button
+            onClick={() => setTab(track === 'donor' ? 'trust' : 'operators')}
+            style={{
+              background: 'transparent', color: 'var(--fg)',
+              border: '1px solid var(--border)', padding: '12px 28px',
+              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'var(--font)',
+            }}
+          >
+            {track === 'donor' ? 'Full Trust FAQ →' : 'Operator Requirements →'}
+          </button>
+        </div>
+      )}
 
       <style>{`
         @media (max-width: 700px) {

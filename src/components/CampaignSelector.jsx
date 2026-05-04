@@ -51,7 +51,7 @@ const campaigns = [
   },
 ];
 
-export default function CampaignSelector() {
+export default function CampaignSelector({ setTab }) {
   const [active, setActive] = useState(0);
   const [animKey, setAnimKey] = useState(0);
 
@@ -170,6 +170,34 @@ export default function CampaignSelector() {
           </div>
         </div>
       </div>
+
+      {setTab && (
+        <div style={{ marginTop: 48, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setTab('campaigns')}
+            style={{
+              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+              padding: '12px 28px', fontSize: 13, fontWeight: 600,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              cursor: 'pointer', fontFamily: 'var(--font)',
+            }}
+          >
+            Browse Active Campaigns →
+          </button>
+          <button
+            onClick={() => setTab('operators')}
+            style={{
+              background: 'transparent', color: 'var(--fg)',
+              border: '1px solid var(--border)', padding: '12px 28px',
+              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'var(--font)',
+            }}
+          >
+            Run a Campaign →
+          </button>
+        </div>
+      )}
 
       <style>{`
         @keyframes campaignFadeIn {

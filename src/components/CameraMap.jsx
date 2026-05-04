@@ -1030,6 +1030,20 @@ export default function CameraMap() {
         </div>
       )}
 
+      {/* Layer toggle hint */}
+      <div style={{
+        background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)',
+        borderRadius: 10, padding: '10px 14px', marginBottom: 10,
+        fontSize: 12, color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap',
+      }}>
+        <span style={{ fontSize: 14 }}>🔍</span>
+        <span>
+          <strong style={{ color: 'var(--text)' }}>6 surveillance layers available</strong> — click the{' '}
+          <strong style={{ color: 'var(--text)' }}>Layers</strong> button in the top-right of the map to toggle
+          Facial Recognition, Cell-Site Simulators, ShotSpotter, Police Drones, Predictive Policing, and Community Victories.
+        </span>
+      </div>
+
       {/* Source notice */}
       <div style={{
         background: 'rgba(52,152,219,0.05)', border: '1px solid rgba(52,152,219,0.15)',

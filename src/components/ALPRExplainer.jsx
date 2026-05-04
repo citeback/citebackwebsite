@@ -23,7 +23,7 @@ const facts = [
   },
 ]
 
-export default function ALPRExplainer() {
+export default function ALPRExplainer({ setTab }) {
   return (
     <section style={{
       padding: '72px 24px',
@@ -65,7 +65,34 @@ export default function ALPRExplainer() {
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 36 }}>
+        <div style={{ textAlign: 'center', marginTop: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          {setTab && (
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <button
+                onClick={() => setTab('campaigns')}
+                style={{
+                  background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+                  padding: '12px 24px', fontSize: 13, fontWeight: 600,
+                  letterSpacing: '0.05em', textTransform: 'uppercase',
+                  cursor: 'pointer', fontFamily: 'var(--font)',
+                }}
+              >
+                Fund a FOIA Campaign →
+              </button>
+              <button
+                onClick={() => setTab('map')}
+                style={{
+                  background: 'transparent', color: 'var(--fg)',
+                  border: '1px solid var(--border)', padding: '12px 24px',
+                  fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+                  textTransform: 'uppercase', cursor: 'pointer',
+                  fontFamily: 'var(--font)',
+                }}
+              >
+                See the Surveillance Map →
+              </button>
+            </div>
+          )}
           <a
             href="https://www.eff.org/pages/automated-license-plate-readers-alpr"
             target="_blank"

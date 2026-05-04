@@ -52,12 +52,12 @@ export default function App() {
           <LaunchTracker />
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
-          <HowItWorks />
-          <ALPRExplainer />
+          <HowItWorks setTab={setTab} />
+          <ALPRExplainer setTab={setTab} />
           <SurveillanceExplainer />
           <Manifesto />
-          <GuaranteeSection />
-          <LiveFeed />
+          <GuaranteeSection setTab={setTab} />
+          <LiveFeed setTab={setTab} />
         </>
       )}
       {tab === 'campaigns' && <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />}
@@ -65,22 +65,28 @@ export default function App() {
       {tab === 'registry' && <HumanRegistry />}
       {tab === 'transparency' && <Transparency />}
       {tab === 'trust' && <TrustFAQ />}
-      {tab === 'governance' && <Governance />}
+      {tab === 'governance' && <Governance setTab={setTab} />}
       {tab === 'operators' && <Operators />}
       {tab === 'feed' && <SurveillanceFeed />}
 
       {showAI && <ConversationalInterface onClose={() => setShowAI(false)} />}
       {/* Floating chatbot button */}
       {!showAI && (
-        <button onClick={() => setShowAI(true)} style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 999,
-          padding: '12px 20px',
-          background: 'var(--fg)', color: 'var(--bg)',
-          border: 'none', fontSize: 13, fontWeight: 500,
-          letterSpacing: '0.04em', cursor: 'pointer',
-          borderRadius: 999,
-          boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        }}>💬 Ask Citeback AI</button>
+        <button
+          onClick={() => setShowAI(true)}
+          title="Ask questions about Citeback — requires Ollama running locally"
+          style={{
+            position: 'fixed', bottom: 24, right: 24, zIndex: 999,
+            padding: '12px 20px',
+            background: 'var(--fg)', color: 'var(--bg)',
+            border: 'none', fontSize: 13, fontWeight: 500,
+            letterSpacing: '0.04em', cursor: 'pointer',
+            borderRadius: 999,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          }}
+        >
+          💬 Ask Citeback AI
+        </button>
       )}
 
       <Footer setTab={setTab} />

@@ -1,18 +1,23 @@
-// vendorProfiles.js — Mini dossiers on surveillance vendors
+// vendorProfiles.js - Mini dossiers on surveillance vendors
 // Keyed by lowercase partial match. Use getVendorProfile(vendorString) for fuzzy lookup.
 
 const vendorProfiles = {
   palantir: {
     name: 'Palantir Technologies',
-    tagline: 'CIA venture-backed data analytics company. ICE\'s primary deportation tool.',
-    flag: 'Co-founded by Peter Thiel. Received early investment from In-Q-Tel, the CIA\'s venture arm. Built the \'deportation machine\' for ICE. Operates in 20+ countries. $3.8B+ in US government contracts.',
+    // LEGAL NOTE: "ICE's primary deportation tool" removed — "primary" is a contested superlative
+    // (Accenture, Microsoft, and others also hold major ICE contracts). With a named Wyoming DAO LLC
+    // operator this is attributable defamation risk. Softer but still accurate framing used.
+    // Source for ICE workflow: The Intercept reporting on Palantir/ICE contracts — confirm specific
+    // citation URL with attorney on review.
+    tagline: 'CIA venture-backed data analytics company. Central to ICE deportation workflows.',
+    flag: 'Co-founded by Peter Thiel. Received early investment from In-Q-Tel, the CIA\'s venture arm. Builds data-fusion infrastructure used in ICE deportation operations — documented by The Intercept. Operates in 20+ countries. $3.8B+ in US government contracts.',
     founded: 2003,
     revenue: '$2.2B (2023)',
     contracts: '$3.8B+ in US government contracts including ICE, US Army, NHS (UK)',
     controversies: [
       'Secret 6-year NOPD predictive policing program exposed by FOIA',
-      'LAPD Operation LASER — 65,000 \'chronic offender bulletins\' targeting minorities',
-      'ICE deportation workflows — documented by The Intercept',
+      'LAPD Operation LASER - 65,000 \'chronic offender bulletins\' targeting minorities',
+      'ICE deportation workflows - documented by The Intercept',
       'IPO\'d on NYSE 2020 despite repeated civil liberties violations',
     ],
     url: 'https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained',
@@ -21,7 +26,7 @@ const vendorProfiles = {
   clearview: {
     name: 'Clearview AI',
     tagline: 'Reportedly scraped 30+ billion faces without consent. Sells access to 3,000+ law enforcement agencies.',
-    flag: 'Built a facial recognition database from photos scraped from Facebook, LinkedIn, Venmo — without permission. Banned in Canada, Australia, UK, France, Italy. Settled ACLU lawsuit in Illinois.',
+    flag: 'Built a facial recognition database from photos scraped from Facebook, LinkedIn, Venmo - without permission. Banned in Canada, Australia, UK, France, Italy. Settled ACLU lawsuit in Illinois.',
     founded: 2017,
     revenue: 'Private (est. $30M+)',
     contracts: '3,000+ law enforcement agencies including federal, state, and local police',
@@ -30,42 +35,51 @@ const vendorProfiles = {
       'Sold to 600+ law enforcement agencies before being exposed by BuzzFeed in 2020',
       'Banned in multiple countries for GDPR/biometric law violations',
       // LEGAL NOTE: "ties to far-right networks" is a characterization. Softened to documented, sourced fact.
-      'CEO Hoan Ton-That had prior associations with far-right media figures including Milo Yiannopoulos before founding Clearview — reported by The New York Times (Jan 2020)',
+      'CEO Hoan Ton-That had prior associations with far-right media figures including Milo Yiannopoulos before founding Clearview - reported by The New York Times (Jan 2020)',
     ],
     url: 'https://www.nytimes.com/2020/01/18/technology/clearview-privacy-facial-recognition.html',
   },
 
   shotspotter: {
     name: 'ShotSpotter / SoundThinking',
-    tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded when scrutiny got too hot.',
+    tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded as SoundThinking in 2023.',
     flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP/MacArthur Justice Center investigation found 40,000+ ShotSpotter alerts in Chicago over 21 months led to no evidence of a gun crime.',
     founded: 1996,
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
     controversies: [
-      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP “Shots Fired” investigation 2021 confirmed pattern)',
-      'Modified audio evidence in a Chicago murder trial — documented by The Intercept',
+      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP "Shots Fired" investigation 2021 confirmed pattern)',
+      // LEGAL NOTE: This is the most legally serious claim (evidence tampering in a murder trial).
+      // Source is The Intercept — update URL field to direct Intercept article before launch.
+      // Recommended URL: https://theintercept.com/2021/01/19/chicago-shotspotter-court-ruling/
+      // (verify this is the correct and most current citation — attorney should confirm).
+      'Modified audio evidence in a Chicago murder trial — documented by The Intercept (Jan 2021)',
       'Chicago paid $33M+ for the system',
-      'Rebranded as \'SoundThinking\' to escape negative press coverage',
+      // LEGAL NOTE: "to escape negative press coverage" was unsourced intent attribution — removed.
+      // Company stated rebrand reflected expanded product portfolio.
+      'Rebranded as \'SoundThinking\' in 2023',
       'Acquired HunchLab predictive policing — now does both surveillance AND prediction',
     ],
+    // LEGAL NOTE: URL points to advocacy site, not the Intercept source for evidence-tampering claim.
+    // Update to: https://theintercept.com/2021/01/19/chicago-shotspotter-court-ruling/ before launch.
     url: 'https://endpolicesurveillance.com',
   },
 
   soundthinking: {
     name: 'ShotSpotter / SoundThinking',
-    tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded when scrutiny got too hot.',
+    tagline: 'Sells \'gunshot detection\' to cities for millions per year. Rebranded as SoundThinking in 2023.',
     flag: 'Formerly ShotSpotter — rebranded as SoundThinking in 2023. AP/MacArthur Justice Center investigation found 40,000+ ShotSpotter alerts in Chicago over 21 months led to no evidence of a gun crime.',
     founded: 1996,
     revenue: '$100M+ (2023)',
     contracts: 'Chicago ($33M+), NYC, Oakland, and 100+ other cities',
     controversies: [
-      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP “Shots Fired” investigation 2021 confirmed pattern)',
-      'Modified audio evidence in a Chicago murder trial — documented by The Intercept',
+      'Studies show 70–89% of alerts lead to no evidence of gunfire depending on jurisdiction (89% in Chicago per MacArthur Justice Center 2021; AP "Shots Fired" investigation 2021 confirmed pattern)',
+      'Modified audio evidence in a Chicago murder trial — documented by The Intercept (Jan 2021)',
       'Chicago paid $33M+ for the system',
-      'Rebranded as \'SoundThinking\' to escape negative press coverage',
+      'Rebranded as \'SoundThinking\' in 2023',
       'Acquired HunchLab predictive policing — now does both surveillance AND prediction',
     ],
+    // LEGAL NOTE: Update URL to Intercept source — see shotspotter entry above.
     url: 'https://endpolicesurveillance.com',
   },
 
@@ -77,14 +91,14 @@ const vendorProfiles = {
     // (footnote4a.org/news/fbi-access) documents FBI access specifically.
     // ICE access may exist via fusion center sharing but lacks a citable primary source.
     // Restore only with a direct, verifiable citation. Potential defamation risk.
-    flag: 'Privately held, valued at $3.8B (2022 funding round — current valuation unconfirmed). Deployed 90,000+ cameras in 4,000+ communities. Granted FBI access despite publicly promising no federal contracts — documented by Footnote4a (2023).',
+    flag: 'Privately held, valued at $3.8B (2022 funding round - current valuation unconfirmed). Deployed 90,000+ cameras in 4,000+ communities. Granted FBI access despite publicly promising no federal contracts - documented by Footnote4a (2023).',
     founded: 2017,
     revenue: 'Private (est. $150M+)',
     contracts: '4,000+ communities, 90,000+ cameras across the US',
     controversies: [
       'Quietly granted FBI access after promising communities it had no federal contracts (Footnote4a 2023)',
-      'A Bernalillo County deputy was caught misusing ALPR data — given only a written reprimand',
-      'Flock\'s \'Nova\' product combines plate data with commercial databases and breach records',
+      'A Bernalillo County deputy was caught misusing ALPR data - given only a written reprimand',
+      'Flock Nova™ product (confirmed on flocksafety.com) integrates agency systems for investigations; 404 Media reporting links it to external commercial data sources — \'breach records\' claim needs primary source citation before asserting',
       'Taos Plaza: 18 cameras installed without a public disclosure process or community notification (2023)',
     ],
     url: 'https://footnote4a.org/news/fbi-access',
@@ -93,7 +107,7 @@ const vendorProfiles = {
   predpol: {
     name: 'PredPol / Geolitica',
     tagline: 'Predictive policing algorithm that sent police to over-police communities of color for 9 years.',
-    flag: 'Used by LAPD 2011–2020 before a racial bias audit terminated the contract. Deployed in 150+ cities at peak. Now rebranded as Geolitica after widespread criticism.',
+    flag: 'Used by LAPD 2011-2020 before a racial bias audit terminated the contract. Deployed in 150+ cities at peak. Now rebranded as Geolitica after widespread criticism.',
     founded: 2012,
     revenue: 'Bankrupt (filed 2023)',
     contracts: '150+ cities at peak, including LAPD, Atlanta PD, Santa Cruz PD',
@@ -109,7 +123,7 @@ const vendorProfiles = {
   geolitica: {
     name: 'PredPol / Geolitica',
     tagline: 'Predictive policing algorithm that sent police to over-police communities of color for 9 years.',
-    flag: 'Used by LAPD 2011–2020 before a racial bias audit terminated the contract. Deployed in 150+ cities at peak. Now rebranded as Geolitica after widespread criticism.',
+    flag: 'Used by LAPD 2011-2020 before a racial bias audit terminated the contract. Deployed in 150+ cities at peak. Now rebranded as Geolitica after widespread criticism.',
     founded: 2012,
     revenue: 'Bankrupt (filed 2023)',
     contracts: '150+ cities at peak, including LAPD, Atlanta PD, Santa Cruz PD',
@@ -132,7 +146,7 @@ const vendorProfiles = {
     controversies: [
       'Identified in Georgetown Law \'The Perpetual Line-Up\' as one of the primary vendors with zero public oversight',
       'Integration with state DMV databases means your driver\'s license photo is in a searchable biometric database',
-      'No publicly known accuracy audits — no independent assessment published as of last known public record',
+      'No publicly known accuracy audits - no independent assessment published as of last known public record',
     ],
     url: 'https://www.perpetuallineup.org',
   },
@@ -140,12 +154,12 @@ const vendorProfiles = {
   hunchlab: {
     name: 'HunchLab (now SoundThinking)',
     tagline: 'Predictive policing software. Now owned by ShotSpotter\'s parent company.',
-    flag: 'Acquired by ShotSpotter/SoundThinking — the same company doing acoustic surveillance. Combined acoustic + predictive = full-spectrum surveillance system.',
+    flag: 'Acquired by ShotSpotter/SoundThinking - the same company doing acoustic surveillance. Combined acoustic + predictive = full-spectrum surveillance system.',
     founded: 2012,
     revenue: 'Acquired (private)',
     contracts: 'Philadelphia PD, Baltimore PD, and others before acquisition',
     controversies: [
-      'Philadelphia PD used HunchLab to predict crime hot spots — studies found no significant crime reduction',
+      'Philadelphia PD used HunchLab to predict crime hot spots - studies found no significant crime reduction',
       'Acquisition by SoundThinking creates vertically integrated surveillance: detect → predict → respond',
       'Limited transparency on algorithm inputs or accuracy',
     ],

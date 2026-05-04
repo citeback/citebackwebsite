@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 // Real events — sourced from public records and verified news reporting
 const staticEvents = [
-  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025' },
+  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025' }, // NOTE: widely reported event — needs primary source URL (404 Media / local news) before next audit cycle
   { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
   { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
   { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
@@ -11,7 +11,7 @@ const staticEvents = [
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
   { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },
   { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026' },
-  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' },
+  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // NOTE: attributed to ACLU-WA reporting — needs primary source URL confirmed (aclu-wa.org blocked during audit)
 ]
 
 export default function ActivityTicker() {

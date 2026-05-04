@@ -73,12 +73,12 @@ export default function Footer({ setTab }) {
         <div style={{ fontSize: 13, color: 'var(--gray)' }}>
           Governance —{' '}
           <a
-            href="https://github.com"
+            href="https://github.com/citeback/citebackwebsite"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: 'var(--gray)', textDecoration: 'underline' }}
           >
-            Active
+            View on GitHub
           </a>
         </div>
       </div>

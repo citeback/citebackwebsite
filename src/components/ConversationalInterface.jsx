@@ -235,7 +235,9 @@ export default function ConversationalInterface({ onClose }) {
             {/* Offline error */}
             {isOffline && (
               <div style={styles.offlineMessage}>
-                The local AI is offline. Make sure Ollama is running.
+                🧠 The AI assistant requires <strong>Ollama</strong> running locally at localhost:11434.
+                {' '}<a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#c0392b' }}>Install Ollama</a>,
+                then run <code style={{ fontFamily: 'monospace', fontSize: 12 }}>ollama pull qwen2.5:14b</code>.
               </div>
             )}
 

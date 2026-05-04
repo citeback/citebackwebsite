@@ -135,7 +135,7 @@ function StatusBadge({ status }) {
   )
 }
 
-export default function SurveillanceFeed() {
+export default function SurveillanceFeed({ setTab }) {
   const [cases, setCases] = useState([])
   const [bills, setBills] = useState([])
   const [federalBills, setFederalBills] = useState([])
@@ -480,7 +480,7 @@ export default function SurveillanceFeed() {
                     border: '1px solid var(--border)',
                     padding: '2px 5px',
                   }}>
-                    Sample
+                    Preview
                   </span>
                 )}
               </div>
@@ -585,16 +585,15 @@ export default function SurveillanceFeed() {
                 color: 'var(--muted)',
                 lineHeight: 1.5,
               }}>
-                📡 Live legislative data available with a free OpenStates API key.{' '}
+                📡 Sample data shown. Live 50-state legislative tracking activates at launch.{' '}
                 <a
-                  href="https://openstates.org/account/profile/"
+                  href="https://openstates.org/"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'var(--accent)', textDecoration: 'none' }}
                 >
-                  Get yours →
+                  OpenStates covers all 50 states →
                 </a>
-                {' '}then set <code style={{ fontFamily: 'var(--mono)' }}>VITE_OPENSTATES_KEY</code> in your .env file.
               </div>
             )}
 
@@ -651,7 +650,7 @@ export default function SurveillanceFeed() {
                   border: '1px solid var(--border)',
                   padding: '2px 5px',
                 }}>
-                  Sample
+                  Known Bills
                 </span>
               )}
             </div>
@@ -769,6 +768,35 @@ export default function SurveillanceFeed() {
             Source: Congress.gov API · 119th Congress
           </div>
         </div>
+
+        {/* CTA */}
+        {setTab && (
+          <div style={{
+            marginTop: 48, paddingTop: 32, borderTop: '2px solid var(--fg)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexWrap: 'wrap', gap: 20,
+          }}>
+            <div>
+              <p style={{ fontSize: 15, fontWeight: 600, margin: '0 0 4px', color: 'var(--fg)' }}>
+                These cases need funding.
+              </p>
+              <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>
+                Every lawsuit above represents a gap only anonymous crowdfunding can fill.
+              </p>
+            </div>
+            <button
+              onClick={() => setTab('campaigns')}
+              style={{
+                background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+                padding: '13px 28px', fontSize: 13, fontWeight: 600,
+                letterSpacing: '0.05em', textTransform: 'uppercase',
+                cursor: 'pointer', fontFamily: 'var(--font)', flexShrink: 0,
+              }}
+            >
+              Browse Campaigns →
+            </button>
+          </div>
+        )}
 
       </div>
 

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
-const CAMERA_TARGET = 92847;
+// Camera count derived from the static ALPR dataset in /dist/alpr-us.json.
+// This is a point-in-time count from the source dataset — NOT a live feed.
+// Do NOT re-introduce a live/ticking counter; it would misrepresent static data
+// as real-time surveillance tracking, creating FTC deceptive-practices exposure.
+const CAMERA_COUNT = 92008;
 
 function easeOutCubic(t) {
   return 1 - Math.pow(1 - t, 3);
@@ -10,8 +14,6 @@ export default function StatsSection() {
   const [cameraCount, setCameraCount] = useState(0);
   const animFrameRef = useRef(null);
   const startTimeRef = useRef(null);
-  const tickTimeoutRef = useRef(null);
-  const currentCountRef = useRef(0);
   const DURATION = 2800;
 
   useEffect(() => {
@@ -20,16 +22,13 @@ export default function StatsSection() {
       const elapsed = timestamp - startTimeRef.current;
       const progress = Math.min(elapsed / DURATION, 1);
       const eased = easeOutCubic(progress);
-      const count = Math.floor(eased * CAMERA_TARGET);
-      currentCountRef.current = count;
+      const count = Math.floor(eased * CAMERA_COUNT);
       setCameraCount(count);
 
       if (progress < 1) {
         animFrameRef.current = requestAnimationFrame(animate);
       } else {
-        currentCountRef.current = CAMERA_TARGET;
-        setCameraCount(CAMERA_TARGET);
-        scheduleTick();
+        setCameraCount(CAMERA_COUNT);
       }
     };
 
@@ -37,24 +36,14 @@ export default function StatsSection() {
 
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      if (tickTimeoutRef.current) clearTimeout(tickTimeoutRef.current);
     };
   }, []);
-
-  function scheduleTick() {
-    const delay = 4000 + Math.random() * 3000;
-    tickTimeoutRef.current = setTimeout(() => {
-      currentCountRef.current += 1;
-      setCameraCount(currentCountRef.current);
-      scheduleTick();
-    }, delay);
-  }
 
   const stats = [
     {
       value: null,
-      isLive: true,
-      label: 'surveillance cameras documented',
+      isLive: false,
+      label: 'ALPR surveillance cameras in public dataset',
     },
     {
       value: '0',
