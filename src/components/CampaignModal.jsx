@@ -293,7 +293,7 @@ export default function CampaignModal({ campaign, onClose }) {
                   <><strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
                   Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (iOS/Android) or{' '}
                   <a href="https://getmonero.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Monero GUI</a> (desktop).{' '}
-                  Buy XMR at <a href="https://localmonero.co" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>LocalMonero</a> or any major exchange.</>
+                  Get XMR via <a href="https://xmrswap.me" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>atomic swap</a> (BTC→XMR, no KYC) or your preferred exchange. For maximum privacy, broadcast your transaction over Tor.</>
                 ) : (
                   <><strong style={{ color: 'var(--text)' }}>New to Zano?</strong>{' '}
                   Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Zano Wallet</a> (desktop) or{' '}

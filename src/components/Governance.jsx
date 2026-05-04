@@ -9,6 +9,7 @@ const sections = [
   { id: 'disbursement', label: 'Disbursement', icon: Lock },
   { id: 'ai', label: 'AI Ensemble', icon: Cpu },
   { id: 'tee', label: 'TEE Architecture', icon: Lock },
+  { id: 'bootstrapping', label: 'Bootstrapping', icon: Users },
   { id: 'immutables', label: 'Immutables', icon: AlertTriangle },
   { id: 'prerequisites', label: 'Launch Prerequisites', icon: CheckCircle },
 ]
@@ -165,7 +166,7 @@ export default function Governance() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {[
             { label: 'Donors', color: '#6ee7b7', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative donations.' },
-            { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Must register with Nostr key, pass OFAC screening with real-name data, maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
+            { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
             { label: 'AI Ensemble', color: '#f59e0b', desc: 'Monitoring only — never moves money. Advisory signals, never execution. Minimum 3 independent models.' },
           ].map(p => (
@@ -206,7 +207,7 @@ export default function Governance() {
       <Section id="voting" title="Voting Mechanics" icon={CheckCircle}>
         <p>Voting power is proportional to economic participation. A logarithmic curve rewards participation while limiting concentration.</p>
         <p style={{ marginTop: 12, fontWeight: 600, color: '#fff' }}>Weight Formula:</p>
-        <Code>weight = log₂(donation / $5) + 1{'\n\n'}Floor: $5 donation → weight 1.0{'\n'}Cap:   $1,280 donation → weight 9.0 (maximum)</Code>
+        <Code>weight = max(1, log₂(donation / $5) + 1){'\n\n'}Floor: 1.0 — no donation produces negative or zero weight{'\n'}$5 donation  → weight 1.0{'\n'}$10 donation → weight 2.0{'\n'}Cap: $1,280   → weight 9.0 (maximum)</Code>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent, #6ee7b7)' }}>72-hour rule:</strong> Donations must be at least 72 hours old at proposal submission to qualify. No last-minute flooding.</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent, #6ee7b7)' }}>Quorum requirements:</strong></p>
         <Table
@@ -217,6 +218,11 @@ export default function Governance() {
             ['Governance', '50 voters', '75% supermajority', '14 days'],
           ]}
         />
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
+          <p style={{ margin: 0, fontWeight: 600, color: '#a78bfa', fontSize: 14 }}>Voting Diversity — High-Value Disbursements (§5.8)</p>
+          <p style={{ margin: '8px 0 0', fontSize: 13 }}>Disbursements above $10,000 require approving votes from voters with <strong style={{ color: '#fff' }}>less than 60% pairwise voting-history overlap</strong> in the prior 180 days (Jaccard similarity). An account must be at least 90 days old with at least 5 prior votes to satisfy this requirement — fresh accounts cannot trivially meet it with zero overlap.</p>
+          <p style={{ margin: '8px 0 0', fontSize: 13 }}><strong style={{ color: 'var(--accent, #6ee7b7)' }}>Small community fallback:</strong> If fewer than 10 eligible accounts exist, the diversity requirement is replaced with a 14-day extended escrow hold + mandatory Major-tier vote.</p>
+        </div>
       </Section>
 
       <Section id="disbursement" title="Disbursement" icon={Lock}>
@@ -254,14 +260,37 @@ export default function Governance() {
         </div>
       </Section>
 
-      <Section id="tee" title="TEE Architecture" icon={Lock}>
+      <Section id="tee" title="TEE Architecture (Multi-TEE, 2-of-3 Threshold)" icon={Lock}>
         <p>Wallet keys are split across <strong style={{ color: '#fff' }}>minimum 3 TEE instances on different hardware providers.</strong> 2-of-3 threshold signatures are required — a single TEE compromise cannot release funds.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 8,
           background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)'
         }}>
           <strong style={{ color: 'var(--accent, #6ee7b7)' }}>The core guarantee:</strong>
-          <p style={{ margin: '8px 0 0', fontSize: 14 }}>No human — including the founder — has access to wallet private keys. Ever. There is no one to arrest, subpoena, or pressure into producing keys. This is enforced by architecture, not policy.</p>
+          <p style={{ margin: '8px 0 0', fontSize: 14 }}>No human — including the founder — has access to wallet private keys. Ever. There is no one to arrest, subpoena, or pressure into producing keys. This is enforced by architecture, not policy. If 2+ TEE instances fail simultaneously, all disbursements pause automatically and a Major-tier community vote must be held within 7 days to define recovery — no disbursements occur without a community-approved plan.</p>
+        </div>
+      </Section>
+
+      <Section id="bootstrapping" title="Bootstrapping & Founder Restrictions" icon={Users}>
+        <p>During the bootstrapping period, the founder has <strong style={{ color: '#fff' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: '#fff' }}>5% of any vote total</strong> — enforced by the TEE-encoded founder address registry and immutable (§15).</p>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent, #6ee7b7)' }}>Bootstrapping ends when all three are met:</strong></p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+          {[
+            'Platform has been live for at least 6 months',
+            '3 qualifying governance votes within a 90-day window (50-voter quorum, median donation ≥ $20, without founder participation)',
+            '30-day transition period where both governance regimes apply simultaneously',
+          ].map((item, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <CheckCircle size={14} style={{ color: 'var(--accent, #6ee7b7)', flexShrink: 0, marginTop: 3 }} />
+              <span style={{ fontSize: 14 }}>{item}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent, #6ee7b7)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed — the founder retains the permanent 5% cap.</p>
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+          <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+            <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap — no further discounting. Founders cannot vote on their own ceiling removal.
+          </p>
         </div>
       </Section>
 
@@ -322,7 +351,7 @@ export default function Governance() {
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
         fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center'
       }}>
-        This is a living document. Version 0.6 — Draft. Community ratification required before mainnet.{' '}
+        This is a living document. Version 0.7 — Active. Community ratification required before mainnet.{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #6ee7b7)' }}>
           View full specification on GitHub →
         </a>

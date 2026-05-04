@@ -176,10 +176,13 @@ export default function HumanRegistry() {
       }}>
         <Shield size={16} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
         <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-          <strong style={{ color: 'var(--text)' }}>No identity verification required.</strong>{' '}
-          Verified badge = 3 or more community vouches from people who've worked with them.
+          <strong style={{ color: 'var(--text)' }}>Registry listing requires peer vouching only — no public identity.</strong>{' '}
+          Verified badge = 3 or more community vouches from people who’ve worked with them. No ID documents required to list.
           Funds are released only after campaign completion and receipt submission.
           Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
+        </p>
+        <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8, lineHeight: 1.6, fontStyle: 'italic' }}>
+          Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.
         </p>
       </div>
 

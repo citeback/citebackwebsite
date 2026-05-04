@@ -8,7 +8,7 @@ const principles = [
   { title: 'Receipt Before Release', body: 'Operators submit vendor receipts and photo proof before any disbursement is triggered. A 48-hour public challenge window follows — the community can contest any release.' },
   { title: 'TEE-Secured — No Human Keyholders', body: 'No human holds wallet keys — not operators, not the community council, not the founder. Funds live in a Trusted Execution Environment. Rules are code. Code is public.' },
   { title: 'Full Public Record', body: 'Every completed campaign, receipt, disbursement, and governance action is logged permanently. Signed by the TEE attestation key. Nothing is hidden.' },
-  { title: '1% Platform Fee', body: '1% of every donation funds platform operations (infrastructure, Monero and Zano nodes). The ops wallets are also TEE-secured with public view keys. Any surplus is put to a community vote.' },
+  { title: 'Graduated Platform Fee', body: 'A platform fee funds operations — infrastructure, Monero and Zano nodes. Fees are graduated by operator volume: 5% (under $10k), 4.5% ($10k–$25k), 4% ($25k–$50k), 3% (above $50k). See GOVERNANCE.md §7.3 for the full schedule. Ops wallets are TEE-secured with public view keys. Any surplus goes to a community vote.' },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. The founder has no special access post-launch. Same permissions as everyone else.' },
 ]
 
