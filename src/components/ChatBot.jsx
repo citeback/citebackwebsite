@@ -30,7 +30,7 @@ ACTIVE CAMPAIGNS (all pre-launch, wallets pending):
 HOW TO DONATE:
 - Every campaign has dedicated Monero (XMR) and Zano (ZANO) wallets — currently pending activation
 - Completely anonymous — no account, no email, no identity required
-- Get Monero (XMR) at Kraken or via Haveno/Bisq (P2P decentralized exchanges, no KYC required) — use Cake Wallet or Feather Wallet on mobile
+- Get Monero (XMR) via Cake Wallet (iOS/Android/Desktop, no direct KYC), xmrswap.me (BTC→XMR atomic swaps, no KYC), or ChangeNow/StealthEX (no KYC below small limits) — avoid KYC exchanges for privacy-sensitive donations; use Feather Wallet on desktop
 - Get Zano (ZANO) at Zano Trade (zano.org/trade) or supported exchanges — use Zano desktop/mobile wallet
 
 HOW TO HELP:
