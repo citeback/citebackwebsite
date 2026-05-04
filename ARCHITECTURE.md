@@ -1,14 +1,13 @@
-# Fourthright — System Architecture
+# Citeback — System Architecture
 
-> Version: 0.1 — Draft  
-> Status: Design phase  
-> Last updated: 2026-04-29
+> Status: Pre-launch design specification  
+> Last updated: 2026-05-04
 
 ---
 
 ## Overview
 
-Fourthright is a decentralized surveillance-resistance platform. Its core design goal is **credible neutrality** — the system operates according to publicly verifiable rules, no individual (including the founder) can unilaterally control funds or censor campaigns, and every action is permanently logged for community inspection.
+Citeback is a decentralized surveillance-resistance platform. Its core design goal is **credible neutrality** — the system operates according to publicly verifiable rules, no individual (including the founder) can unilaterally control funds or censor campaigns, and every action is permanently logged for community inspection.
 
 This document describes the full technical architecture, from wallet management through governance and site operations.
 

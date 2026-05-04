@@ -196,21 +196,34 @@ export default function TrustFAQ() {
       {/* Trust Pillars */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 48 }}>
         {[
-          { icon: '🔐', title: 'TEE-Secured Wallets', desc: 'No human holds keys. Not even the founder.' },
-          { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.' },
-          { icon: '🔍', title: 'Verifiable Proofs', desc: 'Cryptographic attestation proves what\'s running.' },
-          { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility.' },
-          { icon: '👁️', title: 'View Keys Published', desc: 'Anyone can verify every wallet transaction.' },
-          { icon: '🌿', title: 'Forkable Forever', desc: 'The code outlives any individual or organization.' },
+          { icon: '🔐', title: 'TEE-Secured Wallets', desc: 'No human holds keys. Not even the founder.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
+          { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'View on GitHub' },
+          { icon: '🔍', title: 'Verifiable Proofs', desc: 'Cryptographic attestation proves what\'s running.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Attestation spec', prelaunch: 'Live attestation published at mainnet' },
+          { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'Governance doc' },
+          { icon: '👁️', title: 'View Keys Published', desc: 'Anyone can verify every wallet transaction.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'How view keys work', prelaunch: 'View keys published when wallets activate' },
+          { icon: '🌿', title: 'Forkable Forever', desc: 'The code outlives any individual or organization.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'Fork on GitHub' },
         ].map((p, i) => (
-          <div key={i} style={{
-            background: 'var(--bg2)', border: '1px solid var(--border)',
-            borderRadius: 12, padding: '16px 18px',
-          }}>
+          <a
+            key={i}
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: 'var(--bg2)', border: '1px solid var(--border)',
+              borderRadius: 12, padding: '16px 18px',
+              display: 'block', textDecoration: 'none', color: 'inherit',
+              transition: 'border-color 0.15s',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
             <div style={{ fontSize: 22, marginBottom: 8 }}>{p.icon}</div>
             <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{p.title}</div>
-            <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>{p.desc}</div>
-          </div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5, marginBottom: p.prelaunch || p.linkLabel ? 8 : 0 }}>{p.desc}</div>
+            {p.prelaunch && <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600, letterSpacing: '0.04em', marginBottom: 4 }}>⏳ {p.prelaunch}</div>}
+            {p.linkLabel && <div style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600, letterSpacing: '0.03em' }}>{p.linkLabel} →</div>}
+          </a>
         ))}
       </div>
 
