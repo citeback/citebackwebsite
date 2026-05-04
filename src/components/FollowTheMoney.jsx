@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ExternalLink, DollarSign, TrendingUp, AlertCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ExternalLink, DollarSign, AlertCircle, Briefcase, Loader } from 'lucide-react'
 
 // Static data pulled from USASpending.gov API (2025-10-01 to present, via keyword search)
 // Source: https://api.usaspending.gov — no auth required, public federal spending records
@@ -16,6 +16,8 @@ const VENDOR_DATA = [
     searchUrl: 'https://www.usaspending.gov/search/?hash=d8e2ede8db13c474b88e9e51f87d2a44',
     color: '#ff6b35',
     note: 'Largest surveillance-tech federal contractor in USASpending records. Provides data fusion for ICE, DHS, DoD, and various law-enforcement agencies.',
+    ldaQuery: 'palantir',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=palantir',
   },
   {
     name: 'Axon',
@@ -28,6 +30,8 @@ const VENDOR_DATA = [
     searchUrl: 'https://www.usaspending.gov/search/?hash=axon_enterprise',
     color: '#ffd166',
     note: 'Dominates federal body-camera contracts. Evidence.com cloud platform stores footage from thousands of agencies — centralizing law-enforcement video under a single corporate SaaS.',
+    ldaQuery: 'axon enterprise',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=axon',
   },
   {
     name: 'Clearview AI',
@@ -40,6 +44,8 @@ const VENDOR_DATA = [
     searchUrl: 'https://www.usaspending.gov/search/?hash=clearview_ai',
     color: '#e63946',
     note: 'Scraped billions of photos without consent. ICE, CBP, and Army use it for identification. Multiple GDPR bans in EU; legal challenges ongoing in the US.',
+    ldaQuery: 'clearview',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=clearview',
   },
   {
     name: 'ShotSpotter / SoundThinking',
@@ -52,6 +58,8 @@ const VENDOR_DATA = [
     searchUrl: 'https://www.usaspending.gov/search/?hash=shotspotter',
     color: '#a855f7',
     note: 'Gunshot detection with documented false-positive problems. Internal data showed ~90% of alerts led to no evidence of a crime. Rebranded to SoundThinking in 2023.',
+    ldaQuery: 'soundthinking',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=soundthinking',
   },
   {
     name: 'Flock Safety',
@@ -64,15 +72,73 @@ const VENDOR_DATA = [
     searchUrl: 'https://www.usaspending.gov/search/?hash=flock_safety',
     color: '#06b6d4',
     note: 'Federal footprint is small — Flock\'s real scale is thousands of local police contracts. A Park Police ALPR deployment in the DC metro area is on record. Local contracts dwarf federal spending.',
+    ldaQuery: null, // Flock lobbies at state level, not federal
+    ldaSearchUrl: null,
   },
 ]
 
-function formatCurrency(str) {
-  return str
+// Fetch lobbying data from Senate LDA API (no auth required)
+// Returns { count, totalExpenses, totalIncome, error }
+async function fetchLdaData(clientQuery) {
+  try {
+    const url = `https://lda.senate.gov/api/v1/filings/?client_name=${encodeURIComponent(clientQuery)}&format=json&limit=100`
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+
+    const count = data.count || 0
+    let totalExpenses = 0
+    let totalIncome = 0
+    let expenseCount = 0
+
+    for (const filing of (data.results || [])) {
+      if (filing.expenses != null) {
+        totalExpenses += parseFloat(filing.expenses)
+        expenseCount++
+      }
+      if (filing.income != null) {
+        totalIncome += parseFloat(filing.income)
+      }
+    }
+
+    return { count, totalExpenses, totalIncome, expenseCount, error: null }
+  } catch (err) {
+    return { count: null, totalExpenses: 0, totalIncome: 0, expenseCount: 0, error: err.message }
+  }
+}
+
+function formatDollars(n) {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`
+  return `$${n.toFixed(0)}`
 }
 
 export default function FollowTheMoney() {
   const [expanded, setExpanded] = useState(null)
+  const [ldaData, setLdaData] = useState({}) // keyed by vendor name
+  const [ldaLoading, setLdaLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadAll() {
+      const results = {}
+      await Promise.all(
+        VENDOR_DATA.map(async (v) => {
+          if (!v.ldaQuery) {
+            results[v.name] = { skipped: true }
+            return
+          }
+          results[v.name] = await fetchLdaData(v.ldaQuery)
+        })
+      )
+      if (!cancelled) {
+        setLdaData(results)
+        setLdaLoading(false)
+      }
+    }
+    loadAll()
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <div style={{ marginTop: 48 }}>
@@ -83,7 +149,7 @@ export default function FollowTheMoney() {
           <h3 style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.3px' }}>Follow the Money</h3>
         </div>
         <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65, maxWidth: 600 }}>
-          Federal taxpayer dollars flowing to surveillance vendors — pulled from{' '}
+          Federal taxpayer dollars flowing to surveillance vendors — contracts from{' '}
           <a
             href="https://www.usaspending.gov"
             target="_blank"
@@ -92,14 +158,25 @@ export default function FollowTheMoney() {
           >
             USASpending.gov
           </a>
-          . These are <em>federal</em> contracts only — state and local spending multiplies these numbers substantially.
+          {' '}and lobbying disclosures from the{' '}
+          <a
+            href="https://lda.senate.gov"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--accent)', textDecoration: 'none' }}
+          >
+            Senate LDA
+          </a>
+          . These are <em>federal</em> figures only — state and local spending multiplies these numbers substantially.
         </p>
       </div>
 
       {/* Vendor cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14, marginBottom: 24 }}>
         {VENDOR_DATA.map((v) => {
           const isOpen = expanded === v.name
+          const lda = ldaData[v.name]
+
           return (
             <div
               key={v.name}
@@ -114,18 +191,75 @@ export default function FollowTheMoney() {
               }}
             >
               {/* Vendor name + color dot */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: v.color, flexShrink: 0 }} />
                 <span style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</span>
               </div>
 
-              {/* Total */}
-              <div style={{ marginBottom: 6 }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: v.color, lineHeight: 1.1 }}>
-                  {v.totalContracts}
+              {/* Two-column stats: Federal Contracts + Lobbying */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                {/* Federal Contracts */}
+                <div style={{
+                  background: 'var(--bg3, #111)',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                    Federal Contracts
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: v.color, lineHeight: 1.1 }}>
+                    {v.totalContracts}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 3 }}>
+                    {v.contractCount}
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                  {v.contractCount}
+
+                {/* Lobbying Disclosures */}
+                <div style={{
+                  background: 'var(--bg3, #111)',
+                  borderRadius: 8,
+                  padding: '10px 12px',
+                }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Briefcase size={9} />
+                    Lobbying Disclosures
+                  </div>
+
+                  {/* Flock Safety — state-level special case */}
+                  {!v.ldaQuery ? (
+                    <div>
+                      <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
+                        State-level lobbying
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--muted)', opacity: 0.6, marginTop: 2 }}>
+                        Federal disclosure not required
+                      </div>
+                    </div>
+                  ) : ldaLoading ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--muted)' }}>
+                      <Loader size={11} style={{ animation: 'spin 1s linear infinite' }} />
+                      <span style={{ fontSize: 11 }}>Loading…</span>
+                    </div>
+                  ) : lda?.error ? (
+                    <div style={{ fontSize: 11, color: 'var(--muted)', opacity: 0.6 }}>
+                      LDA unavailable
+                    </div>
+                  ) : (
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--fg, #e2e8f0)', lineHeight: 1.1 }}>
+                        {lda?.count != null ? `${lda.count.toLocaleString()} filings` : '—'}
+                      </div>
+                      {(lda?.totalExpenses > 0 || lda?.totalIncome > 0) && (
+                        <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 3 }}>
+                          {lda.totalExpenses > 0
+                            ? `${formatDollars(lda.totalExpenses)} expenses reported`
+                            : `${formatDollars(lda.totalIncome)} income reported`}
+                          <span style={{ opacity: 0.6 }}> (sample)</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -134,37 +268,74 @@ export default function FollowTheMoney() {
                 background: 'var(--bg3, #111)',
                 borderRadius: 8,
                 padding: '8px 10px',
-                marginTop: 10,
+                marginTop: 4,
                 fontSize: 12,
                 lineHeight: 1.5,
               }}>
-                <div style={{ color: 'var(--muted)', marginBottom: 2 }}>Largest single award</div>
+                <div style={{ color: 'var(--muted)', marginBottom: 2 }}>Largest single federal award</div>
                 <div style={{ fontWeight: 700, color: 'var(--text)' }}>{v.topAward}</div>
                 <div style={{ color: 'var(--muted)', fontSize: 11 }}>{v.topAwardDesc}</div>
               </div>
 
               {/* Expanded detail */}
               {isOpen && (
-                <div style={{ marginTop: 12, fontSize: 12, lineHeight: 1.65, color: 'var(--muted)' }}>
-                  <div style={{ marginBottom: 8, color: 'var(--text)', fontSize: 12 }}>
+                <div style={{ marginTop: 14, fontSize: 12, lineHeight: 1.65, color: 'var(--muted)' }}>
+                  <div style={{ marginBottom: 10, color: 'var(--text)', fontSize: 12 }}>
                     <strong style={{ color: 'var(--muted)', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.06em' }}>Agency</strong>
                     <br />
                     {v.topAwardAgency}
                   </div>
-                  <p style={{ marginBottom: 10 }}>{v.note}</p>
-                  <a
-                    href={`https://www.usaspending.gov/search/?object_class=&recipient_search_text=${encodeURIComponent(v.recipients[0])}&award_type_codes=A,B,C,D`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: v.color, textDecoration: 'none', fontSize: 11, fontWeight: 600 }}
-                  >
-                    View contracts on USASpending.gov <ExternalLink size={10} />
-                  </a>
+                  <p style={{ marginBottom: 12 }}>{v.note}</p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <a
+                      href={`https://www.usaspending.gov/search/?object_class=&recipient_search_text=${encodeURIComponent(v.recipients[0])}&award_type_codes=A,B,C,D`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: v.color, textDecoration: 'none', fontSize: 11, fontWeight: 600 }}
+                    >
+                      Federal contracts on USASpending.gov <ExternalLink size={10} />
+                    </a>
+
+                    {/* Flock Safety state-level note */}
+                    {!v.ldaQuery && (
+                      <div style={{
+                        display: 'flex', gap: 8, alignItems: 'flex-start',
+                        background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.18)',
+                        borderRadius: 8, padding: '8px 10px', marginTop: 4,
+                      }}>
+                        <Briefcase size={12} style={{ color: v.color, flexShrink: 0, marginTop: 1 }} />
+                        <div>
+                          <div style={{ color: v.color, fontWeight: 700, fontSize: 11, marginBottom: 2 }}>
+                            State-level lobbying — federal disclosure not required
+                          </div>
+                          <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
+                            Flock Safety primarily lobbies state legislatures to secure local police contracts.
+                            Federal LDA filings are not required for state-level activity. The real lobbying
+                            footprint lives in state disclosure databases — not tracked centrally.
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* LDA link for vendors with federal lobbying */}
+                    {v.ldaSearchUrl && lda && !lda.error && (
+                      <a
+                        href={v.ldaSearchUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--muted)', textDecoration: 'none', fontSize: 11, fontWeight: 600 }}
+                      >
+                        Lobbying filings on Senate LDA <ExternalLink size={10} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
 
-              <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 10, opacity: 0.5 }}>
+              <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 12, opacity: 0.5 }}>
                 {isOpen ? 'Click to collapse' : 'Click to expand'}
               </div>
             </div>
@@ -172,7 +343,7 @@ export default function FollowTheMoney() {
         })}
       </div>
 
-      {/* Attribution + caveat */}
+      {/* Attribution + caveats */}
       <div style={{
         display: 'flex', gap: 10, alignItems: 'flex-start',
         background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)',
@@ -180,9 +351,9 @@ export default function FollowTheMoney() {
       }}>
         <AlertCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
         <div>
-          <span style={{ color: 'var(--text)', fontWeight: 600 }}>Federal contracts only. </span>
+          <span style={{ color: 'var(--text)', fontWeight: 600 }}>Federal figures only. </span>
           State and local surveillance spending is not tracked centrally — the real dollar totals are far higher.
-          Data sourced from{' '}
+          {' '}Contract data from{' '}
           <a
             href="https://www.usaspending.gov"
             target="_blank"
@@ -191,18 +362,27 @@ export default function FollowTheMoney() {
           >
             USASpending.gov
           </a>
-          {' '}— the official federal spending database, public and free to query.
-          {' '}
+          {' '}— the official federal spending database.
+          {' '}Lobbying data from the{' '}
           <a
-            href="https://api.usaspending.gov"
+            href="https://lda.senate.gov"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--muted)', textDecoration: 'none' }}
+            style={{ color: 'var(--accent)', textDecoration: 'none' }}
           >
-            API docs →
+            Senate Office of Public Records
           </a>
+          {' '}— Lobbying Disclosure Act filings, live from the LDA API.
+          {' '}Expense figures are sampled from the most recent 100 filings per vendor; totals across all filings may be higher.
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

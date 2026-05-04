@@ -69,6 +69,12 @@ export default function Transparency() {
               note: 'Public federal dataset',
             },
             {
+              name: 'Senate LDA (Lobbying Disclosure)',
+              url: 'https://lda.senate.gov',
+              what: 'Federal lobbying filings for surveillance vendors — Senate Office of Public Records, Lobbying Disclosure Act.',
+              note: 'Live API — no auth required',
+            },
+            {
               name: 'OpenStates',
               url: 'https://openstates.org',
               what: 'State surveillance legislation — bills, status, sponsors, and votes.',
