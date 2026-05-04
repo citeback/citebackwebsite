@@ -27,7 +27,7 @@ const tracks = [
       'FOIA scraping, OCR, and document pipelines',
     ],
     cta: 'Contribute Pseudonymously',
-    accent: 'var(--fg)',
+    accent: 'var(--muted)',
   },
   {
     id: 'operator',
@@ -42,7 +42,7 @@ const tracks = [
       'Keep donors informed via on-chain transparent updates',
     ],
     cta: 'Become an Operator',
-    accent: 'var(--fg)',
+    accent: 'var(--muted)',
   },
 ]
 
@@ -95,7 +95,7 @@ export default function BuildWithUs({ setTab }) {
         }} className="bwu-grid">
           {tracks.map((track) => (
             <div key={track.id} className="bwu-card" style={{
-              background: 'var(--surface, #111)',
+              background: 'var(--bg2)',
               border: '1px solid var(--border)',
               padding: '32px 28px',
               display: 'flex',
@@ -167,7 +167,7 @@ export default function BuildWithUs({ setTab }) {
                   marginTop: 8,
                   background: track.id === 'legal' ? track.accent : 'transparent',
                   color: track.id === 'legal' ? 'var(--bg)' : 'var(--fg)',
-                  border: track.id === 'legal' ? 'none' : '1px solid var(--border)',
+                  border: track.id === 'legal' ? 'none' : '1px solid var(--fg)',
                   padding: '11px 20px',
                   fontSize: 11,
                   letterSpacing: '0.07em',
