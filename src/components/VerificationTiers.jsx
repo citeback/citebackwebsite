@@ -97,7 +97,7 @@ export function ThreatDisclosure() {
         {[
           { icon: <Eye size={14} />, title: 'AI Photo Spoofing', body: 'Generative AI can produce photorealistic fake camera images. Defense: C2PA cryptographic authentication from real camera hardware.' },
           { icon: <Lock size={14} />, title: 'GPS Metadata Forgery', body: 'EXIF data is trivially editable. Defense: C2PA embeds GPS at capture time, cryptographically signed and tamper-evident.' },
-          { icon: <Shield size={14} />, title: 'Sybil Attacks', body: 'One actor, multiple fake verifier identities. Defense: Expert Directory reputation stake — fraud costs real XMR.' },
+          { icon: <Shield size={14} />, title: 'Sybil Attacks', body: 'One actor, multiple fake verifier identities. Defense: Expert Directory reputation stake — fraud costs real XMR or ZANO.' },
           { icon: <CheckCircle size={14} />, title: 'Our Response', body: 'Tiered verification, economic staking, C2PA authentication, and public disclosure of all verification methods.' },
         ].map((item, i) => (
           <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14 }}>

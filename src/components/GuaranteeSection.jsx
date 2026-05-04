@@ -2,6 +2,7 @@ const facts = [
   'Minimum 3 TEE instances across different hardware providers',
   '2-of-3 threshold signatures required — single compromise impossible',
   'No human has ever held a wallet key',
+  'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
   'Mission locked in code, not governance documents',
   'Architecture audited across 5 independent review rounds',
 ];

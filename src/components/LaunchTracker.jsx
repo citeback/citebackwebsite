@@ -9,7 +9,7 @@ const milestones = [
   { done: false,   label: 'FinCEN/MSB attorney written opinion obtained' },
   { done: false,   label: 'TEE deployment live (3 instances, 2-of-3 threshold signatures)' },
   { done: false,   label: 'TEE attestation published and verifiable' },
-  { done: false,   label: 'OFAC screening API integrated' },
+  { done: false,   label: 'Automated OFAC screening — no manual review, no PII stored' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 

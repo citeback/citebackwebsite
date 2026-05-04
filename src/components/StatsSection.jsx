@@ -67,9 +67,9 @@ export default function StatsSection() {
       label: 'governance audit rounds completed',
     },
     {
-      value: 'v0.7',
+      value: 'XMR + ZANO',
       isLive: false,
-      label: 'governance version — active',
+      label: 'the only currencies accepted — no card, no identity',
     },
   ];
 

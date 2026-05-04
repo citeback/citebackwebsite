@@ -41,6 +41,14 @@ const campaigns = [
       'Cities carry liability when surveillance tech causes wrongful arrests.',
     highlightLabel: 'Stat',
   },
+  {
+    name: 'Verification Bounties',
+    description:
+      'Fund community verification of mapped surveillance infrastructure. Contributors earn XMR for GPS-tagged, cryptographically authenticated camera confirmation. C2PA-signed photos achieve gold-tier status instantly.',
+    highlight:
+      '872 ALPR cameras mapped across New Mexico — awaiting ground-truth verification by contributors.',
+    highlightLabel: 'Live',
+  },
 ];
 
 export default function CampaignSelector() {

@@ -6,7 +6,8 @@
 export const platformRules = {
   platformFeePercent: 1,          // 1% of all donations → ops wallet
   feeBufferPercent: 2,            // 2% added to campaign goals for tx fee variance
-  xmrTxFeeEstimate: 0.01,        // ~$0.01 per transaction (USD)
+  xmrTxFeeEstimate: 0.01,        // ~$0.01 per transaction (USD) — Monero fees set by RandomX PoW network
+  zanoTxFeeEstimate: 0.01,       // ~$0.01 per transaction (USD) — Zano fees on hybrid PoW+PoS network
   maxExtensionsPerCampaign: 2,
   extensionWindowPercent: 0.25,   // extensions only in last 25% of campaign window
   challengeWindowHours: 48,
@@ -133,7 +134,7 @@ export const campaigns = [
     id: 7,
     type: 'verify',
     title: 'Verification Bounty — New Mexico',
-    description: 'Fund physical verification of the 872 OSM-mapped ALPR cameras across New Mexico. Verifiers earn XMR for submitting GPS-tagged photos with independent confirmation. C2PA-authenticated photos receive gold-tier status instantly. Standard submissions require 3-of-3 Expert Directory consensus. Fraud-resistant by design — well-resourced adversaries cannot fake C2PA cryptographic signatures or defeat economic staking.',
+    description: 'Fund physical verification of the 872 OSM-mapped ALPR cameras across New Mexico. Verifiers earn XMR or ZANO for submitting GPS-tagged photos with independent confirmation. C2PA-authenticated photos receive gold-tier status instantly. Standard submissions require 3-of-3 Expert Directory consensus. Fraud-resistant by design — well-resourced adversaries cannot fake C2PA cryptographic signatures or defeat economic staking.',
     location: 'New Mexico (Statewide)',
     goal: 1500,
     raised: 0,
