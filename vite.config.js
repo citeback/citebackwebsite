@@ -12,5 +12,20 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/ollama/, ''),
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/leaflet') || id.includes('node_modules/react-leaflet')) {
+            return 'vendor-leaflet'
+          }
+          if (id.includes('node_modules/react-dom') || (id.includes('node_modules/react/') && !id.includes('react-leaflet'))) {
+            return 'vendor-react'
+          }
+        }
+      }
+    }
   }
 })

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
 import LaunchTracker from './components/LaunchTracker'
@@ -7,7 +7,6 @@ import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
 import CampaignSelector from './components/CampaignSelector'
 import CampaignList from './components/CampaignList'
-import CameraMap from './components/CameraMap'
 import HowItWorks from './components/HowItWorks'
 import BuildWithUs from './components/BuildWithUs'
 import HumanRegistry from './components/HumanRegistry'
@@ -23,10 +22,17 @@ import TrustFAQ from './components/TrustFAQ'
 import Governance from './components/Governance'
 import Operators from './components/Operators'
 import ScrollProgress from './components/ScrollProgress'
-import ConversationalInterface from './components/ConversationalInterface'
 import LiveFeed from './components/LiveFeed'
-import SurveillanceFeed from './components/SurveillanceFeed'
 // ARCameraOverlay removed — too complex to debug cross-platform
+
+// Lazy-loaded heavy components
+const CameraMap = lazy(() => import('./components/CameraMap'))
+const SurveillanceFeed = lazy(() => import('./components/SurveillanceFeed'))
+const ConversationalInterface = lazy(() => import('./components/ConversationalInterface'))
+
+const LazyFallback = ({ label = 'Loading…' }) => (
+  <div style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
+)
 
 export default function App() {
   const [tab, setTab] = useState('home')
@@ -63,15 +69,15 @@ export default function App() {
         </>
       )}
       {tab === 'campaigns' && <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />}
-      {tab === 'map' && <CameraMap />}
+      {tab === 'map' && <Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>}
       {tab === 'registry' && <HumanRegistry />}
       {tab === 'transparency' && <Transparency setTab={setTab} />}
       {tab === 'trust' && <TrustFAQ setTab={setTab} />}
       {tab === 'governance' && <Governance setTab={setTab} />}
       {tab === 'operators' && <Operators />}
-      {tab === 'feed' && <SurveillanceFeed setTab={setTab} />}
+      {tab === 'feed' && <Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>}
 
-      {showAI && <ConversationalInterface onClose={() => setShowAI(false)} />}
+      {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
       {/* Floating chatbot button */}
       {!showAI && (
         <button
