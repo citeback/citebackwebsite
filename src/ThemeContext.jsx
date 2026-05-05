@@ -10,6 +10,8 @@ export function ThemeProvider({ children }) {
     const t = themes[theme]
     const root = document.documentElement
     Object.entries(t.vars).forEach(([k, v]) => root.style.setProperty(k, v))
+    // Set data-theme so CSS selectors like [data-theme="BRUTAL"] work
+    root.setAttribute('data-theme', theme)
   }, [theme])
 
   return (

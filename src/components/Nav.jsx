@@ -47,7 +47,7 @@ export default function Nav({ tab, setTab }) {
       left: 0,
       right: 0,
       zIndex: 100,
-      background: 'rgba(250,250,250,0.92)',
+      background: 'var(--nav-bg)',
       backdropFilter: 'blur(8px)',
       WebkitBackdropFilter: 'blur(8px)',
       borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
@@ -134,7 +134,7 @@ export default function Nav({ tab, setTab }) {
                 top: '100%',
                 left: 0,
                 marginTop: 8,
-                background: 'rgba(250,250,250,0.98)',
+                background: 'var(--nav-dropdown-bg)',
                 border: '1px solid var(--border)',
                 borderRadius: 8,
                 padding: '8px 0',
@@ -222,7 +222,7 @@ export default function Nav({ tab, setTab }) {
           display: 'flex',
           flexDirection: 'column',
           gap: 4,
-          background: 'rgba(250,250,250,0.98)',
+          background: 'var(--nav-dropdown-bg)',
         }}>
           {[...primaryLinks, ...moreLinks].filter((l, i, arr) => arr.findIndex(x => x.id === l.id) === i).map(l => (
             <button

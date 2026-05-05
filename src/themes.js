@@ -21,6 +21,8 @@ export const themes = {
       '--card-border': '#d8d4cd',
       '--card-blur': 'none',
       '--hero-bg': 'none',
+      '--nav-bg': 'rgba(250,250,248,0.92)',
+      '--nav-dropdown-bg': 'rgba(242,240,236,0.98)',
     }
   },
   COLD: {
@@ -45,6 +47,8 @@ export const themes = {
       '--card-border': '#1e1e1e',
       '--card-blur': 'none',
       '--hero-bg': 'radial-gradient(ellipse at 50% -10%, rgba(230,57,70,0.15) 0%, transparent 60%)',
+      '--nav-bg': 'rgba(0,0,0,0.88)',
+      '--nav-dropdown-bg': 'rgba(10,10,10,0.98)',
     }
   },
   GLASS: {
@@ -69,6 +73,8 @@ export const themes = {
       '--card-border': 'rgba(255,255,255,0.08)',
       '--card-blur': 'blur(12px)',
       '--hero-bg': 'radial-gradient(ellipse at 30% 0%, rgba(124,58,237,0.2) 0%, rgba(230,57,70,0.12) 40%, transparent 70%)',
+      '--nav-bg': 'rgba(5,5,15,0.88)',
+      '--nav-dropdown-bg': 'rgba(12,12,30,0.98)',
     }
   },
   BRUTAL: {
@@ -93,6 +99,8 @@ export const themes = {
       '--card-border': '#ff2020',
       '--card-blur': 'none',
       '--hero-bg': 'none',
+      '--nav-bg': 'rgba(15,15,15,0.95)',
+      '--nav-dropdown-bg': 'rgba(26,26,26,0.98)',
     }
   },
   PHANTOM: {
@@ -117,6 +125,8 @@ export const themes = {
       '--card-border': 'rgba(168,85,247,0.12)',
       '--card-blur': 'blur(8px)',
       '--hero-bg': 'radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.18) 0%, transparent 65%)',
+      '--nav-bg': 'rgba(8,8,16,0.92)',
+      '--nav-dropdown-bg': 'rgba(15,15,26,0.98)',
     }
   },
 }

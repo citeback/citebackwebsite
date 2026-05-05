@@ -110,7 +110,7 @@ export default function FrontlineFunds() {
               style={{
                 border: '1px solid var(--border)',
                 padding: '28px 28px 24px',
-                background: 'var(--card)',
+                background: 'var(--card-bg)',
               }}
             >
               {/* Header */}

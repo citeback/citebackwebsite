@@ -49,7 +49,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
         <button onClick={() => setProposing(true)} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'var(--accent)', border: 'none', color: '#fff',
-          padding: '10px 18px', borderRadius: 9, fontWeight: 600, fontSize: 14, minHeight: 44,
+          padding: '10px 18px', borderRadius: 'var(--radius)', fontWeight: 600, fontSize: 14, minHeight: 44,
         }}>
           <Plus size={15} /> Propose Campaign
         </button>
@@ -67,7 +67,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
               style={{
                 width: '100%', paddingLeft: 34, padding: '9px 12px 9px 34px',
                 background: 'var(--bg3)', border: '1px solid var(--border)',
-                color: 'var(--text)', borderRadius: 8, fontSize: 13, outline: 'none', fontFamily: 'inherit',
+                color: 'var(--text)', borderRadius: 'var(--radius)', fontSize: 13, outline: 'none', fontFamily: 'inherit',
               }}
             />
           </div>
@@ -79,8 +79,12 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
                 background: filter === f ? 'var(--accent)' : 'var(--bg3)',
                 border: `1px solid ${filter === f ? 'var(--accent)' : 'var(--border)'}`,
                 color: filter === f ? '#fff' : 'var(--muted)',
-                padding: '6px 14px', borderRadius: 7, fontWeight: 500, fontSize: 13, whiteSpace: 'nowrap',
-              }}>{f}</button>
+                padding: '6px 14px', borderRadius: 'var(--radius)', fontWeight: 500, fontSize: 13, whiteSpace: 'nowrap',
+                transition: 'background 0.15s, border-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={e => { if (filter !== f) { e.currentTarget.style.borderColor = 'var(--fg)'; e.currentTarget.style.color = 'var(--fg)' } }}
+              onMouseLeave={e => { if (filter !== f) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--muted)' } }}
+              >{f}</button>
             ))}
           </div>
 
@@ -89,7 +93,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
             <SlidersHorizontal size={13} style={{ color: 'var(--muted)' }} />
             <select value={sort} onChange={e => setSort(e.target.value)} style={{
               background: 'var(--bg3)', border: '1px solid var(--border)',
-              color: 'var(--text)', padding: '7px 10px', borderRadius: 7, fontSize: 13,
+              color: 'var(--text)', padding: '7px 10px', borderRadius: 'var(--radius)', fontSize: 13,
               outline: 'none', cursor: 'pointer',
             }}>
               {sortOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
@@ -118,7 +122,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
         <div style={{ textAlign: 'center', marginTop: 40 }}>
           <button onClick={() => setTab('campaigns')} style={{
             background: 'var(--bg3)', border: '1px solid var(--border)',
-            color: 'var(--text)', padding: '12px 28px', borderRadius: 10, fontWeight: 600, fontSize: 15,
+            color: 'var(--text)', padding: '12px 28px', borderRadius: 'var(--radius)', fontWeight: 600, fontSize: 15,
           }}>View All Campaigns →</button>
         </div>
       )}

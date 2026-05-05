@@ -171,7 +171,7 @@ export default function BuildWithUs({ setTab }) {
                   marginTop: 8,
                   background: track.id === 'legal' ? track.accent : 'transparent',
                   color: track.id === 'legal' ? 'var(--bg)' : 'var(--fg)',
-                  border: track.id === 'legal' ? 'none' : '1px solid var(--fg)',
+                  border: track.id === 'legal' ? 'none' : '1px solid var(--border)',
                   padding: '11px 20px',
                   fontSize: 11,
                   letterSpacing: '0.07em',
