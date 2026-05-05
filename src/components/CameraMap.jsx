@@ -427,7 +427,9 @@ function OSMCanvasLayer({ cameras }) {
       if (!cameras.length) return
       const { lat, lng } = e.latlng
       const zoom = map.getZoom()
-      const clickRadiusM = 50000 / Math.pow(2, zoom - 4)
+      const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+      const touchMultiplier = isTouchDevice ? 2.5 : 1
+      const clickRadiusM = (50000 / Math.pow(2, zoom - 4)) * touchMultiplier
 
       let nearest = null, minDist = Infinity
       for (const c of cameras) {
@@ -503,9 +505,9 @@ function OSMCanvasLayer({ cameras }) {
     }
     const layer = L.geoJSON(geojson, {
       pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-        renderer, radius: 5,
+        renderer, radius: window.matchMedia('(pointer: coarse)').matches ? 8 : 5,
         fillColor: '#e63946', fillOpacity: 0.65,
-        color: 'rgba(230,57,70,0.25)', weight: 1,
+        color: 'rgba(230,57,70,0.35)', weight: window.matchMedia('(pointer: coarse)').matches ? 2 : 1,
       }),
     })
     layer.addTo(map)
