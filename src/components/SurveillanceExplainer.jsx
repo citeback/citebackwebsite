@@ -313,7 +313,7 @@ function AccordionCard({ item, defaultOpen = false }) {
   )
 }
 
-export default function SurveillanceExplainer() {
+export default function SurveillanceExplainer({ setTab }) {
   return (
     <section style={{
       padding: '72px 24px',
@@ -359,17 +359,20 @@ export default function SurveillanceExplainer() {
             Every unchallenged contract is a green light for more surveillance.
             Fund the litigation, the ordinance fight, or the FOIA request — anonymously, in XMR or ZANO.
           </p>
-          <a
-            href="https://citeback.com"
+          <button
+            onClick={() => setTab && setTab('campaigns')}
             style={{
               display: 'inline-block',
-              background: 'var(--accent)', color: '#fff',
-              padding: '11px 24px', borderRadius: 9,
-              fontSize: 14, fontWeight: 700, textDecoration: 'none',
+              background: 'var(--fg)', color: 'var(--bg)',
+              border: 'none',
+              padding: '12px 28px',
+              fontSize: 13, fontWeight: 600,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              cursor: 'pointer', fontFamily: 'var(--font)',
             }}
           >
-            Browse open campaigns →
-          </a>
+            Browse Open Campaigns →
+          </button>
         </div>
 
       </div>

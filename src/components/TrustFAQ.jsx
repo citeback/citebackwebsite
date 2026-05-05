@@ -210,7 +210,7 @@ export default function TrustFAQ({ setTab }) {
             rel="noopener noreferrer"
             style={{
               background: 'var(--bg2)', border: '1px solid var(--border)',
-              borderRadius: 12, padding: '16px 18px',
+              borderRadius: 0, padding: '16px 18px',
               display: 'block', textDecoration: 'none', color: 'inherit',
               transition: 'border-color 0.15s',
               cursor: 'pointer',
@@ -262,7 +262,7 @@ export default function TrustFAQ({ setTab }) {
       {/* Verification CTA */}
       <div style={{
         marginTop: 32, background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
-        borderRadius: 12, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start',
+        borderRadius: 0, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start',
       }}>
         <div style={{ fontSize: 22, flexShrink: 0 }}>🔬</div>
         <div>

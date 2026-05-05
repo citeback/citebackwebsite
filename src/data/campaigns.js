@@ -85,7 +85,7 @@ export const campaigns = [
     deadline: '2026-06-20',
     tags: ['billboard', 'ALPR', 'PTZ', 'Las Cruces', 'New Mexico'],
     source: 'https://progressnownm.org/privacy-first-heres-how-nm-can-set-guardrails-on-flock-cameras-and-surveillance-tech/',
-    contractContext: 'Axon Enterprise holds $353M+ in federal contracts for body cameras and digital evidence platforms used by federal law enforcement. Local PTZ deployments are separate. Source: USASpending.gov',
+    contractContext: 'Flock Safety + Peregrine AI integration is named in Las Cruces PTZ records. Vigilant Solutions (Motorola) operates the DRN — a 12B+ scan commercial ALPR database ICE accesses without warrants. Local deployments like Las Cruces feed into this nationwide commercial surveillance stack. Source: USASpending.gov / EFF reporting',
   },
   {
     id: 4,
@@ -133,10 +133,10 @@ export const campaigns = [
     walletZANO: null,
     status: 'prelaunch',
     backers: 0,
-    deadline: '2026-05-20',
+    deadline: '2026-06-30',
     tags: ['FOIA', 'ALPR', 'Otero County', 'New Mexico'],
     source: 'https://progressnownm.org/privacy-first-heres-how-nm-can-set-guardrails-on-flock-cameras-and-surveillance-tech/',
-    contractContext: 'Flock Safety has federal contracts on record; Otero County (near Holloman AFB) deployments may overlap with federal surveillance infrastructure. Source: USASpending.gov',
+    contractContext: 'Flock Safety (FLOCK GROUP INC) holds federal ALPR contracts. Otero County sits adjacent to Holloman AFB — federally adjacent deployments may feed into broader DHS/DoD surveillance infrastructure. Vigilant Solutions (Motorola) also sells ICE/CBP access to commercial plate scan databases that absorb local ALPR data. Source: USASpending.gov',
   },
 
   // Verification Bounty Campaign

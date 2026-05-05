@@ -56,15 +56,17 @@ export default function App() {
       {tab === 'home' && (
         <>
           <Hero setTab={setTab} />
-          <LaunchTracker />
           <StatsSection />
           <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
           <HowItWorks setTab={setTab} />
-          <BuildWithUs setTab={setTab} />
-          <ALPRExplainer setTab={setTab} />
-          <SurveillanceExplainer />
-          <Manifesto />
           <GuaranteeSection setTab={setTab} />
+          <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+            <LaunchTracker />
+          </div>
+          <SurveillanceExplainer setTab={setTab} />
+          <ALPRExplainer setTab={setTab} />
+          <Manifesto setTab={setTab} />
+          <BuildWithUs setTab={setTab} />
           <LiveFeed setTab={setTab} />
         </>
       )}

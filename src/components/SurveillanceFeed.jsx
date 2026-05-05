@@ -341,24 +341,24 @@ export default function SurveillanceFeed({ setTab }) {
         <div style={{ marginBottom: 48 }}>
           <div style={{
             fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: '0.18em',
+            fontWeight: 600,
+            letterSpacing: '0.16em',
             textTransform: 'uppercase',
-            color: 'var(--accent)',
+            color: 'var(--red)',
             marginBottom: 12,
           }}>
             Intelligence Feed
           </div>
-          <h1 style={{
-            fontSize: 'clamp(26px, 4vw, 38px)',
-            fontWeight: 700,
-            letterSpacing: '-0.02em',
+          <h2 style={{
+            fontSize: 'clamp(26px, 4vw, 42px)',
+            fontWeight: 800,
+            letterSpacing: '-0.03em',
             margin: 0,
             marginBottom: 12,
             color: 'var(--fg)',
           }}>
             Surveillance Litigation & Legislation
-          </h1>
+          </h2>
           <p style={{
             color: 'var(--muted)',
             fontSize: 14,

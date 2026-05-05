@@ -32,11 +32,11 @@ export default function GuaranteeSection({ setTab }) {
         <div>
           <div
             style={{
-              fontSize: '11px',
+              fontSize: '10px',
               textTransform: 'uppercase',
-              letterSpacing: '0.1em',
+              letterSpacing: '0.16em',
               color: 'var(--red)',
-              fontWeight: 500,
+              fontWeight: 600,
               marginBottom: '28px',
             }}
           >

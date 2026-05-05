@@ -22,7 +22,7 @@ export default function LaunchTracker() {
     <div className="launch-tracker" style={{
       background: 'var(--bg2)',
       border: '1px solid var(--border)',
-      borderRadius: 16,
+      borderRadius: 0,
       padding: '28px 32px',
       maxWidth: 640,
       margin: '0 auto',
@@ -42,13 +42,13 @@ export default function LaunchTracker() {
 
       {/* Progress bar */}
       <div style={{
-        height: 6, background: 'var(--border)',
-        borderRadius: 3, marginBottom: 24, overflow: 'hidden',
+        height: 4, background: 'var(--border)',
+        borderRadius: 0, marginBottom: 24, overflow: 'hidden',
       }}>
         <div style={{
           height: '100%', width: `${pct}%`,
-          background: 'linear-gradient(90deg, var(--accent), #6ee7b7)',
-          borderRadius: 3, transition: 'width 0.8s ease',
+          background: 'var(--red)',
+          borderRadius: 0, transition: 'width 0.8s ease',
         }} />
       </div>
 

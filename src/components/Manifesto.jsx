@@ -1,4 +1,4 @@
-export default function Manifesto() {
+export default function Manifesto({ setTab }) {
   const pairs = [
     { they: 'Built the cage.', we: 'Document every bar.' },
     { they: 'Scan without consent.', we: 'Expose without apology.' },
@@ -89,6 +89,47 @@ export default function Manifesto() {
         </div>
 
       </div>
+
+      {setTab && (
+        <div style={{
+          marginTop: 56,
+          paddingTop: 32,
+          borderTop: '1px solid var(--border)',
+          display: 'flex',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}>
+          <button
+            onClick={() => setTab('campaigns')}
+            style={{
+              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
+              padding: '13px 28px', fontSize: 13, fontWeight: 600,
+              letterSpacing: '0.05em', textTransform: 'uppercase',
+              cursor: 'pointer', fontFamily: 'var(--font)',
+              transition: 'opacity 0.15s', minHeight: 44,
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          >
+            Fund a Campaign →
+          </button>
+          <button
+            onClick={() => setTab('operators')}
+            style={{
+              background: 'transparent', color: 'var(--fg)',
+              border: '1px solid var(--border)', padding: '13px 28px',
+              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              fontFamily: 'var(--font)', transition: 'border-color 0.15s',
+              minHeight: 44,
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+          >
+            Run a Campaign →
+          </button>
+        </div>
+      )}
     </section>
   )
 }

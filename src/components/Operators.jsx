@@ -6,7 +6,7 @@ function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defau
   return (
     <div style={{
       background: 'var(--bg2)', border: '1px solid var(--border)',
-      borderRadius: 12, overflow: 'hidden', marginBottom: 12,
+      borderRadius: 0, overflow: 'hidden', marginBottom: 12,
     }}>
       <button onClick={() => setOpen(o => !o)} style={{
         width: '100%', display: 'flex', alignItems: 'center', gap: 12,
@@ -67,7 +67,7 @@ export default function Operators() {
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 15 }}>
           Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
         </p>
-        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, marginTop: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px 16px' }}>
+        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, marginTop: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 0, padding: '12px 16px' }}>
           <strong style={{ color: 'var(--text)' }}>How this works:</strong> The platform is operated by a Wyoming DAO LLC — you’ll work with a real person during onboarding and proposal review. Once your campaign is funded and milestones are met, disbursements are handled automatically by the TEE. No human — including the platform operator — can access campaign wallet keys or redirect funds.
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function Operators() {
       {/* Hard requirements upfront */}
       <div style={{
         background: 'rgba(255,245,51,0.04)', border: '1px solid rgba(255,245,51,0.2)',
-        borderRadius: 12, padding: '20px 24px', marginBottom: 32,
+        borderRadius: 0, padding: '20px 24px', marginBottom: 32,
       }}>
         <p style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 12, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           What You Need to Apply
@@ -141,7 +141,7 @@ export default function Operators() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {tier.types.map(t => (
               <div key={t.name} style={{
-                padding: '12px 16px', borderRadius: 8,
+                padding: '12px 16px', borderRadius: 0,
                 background: 'var(--bg2)', border: '1px solid var(--border)',
                 borderLeft: `3px solid ${tier.color}`,
               }}>
@@ -156,7 +156,7 @@ export default function Operators() {
       {/* Fiat disbursement */}
       <div style={{
         background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
-        borderRadius: 12, padding: '20px 24px', margin: '32px 0',
+        borderRadius: 0, padding: '20px 24px', margin: '32px 0',
       }}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <Coins size={18} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
@@ -187,7 +187,7 @@ export default function Operators() {
       {/* CTA */}
       <div style={{
         background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 12, padding: '28px 24px', textAlign: 'center',
+        borderRadius: 0, padding: '28px 24px', textAlign: 'center',
       }}>
         <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Ready to Propose a Campaign?</h3>
         <p style={{ color: 'var(--muted)', fontSize: 14, marginBottom: 20, maxWidth: 420, margin: '0 auto 20px' }}>
@@ -196,7 +196,7 @@ export default function Operators() {
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '10px 20px', borderRadius: 8, fontSize: 14, fontWeight: 600,
+            padding: '10px 20px', borderRadius: 0, fontSize: 14, fontWeight: 600,
             background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)',
             color: 'var(--text)', textDecoration: 'none',
           }}>
@@ -204,7 +204,7 @@ export default function Operators() {
           </a>
           <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE-SUPPLEMENTS.md" target="_blank" rel="noopener noreferrer" style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '10px 20px', borderRadius: 8, fontSize: 14, fontWeight: 600,
+            padding: '10px 20px', borderRadius: 0, fontSize: 14, fontWeight: 600,
             background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)',
             color: 'var(--text)', textDecoration: 'none',
           }}>

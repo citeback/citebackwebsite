@@ -31,15 +31,16 @@ export default function ALPRExplainer({ setTab }) {
       borderBottom: '1px solid var(--border)',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        <div style={{ marginBottom: 48 }}>
           <div style={{
-            display: 'inline-block',
-            background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.2)',
-            color: 'var(--accent)', padding: '4px 14px', borderRadius: 100,
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-            marginBottom: 16,
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            color: 'var(--red)',
+            marginBottom: 12,
           }}>Know What You're Fighting</div>
-          <h2 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 12 }}>
+          <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 38px)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 12 }}>
             The Surveillance Network Explained
           </h2>
           <p style={{ color: 'var(--muted)', fontSize: 15, maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
@@ -51,13 +52,13 @@ export default function ALPRExplainer({ setTab }) {
           {facts.map((f, i) => (
             <div key={i} style={{
               background: 'var(--bg2)', border: '1px solid var(--border)',
-              borderRadius: 14, padding: 24,
+              borderRadius: 0, padding: 24,
             }}>
               <div style={{
-                width: 42, height: 42, borderRadius: 10,
-                background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.15)',
+                width: 42, height: 42, borderRadius: 0,
+                background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--accent)', marginBottom: 16,
+                color: 'var(--red)', marginBottom: 16,
               }}>{f.icon}</div>
               <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 10 }}>{f.title}</h3>
               <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.75 }}>{f.body}</p>
@@ -100,7 +101,7 @@ export default function ALPRExplainer({ setTab }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               color: 'var(--muted)', fontSize: 13, fontWeight: 500,
-              border: '1px solid var(--border)', padding: '8px 16px', borderRadius: 8,
+              border: '1px solid var(--border)', padding: '8px 16px', borderRadius: 0,
             }}
           >
             <ExternalLink size={13} /> Deep dive: EFF's ALPR resource center

@@ -151,11 +151,11 @@ export default function HowItWorks({ setTab }) {
         {/* Left sticky label */}
         <div className="hiw-sidebar" style={{ position: 'sticky', top: 100 }}>
           <div style={{
-            fontSize: 11,
+            fontSize: 10,
             letterSpacing: '0.16em',
             color: 'var(--red)',
             textTransform: 'uppercase',
-            fontWeight: 500,
+            fontWeight: 600,
             marginBottom: 12,
           }}>
             How It Works

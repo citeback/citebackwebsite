@@ -27,8 +27,8 @@ export default function Transparency({ setTab }) {
       {/* Principles */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 48 }}>
         {principles.map((p, i) => (
-          <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: 20 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', marginBottom: 12 }} />
+          <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 0, padding: 20 }}>
+            <div style={{ width: 2, height: 16, background: 'var(--red)', marginBottom: 12 }} />
             <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{p.title}</h3>
             <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65 }}>{p.body}</p>
           </div>
@@ -88,8 +88,8 @@ export default function Transparency({ setTab }) {
               note: 'Journalism attribution',
             },
           ].map((src, i) => (
-            <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: 20 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--muted)', opacity: 0.5, marginBottom: 12 }} />
+            <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 0, padding: 20 }}>
+              <div style={{ width: 2, height: 16, background: 'var(--border)', marginBottom: 12 }} />
               <h3 style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
                 <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fg)', textDecoration: 'none', borderBottom: '1px solid var(--border)' }}>
                   {src.name} <ExternalLink size={11} style={{ verticalAlign: 'middle', opacity: 0.5 }} />
@@ -104,8 +104,8 @@ export default function Transparency({ setTab }) {
 
       {/* What if we don't launch */}
       <div style={{
-        background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)',
-        borderRadius: 12, padding: '20px 24px', marginBottom: 32,
+        background: 'var(--bg2)', border: '1px solid var(--border)',
+        borderRadius: 0, borderLeft: '3px solid var(--green)', padding: '20px 24px', marginBottom: 32,
       }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
           <Shield size={20} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
@@ -136,7 +136,7 @@ export default function Transparency({ setTab }) {
 
         <div style={{
           textAlign: 'center', padding: '40px 32px', color: 'var(--muted)', fontSize: 14,
-          border: '1px dashed var(--border)', borderRadius: 12, lineHeight: 1.8,
+          border: '1px dashed var(--border)', borderRadius: 0, lineHeight: 1.8,
         }}>
           No disbursements yet — wallets are pending activation.<br />
           <span style={{ fontSize: 12, opacity: 0.65 }}>Every completed campaign will be logged here with receipt and XMR transaction ID. Forever.</span>
@@ -146,7 +146,7 @@ export default function Transparency({ setTab }) {
       {/* CTA */}
       {setTab && (
         <div style={{
-          marginTop: 32, padding: '24px', borderRadius: 12,
+          marginTop: 32, padding: '24px', borderRadius: 0,
           background: 'var(--bg2)', border: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           flexWrap: 'wrap', gap: 20,

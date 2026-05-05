@@ -76,6 +76,20 @@ const VENDOR_DATA = [
     ldaQuery: null, // Flock lobbies at state level, not federal
     ldaSearchUrl: null,
   },
+  {
+    name: 'Vigilant Solutions (Motorola)',
+    recipients: ['VIGILANT SOLUTIONS LLC', 'MOTOROLA SOLUTIONS, INC.'],
+    totalContracts: '$30M+ (federal subset)',
+    contractCount: '20+ ALPR/data awards',
+    topAward: '$6,100,000',
+    topAwardDesc: 'ALPR database subscription — ICE/HSI access to DRN plate scan network',
+    topAwardAgency: 'Dept. of Homeland Security / ICE',
+    searchUrl: 'https://www.usaspending.gov/search/?object_class=&recipient_search_text=Vigilant+Solutions&award_type_codes=A,B,C,D',
+    color: '#f59e0b',
+    note: 'Operates the DRN — the largest commercial ALPR database in the US, with 12+ billion plate scans sourced from repo trucks, parking companies, and private operators. ICE and CBP purchase bulk subscription access to track movement histories without warrants or public disclosure. Acquired by Motorola Solutions in 2019; now embedded in the Motorola public-safety ecosystem used by thousands of agencies nationwide.',
+    ldaQuery: 'motorola solutions',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=motorola+solutions',
+  },
 ]
 
 // Fetch lobbying data from Senate LDA API (no auth required)
@@ -145,16 +159,20 @@ export default function FollowTheMoney() {
     <div style={{ marginTop: 48 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
-          <DollarSign size={20} style={{ color: 'var(--accent)' }} />
-          <h3 style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.3px' }}>Follow the Money</h3>
-          <span style={{
-            fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: 'var(--muted)', border: '1px solid var(--border)', padding: '2px 7px',
-            marginLeft: 4,
-          }}>
-            USASpending.gov · Last verified {DATA_FRESHNESS}
-          </span>
+        <div style={{ marginBottom: 8 }}>
+          <div style={{
+            fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
+            textTransform: 'uppercase', color: 'var(--red)', marginBottom: 10,
+          }}>Federal Surveillance Contracts</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+            <h3 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--fg)' }}>Follow the Money</h3>
+            <span style={{
+              fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: 'var(--muted)', border: '1px solid var(--border)', padding: '2px 6px',
+            }}>
+              USASpending.gov · Last verified {DATA_FRESHNESS}
+            </span>
+          </div>
         </div>
         <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65, maxWidth: 600 }}>
           Federal taxpayer dollars flowing to surveillance vendors — contracts from{' '}
@@ -192,7 +210,7 @@ export default function FollowTheMoney() {
               style={{
                 background: 'var(--bg2)',
                 border: `1px solid ${isOpen ? v.color + '55' : 'var(--border)'}`,
-                borderRadius: 12,
+                borderRadius: 0,
                 padding: '16px 18px',
                 cursor: 'pointer',
                 transition: 'border-color 0.2s',
@@ -220,7 +238,7 @@ export default function FollowTheMoney() {
                 {/* Federal Contracts */}
                 <div style={{
                   background: 'var(--bg3, #111)',
-                  borderRadius: 8,
+                  borderRadius: 0,
                   padding: '10px 12px',
                 }}>
                   <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
@@ -237,7 +255,7 @@ export default function FollowTheMoney() {
                 {/* Lobbying Disclosures */}
                 <div style={{
                   background: 'var(--bg3, #111)',
-                  borderRadius: 8,
+                  borderRadius: 0,
                   padding: '10px 12px',
                 }}>
                   <div style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -285,7 +303,7 @@ export default function FollowTheMoney() {
               {/* Top award */}
               <div style={{
                 background: 'var(--bg3, #111)',
-                borderRadius: 8,
+                borderRadius: 0,
                 padding: '8px 10px',
                 marginTop: 4,
                 fontSize: 12,
@@ -322,7 +340,7 @@ export default function FollowTheMoney() {
                       <div style={{
                         display: 'flex', gap: 8, alignItems: 'flex-start',
                         background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.18)',
-                        borderRadius: 8, padding: '8px 10px', marginTop: 4,
+                        borderRadius: 0, padding: '8px 10px', marginTop: 4,
                       }}>
                         <Briefcase size={12} style={{ color: v.color, flexShrink: 0, marginTop: 1 }} />
                         <div>
@@ -366,7 +384,7 @@ export default function FollowTheMoney() {
       <div style={{
         display: 'flex', gap: 10, alignItems: 'flex-start',
         background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)',
-        borderRadius: 10, padding: '12px 16px', fontSize: 12, color: 'var(--muted)',
+        borderRadius: 0, padding: '12px 16px', fontSize: 12, color: 'var(--muted)',
       }}>
         <AlertCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
         <div>

@@ -10,7 +10,7 @@ const staticEvents = [
   { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026' },
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
   { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },
-  { text: 'NM Senator Wirth: "You literally can be tracked based on your plate, wherever you\'ve been"', time: 'Jan 2026' },
+  { text: 'ICE/CBP purchase bulk access to Vigilant DRN\'s 12B+ commercial plate scans — no warrant required', time: 'ongoing' }, // SOURCE: EFF, ACLU, and Georgetown Law CLIP reporting on ICE-Vigilant contracts 2019-present; see https://www.eff.org/deeplinks/2019/09/vigilant-solutions-selling-license-plate-reader-data-ice
   { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // SOURCE: ACLU of Washington reporting, Oct 2025 — see https://www.aclu-wa.org/pages/alpr-license-plate-readers (returns 403 as of 2026-05-04 — check https://www.aclu-wa.org/news/ for updated permalink)
 ]
 
