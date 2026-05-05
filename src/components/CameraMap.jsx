@@ -445,7 +445,7 @@ function buildAlprPopupHTML(camera, map) {
       <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#5dade2;text-decoration:none">📡 View on OpenStreetMap →</a>
       <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#e63946;text-decoration:none">🗺 Google Maps →</a>
       <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#2ecc71;text-decoration:none">📷 Street View →</a>
-      <button onclick="if(window.__fr_openPhotoSubmit)window.__fr_openPhotoSubmit('${camera.id}',${camera.lat},${camera.lon})" style="font-size:12px;font-weight:700;color:#000;background:#f59e0b;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;text-align:left;margin-top:2px">📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}</button>
+      <button data-photo-submit data-camera-id="${camera.id}" data-lat="${camera.lat}" data-lon="${camera.lon}" style="font-size:12px;font-weight:700;color:#000;background:#f59e0b;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;text-align:left;margin-top:2px">📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}</button>
     </div>
   </div>`
 }
@@ -477,7 +477,7 @@ function buildAgencyPopupHTML(agency, layer) {
     ${agency.notes ? `<div style="font-size:11px;color:#444;line-height:1.55;background:#f8f6f2;border:1px solid #e5e0d8;border-radius:6px;padding:6px 8px;margin-bottom:8px">ℹ️ ${agency.notes}</div>` : ''}
     <div style="font-size:10px;color:#777;line-height:1.5;border-top:1px solid #eee;padding-top:6px;margin-bottom:8px"><strong>Source:</strong> ${agency.source}</div>
     ${agency.url ? `<div style="margin-bottom:8px"><a href="${agency.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:600;color:${layer.color};text-decoration:none">View source →</a></div>` : ''}
-    <button onclick="window.dispatchEvent(new CustomEvent('openPropose',{detail:{agency:'${agency.name.replace(/'/g, '&#39;')}',location:'${(agency.city + ', ' + agency.state).replace(/'/g, '&#39;')}'}}))" style="width:100%;padding:7px 10px;background:transparent;border:1px solid ${layer.color};border-radius:6px;color:${layer.color};font-size:11px;font-weight:700;cursor:pointer">📋 Propose FOIA →</button>
+    <button data-propose data-agency="${agency.name.replace(/"/g, '&quot;')}" data-location="${(agency.city + ', ' + agency.state).replace(/"/g, '&quot;')}"" style="width:100%;padding:7px 10px;background:transparent;border:1px solid ${layer.color};border-radius:6px;color:${layer.color};font-size:11px;font-weight:700;cursor:pointer">📋 Propose FOIA →</button>
   </div>`
 }
 
@@ -487,7 +487,34 @@ function openItemPopup(map, entry, latlng) {
     : buildAgencyPopupHTML(entry.item, entry.layer)
   const lat = entry.type === 'alpr' ? entry.item.lat : entry.item.lat
   const lng = entry.type === 'alpr' ? entry.item.lon : entry.item.lng
-  L.popup({ maxWidth: 320 }).setLatLng([lat, lng]).setContent(html).openOn(map)
+  const popup = L.popup({ maxWidth: 320 }).setLatLng([lat, lng]).setContent(html)
+  popup.openOn(map)
+
+  const popupEl = popup.getElement()
+  if (popupEl) {
+    const photoBtn = popupEl.querySelector('[data-photo-submit]')
+    if (photoBtn) {
+      photoBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        const id = photoBtn.getAttribute('data-camera-id')
+        const plat = parseFloat(photoBtn.getAttribute('data-lat'))
+        const plon = parseFloat(photoBtn.getAttribute('data-lon'))
+        if (window.__fr_openPhotoSubmit) window.__fr_openPhotoSubmit(id, plat, plon)
+      })
+    }
+    const proposeBtn = popupEl.querySelector('[data-propose]')
+    if (proposeBtn) {
+      proposeBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        window.dispatchEvent(new CustomEvent('openPropose', {
+          detail: {
+            agency: proposeBtn.getAttribute('data-agency'),
+            location: proposeBtn.getAttribute('data-location')
+          }
+        }))
+      })
+    }
+  }
 }
 
 // ─── Unified tap handler + ALPR canvas renderer ──────────────────────────────
