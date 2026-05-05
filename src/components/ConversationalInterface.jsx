@@ -92,7 +92,7 @@ function getStaticResponse(userText) {
   return null
 }
 
-const PRIMARY_MODEL = 'qwen2.5:14b'
+const PRIMARY_MODEL = 'qwen2.5:7b'
 const AI_URL = 'https://ai.citeback.com/api/chat'
 
 export default function ConversationalInterface({ onClose }) {
