@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
 import LaunchTracker from './components/LaunchTracker'
@@ -24,7 +25,6 @@ import Operators from './components/Operators'
 import FrontlineFunds from './components/FrontlineFunds'
 import ScrollProgress from './components/ScrollProgress'
 import LiveFeed from './components/LiveFeed'
-// ARCameraOverlay removed — too complex to debug cross-platform
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -35,17 +35,27 @@ const LazyFallback = ({ label = 'Loading…' }) => (
   <div style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
 )
 
+const tabToPath = (tab) => tab === 'home' ? '/' : `/${tab}`
+const pathToTab = (path) => {
+  const base = path.split('/')[1]
+  return base === '' ? 'home' : base
+}
+
 export default function App() {
-  const [tab, setTab] = useState('home')
+  const navigate = useNavigate()
+  const location = useLocation()
   const [selectedCampaign, setSelectedCampaign] = useState(null)
   const [showAI, setShowAI] = useState(false)
+  const [proposePrefill, setProposePrefill] = useState(null)
+
+  const tab = pathToTab(location.pathname)
+  const setTab = (t) => navigate(tabToPath(t))
 
   useEffect(() => {
     const handler = (e) => setTab(e.detail)
     window.addEventListener('navigate', handler)
     return () => window.removeEventListener('navigate', handler)
   }, [])
-  const [proposePrefill, setProposePrefill] = useState(null)
 
   useEffect(() => {
     const handler = (e) => setProposePrefill(e.detail || {})
@@ -53,65 +63,81 @@ export default function App() {
     return () => window.removeEventListener('openPropose', handler)
   }, [])
 
-
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Skip-to-content link (WCAG 2.4.1) */}
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
       <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <ActivityTicker />
+        <ActivityTicker />
 
-      {tab === 'home' && (
-        <>
-          <Hero setTab={setTab} />
-          <StatsSection />
-          <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
-          <HowItWorks setTab={setTab} />
-          <GuaranteeSection setTab={setTab} />
-          <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-            <LaunchTracker />
-          </div>
-          <SurveillanceExplainer setTab={setTab} />
-          <ALPRExplainer setTab={setTab} />
-          <Manifesto setTab={setTab} />
-          <BuildWithUs setTab={setTab} />
-          <LiveFeed setTab={setTab} />
-        </>
-      )}
-      {tab === 'campaigns' && <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />}
-      {tab === 'map' && <Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>}
-      {tab === 'registry' && <HumanRegistry />}
-      {tab === 'transparency' && <Transparency setTab={setTab} />}
-      {tab === 'trust' && <TrustFAQ setTab={setTab} />}
-      {tab === 'governance' && <Governance setTab={setTab} />}
-      {tab === 'operators' && <Operators />}
-      {tab === 'frontline' && <FrontlineFunds />}
-      {tab === 'feed' && <Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>}
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Hero setTab={setTab} />
+              <StatsSection />
+              <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
+              <HowItWorks setTab={setTab} />
+              <GuaranteeSection setTab={setTab} />
+              <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+                <LaunchTracker />
+              </div>
+              <SurveillanceExplainer setTab={setTab} />
+              <ALPRExplainer setTab={setTab} />
+              <Manifesto setTab={setTab} />
+              <BuildWithUs setTab={setTab} />
+              <LiveFeed setTab={setTab} />
+            </>
+          } />
+          <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
+          <Route path="/map" element={<Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>} />
+          <Route path="/registry" element={<HumanRegistry />} />
+          <Route path="/transparency" element={<Transparency setTab={setTab} />} />
+          <Route path="/trust" element={<TrustFAQ setTab={setTab} />} />
+          <Route path="/governance" element={<Governance setTab={setTab} />} />
+          <Route path="/operators" element={<Operators />} />
+          <Route path="/frontline" element={<FrontlineFunds />} />
+          <Route path="/feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
+          <Route path="*" element={
+            <>
+              <Hero setTab={setTab} />
+              <StatsSection />
+              <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
+              <HowItWorks setTab={setTab} />
+              <GuaranteeSection setTab={setTab} />
+              <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+                <LaunchTracker />
+              </div>
+              <SurveillanceExplainer setTab={setTab} />
+              <ALPRExplainer setTab={setTab} />
+              <Manifesto setTab={setTab} />
+              <BuildWithUs setTab={setTab} />
+              <LiveFeed setTab={setTab} />
+            </>
+          } />
+        </Routes>
 
-      {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
-      {/* Floating chatbot button */}
-      {!showAI && (
-        <button
-          onClick={() => setShowAI(true)}
-          aria-label="Ask Citeback AI — requires Ollama running locally"
-          title="Ask questions about Citeback — requires Ollama running locally"
-          style={{
-            position: 'fixed', bottom: 24, right: 24, zIndex: 999,
-            padding: '12px 20px',
-            background: 'var(--fg)', color: 'var(--bg)',
-            border: 'none', fontSize: 13, fontWeight: 500,
-            letterSpacing: '0.04em', cursor: 'pointer',
-            borderRadius: 999,
-            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-          }}
-        >
-          💬 Ask Citeback AI
-        </button>
-      )}
-
+        {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
+        {!showAI && (
+          <button
+            onClick={() => setShowAI(true)}
+            aria-label="Ask Citeback AI — requires Ollama running locally"
+            title="Ask questions about Citeback — requires Ollama running locally"
+            style={{
+              position: 'fixed', bottom: 24, right: 24, zIndex: 999,
+              padding: '12px 20px',
+              background: 'var(--fg)', color: 'var(--bg)',
+              border: 'none', fontSize: 13, fontWeight: 500,
+              letterSpacing: '0.04em', cursor: 'pointer',
+              borderRadius: 999,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+            }}
+          >
+            💬 Ask Citeback AI
+          </button>
+        )}
       </main>
+
       <Footer setTab={setTab} />
       <ThemePicker />
 
