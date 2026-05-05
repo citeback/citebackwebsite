@@ -168,8 +168,8 @@ export default function Nav({ tab, setTab }) {
           <button
             onClick={() => setTab('campaigns')}
             style={{
-              background: '#111',
-              color: '#fff',
+              background: 'var(--fg)',
+              color: 'var(--bg)',
               border: 'none',
               padding: '12px 28px',
               fontSize: 12,
@@ -180,8 +180,8 @@ export default function Nav({ tab, setTab }) {
               fontWeight: 500,
               transition: 'background 0.15s',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#333' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#111' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--gray)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--fg)' }}
           >
             Fund a Campaign
           </button>
@@ -244,8 +244,8 @@ export default function Nav({ tab, setTab }) {
               onClick={() => { setTab('campaigns'); setOpen(false) }}
               style={{
                 width: '100%',
-                background: '#111',
-                color: '#fff',
+                background: 'var(--fg)',
+                color: 'var(--bg)',
                 border: 'none',
                 padding: '13px',
                 fontSize: 13,

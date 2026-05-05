@@ -76,7 +76,7 @@ export default function CampaignModal({ campaign, onClose }) {
         </div>
 
         {/* Progress */}
-        <div style={{ padding: '18px clamp(16px, 5vw, 28px)', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
+        <div style={{ padding: '18px clamp(16px, 5vw, 28px)', borderBottom: '1px solid var(--border)', background: 'var(--bg3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-1px' }}>
@@ -261,7 +261,7 @@ export default function CampaignModal({ campaign, onClose }) {
                   <div style={{
                     background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8,
                     padding: '12px 14px', fontFamily: 'var(--mono)', fontSize: 11,
-                    wordBreak: 'break-all', color: '#aaa', lineHeight: 1.7, marginBottom: 12,
+                    wordBreak: 'break-all', color: 'var(--muted)', lineHeight: 1.7, marginBottom: 12,
                     userSelect: 'all',
                   }}>
                     {activeWallet}

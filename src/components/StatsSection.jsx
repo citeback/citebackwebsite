@@ -41,7 +41,7 @@ export default function StatsSection() {
 
   const stats = [
     {
-      value: null,
+      value: CAMERA_COUNT.toLocaleString(),
       isLive: false,
       label: 'ALPR surveillance cameras in public dataset',
     },

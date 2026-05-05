@@ -162,7 +162,11 @@ export default function BuildWithUs({ setTab }) {
 
               {/* CTA */}
               <button
-                onClick={() => track.id === 'operator' && setTab && setTab('operators')}
+                onClick={() => {
+                  if (!setTab) return
+                  if (track.id === 'operator') setTab('operators')
+                  else if (track.id === 'legal' || track.id === 'technical') setTab('registry')
+                }}
                 style={{
                   marginTop: 8,
                   background: track.id === 'legal' ? track.accent : 'transparent',

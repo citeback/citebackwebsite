@@ -4,7 +4,7 @@ const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
   { value: '7', label: 'NM Cameras (via FOIA)' },
-  { value: '6', label: 'Campaigns Queued' },
+  { value: '7', label: 'Campaigns Queued' },
   { value: '0', label: 'Actions Funded' },
   { value: 'XMR+ZANO', label: 'Accepted Currencies' },
 ]
