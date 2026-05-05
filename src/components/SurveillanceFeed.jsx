@@ -533,7 +533,7 @@ export default function SurveillanceFeed({ setTab }) {
                 }}>
                   Legislative Watch
                 </span>
-                {!OPENSTATES_KEY && (
+                {bills.some(b => b.isMock) && (
                   <span style={{
                     fontSize: 9,
                     fontWeight: 700,
@@ -643,7 +643,7 @@ export default function SurveillanceFeed({ setTab }) {
               </div>
             )}
 
-            {!OPENSTATES_KEY && (
+            {bills.some(b => b.isMock) && (
               <div style={{
                 marginTop: 16,
                 padding: '12px 14px',
