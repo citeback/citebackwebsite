@@ -292,6 +292,11 @@ export default function ConversationalInterface({ onClose }) {
                 ? 'Common questions — AI temporarily unavailable'
                 : 'Talk to Citeback'}
             </p>
+            {!offlineMode && (
+              <p style={styles.privacyNote}>
+                Responses may be slow. Your conversations are private — never logged, never fed into commercial AI models. Runs on our own server.
+              </p>
+            )}
             {offlineMode && (
               <p style={styles.offlineBanner}>
                 AI is temporarily unavailable. These questions use pre-written answers.
@@ -468,6 +473,15 @@ const styles = {
     color: 'var(--muted)',
     marginBottom: '12px',
     fontWeight: 400,
+  },
+  privacyNote: {
+    fontSize: '12px',
+    color: 'var(--muted)',
+    lineHeight: 1.6,
+    marginBottom: '20px',
+    paddingBottom: '16px',
+    borderBottom: '1px solid var(--border)',
+    fontStyle: 'italic',
   },
   offlineBanner: {
     fontSize: '13px',
