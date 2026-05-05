@@ -271,6 +271,7 @@ export default function ConversationalInterface({ onClose }) {
 
   return (
     <div style={styles.overlay}>
+      <style>{`@keyframes fadeInNote { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }`}</style>
       {/* Close button */}
       <button
         onClick={onClose}
@@ -403,6 +404,10 @@ function TypingIndicator() {
           0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
           40% { opacity: 1; transform: scale(1); }
         }
+        @keyframes fadeInNote {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         @keyframes fadePhrase {
           0% { opacity: 0; transform: translateY(4px); }
           15% { opacity: 1; transform: translateY(0); }
@@ -482,6 +487,9 @@ const styles = {
     paddingBottom: '16px',
     borderBottom: '1px solid var(--border)',
     fontStyle: 'italic',
+    opacity: 0,
+    animation: 'fadeInNote 0.6s ease forwards',
+    animationDelay: '2.5s',
   },
   offlineBanner: {
     fontSize: '13px',
