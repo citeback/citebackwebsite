@@ -20,7 +20,7 @@ This document describes the full technical architecture, from wallet management 
 2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the TEE governs only financial execution.
 3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
 4. **Privacy-preserving** — Donors are anonymous. Operators earn reputation without revealing identity.
-5. **Self-sustaining** — The platform funds its own operations from a 1% platform fee. No founder dependency.
+5. **Self-sustaining** — The platform funds its own operations from a graduated 3–5% platform fee (see GOVERNANCE.md §7.3). No founder dependency.
 6. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
@@ -173,10 +173,18 @@ Disbursement logged: campaign ID, amount, XMR tx ID, timestamp, proof hash
 
 ### Fee Model
 
-**1% platform fee** applied to every incoming donation:
+**Graduated platform fee** applied at disbursement (per GOVERNANCE.md §7.3):
 
-- 99% → campaign wallet
-- 1% → platform operations wallet (also inside TEE)
+| Rolling 90-Day Operator Volume | Platform Fee |
+|---|---|
+| $0 – $10,000 | 5.0% |
+| $10,001 – $25,000 | 4.5% |
+| $25,001 – $50,000 | 4.0% |
+| Above $50,000 | 3.0% |
+
+Fee tiers apply to rolling 90-day operator volume. At disbursement:
+- (100% - applicable fee%) → operator
+- applicable fee% → platform operations wallet (also inside TEE)
 
 The operations wallet covers:
 - VPS / TEE infrastructure costs

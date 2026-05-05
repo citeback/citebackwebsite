@@ -1,11 +1,11 @@
 # PRE-LAUNCH.md — Citeback
 
 Things that must be resolved before citeback.com goes fully live.
-Last updated: 2026-05-04
+Last updated: 2026-05-05 (overnight planning session — expanded with new blockers)
 
 ---
 
-## 🔴 Must Fix Before Launch
+## 🔴 Must Fix Before Launch (Hard Blockers)
 
 ### 1. Wyoming DAO LLC — Incorporate
 - Formation is the #1 hard prerequisite
@@ -23,13 +23,25 @@ Last updated: 2026-05-04
 - Do not accept operator signups until counsel signs off
 
 ### 4. ToS Page
-- Referenced in governance docs but doesn't exist on the site
+- Draft now exists at `TOS_DRAFT.md` — needs attorney review before publication
 - Needs to be linked from Footer before launch
 - Red-team flagged its absence as a credibility gap
+- Contains OFAC donor-side limitation disclosure (required)
+
+### 5. ICANN Domain Verification — URGENT
+- citeback@proton.me must verify citeback.com domain via ICANN verification email
+- Verification required before **May 14, 2026** or domain risks suspension
+- Check scotthughes070@proton.me for the ICANN verification email
+
+### 6. ARCHITECTURE.md — Stale Fee Reference
+- ARCHITECTURE.md references "1% platform fee" in two places
+- Actual fee is graduated 3–5% per GOVERNANCE.md §7.3
+- Fix this before next push to avoid internal documentation contradiction
+- Files: `ARCHITECTURE.md` lines 23 and 176-179
 
 ---
 
-## 🟠 Verify Before Launch
+## 🟠 Verify Before Launch (Soft Blockers)
 
 ### 5. Cambridge MA ALPR Timeline
 - ALPRExplainer says "terminated in 2023"
@@ -61,10 +73,50 @@ Last updated: 2026-05-04
 - Consider proxying through a Netlify serverless function to prevent IP leakage
 - Low priority pre-launch, important for credibility post-launch
 
+### 11. Campaign #4 — Separate Attorney Sign-Off Required
+- Campaign #4 (NM ALPR Privacy Bill) is tagged in `campaigns.js` with an explicit ⚠️ requiring pre-launch attorney sign-off on LDA/FARA compliance
+- GOVERNANCE.md §3.2 also requires legal review before legislative advocacy type goes live
+- Launch FOIA campaigns (1, 5, 6) and billboard campaigns (2, 3) first
+- Hold Campaign #4 and Campaign #7 (verify bounty — novel legal questions) until attorney clearance
+
+### 12. Operator Accountability Protocol — Not Yet Published
+- GOVERNANCE.md lists this as a hard launch prerequisite (§ "Launch Prerequisites" item 11)
+- Documented process for community challenges to operator decisions needed before operator onboarding
+- Must include SLA and escalation path
+- Draft this before first operator is onboarded
+
+### 13. Governance v1.0 Ratification — Not Yet Done
+- GOVERNANCE.md §14 requires governance ratification as a launch prerequisite
+- During bootstrapping: Scott's formal public sign-off + announcement that this is the launch-version spec
+- Do this after attorney reviews governance doc and before wallets go live
+
+### 14. Campaign Quality Advisory Board — Not Recruited
+- GOVERNANCE.md Launch Prerequisites item 16 requires minimum 2 domain experts
+- Need: civil liberties attorney + surveillance accountability practitioner
+- Good outreach targets: EFF, ACLU NM, Surveillance Technology Oversight Project (S.T.O.P.)
+- Start outreach early — recruitment takes time
+
 ### 10. OG Image
 - Current: auto-generated editorial card ✅
 - Optional: a more branded/visual version with the Citeback logo
 - Current version is good enough for launch
+
+### 15. TEE Provider — Decision Needed Before Development
+- Must choose between Phala Network, Marlin Oyster, or self-hosted SGX before TEE development begins
+- Decision drives contractor requirements, development approach, and cost
+- See LAUNCH_PLAN.md T-1 for evaluation criteria
+
+### 16. Fiat Disbursement Pathway — Phase 2 Design
+- GOVERNANCE.md §3.4 identifies this as the highest-priority operational gap
+- Lawyers, billboard vendors, and filing fees are paid in fiat
+- Anonymous crypto → fiat conversion without exposing campaign participants is unsolved
+- Requires legal + operational design. Document as Phase 2 priority, not launch blocker.
+
+### 17. Security Audit — Pre-Launch
+- TEE code must be independently audited before wallets go live
+- Audit firm must be separate from development contractor
+- Budget: $5,000–20,000 depending on scope
+- Schedule audit concurrent with TEE development (book early — good firms have backlogs)
 
 ---
 
@@ -85,3 +137,9 @@ Last updated: 2026-05-04
 - Focus traps on all modals ✅
 - Mobile responsive on iPhone (390px) ✅
 - No Fourthright references anywhere ✅
+- robots.txt published ✅
+- sitemap.xml published ✅
+- FrontlineFunds component exists ✅
+- TOS_DRAFT.md created (awaiting attorney review) ✅
+- LAUNCH_PLAN.md created ✅
+- LAUNCH_TIMELINE.md created ✅
