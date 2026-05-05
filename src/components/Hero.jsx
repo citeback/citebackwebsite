@@ -205,7 +205,7 @@ export default function Hero({ setTab }) {
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
                 onMouseLeave={e => e.currentTarget.style.opacity = '1'}
               >
-                Fund a Campaign
+                See Campaigns
               </button>
               <button
                 onClick={() => setTab('operators')}
@@ -238,7 +238,7 @@ export default function Hero({ setTab }) {
               letterSpacing: '0.03em',
               opacity: 0.7,
             }}>
-              No wallets activate until 10 public prerequisites are verified. No human holds funds — ever.
+              No wallets activate until 10 public prerequisites are verified. At launch, wallet keys are sealed inside a TEE enclave — no human can access them by architectural design.
             </p>
           </div>
 

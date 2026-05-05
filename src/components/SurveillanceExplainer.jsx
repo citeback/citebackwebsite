@@ -17,7 +17,7 @@ const TYPES = [
         '"Hot list" errors have led to guns-drawn traffic stops of innocent drivers.',
       ],
       resistance: [
-        'Cambridge, MA terminated its Flock contract in 2023 after community pressure exposed the scope of data sharing.',
+        'Cambridge, MA terminated its Flock Safety contract in December 2025 after sustained community pressure over data-sharing practices — a process that had been building since at least 2023.',
         'NM Sen. Wirth introduced legislation requiring a warrant before ALPR data can be shared with federal agencies.',
       ],
       cta: 'FOIA your local agency\'s Flock contract. Find out how long they retain data and who they share it with.',
@@ -344,6 +344,21 @@ export default function SurveillanceExplainer({ setTab }) {
           {TYPES.map((item, i) => (
             <AccordionCard key={item.id} item={item} defaultOpen={i === 0} />
           ))}
+        </div>
+
+        {/* Legal disclaimer */}
+        <div style={{
+          marginTop: 32,
+          padding: '12px 18px',
+          background: 'var(--bg2)',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          fontSize: 11,
+          color: 'var(--muted)',
+          lineHeight: 1.6,
+          opacity: 0.75,
+        }}>
+          <strong>Not legal advice.</strong> This section is provided for educational purposes only. Citeback is not a law firm and does not provide legal counsel. FOIA requests, litigation, and ordinance campaigns may have jurisdiction-specific requirements. Consult a qualified attorney for legal advice specific to your situation.
         </div>
 
         {/* Bottom CTA */}

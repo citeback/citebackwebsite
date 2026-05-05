@@ -25,6 +25,9 @@ import Operators from './components/Operators'
 import FrontlineFunds from './components/FrontlineFunds'
 import ScrollProgress from './components/ScrollProgress'
 import LiveFeed from './components/LiveFeed'
+import WaitlistBanner from './components/WaitlistBanner'
+import PrivacyPolicy from './components/PrivacyPolicy'
+import TermsPage from './components/TermsPage'
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -46,6 +49,8 @@ const TAB_TO_PATH = {
   operators: '/run-a-campaign',
   frontline: '/frontline-funds',
   feed: '/intelligence-feed',
+  privacy: '/privacy',
+  terms: '/terms',
 }
 
 const PATH_TO_TAB = Object.fromEntries(Object.entries(TAB_TO_PATH).map(([k, v]) => [v, k]))
@@ -100,6 +105,7 @@ export default function App() {
               <Manifesto setTab={setTab} />
               <BuildWithUs setTab={setTab} />
               <LiveFeed setTab={setTab} />
+              <WaitlistBanner />
             </>
           } />
           <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
@@ -110,6 +116,8 @@ export default function App() {
           <Route path="/governance" element={<Governance setTab={setTab} />} />
           <Route path="/run-a-campaign" element={<Operators />} />
           <Route path="/frontline-funds" element={<FrontlineFunds />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
           <Route path="*" element={
             <>
@@ -126,6 +134,7 @@ export default function App() {
               <Manifesto setTab={setTab} />
               <BuildWithUs setTab={setTab} />
               <LiveFeed setTab={setTab} />
+              <WaitlistBanner />
             </>
           } />
         </Routes>

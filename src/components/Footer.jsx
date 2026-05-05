@@ -90,11 +90,23 @@ export default function Footer({ setTab }) {
         </div>
       </div>
 
-      {/* Data attribution */}
+      {/* Legal disclaimer */}
       <div style={{
         borderTop: '1px solid var(--border)',
         paddingTop: 16,
         marginTop: 16,
+        fontSize: 11,
+        color: 'var(--gray)',
+        opacity: 0.7,
+        lineHeight: 1.7,
+        marginBottom: 12,
+      }}>
+        Donations to Citeback are <strong>not tax-deductible</strong>. Citeback is a Wyoming DAO LLC, not a 501(c)(3) charitable organization.
+        All donations are final and non-refundable. Content on this site is for educational purposes only and does not constitute legal advice.
+      </div>
+
+      {/* Data attribution */}
+      <div style={{
         fontSize: 11,
         color: 'var(--gray)',
         opacity: 0.6,

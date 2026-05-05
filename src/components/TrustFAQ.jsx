@@ -108,6 +108,10 @@ const sections = [
     color: '#5dade2',
     questions: [
       {
+        q: 'Are donations tax-deductible?',
+        a: `No. Citeback is organized as a Wyoming DAO LLC — a for-profit legal entity. It is not a 501(c)(3) tax-exempt charitable organization.\n\nDonations to Citeback campaigns are not tax-deductible for US federal income tax purposes. If tax deductibility is important to you, consider the organizations listed in our Frontline Funds section — several are established nonprofits.`,
+      },
+      {
         q: 'Can anyone donate?',
         a: `Donations from individuals or entities on OFAC sanctions lists are strictly prohibited by our Terms of Use. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise sanctioned party.
 

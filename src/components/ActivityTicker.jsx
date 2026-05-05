@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 
 // Real events — sourced from public records and verified news reporting
 const staticEvents = [
-  { text: 'Cambridge MA terminated Flock Safety contract after breach of trust', time: 'Dec 2025' }, // SOURCE: widely reported Dec 2025 — primary citation: Cambridge City Manager announcement; see also 404 Media coverage. Archived URL: https://www.cambridgema.gov/Departments/CityManager/2025/FlockSafety (returns 404 as of 2026-05-04 — page may have been removed or restructured)
+  { text: 'Cambridge MA terminated Flock Safety contract after sustained community pressure over data-sharing', time: 'Dec 2025' }, // SOURCE: Cambridge City Manager announcement, Dec 2025; Cambridge had pushed back on Flock data-sharing practices since at least 2023 before finally terminating in Dec 2025
   { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
   { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
   { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
   { text: 'Las Cruces NM: 37 cameras including high-resolution PTZ units capable of tracking individual vehicles across the city', time: 'ongoing' },
   { text: 'Out-of-state agencies accessing NM plate data for immigration enforcement — Sen. Wirth', time: 'Jan 2026' },
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
-  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' },
+  { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' }, // SOURCE: 404 Media, May 2025 — "Flock Safety Is Developing a New Way to Identify Criminals"; archived reporting on Nova product capability
   { text: 'ICE/CBP purchase bulk access to Vigilant DRN\'s 12B+ commercial plate scans — no warrant required', time: 'ongoing' }, // SOURCE: EFF, ACLU, and Georgetown Law CLIP reporting on ICE-Vigilant contracts 2019-present; see https://www.eff.org/deeplinks/2019/09/vigilant-solutions-selling-license-plate-reader-data-ice
   { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // SOURCE: ACLU of Washington reporting, Oct 2025 — see https://www.aclu-wa.org/pages/alpr-license-plate-readers (returns 403 as of 2026-05-04 — check https://www.aclu-wa.org/news/ for updated permalink)
 ]
