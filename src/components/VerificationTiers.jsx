@@ -77,9 +77,9 @@ export function TierBadge({ tier, size = 'sm' }) {
 export function ThreatDisclosure() {
   return (
     <div style={{
-      background: 'rgba(230,57,70,0.04)',
-      border: '1px solid rgba(230,57,70,0.15)',
-      borderRadius: 14, padding: 24, marginBottom: 28,
+      background: 'var(--bg2)',
+      border: '1px solid var(--border)',
+      borderLeft: '3px solid var(--red)', borderRadius: 0, padding: 24, marginBottom: 28,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <AlertTriangle size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
@@ -100,7 +100,7 @@ export function ThreatDisclosure() {
           { icon: <Shield size={14} />, title: 'Sybil Attacks', body: 'One actor, multiple fake verifier identities. Defense: Expert Directory reputation stake — fraud costs real XMR or ZANO.' },
           { icon: <CheckCircle size={14} />, title: 'Our Response', body: 'Tiered verification, economic staking, C2PA authentication, and public disclosure of all verification methods.' },
         ].map((item, i) => (
-          <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14 }}>
+          <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 0, padding: 14 }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, color: 'var(--accent)', fontWeight: 700, fontSize: 12 }}>
               {item.icon} {item.title}
             </div>
@@ -115,9 +115,9 @@ export function ThreatDisclosure() {
 export function C2PAExplainer() {
   return (
     <div style={{
-      background: 'rgba(241,196,15,0.05)',
-      border: '1px solid rgba(241,196,15,0.2)',
-      borderRadius: 12, padding: 18,
+      background: 'var(--bg2)',
+      border: '1px solid var(--border)',
+      borderLeft: '3px solid var(--gray)', borderRadius: 0, padding: 18,
     }}>
       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
         <span style={{ fontSize: 20, flexShrink: 0 }}>🏆</span>
