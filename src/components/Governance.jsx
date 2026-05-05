@@ -37,7 +37,7 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
         {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
       {open && (
-        <div style={{ padding: '0 24px 24px', color: 'var(--text-secondary, rgba(255,255,255,0.7))', lineHeight: 1.7 }}>
+        <div style={{ padding: '0 24px 24px', color: 'var(--muted)', lineHeight: 1.7 }}>
           {children}
         </div>
       )}
@@ -66,7 +66,7 @@ function Table({ headers, rows }) {
             {headers.map(h => (
               <th key={h} style={{
                 textAlign: 'left', padding: '8px 12px',
-                borderBottom: '1px solid rgba(255,255,255,0.12)',
+                borderBottom: '1px solid var(--border)',
                 color: 'var(--accent)', fontWeight: 600, whiteSpace: 'nowrap'
               }}>{h}</th>
             ))}
@@ -74,7 +74,7 @@ function Table({ headers, rows }) {
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
               {row.map((cell, j) => (
                 <td key={j} style={{ padding: '8px 12px', verticalAlign: 'top' }}>{cell}</td>
               ))}
@@ -89,7 +89,7 @@ function Table({ headers, rows }) {
 function Code({ children }) {
   return (
     <code style={{
-      display: 'block', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)',
+      display: 'block', background: 'var(--bg3)', border: '1px solid var(--border)',
       borderRadius: 8, padding: '12px 16px', fontFamily: 'monospace', fontSize: 13,
       color: 'var(--green)', marginTop: 8, marginBottom: 8, whiteSpace: 'pre-wrap'
     }}>
@@ -112,7 +112,7 @@ export default function Governance({ setTab }) {
           <Tag>Active</Tag>
           <Tag color="#a78bfa">Updated 2026-05-04</Tag>
         </div>
-        <p style={{ color: 'var(--text-secondary, rgba(255,255,255,0.6))', maxWidth: 600, lineHeight: 1.7 }}>
+        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7 }}>
           This document defines how Citeback is governed — how decisions are made, 
           how funds are disbursed, what can never be changed, and what must be in place before 
           a single dollar is accepted.
@@ -124,7 +124,7 @@ export default function Governance({ setTab }) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12,
             padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+            background: 'var(--bg2)', border: '1px solid var(--border)',
             color: 'var(--fg)', textDecoration: 'none'
           }}
         >
@@ -140,7 +140,7 @@ export default function Governance({ setTab }) {
         <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: 1 }}>Contents</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px' }}>
           {sections.map(s => (
-            <a key={s.id} href={`#${s.id}`} style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
+            <a key={s.id} href={`#${s.id}`} style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>
               → {s.label}
             </a>
           ))}
@@ -156,7 +156,7 @@ export default function Governance({ setTab }) {
           marginTop: 16, padding: '12px 16px', borderRadius: 8,
           background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)'
         }}>
-          <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             <strong style={{ color: '#f87171' }}>What this platform is not:</strong> A tool for harassment, defamation, or attacks on private individuals. A platform for criminal defense or illegal activity. Designed to evade lawful oversight.
           </p>
         </div>
@@ -296,7 +296,7 @@ export default function Governance({ setTab }) {
         </div>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed — the founder retains the permanent 5% cap.</p>
         <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
-          <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap — no further discounting. Founders cannot vote on their own ceiling removal.
           </p>
         </div>
@@ -355,8 +355,8 @@ export default function Governance({ setTab }) {
       {/* Footer note */}
       <div style={{
         marginTop: 32, padding: '16px 20px', borderRadius: 10,
-        background: 'var(--bg2)', border: '1px solid rgba(255,255,255,0.08)',
-        fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center'
+        background: 'var(--bg2)', border: '1px solid var(--border)',
+        fontSize: 13, color: 'var(--muted)', textAlign: 'center'
       }}>
         This is a living document. Community ratification required before mainnet.{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
@@ -376,7 +376,7 @@ export default function Governance({ setTab }) {
             <p style={{ fontWeight: 700, color: 'var(--accent)', margin: '0 0 4px', fontSize: 14 }}>
               Governed by code. Funded anonymously.
             </p>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>
               Browse the campaigns this governance structure protects.
             </p>
           </div>
@@ -395,8 +395,8 @@ export default function Governance({ setTab }) {
             <button
               onClick={() => setTab('operators')}
               style={{
-                background: 'transparent', color: 'rgba(255,255,255,0.7)',
-                border: '1px solid rgba(255,255,255,0.2)', padding: '10px 22px',
+                background: 'transparent', color: 'var(--muted)',
+                border: '1px solid var(--border)', padding: '10px 22px',
                 fontSize: 13, fontWeight: 500, cursor: 'pointer',
                 fontFamily: 'var(--font)', borderRadius: 6, flexShrink: 0,
               }}
