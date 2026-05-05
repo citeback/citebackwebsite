@@ -38,10 +38,10 @@ const TYPES = [
       problems: [
         'Robert Williams, a Black man in Detroit, was wrongfully arrested in 2020 because facial recognition misidentified him — he spent 30 hours in jail for a crime he didn\'t commit.',
         'NIST testing found dramatically higher error rates for Black faces, Asian faces, and women — the people most likely to be falsely matched.',
-        'A Georgetown Law study found 117 agencies were using facial recognition with zero public oversight or disclosed policies.',
+        'A Georgetown Law study found face recognition networks affect over 117 million American adults — and the vast majority of police agencies using it operate with zero public oversight or disclosed policies.',
       ],
       resistance: [
-        'San Francisco, Boston, and Detroit have all passed bans on government use of facial recognition.',
+        'San Francisco, Boston, and Minneapolis have all passed bans on government use of facial recognition. Detroit — despite being the site of the Robert Williams wrongful arrest — has only restricted, not banned, its use.',
         'Multiple lawsuits against Clearview AI are ongoing — Illinois\'s BIPA law has been the most effective legal lever.',
       ],
       cta: 'FOIA your local police department\'s facial recognition contracts and use policies.',
@@ -78,13 +78,13 @@ const TYPES = [
     id: 'shotspotter',
     icon: '🔊',
     name: 'ShotSpotter (Acoustic Gunshot Detection)',
-    tagline: 'Microphones on every block — with a 70% false alarm rate.',
+    tagline: 'Microphones on every block — with an 89%+ false alarm rate.',
     color: '#eab308',
     sections: {
       what: 'A network of microphones mounted on poles and buildings that claim to detect gunshots and alert police in real time. The company recently rebranded as "SoundThinking" — but the product is the same.',
       affects: 'An AP investigation found ShotSpotter alerts sent Chicago police to innocent people at least 40,000 times in a single year. Cities pay $3–5 million per year for the system. Your neighborhood can be under microphone surveillance without any public vote or notice.',
       problems: [
-        'Approximately 70% of ShotSpotter alerts find no evidence of gunfire or a firearm, according to a MacArthur Justice Center analysis of Chicago data.',
+        'Approximately 89% of ShotSpotter alerts find no evidence of gunfire or a firearm, according to a MacArthur Justice Center analysis of Chicago data. Multiple independent analyses put the figure above 90%.',
         'In one case, ShotSpotter retrospectively altered its audio analysis after police requested it — the modified "evidence" was used in a murder prosecution.',
         'Chicago paid a total of $33 million before ending its contract — money that could have funded 170+ police officers or mental health services.',
       ],
