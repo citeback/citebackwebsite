@@ -171,8 +171,8 @@ export default function TrustFAQ({ setTab }) {
       {/* Phase Status Banner */}
       <div style={{
         display: 'flex', alignItems: 'flex-start', gap: 12,
-        background: 'rgba(243,156,18,0.08)', border: '1px solid rgba(243,156,18,0.25)',
-        borderRadius: 10, padding: '14px 18px', marginBottom: 36,
+        background: 'var(--bg2)', border: '1px solid var(--border)',
+        borderLeft: '3px solid var(--gray)', borderRadius: 0, padding: '14px 18px', marginBottom: 36,
       }}>
         <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🟡</span>
         <div>
@@ -187,7 +187,11 @@ export default function TrustFAQ({ setTab }) {
 
       {/* Header */}
       <div style={{ marginBottom: 40 }}>
-        <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>How It Works & Why You Can Trust It</h2>
+        <div style={{
+          fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
+          textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
+        }}>Trust &amp; Architecture</div>
+        <h2 style={{ fontSize: 'clamp(22px, 3vw, 38px)', fontWeight: 800, letterSpacing: '-0.03em' }}>How It Works &amp; Why You Can Trust It</h2>
         <p style={{ color: 'var(--muted)', marginTop: 8, fontSize: 14, maxWidth: 620, lineHeight: 1.7 }}>
           Citeback is designed so you don't have to trust us. Every claim here is backed by open source code and cryptographic proofs — not promises.
         </p>
@@ -235,7 +239,7 @@ export default function TrustFAQ({ setTab }) {
             onClick={() => setActiveSection(i)}
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
-              padding: '8px 14px', borderRadius: 8, border: '1px solid',
+              padding: '8px 14px', borderRadius: 0, border: '1px solid',
               cursor: 'pointer', fontSize: 13, fontWeight: 600,
               background: activeSection === i ? 'rgba(230,57,70,0.1)' : 'var(--bg2)',
               borderColor: activeSection === i ? s.color : 'var(--border)',
@@ -252,7 +256,7 @@ export default function TrustFAQ({ setTab }) {
       {/* FAQ items */}
       <div style={{
         background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 14, padding: '0 24px',
+        borderRadius: 0, padding: '0 24px',
       }}>
         {sections[activeSection].questions.map((item, i) => (
           <FAQItem key={i} q={item.q} a={item.a} />
@@ -261,8 +265,8 @@ export default function TrustFAQ({ setTab }) {
 
       {/* Verification CTA */}
       <div style={{
-        marginTop: 32, background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
-        borderRadius: 0, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start',
+        marginTop: 32, background: 'var(--bg2)', border: '1px solid var(--border)',
+        borderLeft: '3px solid var(--red)', borderRadius: 0, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start',
       }}>
         <div style={{ fontSize: 22, flexShrink: 0 }}>🔬</div>
         <div>

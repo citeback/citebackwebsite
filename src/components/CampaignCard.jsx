@@ -48,7 +48,7 @@ export default function CampaignCard({ campaign, onClick }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{
           background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text,
-          padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700,
+          padding: '3px 10px', borderRadius: 0, fontSize: 11, fontWeight: 700,
           textTransform: 'uppercase', letterSpacing: '0.06em',
         }}>{tc.label}</span>
 
@@ -78,11 +78,11 @@ export default function CampaignCard({ campaign, onClick }) {
           </span>
           <span style={{ color: 'var(--muted)' }}>${campaign.goal.toLocaleString()} goal</span>
         </div>
-        <div style={{ height: 4, background: 'var(--bg3)', borderRadius: 100, overflow: 'hidden' }}>
+        <div style={{ height: 3, background: 'var(--bg3)', borderRadius: 0, overflow: 'hidden' }}>
           <div style={{
             width: `${pct}%`, height: '100%',
-            background: funded ? 'var(--green)' : 'linear-gradient(90deg, var(--accent), #ff6b6b)',
-            borderRadius: 100,
+            background: funded ? 'var(--green)' : 'var(--red)',
+            borderRadius: 0,
           }} />
         </div>
       </div>

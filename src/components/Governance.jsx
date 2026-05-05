@@ -20,7 +20,7 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
     <div id={id} style={{
       background: 'var(--card-bg)',
       border: '1px solid var(--border)',
-      borderRadius: 12,
+      borderRadius: 0,
       marginBottom: 16,
       overflow: 'hidden'
     }}>
@@ -48,7 +48,7 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
 function Tag({ children, color = '#6ee7b7' }) {
   return (
     <span style={{
-      display: 'inline-block', padding: '2px 10px', borderRadius: 20,
+      display: 'inline-block', padding: '2px 10px', borderRadius: 0,
       fontSize: 12, fontWeight: 600, marginRight: 6, marginBottom: 4,
       background: color + '22', color: color, border: `1px solid ${color}44`
     }}>
@@ -90,7 +90,7 @@ function Code({ children }) {
   return (
     <code style={{
       display: 'block', background: 'var(--bg3)', border: '1px solid var(--border)',
-      borderRadius: 8, padding: '12px 16px', fontFamily: 'monospace', fontSize: 13,
+      borderRadius: 0, padding: '12px 16px', fontFamily: 'monospace', fontSize: 13,
       color: 'var(--green)', marginTop: 8, marginBottom: 8, whiteSpace: 'pre-wrap'
     }}>
       {children}
@@ -123,7 +123,7 @@ export default function Governance({ setTab }) {
           rel="noopener noreferrer"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12,
-            padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+            padding: '8px 16px', borderRadius: 0, fontSize: 13, fontWeight: 600,
             background: 'var(--bg2)', border: '1px solid var(--border)',
             color: 'var(--fg)', textDecoration: 'none'
           }}
@@ -135,7 +135,7 @@ export default function Governance({ setTab }) {
       {/* TOC */}
       <div style={{
         background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
-        borderRadius: 12, padding: '16px 20px', marginBottom: 32
+        borderRadius: 0, padding: '16px 20px', marginBottom: 32
       }}>
         <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: 1 }}>Contents</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px' }}>
@@ -153,7 +153,7 @@ export default function Governance({ setTab }) {
         <p style={{ marginTop: 12 }}>The platform ensures that financial access, legal pressure, and platform deplatforming <strong style={{ color: 'var(--fg)' }}>cannot silence lawful accountability work.</strong> It operates within applicable law and supports First Amendment-protected activity.</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding campaigns those organizations cannot touch.</p>
         <div style={{
-          marginTop: 16, padding: '12px 16px', borderRadius: 8,
+          marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)'
         }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
@@ -218,7 +218,7 @@ export default function Governance({ setTab }) {
             ['Governance', '50 voters', '75% supermajority', '14 days'],
           ]}
         />
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
           <p style={{ margin: 0, fontWeight: 600, color: '#a78bfa', fontSize: 14 }}>Voting Diversity — High-Value Disbursements (§5.8)</p>
           <p style={{ margin: '8px 0 0', fontSize: 13 }}>Disbursements above $10,000 require approving votes from voters with <strong style={{ color: 'var(--fg)' }}>less than 60% pairwise voting-history overlap</strong> in the prior 180 days (Jaccard similarity). An account must be at least 90 days old with at least 5 prior votes to satisfy this requirement — fresh accounts cannot trivially meet it with zero overlap.</p>
           <p style={{ margin: '8px 0 0', fontSize: 13 }}><strong style={{ color: 'var(--accent)' }}>Small community fallback:</strong> If fewer than 10 eligible accounts exist, the diversity requirement is replaced with a 14-day extended escrow hold + mandatory Major-tier vote.</p>
@@ -271,7 +271,7 @@ export default function Governance({ setTab }) {
       <Section id="tee" title="TEE Architecture (Multi-TEE, 2-of-3 Threshold)" icon={Lock}>
         <p>Wallet keys are split across <strong style={{ color: 'var(--fg)' }}>minimum 3 TEE instances on different hardware providers.</strong> 2-of-3 threshold signatures are required — a single TEE compromise cannot release funds.</p>
         <div style={{
-          marginTop: 16, padding: '12px 16px', borderRadius: 8,
+          marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)'
         }}>
           <strong style={{ color: 'var(--accent)' }}>The core guarantee:</strong>
@@ -295,7 +295,7 @@ export default function Governance({ setTab }) {
           ))}
         </div>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed — the founder retains the permanent 5% cap.</p>
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap — no further discounting. Founders cannot vote on their own ceiling removal.
           </p>
@@ -367,7 +367,7 @@ export default function Governance({ setTab }) {
       {/* CTA */}
       {setTab && (
         <div style={{
-          marginTop: 32, padding: '24px', borderRadius: 12,
+          marginTop: 32, padding: '24px', borderRadius: 0,
           background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           flexWrap: 'wrap', gap: 20,
