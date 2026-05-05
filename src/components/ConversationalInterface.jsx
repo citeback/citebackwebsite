@@ -93,7 +93,8 @@ function getStaticResponse(userText) {
 }
 
 const PRIMARY_MODEL = 'qwen2.5:14b'
-const AI_URL = '/.netlify/functions/chat'
+const AI_URL = 'https://ai.citeback.com/api/chat'
+const AI_KEY = 'a2b33ed2cd09b0b049a106f2aa92afb1c590ed1c230c5b90507c40e5f6a782a9'
 
 export default function ConversationalInterface({ onClose }) {
   const [messages, setMessages] = useState([])
@@ -181,7 +182,7 @@ export default function ConversationalInterface({ onClose }) {
 
       const response = await fetch(AI_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': AI_KEY },
         body: JSON.stringify({
           model,
           messages: history,
