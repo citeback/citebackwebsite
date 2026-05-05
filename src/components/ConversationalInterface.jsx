@@ -290,6 +290,17 @@ export default function ConversationalInterface({ onClose }) {
     sendMessage(prompt)
   }
 
+  const [feedback, setFeedback] = useState({}) // { msgIndex: 'up'|'down'|'sent' }
+
+  const sendFeedback = (idx, vote) => {
+    setFeedback(prev => ({ ...prev, [idx]: 'sent' }))
+    fetch('https://ai.citeback.com/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vote }),
+    }).catch(() => {})
+  }
+
   const offlineMode = ollamaAvailable === false
 
   return (
@@ -354,6 +365,19 @@ export default function ConversationalInterface({ onClose }) {
                 {/* Static badge */}
                 {msg.isStatic && (
                   <span style={styles.staticBadge}>pre-written</span>
+                )}
+                {/* Feedback buttons — only on completed AI responses */}
+                {msg.role === 'assistant' && !msg.isStatic && msg.content && !isStreaming && (
+                  <div style={styles.feedbackRow}>
+                    {feedback[idx] === 'sent' ? (
+                      <span style={styles.feedbackThanks}>thanks</span>
+                    ) : (
+                      <>
+                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'up')} title="Helpful">👍</button>
+                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'down')} title="Not helpful">👎</button>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
@@ -575,6 +599,27 @@ const styles = {
     textTransform: 'uppercase',
     verticalAlign: 'middle',
     fontWeight: 400,
+  },
+  feedbackRow: {
+    display: 'flex',
+    gap: '6px',
+    marginTop: '8px',
+    opacity: 0.5,
+    transition: 'opacity 0.15s',
+  },
+  feedbackBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '14px',
+    padding: '2px 4px',
+    borderRadius: '4px',
+    lineHeight: 1,
+  },
+  feedbackThanks: {
+    fontSize: '11px',
+    color: 'var(--muted)',
+    fontStyle: 'italic',
   },
   offlineMessage: {
     alignSelf: 'flex-start',
