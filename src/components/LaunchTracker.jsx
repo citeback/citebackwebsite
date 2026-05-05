@@ -1,8 +1,9 @@
 import { CheckCircle, Circle, Clock } from 'lucide-react'
+import { useCameraCount } from '../context/CameraCount'
 
-const milestones = [
+const milestonesBase = [
   { done: true,    label: 'Governance framework published' },
-  { done: true,    label: 'Surveillance camera database live (92,000+ cameras)' },
+  { done: true,    label: 'CAMERA_COUNT_PLACEHOLDER' },
   { done: true,    label: 'Expert directory launched — applications open for attorneys, FOIA specialists, and technical contributors' },
   { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
@@ -13,11 +14,16 @@ const milestones = [
   { done: false,   label: 'First campaign wallet activated' },
 ]
 
-const done = milestones.filter(m => m.done).length
-const total = milestones.length
-const pct = Math.round((done / total) * 100)
-
 export default function LaunchTracker() {
+  const cameraCount = useCameraCount()
+  const milestones = milestonesBase.map(m =>
+    m.label === 'CAMERA_COUNT_PLACEHOLDER'
+      ? { ...m, label: `Surveillance camera database live (${cameraCount} cameras)` }
+      : m
+  )
+  const done = milestones.filter(m => m.done).length
+  const total = milestones.length
+  const pct = Math.round((done / total) * 100)
   return (
     <div className="launch-tracker" style={{
       background: 'var(--bg2)',

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useCameraCount } from '../context/CameraCount'
 import { MessageCircle, X, Send, Loader, Shield, Bot } from 'lucide-react'
 
 const SYSTEM_PROMPT = `You are Citeback's AI assistant — an expert on ALPR (Automated License Plate Reader) surveillance, privacy rights, and the Citeback platform. You are direct, factual, and passionate about civil liberties.
@@ -69,12 +70,13 @@ const API_URL = '/.netlify/functions/chat'
 const MODEL = 'qwen2.5:14b'
 
 export default function ChatBot() {
+  const cameraCount = useCameraCount()
   const [open, setOpen] = useState(false)
   const [accepted, setAccepted] = useState(false)
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hey. I'm Citeback AI — I know everything about the 92,000+ ALPR cameras we've mapped, our campaigns, and how to fight back legally. What do you want to know?"
+      content: `Hey. I'm Citeback AI — I know everything about the ${cameraCount} ALPR cameras we've mapped, our campaigns, and how to fight back legally. What do you want to know?`
     }
   ])
   const [input, setInput] = useState('')

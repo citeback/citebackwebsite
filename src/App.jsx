@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { CameraCountProvider } from './context/CameraCount'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
@@ -82,6 +83,7 @@ export default function App() {
   }, [])
 
   return (
+    <CameraCountProvider>
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <ScrollProgress />
@@ -170,5 +172,6 @@ export default function App() {
         <ProposeModal prefill={proposePrefill} onClose={() => setProposePrefill(null)} />
       )}
     </div>
+    </CameraCountProvider>
   )
 }

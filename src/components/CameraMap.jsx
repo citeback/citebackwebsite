@@ -13,6 +13,7 @@ import {
   predictivePolicing,
 } from '../data/surveillanceLayers'
 import { getVendorProfile } from '../data/vendorProfiles'
+import { useCameraCount } from '../context/CameraCount'
 
 // Hardcoded verified NM cameras (our own sourced data)
 const verifiedCameras = [
@@ -836,6 +837,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
 
 // ─── Main CameraMap component ─────────────────────────────────────────────────
 export default function CameraMap() {
+  const cameraCount = useCameraCount()
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
   const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive']))
   const [showVictories, setShowVictories] = useState(false)
@@ -996,7 +998,7 @@ export default function CameraMap() {
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Surveillance Map</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, lineHeight: 1.6, maxWidth: 480 }}>
-            Live ALPR data from OpenStreetMap — 92,000+ cameras mapped by contributors worldwide.
+            Live ALPR data from OpenStreetMap — {cameraCount} cameras mapped by contributors worldwide.
             Zoom in to load cameras in any area. Every pin has a source.
           </p>
         </div>
@@ -1139,7 +1141,7 @@ export default function CameraMap() {
       }}>
         <CheckCircle size={14} style={{ color: '#5dade2', flexShrink: 0, marginTop: 1 }} />
         <span>
-          Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — 92,000+ ALPR cameras mapped nationally.
+          Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — {cameraCount} ALPR cameras mapped nationally.
           Zoom in to load cameras in any area.
         </span>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
@@ -1422,7 +1424,7 @@ export default function CameraMap() {
           <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{verifiedCameras.length}</span> Citeback-verified ·{' '}
           <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{osmCameras.length.toLocaleString()}</span> loaded · Zoom into any city for full detail
         </span>
-        <span>Data: OpenStreetMap contributors (ODbL) · 92,000+ mapped nationally</span>
+        <span>Data: OpenStreetMap contributors (ODbL) · {cameraCount} mapped nationally</span>
       </div>
     </section>
   )
