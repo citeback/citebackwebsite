@@ -94,7 +94,7 @@ export const campaigns = [
     id: 4,
     type: 'legal',
     title: 'Legal Fund — NM State ALPR Privacy Bill',
-    description: 'Albuquerque PD keeps your license plate scan for 365 days. The bill backed by State Senator Peter Wirth would cap that at 30 days and require a warrant before any agency can query the database — a 12x reduction in your exposure window and a hard legal barrier to warrantless location tracking. We\'re funding attorney preparation, expert witness coordination, and testimony for the 2027 session. This bill is winnable. The time to build the advocacy record is now — before the session opens.',
+    description: 'Albuquerque PD keeps your license plate scan for 365 days. The bill backed by State Senator Peter Wirth would cap that at 30 days and require a warrant before any agency can query the database — a 12x reduction in your exposure window and a hard legal barrier to warrantless location tracking. We\'re funding attorney preparation, expert witness coordination, and testimony for the 2027 session. This bill is winnable. The time to build the advocacy record is now — before the session opens. ⚠️ Legislative advocacy campaigns require pre-launch attorney sign-off on lobbying disclosure (LDA) and foreign-agent (FARA) compliance before this campaign goes live — see GOVERNANCE.md §3.2.',
     winCondition: 'ALPR Privacy Act passes: warrant requirement + 30-day retention cap. APD\'s 365-day hold on your location history drops to 30.',
     milestones: [
       { amount: 2000, label: 'Attorney retainer secured', desc: 'Retain counsel to draft bill analysis and prepare initial testimony brief for Senate Judiciary Committee' },

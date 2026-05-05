@@ -1,10 +1,10 @@
 const facts = [
-  'Minimum 3 TEE instances across independent hardware providers',
-  '2-of-3 threshold signatures required — one compromised node cannot unlock funds',
+  'At launch: minimum 3 TEE instances across independent hardware providers (a hard launch prerequisite)',
+  'At launch: 2-of-3 threshold signatures required — one compromised node cannot unlock funds',
   'No human will ever hold a wallet key — keys are generated inside the TEE enclave and never leave',
-  'Being structured as a Wyoming DAO LLC — spending governed by code, not humans',
+  'Being structured as a Wyoming DAO LLC — formation is a hard launch prerequisite',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
-  'Mission encoded in TEE code — not governance documents that can be quietly amended',
+  'At launch: mission rules will be encoded in TEE code — not governance documents that can be quietly amended',
   'Architecture specification published — open for community audit before launch',
 ];
 
@@ -59,7 +59,7 @@ export default function GuaranteeSection({ setTab }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
               'Every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are generated inside the enclave and never leave.',
-              'The platform has two layers: the operator manages campaigns, and the TEE manages money. What no one can do — no founder, no operator, no court order — is produce keys that exist only inside the enclave.',
+              'The platform is designed in two layers: the operator manages campaigns, and at launch the TEE will manage money. What no one will be able to do after launch — no founder, no operator, no court order — is produce keys that exist only inside the enclave.',
               "This isn't a policy. It isn't a promise. It's the architecture — and the code is public for anyone to audit before launch.",
             ].map((para, i) => (
               <p

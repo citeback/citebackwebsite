@@ -9,7 +9,7 @@ const milestones = [
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
   { done: false,   label: 'TEE wallets live — 3 nodes, 2-of-3 threshold signatures' },
   { done: false,   label: 'TEE remote attestation published and verifiable' },
-  { done: false,   label: 'Automated OFAC screening — no manual review, no PII stored' },
+  { done: false,   label: 'TEE automated wallet-level OFAC screening at disbursement (operator onboarding uses separate manual pre-screening with identity verification)' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 

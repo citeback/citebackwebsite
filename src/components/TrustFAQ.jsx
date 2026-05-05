@@ -109,7 +109,11 @@ const sections = [
     questions: [
       {
         q: 'Can anyone donate?',
-        a: `Donations from individuals or entities on OFAC sanctions lists are strictly prohibited by our Terms of Use. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise sanctioned party. While Monero's privacy properties prevent on-chain screening, this prohibition is a binding condition of platform use.`,
+        a: `Donations from individuals or entities on OFAC sanctions lists are strictly prohibited by our Terms of Use. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise sanctioned party.
+
+**OFAC gap disclosure (required reading):** Because Monero and Zano transactions are private at the protocol level, the platform has no technical ability to screen anonymous donors against the OFAC SDN list. This is a structural limitation — not a policy choice — and is documented in GOVERNANCE.md §9.3. The ToS prohibition is a binding legal condition, but on-chain enforcement is not possible on the donor side.
+
+Campaign operators (who receive disbursements) are separately screened against the OFAC SDN list by the platform entity before onboarding and again by the TEE at every disbursement. The donor-side limitation and the attorney-required legal analysis of this gap are both documented as pre-launch open questions in GOVERNANCE.md. No funds go live until written attorney guidance is received.`,
       },
     ],
   },
@@ -119,7 +123,19 @@ const sections = [
     color: '#e67e22',
     questions: [
       {
-        q: 'What are the honest risks?',
+        q: 'What data does browsing this site expose?',
+        a: `Your donation uses XMR or ZANO protocol-level privacy — no on-chain link between you and the campaign. However, browsing this site creates standard server-side and third-party logs that are separate from your donation privacy:
+
+• **Hosting:** This site runs on Netlify, which logs visitor IP addresses per standard hosting practice. Netlify's data retention follows their published privacy policy.
+• **Fonts:** This site loads fonts from Bunny CDN (fonts.bunny.net). Bunny CDN logs standard CDN access requests including IP addresses.
+• **Map tiles:** The surveillance camera map loads tiles from CARTO (*.basemaps.cartocdn.com). CARTO receives tile requests including your IP address.
+• **External data APIs:** Features powered by CourtListener, USASpending.gov, the Senate LDA API, and api.congress.gov make client-side requests that expose your IP to those services.
+• **Form submissions:** Campaign proposals and registry applications submitted via this site are processed and stored by Netlify Forms, including any contact information you provide and your IP address at submission time.
+
+For maximum privacy when browsing this site, use Tor Browser, a trusted VPN, or a privacy-preserving proxy. Your XMR or ZANO donation remains private regardless of browsing method — coin-level privacy is at the protocol layer, not the application layer. These infrastructure disclosures do not affect donation privacy.`,
+    },
+    {
+      q: 'What are the honest risks?',
         a: `We'll be straight with you:\n\n**TEE side-channel attacks** — Known attack classes include Spectre/Meltdown-class CPU vulnerabilities and physical DRAM bus interposer attacks (WireTap Sept 2025, TEE.Fail Oct 2025 demonstrated ~$1,000 hardware attacks against TDX/SGX/SEV-SNP on fully patched systems — requiring physical server access). TEE providers patch software-exploitable vulnerabilities; the 2-of-3 geographic distribution across separate providers is the primary defense against physical attacks.\n\n**Fake proof submissions** — The platform operator reviews proof documents, but cannot fully authenticate every photo or receipt. The 48-hour community challenge window and reputation staking are the primary defenses.\n\n**Sybil attacks on voting** — Addressed through logarithmic proof-of-donation weighting (cap at $1,280 → weight 9.0, per GOVERNANCE.md §5). Spinning up fake wallets costs real money — a $5 floor applies, and the 72-hour age requirement blocks last-minute attacks. The human operator monitors for suspicious coordination patterns and can trigger provisional pauses; any pause must be confirmed by community vote within 12 hours. Not zero-risk, but economically irrational at scale.\n\n**Coordinated whale rings** — Multiple actors each donating to the cap and voting together off-platform. Quorum requirements and time-locks limit exposure; fully solving this without breaking donor privacy isn't possible.\n\n**TEE provider compromise** — If the TEE hardware vendor is compromised at a nation-state level, attestation could theoretically be forged. This is the hardest attack to defend against.\n\n**Regulatory risk** — Citeback is designed to fund only lawful activities and undergoes pre-launch attorney review of identified regulatory questions — including FinCEN/MSB classification, OFAC compliance, and state money transmission licensing. These questions are documented as open issues in governance; no funds go live until written legal guidance is in hand. Regulatory environments also change. The open source + forkable design ensures the platform can adapt.`,
       },
       {
