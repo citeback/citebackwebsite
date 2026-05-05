@@ -4,7 +4,7 @@ const milestones = [
   { done: true,    label: 'Governance framework published' },
   { done: true,    label: 'Surveillance camera database live (92,000+ cameras)' },
   { done: true,    label: 'Expert directory launched — applications open for attorneys, FOIA specialists, and technical contributors' },
-  { done: true,    label: 'Campaign proposals open for community review' },
+  { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
   { done: false,   label: 'TEE wallets live — 3 nodes, 2-of-3 threshold signatures' },

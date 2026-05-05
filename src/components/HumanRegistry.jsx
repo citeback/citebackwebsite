@@ -19,7 +19,7 @@ const roles = [
 ]
 
 function ApplyModal({ onClose }) {
-  const [form, setForm] = useState({ role: '', location: '', background: '', contact: '' })
+  const [form, setForm] = useState({ role: '', location: '', background: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const modalRef = useRef(null)
@@ -150,10 +150,11 @@ function ApplyModal({ onClose }) {
                 value={form.background} onChange={e => set('background', e.target.value)} />
             </div>
 
-            <div>
-              <label htmlFor="apply-contact" style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle, or ProtonMail)</label>
-              <input id="apply-contact" style={inputStyle} placeholder="How to reach you if approved. Never shared publicly."
-                value={form.contact} onChange={e => set('contact', e.target.value)} />
+            <div style={{
+              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
+              borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
+            }}>
+              To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
             <div style={{

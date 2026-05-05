@@ -11,7 +11,7 @@ const types = [
 
 export default function ProposeModal({ onClose, prefill = {} }) {
   const [step, setStep] = useState(1)
-  const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '', contact: '' })
+  const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const modalRef = useRef(null)
@@ -193,10 +193,11 @@ export default function ProposeModal({ onClose, prefill = {} }) {
               <input id="prop-goal" style={inputStyle} type="number" placeholder="e.g. 750"
                 value={form.goal} onChange={e => set('goal', e.target.value)} />
             </div>
-            <div>
-              <label htmlFor="prop-contact" style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle)</label>
-              <input id="prop-contact" style={inputStyle} placeholder="For follow-up questions. Never shared publicly."
-                value={form.contact} onChange={e => set('contact', e.target.value)} />
+            <div style={{
+              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
+              borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
+            }}>
+              To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
             <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
