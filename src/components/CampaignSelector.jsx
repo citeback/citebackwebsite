@@ -64,7 +64,7 @@ export default function CampaignSelector({ setTab }) {
   const campaign = campaigns[active];
 
   return (
-    <section style={{ padding: '80px 0' }}>
+    <section style={{ padding: '80px clamp(16px, 4vw, 24px)' }}>
       <div
         style={{
           fontSize: '11px',
@@ -179,7 +179,7 @@ export default function CampaignSelector({ setTab }) {
               background: 'var(--fg)', color: 'var(--bg)', border: 'none',
               padding: '12px 28px', fontSize: 13, fontWeight: 600,
               letterSpacing: '0.05em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'var(--font)',
+              cursor: 'pointer', fontFamily: 'var(--font)', minHeight: 44,
             }}
           >
             Browse Active Campaigns →
@@ -191,7 +191,7 @@ export default function CampaignSelector({ setTab }) {
               border: '1px solid var(--border)', padding: '12px 28px',
               fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
               textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'var(--font)',
+              fontFamily: 'var(--font)', minHeight: 44,
             }}
           >
             Run a Campaign →

@@ -89,7 +89,7 @@ export default function StatsSection() {
             >
               <span
                 style={{
-                  fontSize: '48px',
+                  fontSize: 'clamp(28px, 8vw, 48px)',
                   fontWeight: 200,
                   lineHeight: 1,
                   color: 'var(--fg)',

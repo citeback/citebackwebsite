@@ -332,7 +332,7 @@ export default function SurveillanceFeed({ setTab }) {
   return (
     <section style={{
       minHeight: '60vh',
-      padding: '80px 24px 60px',
+      padding: 'clamp(48px, 8vw, 80px) 24px 60px',
       background: 'var(--bg)',
     }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
