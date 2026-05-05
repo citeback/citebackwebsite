@@ -71,8 +71,7 @@ function getStaticResponse(userText) {
 }
 
 const PRIMARY_MODEL = 'qwen2.5:14b'
-const FALLBACK_MODEL = 'llama3.2'
-const OLLAMA_URL = 'http://localhost:11434/api/chat'
+const AI_URL = '/.netlify/functions/chat'
 
 export default function ConversationalInterface({ onClose }) {
   const [messages, setMessages] = useState([])
@@ -87,13 +86,9 @@ export default function ConversationalInterface({ onClose }) {
   const inputRef = useRef(null)
   const abortControllerRef = useRef(null)
 
-  // Probe Ollama availability once on mount
+  // Mark AI as available optimistically — errors will flip the flag
   useEffect(() => {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 3000)
-    fetch('http://localhost:11434/api/tags', { signal: controller.signal })
-      .then(r => { clearTimeout(timer); setOllamaAvailable(r.ok) })
-      .catch(() => { clearTimeout(timer); setOllamaAvailable(false) })
+    setOllamaAvailable(true)
   }, [])
 
   // Scroll to bottom whenever messages change
@@ -128,7 +123,7 @@ export default function ConversationalInterface({ onClose }) {
     const aiMessage = {
       role: 'assistant',
       content: staticAnswer ||
-        'That question isn\'t in my static FAQ yet. For detailed answers, check the Transparency and Governance tabs — or ask again once Ollama is running locally.',
+        'That question isn\'t in my static FAQ yet. For detailed answers, check the Transparency and Governance tabs, or try again shortly.',
       isStatic: true,
     }
     setMessages(prev => [...prev, userMessage, aiMessage])
@@ -162,13 +157,13 @@ export default function ConversationalInterface({ onClose }) {
     const tryModel = async (model) => {
       abortControllerRef.current = new AbortController()
 
-      const response = await fetch(OLLAMA_URL, {
+      const response = await fetch(AI_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model,
           messages: history,
-          stream: true,
+          stream: false,
         }),
         signal: abortControllerRef.current.signal,
       })
@@ -177,80 +172,42 @@ export default function ConversationalInterface({ onClose }) {
         throw new Error(`HTTP ${response.status}`)
       }
 
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        const chunk = decoder.decode(value, { stream: true })
-        const lines = chunk.split('\n').filter(Boolean)
-
-        for (const line of lines) {
-          try {
-            const data = JSON.parse(line)
-            const token = data?.message?.content
-            if (token) {
-              setMessages(prev => {
-                const updated = [...prev]
-                const last = updated[updated.length - 1]
-                if (last?.role === 'assistant') {
-                  updated[updated.length - 1] = {
-                    ...last,
-                    content: last.content + token,
-                  }
-                }
-                return updated
-              })
-            }
-          } catch {
-            // Malformed JSON line — skip
+      const data = await response.json()
+      const content = data?.message?.content
+      if (content) {
+        setMessages(prev => {
+          const updated = [...prev]
+          const last = updated[updated.length - 1]
+          if (last?.role === 'assistant') {
+            updated[updated.length - 1] = { ...last, content }
           }
-        }
+          return updated
+        })
       }
     }
 
     try {
       await tryModel(PRIMARY_MODEL)
       setOllamaAvailable(true)
-    } catch (primaryErr) {
-      if (primaryErr.name === 'AbortError') {
+    } catch (err) {
+      if (err.name === 'AbortError') {
         setIsStreaming(false)
         return
       }
-      // Try fallback model
-      try {
-        // Reset the last assistant message
-        setMessages(prev => {
-          const updated = [...prev]
-          updated[updated.length - 1] = { role: 'assistant', content: '' }
-          return updated
-        })
-        await tryModel(FALLBACK_MODEL)
-        setOllamaAvailable(true)
-      } catch (fallbackErr) {
-        if (fallbackErr.name === 'AbortError') {
-          setIsStreaming(false)
-          return
+      // Request failed — fall back to static responses
+      setOllamaAvailable(false)
+      setMessages(prev => prev.filter((_, i) => i !== prev.length - 1))
+      const staticAnswer = getStaticResponse(userText)
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: staticAnswer ||
+            'The AI is temporarily unavailable. Check the Transparency and Governance tabs for detailed answers.',
+          isStatic: true,
         }
-        // Both models failed — mark offline and fall back to static
-        setOllamaAvailable(false)
-        // Remove the empty assistant message
-        setMessages(prev => prev.filter((_, i) => i !== prev.length - 1))
-        // Deliver static response instead
-        const staticAnswer = getStaticResponse(userText)
-        setMessages(prev => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: staticAnswer ||
-              'Ollama is unavailable. Check the Transparency and Governance tabs for detailed answers, or install Ollama locally to enable full AI responses.',
-            isStatic: true,
-          }
-        ])
-        setIsOffline(true)
-      }
+      ])
+      setIsOffline(true)
     } finally {
       setIsStreaming(false)
       abortControllerRef.current = null
@@ -291,12 +248,12 @@ export default function ConversationalInterface({ onClose }) {
           <div style={styles.starterContainer}>
             <p style={styles.starterHeading}>
               {offlineMode
-                ? 'Common questions — local AI unavailable'
+                ? 'Common questions — AI temporarily unavailable'
                 : 'Talk to Citeback'}
             </p>
             {offlineMode && (
               <p style={styles.offlineBanner}>
-                Local AI is offline. These questions use pre-written answers.
+                AI is temporarily unavailable. These questions use pre-written answers.
               </p>
             )}
             <div style={styles.starterPrompts}>
@@ -334,9 +291,7 @@ export default function ConversationalInterface({ onClose }) {
             {/* Offline notice — shown after first static response */}
             {isOffline && (
               <div style={styles.offlineMessage}>
-                Local AI (Ollama) is not running — answering from pre-written FAQ.{' '}
-                <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--red)' }}>Install Ollama</a>,
-                then run <code style={{ fontFamily: 'monospace', fontSize: 12 }}>ollama pull qwen2.5:14b</code> for live responses.
+                AI is temporarily unavailable — answering from pre-written FAQ. Try again shortly.
               </div>
             )}
 
