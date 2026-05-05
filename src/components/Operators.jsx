@@ -65,10 +65,10 @@ export default function Operators() {
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Run a Campaign</h1>
         </div>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 15 }}>
-          Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
+          Operators are the people who make campaigns happen - lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
         </p>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, marginTop: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 0, padding: '12px 16px' }}>
-          <strong style={{ color: 'var(--text)' }}>How this works:</strong> The platform is operated by a Wyoming DAO LLC — you’ll work with a real person during onboarding and proposal review. Once your campaign is funded and milestones are met, disbursements are handled automatically by the TEE. No human — including the platform operator — can access campaign wallet keys or redirect funds.
+          <strong style={{ color: 'var(--text)' }}>How this works:</strong> The platform is being organized as a Wyoming DAO LLC (formation is a launch prerequisite) — you'll work with a real person during onboarding and proposal review (the founder pre-launch; the DAO LLC operator post-launch). Once your campaign is funded and milestones are met, disbursements will be handled automatically by the TEE. No human — including the platform operator — can access campaign wallet keys or redirect funds.
         </p>
       </div>
 
@@ -166,7 +166,7 @@ export default function Operators() {
               Funds disburse as XMR or ZANO from the TEE to your operator wallet. Converting to fiat is your responsibility - use any exchange or P2P platform that complies with applicable law in your jurisdiction. The platform does not recommend specific conversion methods.
             </p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, marginTop: 8 }}>
-              The platform disburses XMR or ZANO. After receipt, you are responsible for your own compliance with applicable law, including any reporting obligations in your jurisdiction. You are an independent contractor operating for your own account — the platform does not act as your financial intermediary and does not recommend specific conversion methods.
+              The platform disburses XMR or ZANO. After receipt, you are responsible for your own compliance with applicable law, including any reporting obligations in your jurisdiction. You are an independent contractor operating for your own account - the platform does not act as your financial intermediary and does not recommend specific conversion methods.
             </p>
           </div>
         </div>
@@ -174,14 +174,14 @@ export default function Operators() {
 
       <Accordion title="What happens after you submit" icon={FileText}>
         <ol style={{ paddingLeft: 18, lineHeight: 2 }}>
-          <li>Submission reviewed within 5-7 business days by the platform operator (Wyoming DAO LLC)</li>
-          <li>Identity verified and OFAC screened privately by the operator — never published</li>
+          <li>Submission reviewed within 5-7 business days by the platform operator (founder pre-launch; Wyoming DAO LLC once formed)</li>
+          <li>Identity verified and OFAC screened privately by the operator - never published</li>
           <li>Tier assigned based on campaign scope and budget</li>
           <li>Campaign published - community begins funding</li>
           <li>Funds disburse milestone-by-milestone as proof is submitted and verified</li>
           <li>Campaign closes with a public outcome record</li>
         </ol>
-        <p style={{ marginTop: 12 }}>All donations are final and non-refundable. If a campaign isn't funded within its deadline, funds are automatically redirected to the highest-priority active campaign in the same category — never held by the platform.</p>
+        <p style={{ marginTop: 12 }}>All donations are final and non-refundable. If a campaign isn't funded within its deadline, funds are automatically redirected to the highest-priority active campaign in the same category - never held by the platform.</p>
       </Accordion>
 
       {/* CTA */}

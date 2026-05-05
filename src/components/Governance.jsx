@@ -239,8 +239,8 @@ export default function Governance({ setTab }) {
           headers={['Volume', 'Fee']}
           rows={[
             ['$0 – $10k', '5.0%'],
-            ['$10k – $25k', '4.5%'],
-            ['$25k – $50k', '4.0%'],
+            ['$10,001 – $25k', '4.5%'],
+            ['$25,001 – $50k', '4.0%'],
             ['Above $50k', '3.0%'],
           ]}
         />

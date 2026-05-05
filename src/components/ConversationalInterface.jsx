@@ -7,7 +7,7 @@ Key facts:
 - XMR privacy: ring signatures obscure sender, stealth addresses hide receiver, RingCT hides transaction amounts. Wallet managed via monero-wallet-rpc inside the enclave.
 - ZANO privacy: private-by-default — amounts, sender, receiver, AND asset type are all hidden at the protocol level (confidential assets, CryptoNote base). Hybrid PoW+PoS consensus. Ionic Swaps enable atomic P2P exchange. Wallet managed via Zano full RPC API.
 - No human holds wallet keys — TEE architecture (Intel TDX / ARM TrustZone), cryptographic attestation proves enclave integrity, minimum 3 instances across geographically separate jurisdictions, 2-of-3 threshold signatures; private keys never leave the secure enclave
-- The platform is operated by a Wyoming DAO LLC — the operator manages the site, reviews campaign proposals, and handles onboarding; the operator cannot access wallet keys
+- The platform is being organized as a Wyoming DAO LLC (entity formation is a Phase 2 launch prerequisite); pre-launch, the founder acts as interim platform operator — in neither case can the operator access wallet keys
 - Mission is immutably locked in architecture, not policy
 - 92,847+ surveillance cameras documented
 - Governance: specification published and active, community ratification required before mainnet
@@ -33,15 +33,15 @@ const STARTER_PROMPTS = [
 // Static FAQ responses for when Ollama is unavailable
 const STATIC_RESPONSES = {
   'What is Citeback?':
-    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Donations arrive in Monero or Zano; a Trusted Execution Environment manages every wallet so no human can touch the keys. The platform is operated by a Wyoming DAO LLC.',
+    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Donations will arrive in Monero or Zano; a Trusted Execution Environment will manage every wallet so no human can touch the keys. The platform is being organized as a Wyoming DAO LLC — entity formation is a hard launch prerequisite before any funds are accepted.',
   'How do I donate anonymously?':
-    'Send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets are managed by a TEE enclave — the architecture is designed to make key extraction technically infeasible, including under legal compulsion. No software patch or subpoena produces keys that exist only in hardware.',
+    'Once wallets activate at Phase 2 launch, send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets will be managed by a TEE enclave — the architecture is designed to make key extraction technically infeasible, including under legal compulsion. No software patch or subpoena produces keys that exist only in hardware.',
   'What currencies do you accept?':
     'Citeback accepts Monero (XMR) and Zano (ZANO). Monero uses ring signatures, stealth addresses, and RingCT to obscure sender, receiver, and amount. Zano is private-by-default at the protocol level — it also hides asset type — and supports Ionic Swaps for atomic peer-to-peer exchange.',
   'Who controls the wallets?':
-    'No human does. Wallet keys are generated inside a Trusted Execution Environment (Intel TDX or ARM TrustZone) and never leave it. A minimum of three geographically separate enclave instances hold 2-of-3 threshold key shares. Cryptographic attestation lets anyone verify enclave integrity independently.',
+    'No human will, by design. Once deployed, wallet keys are generated inside a Trusted Execution Environment (Intel TDX or ARM TrustZone) and never leave it. A minimum of three geographically separate enclave instances will hold 2-of-3 threshold key shares. Cryptographic attestation lets anyone verify enclave integrity independently. TEE wallets activate at Phase 2 launch.',
   'Is this legal?':
-    'Yes. Funding FOIA litigation, billboard campaigns, and legal defense funds is protected activity under the First Amendment. The platform is structured as a Wyoming DAO LLC. Monero and Zano are legal to hold and transmit in the United States. No campaign on Citeback funds illegal activity.',
+    'Yes. Funding FOIA litigation, billboard campaigns, and legal defense funds is protected activity under the First Amendment. The platform is being organized as a Wyoming DAO LLC — entity formation, attorney review of regulatory questions (including FinCEN/MSB classification and OFAC compliance), and written legal guidance are all required before any funds are accepted. Monero and Zano are legal to hold and transmit in the United States. No campaign on Citeback may fund illegal activity.',
   'When do wallets go live?':
     'Wallets are activating soon. Governance prerequisites are being completed and community ratification is required before mainnet. Follow the Transparency and Governance tabs for real-time status updates.',
   'What is a Stingray?':
@@ -49,7 +49,7 @@ const STATIC_RESPONSES = {
   'What is ShotSpotter?':
     'ShotSpotter (now SoundThinking) is an acoustic gunshot detection system deployed across dozens of US cities. Independent audits have found high false-positive rates and the system has been used to justify stops with little evidence. Citeback funds vendor accountability campaigns targeting ShotSpotter contracts.',
   'How do I propose a campaign?':
-    'Go to the "Run a Campaign" section and submit a proposal. The Wyoming DAO LLC operator reviews proposals for legal viability and alignment with the platform mission. Once approved, a TEE-managed wallet is provisioned and the campaign goes live. You never need to identify yourself to propose.',
+    'Go to the "Run a Campaign" section to review requirements and prepare your proposal. Operators must verify their real identity privately with the platform\'s legal entity — your name is never published on-chain or in any public forum. The platform operator reviews proposals for legal viability and alignment with the mission. Once approved, a TEE-managed wallet will be provisioned and the campaign will go live. Note: operator identity verification is required; donor anonymity is separate and fully preserved.',
 }
 
 function getStaticResponse(userText) {
