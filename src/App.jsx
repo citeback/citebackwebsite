@@ -4,7 +4,6 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
 import LaunchTracker from './components/LaunchTracker'
-import ThemePicker from './components/ThemePicker'
 import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
 import CampaignSelector from './components/CampaignSelector'
@@ -163,7 +162,7 @@ export default function App() {
       </main>
 
       <Footer setTab={setTab} />
-      <ThemePicker />
+
 
       {selectedCampaign && (
         <CampaignModal campaign={selectedCampaign} onClose={() => setSelectedCampaign(null)} />
