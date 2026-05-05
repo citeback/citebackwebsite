@@ -104,8 +104,10 @@ export default function Footer({ setTab }) {
         <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>OpenStreetMap contributors</a>,{' '}
         <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>EFF Atlas of Surveillance</a>,{' '}
         <a href="https://www.courtlistener.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>CourtListener</a>,{' '}
-        <a href="https://www.usaspending.gov" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>USASpending.gov</a>, and{' '}
-        <a href="https://openstates.org" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>OpenStates</a>.{' '}
+        <a href="https://www.usaspending.gov" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>USASpending.gov</a>,{' '}
+        <a href="https://openstates.org" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>OpenStates</a>,{' '}
+        <a href="https://api.congress.gov" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>Congress.gov</a>, and{' '}
+        <a href="https://lda.senate.gov" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>Senate LDA</a>.{' '}
         Campaign sources individually cited.
       </div>
 
