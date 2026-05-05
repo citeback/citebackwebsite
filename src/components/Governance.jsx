@@ -18,8 +18,8 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div id={id} style={{
-      background: 'var(--card-bg, rgba(255,255,255,0.04))',
-      border: '1px solid var(--border, rgba(255,255,255,0.08))',
+      background: 'var(--card-bg)',
+      border: '1px solid var(--border)',
       borderRadius: 12,
       marginBottom: 16,
       overflow: 'hidden'

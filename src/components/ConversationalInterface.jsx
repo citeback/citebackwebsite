@@ -324,10 +324,6 @@ export default function ConversationalInterface({ onClose }) {
                 {msg.content || (msg.role === 'assistant' && isStreaming && idx === messages.length - 1 ? (
                   <TypingIndicator />
                 ) : null)}
-                {/* Show typing indicator inside last assistant message if empty and streaming */}
-                {msg.role === 'assistant' && !msg.content && isStreaming && idx === messages.length - 1 && (
-                  <TypingIndicator />
-                )}
                 {/* Static badge */}
                 {msg.isStatic && (
                   <span style={styles.staticBadge}>pre-written</span>

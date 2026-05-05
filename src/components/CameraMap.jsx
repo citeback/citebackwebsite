@@ -842,11 +842,22 @@ export default function CameraMap() {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   const detectGPS = () => {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.')
+      return
+    }
     setLocating(true)
     navigator.geolocation.getCurrentPosition(
       pos => { set('lat', pos.coords.latitude.toFixed(6)); set('lng', pos.coords.longitude.toFixed(6)); setLocating(false) },
-      () => setLocating(false)
+      (err) => {
+        setLocating(false)
+        if (err.code === err.PERMISSION_DENIED) {
+          // Geolocation denied — user can enter coordinates manually
+          set('lat', '')
+          set('lng', '')
+        }
+        // For POSITION_UNAVAILABLE or TIMEOUT, silently fall back
+      }
     )
   }
 

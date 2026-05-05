@@ -21,11 +21,17 @@ export default function ActivityTicker() {
   useEffect(() => {
     // Pull the 3 most recent CourtListener opinions on ALPR/surveillance topics
     // and prepend them to the ticker. Falls back to static events on any error.
+    // Timeout after 6s to avoid hanging indefinitely on slow responses.
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 6000)
+
     fetch(
-      'https://www.courtlistener.com/api/rest/v4/search/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22+OR+%22facial+recognition%22&type=o&format=json&order_by=dateFiled+desc'
+      'https://www.courtlistener.com/api/rest/v4/search/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22+OR+%22facial+recognition%22&type=o&format=json&order_by=dateFiled+desc',
+      { signal: controller.signal }
     )
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
       .then(data => {
+        clearTimeout(timeoutId)
         const live = (data.results || []).slice(0, 3).map(c => ({
           text: `New case: ${c.caseName} — ${c.court_citation_string || c.court}`,
           time: c.dateFiled || 'recent',
@@ -37,9 +43,12 @@ export default function ActivityTicker() {
         }
       })
       .catch(() => {
+        clearTimeout(timeoutId)
         // Silently fall back to static events — no disruption to UI
         setIsLiveActive(false)
       })
+
+    return () => { clearTimeout(timeoutId); controller.abort() }
   }, [])
 
   return (
