@@ -49,7 +49,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
         <button onClick={() => setProposing(true)} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'var(--accent)', border: 'none', color: '#fff',
-          padding: '10px 18px', borderRadius: 9, fontWeight: 600, fontSize: 14,
+          padding: '10px 18px', borderRadius: 9, fontWeight: 600, fontSize: 14, minHeight: 44,
         }}>
           <Plus size={15} /> Propose Campaign
         </button>

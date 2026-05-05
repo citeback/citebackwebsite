@@ -178,6 +178,7 @@ export default function Hero({ setTab }) {
                   cursor: 'pointer',
                   fontFamily: 'var(--font)',
                   transition: 'opacity 0.15s',
+                  minHeight: 44,
                 }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
                 onMouseLeave={e => e.currentTarget.style.opacity = '1'}
@@ -198,6 +199,7 @@ export default function Hero({ setTab }) {
                   cursor: 'pointer',
                   fontFamily: 'var(--font)',
                   transition: 'border-color 0.15s',
+                  minHeight: 44,
                 }}
                 onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
                 onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
@@ -287,7 +289,7 @@ export default function Hero({ setTab }) {
           bottom: -3px;
           left: -4px;
           right: -4px;
-          background: #0d0d0d;
+          background: var(--fg, #1a1a1a);
           opacity: 1;
           transition: opacity 0.2s ease;
           pointer-events: none;

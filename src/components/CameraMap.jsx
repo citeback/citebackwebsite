@@ -213,7 +213,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
       <div style={modalStyle}>
         <button onClick={onClose} style={{
           position: 'absolute', top: 16, right: 16,
-          background: 'none', border: 'none', color: '#78716c',
+          background: 'none', border: 'none', color: 'var(--muted)',
           cursor: 'pointer', padding: 4, borderRadius: 6,
           display: 'flex', alignItems: 'center',
         }}>
@@ -223,10 +223,10 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
         {success ? (
           <div style={{ textAlign: 'center', padding: '20px 0' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>📸</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#fafaf9', marginBottom: 8 }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginBottom: 8 }}>
               Photo submitted — thanks!
             </div>
-            <div style={{ fontSize: 13, color: '#78716c', lineHeight: 1.6, maxWidth: 340, margin: '0 auto 20px' }}>
+            <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, maxWidth: 340, margin: '0 auto 20px' }}>
               Your photo is in the review queue. It'll appear on the map once it clears the spam filter — usually within a few hours.
             </div>
             <div style={{
@@ -245,12 +245,12 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <Camera size={18} style={{ color: '#f59e0b' }} />
-              <span style={{ fontSize: 17, fontWeight: 700, color: '#fafaf9' }}>Submit a Photo</span>
+              <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)' }}>Submit a Photo</span>
             </div>
-            <div style={{ fontSize: 12, color: '#78716c', marginBottom: 20, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 20, lineHeight: 1.5 }}>
               Help keep the map current. Google Street View can be years out of date — your photo from today is more valuable.
               {camera && (
-                <span style={{ display: 'block', marginTop: 4, color: '#a8a29e' }}>
+                <span style={{ display: 'block', marginTop: 4, color: 'var(--muted)' }}>
                   📍 Camera node #{camera.id}
                 </span>
               )}
@@ -264,21 +264,21 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                 onDrop={handleDrop}
                 onClick={() => inputRef.current?.click()}
                 style={{
-                  border: `2px dashed ${dragging ? '#f59e0b' : '#292524'}`,
+                  border: `2px dashed ${dragging ? '#f59e0b' : 'var(--border)'}`,
                   borderRadius: 12,
                   padding: '36px 20px',
                   textAlign: 'center',
                   cursor: 'pointer',
-                  background: dragging ? 'rgba(245,158,11,0.05)' : '#0a0908',
+                  background: dragging ? 'rgba(245,158,11,0.05)' : 'var(--bg)',
                   transition: 'all 0.15s',
                   marginBottom: 14,
                 }}
               >
-                <Upload size={28} style={{ color: dragging ? '#f59e0b' : '#44403c', marginBottom: 10 }} />
-                <div style={{ fontSize: 14, fontWeight: 600, color: dragging ? '#f59e0b' : '#a8a29e', marginBottom: 4 }}>
+                <Upload size={28} style={{ color: dragging ? '#f59e0b' : 'var(--muted)', marginBottom: 10 }} />
+                <div style={{ fontSize: 14, fontWeight: 600, color: dragging ? '#f59e0b' : 'var(--muted)', marginBottom: 4 }}>
                   Drop photo here
                 </div>
-                <div style={{ fontSize: 12, color: '#57534e' }}>
+                <div style={{ fontSize: 12, color: 'var(--muted)' }}>
                   or <span style={{ color: '#f59e0b', textDecoration: 'underline' }}>browse files</span> · JPG, PNG, HEIC · max 20MB
                 </div>
                 <input
@@ -329,7 +329,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                   <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>Spam filter passed</span>
                   <button
                     onClick={() => { setFile(null); setPreview(null); setError(null) }}
-                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#78716c', cursor: 'pointer', fontSize: 12, padding: 0 }}
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, padding: 0 }}
                   >
                     Remove
                   </button>
@@ -337,7 +337,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                 <img
                   src={preview}
                   alt="Preview"
-                  style={{ width: '100%', borderRadius: 10, border: '1px solid #292524', maxHeight: 220, objectFit: 'cover' }}
+                  style={{ width: '100%', borderRadius: 10, border: '1px solid var(--border)', maxHeight: 220, objectFit: 'cover' }}
                 />
               </div>
             )}
@@ -345,7 +345,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             {/* Optional notes */}
             {preview && (
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#78716c', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }}>
                   What are we looking at? <span style={{ fontWeight: 400 }}>(optional)</span>
                 </label>
                 <textarea
@@ -359,8 +359,8 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
 
             {/* AI filter notice */}
             <div style={{
-              fontSize: 11, color: '#57534e', lineHeight: 1.6,
-              borderTop: '1px solid #1c1917', paddingTop: 12, marginBottom: preview ? 16 : 0,
+              fontSize: 11, color: 'var(--muted)', lineHeight: 1.6,
+              borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: preview ? 16 : 0,
             }}>
               🤖 All photos pass a spam filter before review. Photos showing faces, license plates, or unrelated content are automatically blocked. Nothing goes live without human approval.
             </div>
@@ -670,7 +670,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
               style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 background: isOn ? `${layer.color}14` : 'transparent',
-                border: `1px solid ${isOn ? `${layer.color}40` : 'rgba(255,255,255,0.06)'}`,
+                border: `1px solid ${isOn ? `${layer.color}40` : 'var(--border)'}`,
                 borderRadius: blurbOpen ? '8px 8px 0 0' : 8, padding: '8px 10px',
                 cursor: 'pointer', width: '100%', textAlign: 'left',
                 transition: 'all 0.15s',
@@ -678,7 +678,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
             >
               <span style={{ fontSize: 14 }}>{layer.icon}</span>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? '#f0f0f0' : '#6b7280', lineHeight: 1.2 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? 'var(--fg)' : 'var(--muted)', lineHeight: 1.2 }}>
                   {layer.label}
                 </div>
                 {layer.data && layer.data.length > 0 ? (
@@ -691,7 +691,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
               </div>
               <div style={{
                 width: 10, height: 10, borderRadius: '50%',
-                background: isOn ? layer.color : 'rgba(255,255,255,0.12)',
+                background: isOn ? layer.color : 'var(--border)',
                 flexShrink: 0, transition: 'background 0.15s',
               }} />
             </button>
@@ -705,7 +705,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
                 borderRadius: '0 0 8px 8px',
                 padding: '8px 10px 10px',
               }}>
-                <div style={{ fontSize: 11, color: '#c0bdb8', lineHeight: 1.55, marginBottom: 6 }}>
+                <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.55, marginBottom: 6 }}>
                   ℹ️ {blurb}
                 </div>
                 <a
@@ -726,13 +726,13 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
       })}
 
       {/* Victories divider */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '8px 0 6px' }} />
+      <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
       <button
         onClick={() => setShowVictories(v => !v)}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
           background: showVictories ? 'rgba(46,204,113,0.1)' : 'transparent',
-          border: `1px solid ${showVictories ? 'rgba(46,204,113,0.4)' : 'rgba(255,255,255,0.06)'}`,
+          border: `1px solid ${showVictories ? 'rgba(46,204,113,0.4)' : 'var(--border)'}`,
           borderRadius: 8, padding: '8px 10px',
           cursor: 'pointer', width: '100%', textAlign: 'left',
           transition: 'all 0.15s',
@@ -740,12 +740,12 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
       >
         <span style={{ fontSize: 14 }}>✊</span>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: showVictories ? '#2ecc71' : '#6b7280', lineHeight: 1.2 }}>Community Victories</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: showVictories ? '#2ecc71' : 'var(--muted)', lineHeight: 1.2 }}>Community Victories</div>
           <div style={{ fontSize: 10, color: '#2ecc71', marginTop: 2, opacity: 0.8 }}>Programs terminated by community action</div>
         </div>
         <div style={{
           width: 10, height: 10, borderRadius: '50%',
-          background: showVictories ? '#2ecc71' : 'rgba(255,255,255,0.12)',
+          background: showVictories ? '#2ecc71' : 'var(--border)',
           flexShrink: 0, transition: 'background 0.15s',
         }} />
       </button>
@@ -969,7 +969,7 @@ export default function CameraMap() {
               <Clock size={11} style={{ color: '#f59e0b' }} /> <strong style={{ color: '#f59e0b' }}>{pendingPhotos}</strong> pending review
             </span>
           )}
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: '#57534e' }}>
+          <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--muted)' }}>
             Click any camera pin → "Submit Photo" to contribute
           </span>
         </div>
@@ -1170,7 +1170,7 @@ export default function CameraMap() {
       )}
 
       {/* Map */}
-      <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', height: 520, position: 'relative' }}>
+      <div className="map-container" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', height: 520, position: 'relative' }}>
         <MapContainer center={[38.5, -96.5]} zoom={4} style={{ height: '100%', width: '100%' }} zoomControl>
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -1329,9 +1329,9 @@ export default function CameraMap() {
             title="Surveillance layer toggles"
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
-              background: overlayPanelOpen ? '#1a1a2e' : 'rgba(20,18,16,0.9)',
-              border: `1px solid ${overlayPanelOpen ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.12)'}`,
-              color: overlayPanelOpen ? '#a855f7' : '#e2e8f0',
+              background: overlayPanelOpen ? 'rgba(168,85,247,0.12)' : 'var(--card-bg)',
+              border: `1px solid ${overlayPanelOpen ? 'rgba(168,85,247,0.5)' : 'var(--border)'}`,
+              color: overlayPanelOpen ? '#a855f7' : 'var(--fg)',
               padding: '7px 12px', borderRadius: 8,
               fontSize: 12, fontWeight: 600, cursor: 'pointer',
               backdropFilter: 'blur(8px)',
@@ -1348,21 +1348,21 @@ export default function CameraMap() {
 
           {overlayPanelOpen && (
             <div style={{
-              background: 'rgba(14,12,10,0.96)', border: '1px solid rgba(255,255,255,0.1)',
+              background: 'var(--card-bg)', border: '1px solid var(--border)',
               borderRadius: 12, padding: 14, width: 260,
               backdropFilter: 'blur(12px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
                 <Shield size={13} style={{ color: '#a855f7' }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#e2e8f0', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg)', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
               <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} />
 
               <div style={{
-                marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)',
-                fontSize: 10, color: '#4b5563', lineHeight: 1.6,
+                marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border)',
+                fontSize: 10, color: 'var(--muted)', lineHeight: 1.6,
               }}>
                 Sources:{' '}
                 <a href="https://atlasofsurveillance.org/search" target="_blank" rel="noopener noreferrer"

@@ -335,7 +335,7 @@ export default function ConversationalInterface({ onClose }) {
             {isOffline && (
               <div style={styles.offlineMessage}>
                 Local AI (Ollama) is not running — answering from pre-written FAQ.{' '}
-                <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: '#c0392b' }}>Install Ollama</a>,
+                <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--red)' }}>Install Ollama</a>,
                 then run <code style={{ fontFamily: 'monospace', fontSize: 12 }}>ollama pull qwen2.5:14b</code> for live responses.
               </div>
             )}
@@ -390,7 +390,7 @@ const styles = {
   overlay: {
     position: 'fixed',
     inset: 0,
-    backgroundColor: '#f7f5f2',
+    backgroundColor: 'var(--bg)',
     zIndex: 1000,
     display: 'flex',
     flexDirection: 'column',
@@ -404,7 +404,7 @@ const styles = {
     background: 'none',
     border: 'none',
     fontSize: '28px',
-    color: '#999',
+    color: 'var(--muted)',
     cursor: 'pointer',
     lineHeight: 1,
     padding: '4px 8px',
@@ -417,7 +417,7 @@ const styles = {
     top: '30px',
     right: '68px',
     fontSize: '11px',
-    color: '#bbb',
+    color: 'var(--muted)',
     letterSpacing: '0.05em',
     fontFamily: 'inherit',
     zIndex: 1001,
@@ -442,13 +442,13 @@ const styles = {
     fontSize: '13px',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
-    color: '#aaa',
+    color: 'var(--muted)',
     marginBottom: '12px',
     fontWeight: 400,
   },
   offlineBanner: {
     fontSize: '13px',
-    color: '#c0392b',
+    color: 'var(--red)',
     marginBottom: '24px',
     fontWeight: 400,
     lineHeight: 1.5,
@@ -464,11 +464,11 @@ const styles = {
     textAlign: 'left',
     padding: '10px 0',
     fontSize: '16px',
-    color: '#1a1a1a',
+    color: 'var(--fg)',
     cursor: 'pointer',
     fontWeight: 300,
     lineHeight: 1.5,
-    borderBottom: '1px solid #e8e6e3',
+    borderBottom: '1px solid var(--border)',
     transition: 'color 0.15s',
     fontFamily: 'inherit',
   },
@@ -482,7 +482,7 @@ const styles = {
   userMessage: {
     alignSelf: 'flex-end',
     textAlign: 'right',
-    color: '#888',
+    color: 'var(--muted)',
     fontSize: '15px',
     fontWeight: 400,
     lineHeight: 1.6,
@@ -491,7 +491,7 @@ const styles = {
   aiMessage: {
     alignSelf: 'flex-start',
     textAlign: 'left',
-    color: '#1a1a1a',
+    color: 'var(--fg)',
     fontSize: '16px',
     fontWeight: 300,
     lineHeight: 1.75,
@@ -502,7 +502,7 @@ const styles = {
     display: 'inline-block',
     marginLeft: '10px',
     fontSize: '10px',
-    color: '#bbb',
+    color: 'var(--muted)',
     letterSpacing: '0.06em',
     textTransform: 'uppercase',
     verticalAlign: 'middle',
@@ -510,12 +510,12 @@ const styles = {
   },
   offlineMessage: {
     alignSelf: 'flex-start',
-    color: '#999',
+    color: 'var(--muted)',
     fontSize: '13px',
     fontWeight: 400,
     lineHeight: 1.6,
     fontStyle: 'italic',
-    borderTop: '1px solid #e8e6e3',
+    borderTop: '1px solid var(--border)',
     paddingTop: '12px',
   },
   inputArea: {
@@ -525,13 +525,13 @@ const styles = {
     transform: 'translateX(-50%)',
     width: '100%',
     maxWidth: '680px',
-    backgroundColor: '#f7f5f2',
+    backgroundColor: 'var(--bg)',
     padding: '0 24px 32px',
     boxSizing: 'border-box',
   },
   redLine: {
     height: '2px',
-    backgroundColor: '#c0392b',
+    backgroundColor: 'var(--red)',
     marginBottom: '0',
   },
   form: {
@@ -540,16 +540,16 @@ const styles = {
   input: {
     width: '100%',
     border: 'none',
-    borderBottom: '1px solid #ddd',
+    borderBottom: '1px solid var(--border)',
     background: 'transparent',
     fontSize: '18px',
     fontWeight: 300,
-    color: '#1a1a1a',
+    color: 'var(--fg)',
     padding: '16px 0',
     outline: 'none',
     fontFamily: 'inherit',
     boxSizing: 'border-box',
-    caretColor: '#c0392b',
+    caretColor: 'var(--red)',
   },
   typingIndicator: {
     display: 'inline-flex',
@@ -562,7 +562,7 @@ const styles = {
     width: '6px',
     height: '6px',
     borderRadius: '50%',
-    backgroundColor: '#c0392b',
+    backgroundColor: 'var(--red)',
     animation: 'dotPulse 1.2s infinite ease-in-out',
   },
 }

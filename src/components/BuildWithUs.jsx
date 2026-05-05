@@ -181,6 +181,7 @@ export default function BuildWithUs({ setTab }) {
                   fontFamily: 'var(--font)',
                   transition: 'opacity 0.15s, border-color 0.15s',
                   textAlign: 'center',
+                  minHeight: 44,
                 }}
                 onMouseEnter={e => {
                   if (track.id === 'legal') e.currentTarget.style.opacity = '0.8'

@@ -98,6 +98,10 @@ img {
   .leaflet-container {
     height: 360px !important;
   }
+  /* Shrink outer map wrapper to match leaflet height */
+  .map-container {
+    height: 360px !important;
+  }
 
   /* Shrink hero padding on mobile */
   .hero-section {

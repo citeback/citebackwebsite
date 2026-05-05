@@ -42,7 +42,7 @@ export default function LaunchTracker() {
 
       {/* Progress bar */}
       <div style={{
-        height: 6, background: 'rgba(255,255,255,0.08)',
+        height: 6, background: 'var(--border)',
         borderRadius: 3, marginBottom: 24, overflow: 'hidden',
       }}>
         <div style={{
@@ -58,7 +58,7 @@ export default function LaunchTracker() {
           <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
             {m.done
               ? <CheckCircle size={16} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 1 }} />
-              : <Circle size={16} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0, marginTop: 1 }} />}
+              : <Circle size={16} style={{ color: 'var(--border)', flexShrink: 0, marginTop: 1 }} />}
             <span style={{
               fontSize: 13, lineHeight: 1.5,
               color: m.done ? 'var(--text)' : 'var(--muted)',
