@@ -35,11 +35,24 @@ const LazyFallback = ({ label = 'Loading…' }) => (
   <div style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
 )
 
-const tabToPath = (tab) => tab === 'home' ? '/' : `/${tab}`
-const pathToTab = (path) => {
-  const base = path.split('/')[1]
-  return base === '' ? 'home' : base
+const TAB_TO_PATH = {
+  home: '/',
+  campaigns: '/campaigns',
+  map: '/map',
+  registry: '/expert-directory',
+  transparency: '/transparency',
+  trust: '/how-it-works',
+  governance: '/governance',
+  operators: '/run-a-campaign',
+  frontline: '/frontline-funds',
+  feed: '/intelligence-feed',
 }
+
+const PATH_TO_TAB = Object.fromEntries(Object.entries(TAB_TO_PATH).map(([k, v]) => [v, k]))
+PATH_TO_TAB['/'] = 'home'
+
+const tabToPath = (tab) => TAB_TO_PATH[tab] ?? `/${tab}`
+const pathToTab = (path) => PATH_TO_TAB[path] ?? 'home'
 
 export default function App() {
   const navigate = useNavigate()
@@ -91,13 +104,13 @@ export default function App() {
           } />
           <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/map" element={<Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>} />
-          <Route path="/registry" element={<HumanRegistry />} />
+          <Route path="/expert-directory" element={<HumanRegistry />} />
           <Route path="/transparency" element={<Transparency setTab={setTab} />} />
-          <Route path="/trust" element={<TrustFAQ setTab={setTab} />} />
+          <Route path="/how-it-works" element={<TrustFAQ setTab={setTab} />} />
           <Route path="/governance" element={<Governance setTab={setTab} />} />
-          <Route path="/operators" element={<Operators />} />
-          <Route path="/frontline" element={<FrontlineFunds />} />
-          <Route path="/feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
+          <Route path="/run-a-campaign" element={<Operators />} />
+          <Route path="/frontline-funds" element={<FrontlineFunds />} />
+          <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />
