@@ -14,7 +14,7 @@ const funds = [
     id: 2,
     org: 'Institute for Justice + ACLU + EFF',
     title: 'Schmidt v. Norfolk (4th Circuit Court of Appeals)',
-    what: 'A Virginia trial court ruled in May 2024 that Norfolk\'s 172-camera Flock network is a "dragnet over the entire city" legally equivalent to GPS tracking — and requires a warrant. The prosecution appealed. ACLU and EFF filed amicus briefs in April 2026. A 4th Circuit win sets binding precedent for five states.',
+    what: 'Norfolk PD deployed 172 Flock Safety cameras across the city, tracking drivers\' movements without a warrant. A federal district court ruled the network did not violate Fourth Amendment warrant requirements. Plaintiffs appealed to the 4th Circuit. In April 2026, the ACLU, ACLU of Virginia, and EFF filed amicus briefs arguing the network indiscriminately collects sensitive location data and violates Fourth Amendment privacy expectations — the district court ruling should be reversed.',
     why: 'Most consequential Flock case in the country. Federal appellate ruling could force warrant requirements on every Flock deployment in VA, MD, NC, SC, and WV.',
     donateUrl: 'https://www.aclu.org/cases/schmidt-v-norfolk',
     donateLabel: 'Support ACLU',
