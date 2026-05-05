@@ -537,10 +537,10 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
 
       // Disambiguation: multiple layer types nearby — let user pick
       nearby.sort((a, b) => a.dist - b.dist)
-      window.__fr_disambig = nearby
+
       const listItems = nearby.map((entry, i) => {
         const distLabel = entry.dist < 1000 ? `${Math.round(entry.dist)}m` : `${(entry.dist / 1000).toFixed(1)}km`
-        return `<button onclick="window.__fr_pickDisambig(${i})" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:transparent;border:1px solid ${entry.color}22;border-radius:8px;cursor:pointer;text-align:left;margin-bottom:6px">
+        return `<button data-disambig="${i}" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:transparent;border:1px solid ${entry.color}22;border-radius:8px;cursor:pointer;text-align:left;margin-bottom:6px">
           <span style="font-size:16px">${entry.icon}</span>
           <div style="flex:1">
             <div style="font-size:12px;font-weight:700;color:${entry.color}">${entry.label}</div>
@@ -550,18 +550,26 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
         </button>`
       }).join('')
 
-      window.__fr_pickDisambig = (i) => {
-        map.closePopup()
-        openItemPopup(map, window.__fr_disambig[i])
-      }
-
-      L.popup({ maxWidth: 300 })
+      const disambigPopup = L.popup({ maxWidth: 300 })
         .setLatLng([lat, lng])
         .setContent(`<div style="font-family:Inter,sans-serif;padding:4px">
           <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:10px;letter-spacing:0.05em">NEARBY — TAP TO SELECT</div>
           ${listItems}
         </div>`)
-        .openOn(map)
+      disambigPopup.openOn(map)
+
+      // Attach real event listeners after popup is in the DOM (avoids CSP/inline-onclick issues)
+      const popupEl = disambigPopup.getElement()
+      if (popupEl) {
+        popupEl.querySelectorAll('[data-disambig]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation()
+            const idx = parseInt(btn.getAttribute('data-disambig'))
+            map.closePopup()
+            openItemPopup(map, nearby[idx])
+          })
+        })
+      }
     }
   })
 
