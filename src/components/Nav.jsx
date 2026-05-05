@@ -40,7 +40,7 @@ export default function Nav({ tab, setTab }) {
   }, [moreOpen])
 
   return (
-    <nav style={{
+    <nav aria-label="Main navigation" style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -106,6 +106,9 @@ export default function Nav({ tab, setTab }) {
           <div ref={moreRef} style={{ position: 'relative' }}>
             <button
               onClick={() => setMoreOpen(o => !o)}
+              aria-haspopup="true"
+              aria-expanded={moreOpen}
+              aria-label="More navigation links"
               style={{
                 background: 'none',
                 border: 'none',

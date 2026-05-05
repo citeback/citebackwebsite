@@ -45,20 +45,23 @@ export default function Footer({ setTab }) {
         flexWrap: 'wrap',
       }}>
         {navLinks.map(({ label, tab }) => (
-          <span
+          <button
             key={label}
             onClick={() => setTab && setTab(tab)}
             style={{
               fontSize: 13,
               color: 'var(--gray)',
               cursor: 'pointer',
-              textDecoration: 'none',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              fontFamily: 'inherit',
             }}
-            onMouseEnter={e => e.target.style.color = 'var(--fg)'}
-            onMouseLeave={e => e.target.style.color = 'var(--gray)'}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--fg)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--gray)'}
           >
             {label}
-          </span>
+          </button>
         ))}
       </div>
 

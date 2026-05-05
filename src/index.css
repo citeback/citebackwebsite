@@ -50,6 +50,33 @@ button { cursor: pointer; font-family: inherit; }
 .leaflet-container { background: #0d0d10 !important; }
 
 /* Glassmorphism utility */
+/* Skip-to-content link (WCAG 2.4.1) */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 8px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--fg, #1a1a1a);
+  color: var(--bg, #fafaf8);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  transition: top 0.15s;
+  outline: 2px solid var(--accent, #dc2626);
+  outline-offset: 2px;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* Focus visible for keyboard users (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--accent, #dc2626);
+  outline-offset: 2px;
+}
+
 .glass {
   background: var(--card-bg) !important;
   backdrop-filter: var(--card-blur) !important;

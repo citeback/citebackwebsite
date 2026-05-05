@@ -4,9 +4,9 @@ const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
   { value: '7', label: 'NM Cameras (via FOIA)' },
-  { value: '7', label: 'Campaigns Queued' },
-  { value: '0', label: 'Actions Funded' },
-  { value: 'XMR+ZANO', label: 'Accepted Currencies' },
+  { value: '7', label: 'Campaigns Under Review' },
+  { value: '4/10', label: 'Launch Gates Cleared' },
+  { value: 'XMR+ZANO', label: 'Monero + Zano — privacy coins, no card, no ID' },
 ]
 
 export default function Hero({ setTab }) {
@@ -93,7 +93,7 @@ export default function Hero({ setTab }) {
             textTransform: 'uppercase',
             fontWeight: 600,
           }}>
-            Pre-Launch — Campaigns Under Community Review
+            Surveillance Resistance Crowdfunding · Pre-Launch
           </div>
           <div style={{
             fontSize: 11,
@@ -160,7 +160,7 @@ export default function Hero({ setTab }) {
               fontWeight: 400,
               marginBottom: 40,
             }}>
-              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — paid in XMR + ZANO. No account. No identity. No trail.
+              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — funded with Monero (XMR) or Zano, privacy cryptocurrencies that leave no traceable transaction history. No account. No identity. No trail.
             </p>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

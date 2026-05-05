@@ -49,8 +49,11 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Skip-to-content link (WCAG 2.4.1) */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
+      <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column' }}>
       <ActivityTicker />
 
       {tab === 'home' && (
@@ -99,6 +102,7 @@ export default function App() {
         </button>
       )}
 
+      </main>
       <Footer setTab={setTab} />
       <ThemePicker />
 

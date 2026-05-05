@@ -1,7 +1,7 @@
 import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Bell, Camera, Lock, GitMerge, Zap, Award } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { typeColors } from '../data/campaigns'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
@@ -12,6 +12,36 @@ export default function CampaignModal({ campaign, onClose }) {
   const [walletTab, setWalletTab] = useState('address')
   const [currency, setCurrency] = useState('XMR')
   const [interested, setInterested] = useState(false)
+  const modalRef = useRef(null)
+  const headingId = 'campaign-modal-heading'
+
+  useEffect(() => {
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    first?.focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') {
+        const focusableNow = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const firstNow = focusableNow[0]
+        const lastNow = focusableNow[focusableNow.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === firstNow) { e.preventDefault(); lastNow?.focus() }
+        } else {
+          if (document.activeElement === lastNow) { e.preventDefault(); firstNow?.focus() }
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
   const pct = campaign.walletXMR ? Math.min(100, Math.round((campaign.raised / campaign.goal) * 100)) : 0
   const tc = typeColors[campaign.type]
   const funded = campaign.status === 'funded'
@@ -38,18 +68,29 @@ export default function CampaignModal({ campaign, onClose }) {
   })
 
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 20, maxWidth: 560, width: '100%',
-        maxHeight: '92vh', overflowY: 'auto',
-        overflowX: 'hidden',
-        display: 'flex', flexDirection: 'column',
-      }}>
+    <div
+      onClick={onClose}
+      role="presentation"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
+      }}
+    >
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--bg2)', border: '1px solid var(--border)',
+          borderRadius: 20, maxWidth: 560, width: '100%',
+          maxHeight: '92vh', overflowY: 'auto',
+          overflowX: 'hidden',
+          display: 'flex', flexDirection: 'column',
+        }}
+      >
         {/* Header */}
         <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px) 20px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
@@ -62,7 +103,7 @@ export default function CampaignModal({ campaign, onClose }) {
               <X size={20} />
             </button>
           </div>
-          <h2 style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, marginBottom: 12 }}>{campaign.title}</h2>
+          <h2 id={headingId} style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, marginBottom: 12 }}>{campaign.title}</h2>
           <p style={{ color: 'var(--muted)', lineHeight: 1.75, fontSize: 14 }}>{campaign.description}</p>
           {campaign.source && (
             <a href={campaign.source} target="_blank" rel="noopener noreferrer" style={{
@@ -292,15 +333,17 @@ export default function CampaignModal({ campaign, onClose }) {
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
                 {currency === 'XMR' ? (
                   <><strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
-                  Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (iOS/Android) or{' '}
-                  <a href="https://getmonero.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Monero GUI</a> (desktop).{' '}
-                  Get XMR via <a href="https://xmrswap.me" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>atomic swap</a> (BTC→XMR, no KYC) or your preferred exchange. For maximum privacy, broadcast your transaction over Tor.</>
+                  Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (iOS/Android),{' '}
+                  <a href="https://monerujo.io" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Monerujo</a> (Android), or{' '}
+                  <a href="https://featherwallet.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Feather Wallet</a> (desktop — built-in Tor).{' '}
+                  Get XMR via <a href="https://haveno.exchange" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Haveno</a> (P2P DEX, no KYC) or{' '}
+                  <a href="https://xmrswap.me" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>atomic swap</a> (BTC→XMR, no KYC). For maximum privacy, broadcast your transaction over Tor.</>
                 ) : (
                   <><strong style={{ color: 'var(--text)' }}>New to Zano?</strong>{' '}
                   Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Zano Wallet</a> (desktop) or{' '}
-                  <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (mobile — Zano supported).
-                  Get ZANO at <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>KuCoin</a> or{' '}
-                  <a href="https://tradeogre.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>TradeOgre</a>.</>
+                  <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (mobile — Zano supported).{' '}
+                  Get ZANO at <a href="https://tradeogre.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>TradeOgre</a> (no KYC) or{' '}
+                  <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>KuCoin</a> (KYC required).</>
                 )}
               </div>
 
