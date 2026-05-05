@@ -467,7 +467,7 @@ function OSMCanvasLayer({ cameras }) {
             </div>
             ${nearest.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${nearest.op}</div>` : ''}
             <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${nearest.lat.toFixed(6)}, ${nearest.lon.toFixed(6)}</strong></div>
-            <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" style="color:#5dade2">#${nearest.id} →</a></div>
+            <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${nearest.id} →</a></div>
             ${photoStrip}
             <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
               <a href="${osmUrl}" target="_blank" rel="noopener noreferrer"
