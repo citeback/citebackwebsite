@@ -2,7 +2,7 @@ const tracks = [
   {
     id: 'legal',
     label: 'Legal',
-    tag: 'Attorneys · Paralegals · Researchers',
+    tag: 'Legal Researchers · Paralegals · Researchers',
     description:
       'Help campaigns move from funded to filed. Review proposed actions for legal viability, draft demand letters, advise on FOIA strategy, or connect operators with counsel. Engagement is fully on your terms.',
     details: [

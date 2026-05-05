@@ -2,16 +2,16 @@ import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu } from 
 import { useState, useEffect, useRef } from 'react'
 
 const typeConfig = {
-  attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Attorney' },
-  billboard: { icon: <Megaphone size={20} />, color: '#ff6b6b', colorRaw: '255,107,107', label: 'Billboard Operator' },
+  attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Legal Researcher' },
+  billboard: { icon: <Megaphone size={20} />, color: '#ff6b6b', colorRaw: '255,107,107', label: 'Media Coordinator' },
   foia: { icon: <FileSearch size={20} />, color: '#bb8fce', colorRaw: '187,143,206', label: 'FOIA Specialist' },
   verifier: { icon: <Shield size={20} />, color: '#f39c12', colorRaw: '243,156,18', label: 'Camera Verifier' },
   technical: { icon: <Cpu size={20} />, color: '#2ecc71', colorRaw: '46,204,113', label: 'Technical Contributor' },
 }
 
 const roles = [
-  { id: 'attorney', label: '⚖️ Attorney', desc: 'Civil liberties, Fourth Amendment, FOIA litigation' },
-  { id: 'billboard', label: '📋 Billboard Operator', desc: 'Billboard rental, vendor relationships, placement' },
+  { id: 'attorney', label: '⚖️ Legal Researcher', desc: 'Legal research, paralegal work, Fourth Amendment analysis, FOIA escalation — not licensed legal representation' },
+  { id: 'billboard', label: '📋 Media Coordinator', desc: 'Verified vendor relationships with billboard and print media operators — identity confirmed privately, vendor access verified before campaigns go live' },
   { id: 'foia', label: '🗂 FOIA Specialist', desc: 'Public records requests, tracking, escalation' },
   { id: 'verifier', label: '📸 Camera Verifier', desc: 'Physical verification of ALPR cameras with GPS-tagged photos' },
   { id: 'technical', label: '🖥 Technical Contributor', desc: 'TEE engineering, Zano/XMR RPC integration, frontend dev, FOIA automation — pseudonymous OK' },
@@ -197,9 +197,9 @@ export default function HumanRegistry() {
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Expert Directory</h2>
           <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, maxWidth: 480, lineHeight: 1.6 }}>
-            Vetted operators who execute funded campaigns — attorneys, billboard operators, FOIA specialists,
-            and technical contributors. Verified by peer vouching, not identity documents.
-            No names. No dox. Just track records. Technical contributors may register pseudonymously via XMR or ZANO address.
+            Vetted operators who execute funded campaigns — legal researchers, media coordinators, FOIA specialists,
+            and technical contributors. Real-world executors verify identity and vendor access privately with the platform — never published.
+            Technical contributors register pseudonymously by XMR or ZANO address only. No public identity required for anyone.
           </p>
         </div>
         <button onClick={() => setShowApply(true)} style={{
