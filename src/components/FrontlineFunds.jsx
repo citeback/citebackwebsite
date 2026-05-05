@@ -27,7 +27,7 @@ const funds = [
     title: 'Williams v. City of Chicago — ShotSpotter Class Action',
     what: 'Chicago PD used ShotSpotter/SoundThinking acoustic gunfire detection to justify stops, searches, and prosecutions without adequate evidence. Michael Williams, Daniel Ortiz, and class members are suing. SoundThinking tried to quash a subpoena for its own algorithm in 2023. Still in active discovery.',
     why: 'The most significant ShotSpotter legal challenge in the country. If it succeeds, it forces disclosure of the algorithm and establishes that acoustic surveillance alone can\'t justify a stop or prosecution.',
-    donateUrl: 'https://www.macarthurjustice.org/donate/',
+    donateUrl: 'https://secure.everyaction.com/WIw5_qbl9USz1BZMdtqujQ2',
     donateLabel: 'Support MacArthur Justice Center',
     status: 'Active — class action, ongoing discovery',
     tag: 'Class Action',

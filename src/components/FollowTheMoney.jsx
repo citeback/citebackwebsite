@@ -18,7 +18,7 @@ const VENDOR_DATA = [
     color: '#ff6b35',
     note: 'Largest surveillance-tech federal contractor in USASpending records. Provides data fusion for ICE, DHS, DoD, and various law-enforcement agencies.',
     ldaQuery: 'palantir',
-    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=palantir',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/public/filing/search/?client_name=palantir',
   },
   {
     name: 'Axon',
@@ -32,7 +32,7 @@ const VENDOR_DATA = [
     color: '#ffd166',
     note: 'Dominates federal body-camera contracts. Evidence.com cloud platform stores footage from thousands of agencies — centralizing law-enforcement video under a single corporate SaaS.',
     ldaQuery: 'axon enterprise',
-    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=axon',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/public/filing/search/?client_name=axon',
   },
   {
     name: 'Clearview AI',
@@ -46,7 +46,7 @@ const VENDOR_DATA = [
     color: '#e63946',
     note: 'Scraped billions of photos without consent. ICE, CBP, and Army use it for identification. Multiple GDPR bans in EU; legal challenges ongoing in the US.',
     ldaQuery: 'clearview',
-    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=clearview',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/public/filing/search/?client_name=clearview',
   },
   {
     name: 'ShotSpotter / SoundThinking',
@@ -60,7 +60,7 @@ const VENDOR_DATA = [
     color: '#a855f7',
     note: 'Gunshot detection with documented false-positive problems. Internal data showed ~90% of alerts led to no evidence of a crime. Rebranded to SoundThinking in 2023.',
     ldaQuery: 'soundthinking',
-    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=soundthinking',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/public/filing/search/?client_name=soundthinking',
   },
   {
     name: 'Flock Safety',
@@ -88,7 +88,7 @@ const VENDOR_DATA = [
     color: '#f59e0b',
     note: 'Operates the DRN — the largest commercial ALPR database in the US, with 12+ billion plate scans sourced from repo trucks, parking companies, and private operators. ICE and CBP purchase bulk subscription access to track movement histories without warrants or public disclosure. Acquired by Motorola Solutions in 2019; now embedded in the Motorola public-safety ecosystem used by thousands of agencies nationwide.',
     ldaQuery: 'motorola solutions',
-    ldaSearchUrl: 'https://lda.senate.gov/filings/list/filing/?client_name=motorola+solutions',
+    ldaSearchUrl: 'https://lda.senate.gov/filings/public/filing/search/?client_name=motorola+solutions',
   },
 ]
 
