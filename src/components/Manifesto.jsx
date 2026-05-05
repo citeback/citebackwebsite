@@ -3,7 +3,7 @@ export default function Manifesto({ setTab }) {
     { they: 'Built the cage.', we: 'Document every bar.' },
     { they: 'Scan without consent.', we: 'Expose without apology.' },
     { they: 'Sell your data to anyone who pays.', we: 'Fund the litigation to stop it.' },
-    { they: 'Pressure donors to back down.', we: 'Hold no keys. The TEE controls the money — not us.' },
+    { they: 'Pressure donors to back down.', we: 'Hold no keys. By design, the TEE will control the money — not us.' },
   ]
 
   return (

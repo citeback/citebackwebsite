@@ -53,7 +53,7 @@ export default function GuaranteeSection({ setTab }) {
               marginBottom: '36px',
             }}
           >
-            No human holds the keys.
+            At launch: no human holds the keys.
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
