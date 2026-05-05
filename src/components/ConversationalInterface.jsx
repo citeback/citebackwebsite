@@ -348,14 +348,14 @@ export default function ConversationalInterface({ onClose }) {
 }
 
 const THINKING_PHRASES = [
-  'Searching 92,847 camera records…',
+  'Searching surveillance records…',
+  'Reviewing the data…',
   'Checking FOIA precedents…',
-  'Reviewing surveillance law…',
-  'Cross-referencing NM statutes…',
-  'Analyzing Flock Safety contracts…',
-  'Looking up Fourth Amendment case law…',
-  'Checking active campaigns…',
-  'Processing…',
+  'Analyzing…',
+  'Reviewing legal context…',
+  'Processing your question…',
+  'Checking our records…',
+  'Thinking…',
 ]
 
 function TypingIndicator() {
