@@ -152,6 +152,30 @@ export default function CampaignModal({ campaign, onClose }) {
         {/* Body */}
         <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px)', display: 'flex', flexDirection: 'column', gap: 18 }}>
 
+          {/* Win condition — all non-verify campaigns */}
+          {campaign.type !== 'verify' && campaign.winCondition && (
+            <div style={{ background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 12, padding: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 11, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Win Condition</div>
+              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>{campaign.winCondition}</div>
+            </div>
+          )}
+
+          {/* Milestones */}
+          {campaign.milestones && campaign.milestones.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontWeight: 700, fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Funding Milestones</div>
+              {campaign.milestones.map((m, i) => (
+                <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{m.label}</div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--accent)' }}>${m.amount.toLocaleString()}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.55 }}>{m.desc}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {campaign.type === 'verify' ? (
             /* Verification Bounty — full game theory breakdown */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

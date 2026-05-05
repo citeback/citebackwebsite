@@ -128,6 +128,10 @@ export default function Hero({ setTab }) {
               <span
                 ref={el => redactedRefs.current[0] = el}
                 className="redacted"
+                role="mark"
+                aria-label="surveillance (redacted — hover or tap to reveal)"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.currentTarget.classList.toggle('revealed'); setHintVisible(false) } }}
               >
                 surveillance
               </span>
@@ -136,6 +140,10 @@ export default function Hero({ setTab }) {
               <span
                 ref={el => redactedRefs.current[1] = el}
                 className="redacted"
+                role="mark"
+                aria-label="everyone (redacted — hover or tap to reveal)"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.currentTarget.classList.toggle('revealed'); setHintVisible(false) } }}
               >
                 everyone
               </span>
@@ -144,6 +152,10 @@ export default function Hero({ setTab }) {
               <span
                 ref={el => redactedRefs.current[2] = el}
                 className="redacted"
+                role="mark"
+                aria-label="fighting (redacted — hover or tap to reveal)"
+                tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.currentTarget.classList.toggle('revealed'); setHintVisible(false) } }}
               >
                 fighting
               </span>
@@ -283,6 +295,11 @@ export default function Hero({ setTab }) {
           position: relative;
           display: inline;
           cursor: default;
+        }
+        .redacted:focus-visible {
+          outline: 2px solid var(--accent, #dc2626);
+          outline-offset: 4px;
+          border-radius: 2px;
         }
         @keyframes redactedReveal {
           0%   { opacity: 1; }

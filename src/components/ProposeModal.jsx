@@ -108,9 +108,23 @@ export default function ProposeModal({ onClose, prefill = {} }) {
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Proposal Submitted</h3>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 24px' }}>
-              Your campaign proposal is in the queue. During pre-launch, proposals are reviewed by the operator team within 24–72 hours. Once governance goes live, community votes will govern approvals.
-              If approved, dedicated Monero (XMR) and Zano (ZANO) wallets will be generated and the campaign opens for funding.
+            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 20px' }}>
+              Your proposal is in the queue. Here’s what happens next:
+            </p>
+            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 380, margin: '0 auto 20px' }}>
+              {[
+                { step: '24–72h', text: 'Team reviews for legality, specificity, and verifiable public record support' },
+                { step: 'If approved', text: 'TEE generates dedicated XMR + ZANO wallets — no human touches the keys' },
+                { step: 'Goes live', text: 'Wallet addresses appear on this page and funding opens immediately' },
+              ].map(({ step, text }, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13 }}>
+                  <span style={{ background: 'var(--accent)', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 100, whiteSpace: 'nowrap', marginTop: 2, flexShrink: 0 }}>{step}</span>
+                  <span style={{ color: 'var(--muted)', lineHeight: 1.55 }}>{text}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ color: 'var(--muted)', fontSize: 12, lineHeight: 1.6, maxWidth: 380, margin: '0 auto 24px' }}>
+              Once governance goes live, community votes will govern approvals. Bookmark this page — if approved, your campaign will appear here.
             </p>
             <button onClick={onClose} style={{
               background: 'var(--accent)', border: 'none', color: '#fff',

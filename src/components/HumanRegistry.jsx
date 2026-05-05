@@ -1,5 +1,5 @@
 import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const typeConfig = {
   attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Attorney' },
@@ -22,6 +22,34 @@ function ApplyModal({ onClose }) {
   const [form, setForm] = useState({ role: '', location: '', background: '', contact: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
+  const modalRef = useRef(null)
+  const headingId = 'apply-modal-heading'
+
+  useEffect(() => {
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    focusable[0]?.focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') {
+        const els = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const first = els[0]
+        const last = els[els.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last?.focus() }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first?.focus() }
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -47,22 +75,33 @@ function ApplyModal({ onClose }) {
   }
 
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 18, padding: 32, maxWidth: 520, width: '100%',
-        maxHeight: '90vh', overflowY: 'auto',
-      }}>
+    <div
+      onClick={onClose}
+      role="presentation"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      }}
+    >
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--bg2)', border: '1px solid var(--border)',
+          borderRadius: 18, padding: 32, maxWidth: 520, width: '100%',
+          maxHeight: '90vh', overflowY: 'auto',
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: 20 }}>Apply to the Registry</h2>
+            <h2 id={headingId} style={{ fontWeight: 800, fontSize: 20 }}>Apply to the Registry</h2>
             <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>No identity required — contact optional</div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
+          <button onClick={onClose} aria-label="Close application form" style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={20} />
           </button>
         </div>
@@ -99,21 +138,21 @@ function ApplyModal({ onClose }) {
             </div>
 
             <div>
-              <label style={labelStyle}>Location / Region</label>
-              <input style={inputStyle} placeholder="e.g. New Mexico, Southwest US, Remote"
+              <label htmlFor="apply-location" style={labelStyle}>Location / Region</label>
+              <input id="apply-location" style={inputStyle} placeholder="e.g. New Mexico, Southwest US, Remote"
                 value={form.location} onChange={e => set('location', e.target.value)} />
             </div>
 
             <div>
-              <label style={labelStyle}>Background & Experience</label>
-              <textarea style={{ ...inputStyle, height: 110, resize: 'vertical' }}
+              <label htmlFor="apply-background" style={labelStyle}>Background & Experience</label>
+              <textarea id="apply-background" style={{ ...inputStyle, height: 110, resize: 'vertical' }}
                 placeholder="Describe your relevant experience. No identifying info required — focus on what you've done and what you can execute."
                 value={form.background} onChange={e => set('background', e.target.value)} />
             </div>
 
             <div>
-              <label style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle, or ProtonMail)</label>
-              <input style={inputStyle} placeholder="How to reach you if approved. Never shared publicly."
+              <label htmlFor="apply-contact" style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle, or ProtonMail)</label>
+              <input id="apply-contact" style={inputStyle} placeholder="How to reach you if approved. Never shared publicly."
                 value={form.contact} onChange={e => set('contact', e.target.value)} />
             </div>
 
