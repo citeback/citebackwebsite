@@ -421,71 +421,145 @@ function distanceM(lat1, lon1, lat2, lon2) {
 }
 
 // ─── OSM Canvas Layer ─────────────────────────────────────────────────────────
-function OSMCanvasLayer({ cameras }) {
+// ─── Popup HTML builders ────────────────────────────────────────────────────
+function buildAlprPopupHTML(camera, map) {
+  const osmUrl = `https://www.openstreetmap.org/node/${camera.id}`
+  const googleUrl = `https://www.google.com/maps?q=${camera.lat},${camera.lon}`
+  const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${camera.lat},${camera.lon}`
+  const photos = (window.__fr_photoStore || {})[camera.id] || []
+  const approved = photos.filter(p => p.status === 'approved')
+  const pending = photos.filter(p => p.status === 'pending')
+  const photoStrip = approved.length > 0
+    ? `<div style="margin:10px 0 6px"><div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:6px">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div><div style="display:flex;gap:4px;flex-wrap:wrap">${approved.map(p => `<img src="${p.dataUrl}" style="width:80px;height:55px;object-fit:cover;border-radius:5px;border:1px solid #292524">`).join('')}</div></div>`
+    : pending.length > 0
+      ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
+      : ''
+  return `<div style="font-family:Inter,sans-serif;padding:4px">
+    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:#e63946">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
+    ${camera.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${camera.op}</div>` : ''}
+    <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
+    <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${camera.id} →</a></div>
+    ${photoStrip}
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+      <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#5dade2;text-decoration:none">📡 View on OpenStreetMap →</a>
+      <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#e63946;text-decoration:none">🗺 Google Maps →</a>
+      <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#2ecc71;text-decoration:none">📷 Street View →</a>
+      <button onclick="if(window.__fr_openPhotoSubmit)window.__fr_openPhotoSubmit('${camera.id}',${camera.lat},${camera.lon})" style="font-size:12px;font-weight:700;color:#000;background:#f59e0b;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;text-align:left;margin-top:2px">📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}</button>
+    </div>
+  </div>`
+}
+
+function buildAgencyPopupHTML(agency, layer) {
+  const vendorProfile = getVendorProfile(agency.vendor)
+  const vendorBlock = vendorProfile
+    ? `<div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-radius:6px;padding:8px 10px;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:800;color:#ef4444;margin-bottom:3px">🚩 ${vendorProfile.name}</div>
+        <div style="font-size:11px;color:#888;margin-bottom:4px;line-height:1.4">${vendorProfile.tagline}</div>
+        <div style="font-size:10px;color:#666;line-height:1.5">${vendorProfile.controversies[0]}</div>
+        ${vendorProfile.url ? `<a href="${vendorProfile.url}" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:#ef4444;font-weight:600;display:block;margin-top:4px">Investigate ${vendorProfile.name} →</a>` : ''}
+      </div>`
+    : ''
+  const terminatedBadge = agency.status === 'terminated'
+    ? `<div style="font-size:10px;font-weight:700;color:#2ecc71;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:4px;padding:2px 7px;margin-bottom:6px;display:inline-block;letter-spacing:0.08em">✓ PROGRAM TERMINATED</div>`
+    : ''
+  return `<div style="font-family:Inter,sans-serif;min-width:260px;max-width:320px;padding:4px">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+      <span style="font-size:16px">${layer.icon}</span>
+      <span style="font-weight:800;font-size:13px;color:${layer.color}">${layer.label.toUpperCase()}</span>
+    </div>
+    ${terminatedBadge}
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px">${agency.name}</div>
+    <div style="font-size:12px;color:#666;margin-bottom:4px">📍 ${agency.city}, ${agency.state}</div>
+    ${agency.vendor ? `<div style="font-size:12px;color:#555;margin-bottom:4px"><strong>Vendor/System:</strong> ${agency.vendor}</div>` : ''}
+    ${vendorBlock}
+    <div style="font-size:11px;font-weight:700;color:${agency.confirmed ? '#10b981' : '#f59e0b'};margin-bottom:6px">${agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}</div>
+    ${agency.notes ? `<div style="font-size:11px;color:#444;line-height:1.55;background:#f8f6f2;border:1px solid #e5e0d8;border-radius:6px;padding:6px 8px;margin-bottom:8px">ℹ️ ${agency.notes}</div>` : ''}
+    <div style="font-size:10px;color:#777;line-height:1.5;border-top:1px solid #eee;padding-top:6px;margin-bottom:8px"><strong>Source:</strong> ${agency.source}</div>
+    ${agency.url ? `<div style="margin-bottom:8px"><a href="${agency.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:600;color:${layer.color};text-decoration:none">View source →</a></div>` : ''}
+    <button onclick="window.dispatchEvent(new CustomEvent('openPropose',{detail:{agency:'${agency.name.replace(/'/g, '&#39;')}',location:'${(agency.city + ', ' + agency.state).replace(/'/g, '&#39;')}'}}))" style="width:100%;padding:7px 10px;background:transparent;border:1px solid ${layer.color};border-radius:6px;color:${layer.color};font-size:11px;font-weight:700;cursor:pointer">📋 Propose FOIA →</button>
+  </div>`
+}
+
+function openItemPopup(map, entry, latlng) {
+  const html = entry.type === 'alpr'
+    ? buildAlprPopupHTML(entry.item)
+    : buildAgencyPopupHTML(entry.item, entry.layer)
+  const lat = entry.type === 'alpr' ? entry.item.lat : entry.item.lat
+  const lng = entry.type === 'alpr' ? entry.item.lon : entry.item.lng
+  L.popup({ maxWidth: 320 }).setLatLng([lat, lng]).setContent(html).openOn(map)
+}
+
+// ─── Unified tap handler + ALPR canvas renderer ──────────────────────────────
+function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
   const map = useMapEvents({
     click(e) {
-      if (!cameras.length) return
       const { lat, lng } = e.latlng
       const zoom = map.getZoom()
       const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
       const touchMultiplier = isTouchDevice ? 2.5 : 1
       const clickRadiusM = (50000 / Math.pow(2, zoom - 4)) * touchMultiplier
 
-      let nearest = null, minDist = Infinity
-      for (const c of cameras) {
-        const d = distanceM(lat, lng, c.lat, c.lon)
-        if (d < minDist) { minDist = d; nearest = c }
+      const nearby = []
+
+      // ALPR cameras (canvas layer)
+      if (cameras.length && activeLayers.has('alpr')) {
+        let nearest = null, minDist = Infinity
+        for (const c of cameras) {
+          const d = distanceM(lat, lng, c.lat, c.lon)
+          if (d < minDist) { minDist = d; nearest = c }
+        }
+        if (nearest && minDist <= clickRadiusM) {
+          nearby.push({ type: 'alpr', item: nearest, dist: minDist, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: '📷', color: '#e63946' })
+        }
       }
-      if (!nearest || minDist > clickRadiusM) return
 
-      const osmUrl = `https://www.openstreetmap.org/node/${nearest.id}`
-      const googleUrl = `https://www.google.com/maps?q=${nearest.lat},${nearest.lon}`
-      const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${nearest.lat},${nearest.lon}`
+      // Non-ALPR overlay layers
+      for (const layer of (effLayers || [])) {
+        if (layer.id === 'alpr' || !layer.data || !activeLayers.has(layer.id)) continue
+        let nearest = null, minDist = Infinity
+        for (const a of layer.data) {
+          if (a.status === 'terminated') continue
+          const d = distanceM(lat, lng, a.lat, a.lng)
+          if (d < minDist) { minDist = d; nearest = a }
+        }
+        if (nearest && minDist <= clickRadiusM) {
+          nearby.push({ type: 'agency', layer, item: nearest, dist: minDist, label: nearest.name, icon: layer.icon, color: layer.color })
+        }
+      }
 
-      // Pull submitted photos from global store
-      const photos = (window.__fr_photoStore || {})[nearest.id] || []
-      const approved = photos.filter(p => p.status === 'approved')
-      const pending = photos.filter(p => p.status === 'pending')
+      if (nearby.length === 0) return
 
-      const photoStrip = approved.length > 0
-        ? `<div style="margin:10px 0 6px">
-            <div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:6px">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap">
-              ${approved.map(p => `<img src="${p.dataUrl}" style="width:80px;height:55px;object-fit:cover;border-radius:5px;border:1px solid #292524">`).join('')}
-            </div>
-          </div>`
-        : pending.length > 0
-          ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0;display:flex;align-items:center;gap:5px">
-              ⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review
-            </div>`
-          : ''
+      if (nearby.length === 1) {
+        openItemPopup(map, nearby[0])
+        return
+      }
 
-      L.popup({ maxWidth: 320 })
-        .setLatLng([nearest.lat, nearest.lon])
-        .setContent(`
-          <div style="font-family:Inter,sans-serif;padding:4px">
-            <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:#e63946">
-              ${nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera'}
-            </div>
-            ${nearest.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${nearest.op}</div>` : ''}
-            <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${nearest.lat.toFixed(6)}, ${nearest.lon.toFixed(6)}</strong></div>
-            <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${nearest.id} →</a></div>
-            ${photoStrip}
-            <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
-              <a href="${osmUrl}" target="_blank" rel="noopener noreferrer"
-                style="font-size:12px;font-weight:600;color:#5dade2;text-decoration:none">📡 View on OpenStreetMap →</a>
-              <a href="${googleUrl}" target="_blank" rel="noopener noreferrer"
-                style="font-size:12px;font-weight:600;color:#e63946;text-decoration:none">🗺 Google Maps →</a>
-              <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer"
-                style="font-size:12px;font-weight:600;color:#2ecc71;text-decoration:none">📷 Street View →</a>
-              <button
-                onclick="if(window.__fr_openPhotoSubmit)window.__fr_openPhotoSubmit('${nearest.id}',${nearest.lat},${nearest.lon})"
-                style="font-size:12px;font-weight:700;color:#000;background:#f59e0b;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;text-align:left;margin-top:2px">
-                📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}
-              </button>
-            </div>
+      // Disambiguation: multiple layer types nearby — let user pick
+      nearby.sort((a, b) => a.dist - b.dist)
+      window.__fr_disambig = nearby
+      const listItems = nearby.map((entry, i) => {
+        const distLabel = entry.dist < 1000 ? `${Math.round(entry.dist)}m` : `${(entry.dist / 1000).toFixed(1)}km`
+        return `<button onclick="window.__fr_pickDisambig(${i})" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:transparent;border:1px solid ${entry.color}22;border-radius:8px;cursor:pointer;text-align:left;margin-bottom:6px">
+          <span style="font-size:16px">${entry.icon}</span>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:700;color:${entry.color}">${entry.label}</div>
+            <div style="font-size:10px;color:#888">${distLabel} away</div>
           </div>
-        `)
+          <span style="font-size:11px;color:#aaa">→</span>
+        </button>`
+      }).join('')
+
+      window.__fr_pickDisambig = (i) => {
+        map.closePopup()
+        openItemPopup(map, window.__fr_disambig[i])
+      }
+
+      L.popup({ maxWidth: 300 })
+        .setLatLng([lat, lng])
+        .setContent(`<div style="font-family:Inter,sans-serif;padding:4px">
+          <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:10px;letter-spacing:0.05em">NEARBY — TAP TO SELECT</div>
+          ${listItems}
+        </div>`)
         .openOn(map)
     }
   })
@@ -1205,7 +1279,7 @@ export default function CameraMap() {
             </CircleMarker>
           ))}
 
-          {filteredCameras.length > 0 && activeLayers.has('alpr') && <OSMCanvasLayer cameras={filteredCameras} />}
+          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} />
 
           {/* Non-ALPR surveillance overlay layers */}
           {EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data && activeLayers.has(l.id)).map(layer =>
@@ -1221,102 +1295,7 @@ export default function CameraMap() {
                   weight: agency.status === 'terminated' ? 2 : 1.5,
                   opacity: agency.status === 'terminated' ? 0.9 : 0.6,
                 }}
-              >
-                <Popup>
-                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 260, maxWidth: 320, padding: 4 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                      <span style={{ fontSize: 16 }}>{layer.icon}</span>
-                      <span style={{ fontWeight: 800, fontSize: 13, color: layer.color }}>
-                        {layer.label.toUpperCase()}
-                      </span>
-                    </div>
-                    {agency.status === 'terminated' && (
-                      <div style={{ fontSize: 10, fontWeight: 700, color: '#2ecc71', background: 'rgba(46,204,113,0.1)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 4, padding: '2px 7px', marginBottom: 6, display: 'inline-block', letterSpacing: '0.08em' }}>✓ PROGRAM TERMINATED</div>
-                    )}
-                    <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{agency.name}</div>
-                    <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
-                      📍 {agency.city}, {agency.state}
-                    </div>
-                    {agency.vendor && (
-                      <div style={{ fontSize: 12, color: '#555', marginBottom: 4 }}>
-                        <strong>Vendor/System:</strong> {agency.vendor}
-                      </div>
-                    )}
-                    {(() => {
-                      const vendorProfile = getVendorProfile(agency.vendor)
-                      return vendorProfile ? (
-                        <div style={{
-                          background: 'rgba(220,38,38,0.06)',
-                          border: '1px solid rgba(220,38,38,0.2)',
-                          borderRadius: 6, padding: '8px 10px', marginBottom: 8
-                        }}>
-                          <div style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', marginBottom: 3 }}>
-                            🚩 {vendorProfile.name}
-                          </div>
-                          <div style={{ fontSize: 11, color: '#888', marginBottom: 4, lineHeight: 1.4 }}>
-                            {vendorProfile.tagline}
-                          </div>
-                          <div style={{ fontSize: 10, color: '#666', lineHeight: 1.5 }}>
-                            {vendorProfile.controversies[0]}
-                          </div>
-                          {vendorProfile.url && (
-                            <a href={vendorProfile.url} target="_blank" rel="noopener noreferrer"
-                              style={{ fontSize: 10, color: '#ef4444', fontWeight: 600, display: 'block', marginTop: 4 }}>
-                              Investigate {vendorProfile.name} →
-                            </a>
-                          )}
-                        </div>
-                      ) : null
-                    })()}
-                    <div style={{ fontSize: 11, fontWeight: 700, color: agency.confirmed ? '#10b981' : '#f59e0b', marginBottom: 6 }}>
-                      {agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}
-                    </div>
-                    {agency.notes && (
-                      <div style={{
-                        fontSize: 11, color: '#444', lineHeight: 1.55,
-                        background: '#f8f6f2', border: '1px solid #e5e0d8',
-                        borderRadius: 6, padding: '6px 8px', marginBottom: 8,
-                      }}>
-                        ℹ️ {agency.notes}
-                      </div>
-                    )}
-                    <div style={{ fontSize: 10, color: '#777', lineHeight: 1.5, borderTop: '1px solid #eee', paddingTop: 6, marginBottom: 8 }}>
-                      <strong>Source:</strong> {agency.source}
-                    </div>
-                    {agency.url && (
-                      <div style={{ marginBottom: 8 }}>
-                        <a
-                          href={agency.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                            fontSize: 11, fontWeight: 600, color: layer.color,
-                            textDecoration: 'none',
-                          }}
-                        >
-                          View source →
-                        </a>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => window.dispatchEvent(new CustomEvent('openPropose', {
-                        detail: { agency: agency.name, location: agency.city + ', ' + agency.state }
-                      }))}
-                      style={{
-                        width: '100%', padding: '7px 10px',
-                        background: 'transparent',
-                        border: `1px solid ${layer.color}`,
-                        borderRadius: 6, color: layer.color,
-                        fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-                      }}
-                    >
-                      📋 Propose FOIA →
-                    </button>
-                  </div>
-                </Popup>
-              </CircleMarker>
+              />
             ))
           )}
         </MapContainer>
