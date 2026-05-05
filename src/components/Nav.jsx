@@ -12,6 +12,7 @@ const primaryLinks = [
 
 const moreLinks = [
   { id: 'operators', label: 'Run a Campaign' },
+  { id: 'frontline', label: 'Frontline Funds' },
   { id: 'registry', label: 'Expert Directory' },
   { id: 'feed', label: 'Intelligence Feed' },
 ]

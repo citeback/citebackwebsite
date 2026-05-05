@@ -21,6 +21,7 @@ import ProposeModal from './components/ProposeModal'
 import TrustFAQ from './components/TrustFAQ'
 import Governance from './components/Governance'
 import Operators from './components/Operators'
+import FrontlineFunds from './components/FrontlineFunds'
 import ScrollProgress from './components/ScrollProgress'
 import LiveFeed from './components/LiveFeed'
 // ARCameraOverlay removed — too complex to debug cross-platform
@@ -38,6 +39,12 @@ export default function App() {
   const [tab, setTab] = useState('home')
   const [selectedCampaign, setSelectedCampaign] = useState(null)
   const [showAI, setShowAI] = useState(false)
+
+  useEffect(() => {
+    const handler = (e) => setTab(e.detail)
+    window.addEventListener('navigate', handler)
+    return () => window.removeEventListener('navigate', handler)
+  }, [])
   const [proposePrefill, setProposePrefill] = useState(null)
 
   useEffect(() => {
@@ -80,6 +87,7 @@ export default function App() {
       {tab === 'trust' && <TrustFAQ setTab={setTab} />}
       {tab === 'governance' && <Governance setTab={setTab} />}
       {tab === 'operators' && <Operators />}
+      {tab === 'frontline' && <FrontlineFunds />}
       {tab === 'feed' && <Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>}
 
       {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
