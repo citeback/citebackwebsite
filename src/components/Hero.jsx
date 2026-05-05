@@ -207,6 +207,17 @@ export default function Hero({ setTab }) {
                 Run a Campaign
               </button>
             </div>
+
+            {/* Trust micro-line */}
+            <p style={{
+              marginTop: 16,
+              fontSize: 12,
+              color: 'var(--gray)',
+              letterSpacing: '0.03em',
+              opacity: 0.7,
+            }}>
+              No wallets activate until 10 public prerequisites are verified. No human holds funds — ever.
+            </p>
           </div>
 
           {/* Right: sidebar column */}

@@ -6,12 +6,12 @@ const donorSteps = [
     desc: 'Find a fight worth funding — FOIA lawsuits, ordinance campaigns, vendor accountability, or surveillance mapping bounties.',
   },
   {
-    title: 'Send XMR or ZANO',
-    desc: 'No account. No identity. No trail. Send directly to the campaign wallet. The operator manages the campaign — the TEE holds the funds. No human has the keys, including the operator.',
+    title: 'Send Monero or Zano',
+    desc: 'No account. No identity. No trail. Monero (XMR) and Zano are privacy cryptocurrencies — your transaction is mathematically untraceable, even to us. Send directly to the campaign wallet. The operator manages the campaign — the TEE (a tamper-proof hardware security vault, not a person or a server) holds the funds. No human has the keys, including the operator.',
   },
   {
     title: 'Track It Publicly',
-    desc: 'Your donation stays private — XMR and ZANO provide protocol-level privacy with no on-chain link between sender and recipient. What is public: every milestone, every verified disbursement, every outcome. The accountability record is permanent.',
+    desc: 'Your donation stays private — Monero and Zano provide cryptographic privacy with no on-chain link between sender and recipient. What is public: every milestone, every verified disbursement, every outcome. The accountability record is permanent.',
   },
   {
     title: 'Watch It Win',
@@ -26,7 +26,7 @@ const operatorSteps = [
   },
   {
     title: 'Get Funded',
-    desc: 'Donors fund anonymously in XMR or ZANO. No donor identity. No paper trail. The TEE holds funds in escrow until milestones are verified — you can manage the campaign, not the money.',
+    desc: 'Donors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable transaction history. No donor identity. No paper trail. The TEE (Trusted Execution Environment — a tamper-proof hardware enclave that no one, including us, can access or override) holds funds in escrow until milestones are verified. You manage the campaign, not the money.',
   },
   {
     title: 'Execute and Document',

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X, CheckCircle, AlertCircle } from 'lucide-react'
 
 const types = [
@@ -14,6 +14,34 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '', contact: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
+  const modalRef = useRef(null)
+  const headingId = 'propose-modal-heading'
+
+  useEffect(() => {
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    focusable[0]?.focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') {
+        const els = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const first = els[0]
+        const last = els[els.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last?.focus() }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first?.focus() }
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -39,20 +67,31 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const labelStyle = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }
 
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 18, padding: 'clamp(20px, 5vw, 32px)', maxWidth: 560, width: '100%',
-        maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden',
-      }}>
+    <div
+      onClick={onClose}
+      role="presentation"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
+      }}
+    >
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headingId}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--bg2)', border: '1px solid var(--border)',
+          borderRadius: 18, padding: 'clamp(20px, 5vw, 32px)', maxWidth: 560, width: '100%',
+          maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden',
+        }}
+      >
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: 20 }}>Propose a Campaign</h2>
+            <h2 id={headingId} style={{ fontWeight: 800, fontSize: 20 }}>Propose a Campaign</h2>
             <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>Step {step} of 2</div>
           </div>
           <button onClick={onClose} aria-label="Close proposal form" style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
@@ -120,29 +159,29 @@ export default function ProposeModal({ onClose, prefill = {} }) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
-              <label style={labelStyle}>Campaign Title</label>
-              <input style={inputStyle} placeholder="e.g. Billboard — US-54 & Main St, Tucumcari NM"
+              <label htmlFor="prop-title" style={labelStyle}>Campaign Title</label>
+              <input id="prop-title" style={inputStyle} placeholder="e.g. Billboard — US-54 & Main St, Tucumcari NM"
                 value={form.title} onChange={e => set('title', e.target.value)} />
             </div>
             <div>
-              <label style={labelStyle}>Location</label>
-              <input style={inputStyle} placeholder="City, State"
+              <label htmlFor="prop-location" style={labelStyle}>Location</label>
+              <input id="prop-location" style={inputStyle} placeholder="City, State"
                 value={form.location} onChange={e => set('location', e.target.value)} />
             </div>
             <div>
-              <label style={labelStyle}>Description</label>
-              <textarea style={{ ...inputStyle, height: 100, resize: 'vertical' }}
+              <label htmlFor="prop-description" style={labelStyle}>Description</label>
+              <textarea id="prop-description" style={{ ...inputStyle, height: 100, resize: 'vertical' }}
                 placeholder="Describe the action, why it matters, and what the funds will specifically cover..."
                 value={form.description} onChange={e => set('description', e.target.value)} />
             </div>
             <div>
-              <label style={labelStyle}>Funding Goal (USD)</label>
-              <input style={inputStyle} type="number" placeholder="e.g. 750"
+              <label htmlFor="prop-goal" style={labelStyle}>Funding Goal (USD)</label>
+              <input id="prop-goal" style={inputStyle} type="number" placeholder="e.g. 750"
                 value={form.goal} onChange={e => set('goal', e.target.value)} />
             </div>
             <div>
-              <label style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle)</label>
-              <input style={inputStyle} placeholder="For follow-up questions. Never shared publicly."
+              <label htmlFor="prop-contact" style={labelStyle}>Contact (optional — XMR/ZANO address, Signal handle)</label>
+              <input id="prop-contact" style={inputStyle} placeholder="For follow-up questions. Never shared publicly."
                 value={form.contact} onChange={e => set('contact', e.target.value)} />
             </div>
 

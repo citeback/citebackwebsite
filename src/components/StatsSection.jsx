@@ -58,7 +58,7 @@ export default function StatsSection() {
     {
       value: 'XMR + ZANO',
       isLive: false,
-      label: 'the only currencies accepted — no card, no identity',
+      label: 'Monero + Zano — privacy coins only. No credit card. No identity. No KYC.',
     },
   ];
 
