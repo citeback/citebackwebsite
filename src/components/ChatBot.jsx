@@ -64,9 +64,9 @@ FRAUD RESISTANCE & ADVERSARIAL THREATS:
 
 Be helpful, concise, and passionate. Answer questions about surveillance, privacy, the map data, campaigns, and how to get involved. If you don't know something specific, say so. Never make up statistics or facts.`
 
-// API endpoint — proxied to Ollama locally, swap to Cloudflare Worker URL in production
-const API_URL = '/ollama/api/chat'
-const MODEL = 'llama3.2'
+// API endpoint — Netlify Function proxy (keeps API key server-side)
+const API_URL = '/.netlify/functions/chat'
+const MODEL = 'qwen2.5:14b'
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false)
@@ -205,7 +205,7 @@ export default function ChatBot() {
               fontSize: 11, color: 'var(--green)',
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }} />
-              Local AI
+              Self-Hosted AI
             </div>
           </div>
 
