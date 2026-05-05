@@ -312,7 +312,7 @@ export default function ConversationalInterface({ onClose }) {
                 if (!started) setStarted(true)
               }}
               onFocus={() => !started && setStarted(true)}
-              placeholder={offlineMode ? 'Ask anything — pre-written answers only…' : 'Ask anything…'}
+              placeholder={isStreaming ? 'Waiting for response…' : offlineMode ? 'Ask anything — pre-written answers only…' : 'Ask anything…'}
               style={styles.input}
               disabled={isStreaming}
               autoComplete="off"
@@ -325,16 +325,43 @@ export default function ConversationalInterface({ onClose }) {
   )
 }
 
+const THINKING_PHRASES = [
+  'Searching 92,847 camera records…',
+  'Checking FOIA precedents…',
+  'Reviewing surveillance law…',
+  'Cross-referencing NM statutes…',
+  'Analyzing Flock Safety contracts…',
+  'Looking up Fourth Amendment case law…',
+  'Checking active campaigns…',
+  'Processing…',
+]
+
 function TypingIndicator() {
+  const [phraseIdx, setPhraseIdx] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhraseIdx(i => (i + 1) % THINKING_PHRASES.length)
+    }, 2200)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <span style={styles.typingIndicator}>
       <span style={{ ...styles.dot, animationDelay: '0ms' }} />
       <span style={{ ...styles.dot, animationDelay: '160ms' }} />
       <span style={{ ...styles.dot, animationDelay: '320ms' }} />
+      <span style={styles.thinkingPhrase}>{THINKING_PHRASES[phraseIdx]}</span>
       <style>{`
         @keyframes dotPulse {
           0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
           40% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadePhrase {
+          0% { opacity: 0; transform: translateY(4px); }
+          15% { opacity: 1; transform: translateY(0); }
+          85% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-4px); }
         }
       `}</style>
     </span>
@@ -509,7 +536,7 @@ const styles = {
   typingIndicator: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '5px',
+    gap: '8px',
     paddingTop: '4px',
   },
   dot: {
@@ -519,5 +546,13 @@ const styles = {
     borderRadius: '50%',
     backgroundColor: 'var(--red)',
     animation: 'dotPulse 1.2s infinite ease-in-out',
+    flexShrink: 0,
+  },
+  thinkingPhrase: {
+    fontSize: '13px',
+    color: 'var(--muted)',
+    fontStyle: 'italic',
+    fontWeight: 300,
+    animation: 'fadePhrase 2.2s ease-in-out infinite',
   },
 }
