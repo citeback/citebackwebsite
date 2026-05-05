@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
-  { value: '7', label: 'NM Cameras (via FOIA)' },
-  { value: '7', label: 'Campaigns Under Review' },
-  { value: '4/10', label: 'Launch Gates Cleared' },
-  { value: 'XMR+ZANO', label: 'Monero + Zano — privacy coins, no card, no ID' },
+  { value: '7', label: 'Campaigns queued at launch' },
+  { value: '$14,050', label: 'Total campaign funding goals' },
+  { value: '4/10', label: 'Launch prerequisites cleared' },
+  { value: 'XMR + ZANO', label: 'No account. No ID. No credit card.' },
 ]
 
 export default function Hero({ setTab }) {
@@ -162,7 +162,17 @@ export default function Hero({ setTab }) {
               {' '}back.
             </h1>
 
-
+            {hintVisible && (
+              <p style={{
+                fontSize: 11,
+                color: 'var(--gray)',
+                letterSpacing: '0.04em',
+                opacity: 0.6,
+                margin: '-8px 0 16px',
+              }}>
+                {isTouchDevice ? '↑ Tap the redacted words to reveal.' : '↑ Hover over the redacted words to reveal.'}
+              </p>
+            )}
 
             <p style={{
               fontSize: 17,

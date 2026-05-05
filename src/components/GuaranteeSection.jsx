@@ -60,7 +60,7 @@ export default function GuaranteeSection({ setTab }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
               'Every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are generated inside the enclave and never leave.',
-              'The platform is designed in two layers: the operator manages campaigns, and at launch the TEE will manage money. What no one will be able to do after launch — no founder, no operator, no court order — is produce keys that exist only inside the enclave.',
+              'The platform has two layers: the operator manages campaigns; at launch, the TEE manages money. What no one can do after launch — not the founder, not the operator, not a court order — is produce keys that exist only inside the enclave.',
               "This isn't a policy. It isn't a promise. It's the architecture — and the code is public for anyone to audit before launch.",
             ].map((para, i) => (
               <p

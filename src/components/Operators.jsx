@@ -65,7 +65,7 @@ export default function Operators() {
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Run a Campaign</h1>
         </div>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 15 }}>
-          Operators are the people who make campaigns happen - lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
+          Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
         </p>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, marginTop: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 0, padding: '12px 16px' }}>
           <strong style={{ color: 'var(--text)' }}>How this works:</strong> The platform is being organized as a Wyoming DAO LLC (formation is a launch prerequisite) — you'll work with a real person during onboarding and proposal review (the founder pre-launch; the DAO LLC operator post-launch). Once your campaign is funded and milestones are met, disbursements will be handled automatically by the TEE. No human — including the platform operator — can access campaign wallet keys or redirect funds.
@@ -99,7 +99,7 @@ export default function Operators() {
       </Accordion>
 
       <Accordion title="Funded by lawful activity only" icon={CheckCircle}>
-        <p>Criminal defense funding is prohibited. Campaigns involving illegal activity are prohibited. Camera tampering is prohibited - these are governance immutables and cannot be voted away.</p>
+        <p>Criminal defense funding is prohibited. Campaigns involving illegal activity are prohibited. Camera tampering is prohibited — these are governance immutables and cannot be voted away.</p>
         <p style={{ marginTop: 8 }}>Billboard campaigns require an operator attestation of factual accuracy - you certify your claims are verifiable. The platform does not verify content, but you are legally responsible for it.</p>
       </Accordion>
 
@@ -174,7 +174,7 @@ export default function Operators() {
 
       <Accordion title="What happens after you submit" icon={FileText}>
         <ol style={{ paddingLeft: 18, lineHeight: 2 }}>
-          <li>Submission reviewed within 5-7 business days by the platform operator (founder pre-launch; Wyoming DAO LLC once formed)</li>
+          <li>Submission reviewed within 5–7 business days by the platform operator (founder pre-launch; Wyoming DAO LLC once formed)</li>
           <li>Identity verified and OFAC screened privately by the operator - never published</li>
           <li>Tier assigned based on campaign scope and budget</li>
           <li>Campaign published - community begins funding</li>
@@ -191,9 +191,21 @@ export default function Operators() {
       }}>
         <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Ready to Propose a Campaign?</h3>
         <p style={{ color: 'var(--muted)', fontSize: 14, marginBottom: 20, maxWidth: 420, margin: '0 auto 20px' }}>
-          Platform wallets are activating soon. Start preparing your campaign proposal now - strong proposals get funded fast once we go live.
+          Platform wallets are activating soon. Submit your proposal now — strong campaigns get funded fast once we go live.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('openPropose', { detail: {} }))}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '12px 24px', borderRadius: 0, fontSize: 14, fontWeight: 700,
+              background: 'var(--accent)', border: 'none',
+              color: '#fff', cursor: 'pointer', fontFamily: 'var(--font)',
+              letterSpacing: '0.04em',
+            }}
+          >
+            Propose a Campaign
+          </button>
           <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '10px 20px', borderRadius: 0, fontSize: 14, fontWeight: 600,
