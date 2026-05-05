@@ -150,28 +150,7 @@ export default function Hero({ setTab }) {
               {' '}back.
             </h1>
 
-            {isTouchDevice && hintVisible && (
-              <div style={{
-                fontSize: 11,
-                color: 'var(--gray)',
-                letterSpacing: '0.08em',
-                marginTop: -20,
-                marginBottom: 24,
-              }}>
-                Tap redacted words to reveal
-              </div>
-            )}
-            {!isTouchDevice && hintVisible && (
-              <div style={{
-                fontSize: 11,
-                color: 'var(--gray)',
-                letterSpacing: '0.08em',
-                marginTop: -20,
-                marginBottom: 24,
-              }}>
-                Hover redacted words to reveal
-              </div>
-            )}
+
 
             <p style={{
               fontSize: 17,
@@ -293,12 +272,13 @@ export default function Hero({ setTab }) {
           cursor: default;
         }
         @keyframes redactedReveal {
-          0% { opacity: 1; }
-          60% { opacity: 1; }
+          0%   { opacity: 1; }
+          15%  { opacity: 0.1; }
+          30%  { opacity: 1; }
+          50%  { opacity: 0.1; }
+          70%  { opacity: 1; }
+          85%  { opacity: 0.1; }
           100% { opacity: 0; }
-        }
-        .redacted {
-          color: #ffffff;
         }
         .redacted::before {
           content: '';
@@ -308,11 +288,11 @@ export default function Hero({ setTab }) {
           left: -4px;
           right: -4px;
           background: #0d0d0d;
-          opacity: 0;
+          opacity: 1;
           transition: opacity 0.2s ease;
           pointer-events: none;
           z-index: 2;
-          animation: redactedReveal 3s ease-in-out 1 forwards;
+          animation: redactedReveal 6s ease-in-out 1 forwards;
         }
         .redacted.revealed::before {
           animation: none;
