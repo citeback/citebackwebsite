@@ -292,9 +292,13 @@ export default function Hero({ setTab }) {
           display: inline;
           cursor: default;
         }
-        @keyframes redactedPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.75; }
+        @keyframes redactedReveal {
+          0% { opacity: 1; }
+          60% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        .redacted {
+          color: #ffffff;
         }
         .redacted::before {
           content: '';
@@ -304,11 +308,11 @@ export default function Hero({ setTab }) {
           left: -4px;
           right: -4px;
           background: #0d0d0d;
-          opacity: 1;
+          opacity: 0;
           transition: opacity 0.2s ease;
           pointer-events: none;
           z-index: 2;
-          animation: redactedPulse 2s ease-in-out 3;
+          animation: redactedReveal 3s ease-in-out 1 forwards;
         }
         .redacted.revealed::before {
           animation: none;
