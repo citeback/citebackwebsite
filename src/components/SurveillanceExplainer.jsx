@@ -24,6 +24,7 @@ const TYPES = [
     },
     links: [
       { label: 'EFF ALPR resource center', url: 'https://www.eff.org/pages/automated-license-plate-readers-alpr' },
+      { label: 'EFF Atlas of Surveillance', url: 'https://atlasofsurveillance.org/' },
     ],
   },
   {

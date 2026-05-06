@@ -39,7 +39,7 @@ export default function WaitlistBanner() {
           fontSize: 10, fontWeight: 700, letterSpacing: '0.14em',
           textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
         }}>
-          Pre-Launch · 6 of 10 Prerequisites Remaining
+          Pre-Launch · Targeting Fall 2026 · 6 of 10 Prerequisites Remaining
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 10 }}>
           Get notified when campaigns go live.

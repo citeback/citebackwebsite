@@ -963,7 +963,7 @@ export default function CameraMap() {
     })
   }
 
-  // Load community sightings from Hetzner
+  // Load community sightings
   useEffect(() => {
     fetch('https://ai.citeback.com/sightings/public')
       .then(r => r.json())
