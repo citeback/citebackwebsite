@@ -157,9 +157,7 @@ export default function SightingForm({ setTab }) {
               <div style={{ lineHeight: 1.7 }}>
                 <strong style={{ color: 'var(--text)' }}>📱 Any iPhone or Android:</strong>{' '}
                 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                — built by Guardian Project for human rights evidence. Free, open source, C2PA-signed.{' '}
-                Or{' '}
-                <a href="https://numbersprotocol.io/nit/capture-app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Numbers Capture</a>.
+                — built by Guardian Project for human rights evidence. Free, open source, C2PA-signed.
               </div>
               <div style={{ marginTop: 4, opacity: 0.7 }}>
                 <strong style={{ color: 'var(--text)' }}>📲 Hardware-native:</strong> Samsung Galaxy S24+ or Google Pixel 10 sign photos automatically.
@@ -229,7 +227,7 @@ export default function SightingForm({ setTab }) {
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
                 Create an account and shoot through{' '}
                 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                (iOS + Android, free) or on a Samsung Galaxy S24+ / Pixel 10 to earn points. 10 points unlocks Tier 1.
+                (iOS + Android, free) or on a Samsung Galaxy S24+ / Google Pixel 10. 10 points unlocks Tier 1.
               </p>
               <button
                 onClick={() => setShowClaimModal(true)}
