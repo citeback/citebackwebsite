@@ -329,7 +329,7 @@ export default function ConversationalInterface({ onClose }) {
             </p>
             {!offlineMode && (
               <p style={styles.privacyNote}>
-                Responses may be slow. Your conversations are never logged, never stored, and never used to train AI models — we verified this. Runs on our own server in Helsinki.
+                Responses may be slow. Your conversations are never logged, never stored, and never used to train AI models — we verified this. Runs on our own server.
               </p>
             )}
             {offlineMode && (
