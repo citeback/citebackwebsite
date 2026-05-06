@@ -106,7 +106,7 @@ export default function Operators() {
         </p>
         <Req ok={true}>A pseudonymous account with verified camera sightings. Start at Tier 0 — submit cameras, build reputation, unlock campaign access.</Req>
         <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
-        <Req ok={true}>Submit a cost breakdown with defined milestones. Every campaign needs a line-item budget and measurable deliverables. Vague asks don't get funded.</Req>
+        <Req ok={true}>Submit a cost breakdown with defined milestones. Every campaign needs a line-item budget and measurable deliverables.</Req>
         <Req ok={true}>Your campaign must target a government entity, government program, or government-contracted surveillance vendor — not a private individual.</Req>
         <Req pending={true}>Identity verification and OFAC screening — pending launch. Required before any campaign goes live. Process opens when the operator onboarding system launches.</Req>
         <p style={{ marginTop: 12, fontSize: 13, color: 'var(--muted)' }}>
@@ -129,7 +129,7 @@ export default function Operators() {
 
       <Accordion title="Has a realistic cost breakdown with milestones" icon={FileText}>
         <p>Campaign proposals require a cost breakdown and defined milestones. Each milestone has a specific deliverable (FOIA filing receipt, MuckRock URL, photo of billboard) and a specific cost. Funding is released milestone by milestone as each deliverable is verified.</p>
-        <p style={{ marginTop: 8 }}>Vague goals ("raise $50k for legal costs") get rejected. Specific proposals ("file FOIA with Bernalillo County Sheriff — $800 attorney fee — verified by MuckRock URL") get funded.</p>
+        <p style={{ marginTop: 8 }}>Vague goals ("raise $50k for legal costs") won't be approved. Specific proposals ("file FOIA with Bernalillo County Sheriff — $800 attorney fee — verified by MuckRock URL") are what the platform is built for.</p>
       </Accordion>
 
       <Accordion title="Operator reputation and campaign caps" icon={Building}>
