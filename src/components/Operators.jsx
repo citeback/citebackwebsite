@@ -40,19 +40,19 @@ function Req({ ok, pending, children }) {
 }
 
 const campaignTypes = [
-  { tier: 1, label: 'Tier 1 - Highest Impact', color: '#6ee7b7', types: [
-    { name: 'Public Records Litigation', desc: 'Force disclosure via FOIA litigation and injunctions. Produces permanent citable records.' },
+  { label: 'Proven High Impact', color: '#6ee7b7', types: [
+    { name: 'FOIA Campaigns', desc: 'Public records requests to expose surveillance contracts, costs, and deployment data. Low cost, feeds every other campaign type.' },
     { name: 'Ordinance Campaigns', desc: 'City council campaigns to ban or regulate surveillance locally. Proven playbook across dozens of cities.' },
-    { name: 'Counter-Database Projects', desc: 'Accountability mapping of surveillance infrastructure. Feeds litigation, journalism, legislation.' },
-    { name: 'FOIA Campaigns', desc: 'High-volume records requests. Low cost, feeds every other campaign type.' },
-    { name: 'Journalist Partnerships', desc: 'Fund investigative reporting on specific surveillance deployments.' },
+    { name: 'Public Records Litigation', desc: 'Force disclosure via FOIA litigation and injunctions when agencies refuse. Produces permanent citable records.' },
+    { name: 'Counter-Database Projects', desc: 'Accountability mapping of surveillance infrastructure. Feeds litigation, journalism, and legislation.' },
+    { name: 'Billboard Campaigns', desc: 'Place public awareness signs near surveillance infrastructure. Simple, visible, hard to ignore.' },
   ]},
-  { tier: 2, label: 'Tier 2 - High Impact', color: '#a78bfa', types: [
-    { name: 'Vendor Accountability', desc: 'Target Clearview, Flock Safety, Palantir by name. Anonymous funding uniquely valuable here.' },
-    { name: 'Insurance/Liability Pressure', desc: 'Document harms to liability insurers of surveillance contractors. Most underexplored tool.' },
+  { label: 'Specialized Actions', color: '#a78bfa', types: [
+    { name: 'Vendor Accountability', desc: 'Target Clearview, Flock Safety, Palantir by name. Anonymous funding is uniquely valuable here.' },
+    { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment campaigns. Operators should consult an attorney before launching.' },
     { name: 'Legal Defense', desc: 'Civil and administrative challenges only. No criminal defense.' },
-    { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment. Requires legal sign-off.' },
-    { name: 'Procurement Intervention', desc: 'Legal challenges to RFPs and sole-source contracts.' },
+    { name: 'Journalist Partnerships', desc: 'Fund investigative reporting on specific surveillance deployments.' },
+    { name: 'Procurement Intervention', desc: 'Legal challenges to government RFPs and sole-source surveillance contracts.' },
   ]},
 ]
 
@@ -157,17 +157,17 @@ export default function Operators() {
         The platform funds any lawful accountability activity. Campaign types below are organized by demonstrated real-world impact.
       </p>
 
-      {campaignTypes.map(tier => (
-        <div key={tier.tier} style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: tier.color, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
-            {tier.label}
+      {campaignTypes.map((group, gi) => (
+        <div key={gi} style={{ marginBottom: 24 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: group.color, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            {group.label}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {tier.types.map(t => (
+            {group.types.map(t => (
               <div key={t.name} style={{
                 padding: '12px 16px', borderRadius: 0,
                 background: 'var(--bg2)', border: '1px solid var(--border)',
-                borderLeft: `3px solid ${tier.color}`,
+                borderLeft: `3px solid ${group.color}`,
               }}>
                 <strong style={{ color: 'var(--text)', fontSize: 14 }}>{t.name}</strong>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--muted)' }}>{t.desc}</p>
