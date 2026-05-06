@@ -72,13 +72,27 @@ export default function Operators() {
         </p>
       </div>
 
+      {/* Participant roles — who needs what */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
+        {[
+          { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it.', color: '#6ee7b7', anon: true },
+          { role: 'Donor', req: 'No account. No identity. Send XMR or ZANO directly to any campaign wallet.', color: '#6ee7b7', anon: true },
+          { role: 'Campaign Operator', req: 'Identity + OFAC screening required. You control funds — accountability comes with that.', color: '#f59e0b', anon: false },
+        ].map(p => (
+          <div key={p.role} style={{ background: 'var(--bg2)', border: `1px solid ${p.anon ? 'rgba(110,231,183,0.2)' : 'rgba(245,158,11,0.3)'}`, borderRadius: 0, padding: '16px 18px' }}>
+            <p style={{ fontWeight: 700, fontSize: 13, color: p.color, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{p.role}</p>
+            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>{p.req}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Hard requirements upfront */}
       <div style={{
         background: 'rgba(255,245,51,0.04)', border: '1px solid rgba(255,245,51,0.2)',
         borderRadius: 0, padding: '20px 24px', marginBottom: 32,
       }}>
         <p style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 12, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          What You Need to Apply
+          What Campaign Operators Need to Apply
         </p>
         <Req ok={true}>Verify your real identity privately. Your name is never published - it's held by the platform's legal entity solely for accountability if a campaign is challenged. Donors stay anonymous. Operators do not.</Req>
         <Req ok={true}>Pass OFAC/sanctions screening. One-time, takes minutes. Required before any funds move.</Req>
