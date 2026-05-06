@@ -31,6 +31,7 @@ import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsPage from './components/TermsPage'
 import SightingForm from './components/SightingForm'
 import ReputationPage from './components/ReputationPage'
+import AdminPanel from './components/AdminPanel'
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -141,6 +142,7 @@ export default function App() {
           <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
           <Route path="/report" element={<SightingForm setTab={setTab} />} />
           <Route path="/reputation" element={<ReputationPage setTab={setTab} />} />
+          <Route path="/cx-admin" element={<AdminPanel />} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />

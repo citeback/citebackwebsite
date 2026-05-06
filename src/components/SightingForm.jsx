@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { CheckCircle, AlertCircle, Eye, MapPin, Loader, Shield } from 'lucide-react'
+import { CheckCircle, AlertCircle, Eye, MapPin, Loader, Shield, Star } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import AccountModal from './AccountModal'
 
 const AI_URL = 'https://ai.citeback.com'
 
@@ -29,7 +30,8 @@ const CAMERA_TYPES = [
 
 export default function SightingForm({ setTab }) {
   const { user, isLoggedIn, authHeaders } = useAuth()
-  const [repEarned, setRepEarned] = useState(null) // { points, newReputation, tierName }
+  const [repEarned, setRepEarned] = useState(null) // { points, newReputation, newTier, tierName }
+  const [showClaimModal, setShowClaimModal] = useState(false)
   const [form, setForm] = useState({
     cameraType: '',
     address: '',
@@ -98,7 +100,7 @@ export default function SightingForm({ setTab }) {
       if (res.ok) {
         const data = await res.json().catch(() => ({}))
         if (data.reputationAwarded) {
-          setRepEarned({ points: data.reputationAwarded, newReputation: data.newReputation, tierName: data.tierName })
+          setRepEarned({ points: data.reputationAwarded, newReputation: data.newReputation, newTier: data.newTier, tierName: data.tierName })
         }
         setSubmitted(true)
       } else {
@@ -174,8 +176,28 @@ export default function SightingForm({ setTab }) {
           background: 'var(--bg2)', border: '1px solid var(--border)',
           borderRadius: 16, padding: 32, textAlign: 'center',
         }}>
+          {/* Tier unlock banner — #6 */}
+          {repEarned?.newTier > 0 && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(230,57,70,0.12), rgba(245,158,11,0.12))',
+              border: '1px solid rgba(245,158,11,0.3)',
+              borderRadius: 12, padding: '16px', marginBottom: 20, textAlign: 'center',
+            }}>
+              <Star size={28} style={{ color: '#f59e0b', marginBottom: 8 }} />
+              <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>
+                🎉 Tier {repEarned.newTier} Unlocked!
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+                You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.
+                {repEarned.newTier === 1 && ' You now have access to campaigns up to $500.'}
+              </div>
+            </div>
+          )}
+
           <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
           <h2 style={{ fontWeight: 800, fontSize: 22, marginBottom: 8 }}>Sighting Submitted</h2>
+
+          {/* Rep earned banner (logged in) */}
           {repEarned && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, justifyContent: 'center', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 8, padding: '10px 14px' }}>
               <Shield size={14} style={{ color: '#10b981' }} />
@@ -184,13 +206,38 @@ export default function SightingForm({ setTab }) {
               </span>
             </div>
           )}
+
+          {/* Claim prompt (anonymous) — #5 */}
+          {!isLoggedIn && (
+            <div style={{
+              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
+              borderRadius: 10, padding: '14px 16px', marginBottom: 20, textAlign: 'left',
+            }}>
+              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for this</div>
+              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
+                Create a free account to earn reputation points for your sightings.
+                10 points unlocks Tier 1 (Operator) access.
+              </p>
+              <button
+                onClick={() => setShowClaimModal(true)}
+                style={{
+                  background: 'var(--accent)', border: 'none', color: '#fff',
+                  padding: '9px 16px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}
+              >
+                <Shield size={13} /> Create Account →
+              </button>
+            </div>
+          )}
+
           <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 24px' }}>
-            Your report is in the moderation queue. Once reviewed, it will be added to the surveillance map
-            and tagged as community-reported.
+            Your report is in the moderation queue. Once reviewed, it will appear on the map
+            as a community-verified sighting.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
-              onClick={() => { setForm({ cameraType: '', address: '', city: '', state: '', notes: '', honeypot: '' }); setSubmitted(false) }}
+              onClick={() => { setForm({ cameraType: '', address: '', city: '', state: '', notes: '', honeypot: '' }); setSubmitted(false); setRepEarned(null) }}
               style={{
                 background: 'var(--accent)', border: 'none', color: '#fff',
                 padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer',
@@ -208,6 +255,7 @@ export default function SightingForm({ setTab }) {
               View the Map
             </button>
           </div>
+          {showClaimModal && <AccountModal onClose={() => setShowClaimModal(false)} />}
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

@@ -863,7 +863,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
           <div style={{ fontSize: 12, fontWeight: 600, color: activeLayers.has('community') ? '#f97316' : 'var(--muted)', lineHeight: 1.2 }}>Community Reports</div>
           <div style={{ fontSize: 10, color: '#f97316', marginTop: 2, opacity: 0.8 }}>
             {communitySightings.length > 0
-              ? `${communitySightings.length} sighting${communitySightings.length !== 1 ? 's' : ''} — pending verification`
+              ? `${communitySightings.length} verified sighting${communitySightings.length !== 1 ? 's' : ''} on the map`
               : 'Be first — submit a sighting'
             }
           </div>
@@ -1389,7 +1389,7 @@ export default function CameraMap() {
                   {s.address && <div style={{ fontSize: 12, color: '#555', marginBottom: 1 }}>{s.address}</div>}
                   {(s.city || s.state) && <div style={{ fontSize: 12, color: '#555', marginBottom: 6 }}>{[s.city, s.state].filter(Boolean).join(', ')}</div>}
                   {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#f97316', fontWeight: 600 }}>⏳ Pending verification</div>
+                  <div style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✅ Community-verified</div>
                 </div>
               </Popup>
             </CircleMarker>
