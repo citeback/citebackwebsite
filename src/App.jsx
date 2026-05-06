@@ -68,7 +68,11 @@ const PATH_TO_TAB = Object.fromEntries(Object.entries(TAB_TO_PATH).map(([k, v]) 
 PATH_TO_TAB['/'] = 'home'
 
 const tabToPath = (tab) => TAB_TO_PATH[tab] ?? `/${tab}`
-const pathToTab = (path) => PATH_TO_TAB[path] ?? 'home'
+const pathToTab = (path) => {
+  if (PATH_TO_TAB[path]) return PATH_TO_TAB[path]
+  if (path.startsWith('/campaigns/')) return 'campaigns'
+  return 'home'
+}
 
 export default function App() {
   const navigate = useNavigate()

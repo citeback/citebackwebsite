@@ -4,6 +4,7 @@ export default function Footer({ setTab }) {
     { label: 'How It Works', tab: 'trust' },
     { label: 'Governance', tab: 'governance' },
     { label: 'Run a Campaign', tab: 'operators' },
+    { label: 'Report a Sighting', tab: 'report' },
   ]
 
   return (

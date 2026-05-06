@@ -977,10 +977,18 @@ export default function CameraMap() {
   const submitCamera = async () => {
     if (!form.lat || !form.lng || !form.location) return
     try {
-      await fetch('/', {
+      await fetch('https://ai.citeback.com/sighting', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ 'form-name': 'camera-submission', ...form }).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cameraType: 'unknown',
+          address: form.location,
+          lat: form.lat,
+          lng: form.lng,
+          notes: form.notes,
+          source: form.source,
+          hasC2PA: form.hasC2PA,
+        }),
       })
     } catch (_) {}
     setSubmitted(true)
