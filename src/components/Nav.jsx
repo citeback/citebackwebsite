@@ -1,5 +1,7 @@
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { Menu, X, ChevronDown, Shield, LogOut } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '../context/AuthContext'
+import AccountModal from './AccountModal'
 
 const primaryLinks = [
   { id: 'home', label: 'Home' },
@@ -16,13 +18,18 @@ const moreLinks = [
   { id: 'registry', label: 'Expert Directory' },
   { id: 'feed', label: 'Intelligence Feed' },
   { id: 'report', label: 'Report a Sighting' },
+  { id: 'reputation', label: 'My Reputation' },
 ]
 
 export default function Nav({ tab, setTab }) {
   const [open, setOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showAuth, setShowAuth] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const moreRef = useRef(null)
+  const userRef = useRef(null)
+  const { user, isLoggedIn, logout } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -33,13 +40,20 @@ export default function Nav({ tab, setTab }) {
   useEffect(() => {
     if (!moreOpen) return
     const handleClickOutside = (e) => {
-      if (moreRef.current && !moreRef.current.contains(e.target)) {
-        setMoreOpen(false)
-      }
+      if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [moreOpen])
+
+  useEffect(() => {
+    if (!userMenuOpen) return
+    const handleClickOutside = (e) => {
+      if (userRef.current && !userRef.current.contains(e.target)) setUserMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [userMenuOpen])
 
   return (
     <nav aria-label="Main navigation" style={{
@@ -170,6 +184,64 @@ export default function Nav({ tab, setTab }) {
               </div>
             )}
           </div>
+          {isLoggedIn ? (
+            <div ref={userRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => setUserMenuOpen(o => !o)}
+                style={{
+                  background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
+                  color: 'var(--accent)', borderRadius: 8, padding: '7px 12px',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: 'var(--font)',
+                }}
+              >
+                <Shield size={13} />
+                {user?.username}
+                <span style={{ fontSize: 11, opacity: 0.7 }}>· {user?.reputation || 0}pts</span>
+              </button>
+              {userMenuOpen && (
+                <div style={{
+                  position: 'absolute', top: '100%', right: 0, marginTop: 6,
+                  background: 'var(--nav-dropdown-bg)', border: '1px solid var(--border)',
+                  borderRadius: 8, padding: '8px 0', minWidth: 160,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 200,
+                }}>
+                  <button
+                    onClick={() => { setTab('reputation'); setUserMenuOpen(false) }}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--gray)', padding: '8px 16px', fontFamily: 'var(--font)' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.background = 'none' }}
+                  >
+                    My Reputation
+                  </button>
+                  <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+                  <button
+                    onClick={() => { logout(); setUserMenuOpen(false) }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--gray)', padding: '8px 16px', fontFamily: 'var(--font)' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.background = 'rgba(0,0,0,0.04)' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.background = 'none' }}
+                  >
+                    <LogOut size={12} /> Log Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuth(true)}
+              style={{
+                background: 'none', border: '1px solid var(--border)',
+                color: 'var(--gray)', borderRadius: 6, padding: '7px 14px',
+                fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
+                fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
+                marginRight: 8,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--fg)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+            >
+              Join
+            </button>
+          )}
           <button
             onClick={() => setTab('campaigns')}
             style={{
@@ -190,6 +262,7 @@ export default function Nav({ tab, setTab }) {
           >
             Fund a Campaign
           </button>
+          {showAuth && <AccountModal onClose={() => setShowAuth(false)} />}
         </div>
 
         {/* Mobile toggle */}

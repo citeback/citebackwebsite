@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
+import { AuthProvider } from './context/AuthContext'
 import { campaigns } from './data/campaigns'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
 import Nav from './components/Nav'
@@ -29,6 +30,7 @@ import LiveFeed from './components/LiveFeed'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsPage from './components/TermsPage'
 import SightingForm from './components/SightingForm'
+import ReputationPage from './components/ReputationPage'
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -53,6 +55,7 @@ const TAB_TO_PATH = {
   privacy: '/privacy',
   terms: '/terms',
   report: '/report',
+  reputation: '/reputation',
 }
 
 function CampaignDeepLink({ setSelectedCampaign, setTab }) {
@@ -97,6 +100,7 @@ export default function App() {
   }, [])
 
   return (
+    <AuthProvider>
     <CameraCountProvider>
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <a href="#main-content" className="skip-link">Skip to main content</a>
@@ -136,6 +140,7 @@ export default function App() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
           <Route path="/report" element={<SightingForm setTab={setTab} />} />
+          <Route path="/reputation" element={<ReputationPage setTab={setTab} />} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />
@@ -187,5 +192,6 @@ export default function App() {
       )}
     </div>
     </CameraCountProvider>
+    </AuthProvider>
   )
 }

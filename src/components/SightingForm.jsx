@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import { CheckCircle, AlertCircle, Eye, MapPin, Loader } from 'lucide-react'
+import { CheckCircle, AlertCircle, Eye, MapPin, Loader, Shield } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const AI_URL = 'https://ai.citeback.com'
 
@@ -27,6 +28,8 @@ const CAMERA_TYPES = [
 ]
 
 export default function SightingForm({ setTab }) {
+  const { user, isLoggedIn, authHeaders } = useAuth()
+  const [repEarned, setRepEarned] = useState(null) // { points, newReputation, tierName }
   const [form, setForm] = useState({
     cameraType: '',
     address: '',
@@ -81,7 +84,7 @@ export default function SightingForm({ setTab }) {
     try {
       const res = await fetch(`${AI_URL}/sighting`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({
           cameraType: form.cameraType,
           address: form.address,
@@ -93,6 +96,10 @@ export default function SightingForm({ setTab }) {
         }),
       })
       if (res.ok) {
+        const data = await res.json().catch(() => ({}))
+        if (data.reputationAwarded) {
+          setRepEarned({ points: data.reputationAwarded, newReputation: data.newReputation, tierName: data.tierName })
+        }
         setSubmitted(true)
       } else {
         setError(true)
@@ -133,18 +140,33 @@ export default function SightingForm({ setTab }) {
           Spotted a license plate reader, ShotSpotter mic, or surveillance camera that isn't on the map?
           Submit it here. Anonymous, no account, no contact info required.
         </p>
-        <div style={{
-          display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16,
-          background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)',
-          borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
-        }}>
-          <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
-          <span>
-            <strong style={{ color: 'var(--text)' }}>Nothing is collected about you.</strong>{' '}
-            No IP address is logged. No cookies. No account. Your sighting goes into a moderation queue
-            and is reviewed before appearing on the map.
-          </span>
-        </div>
+        {isLoggedIn ? (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16,
+            background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)',
+            borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
+          }}>
+            <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+            <span>
+              <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>{' '}·{' '}
+              This sighting will count toward your reputation <strong style={{ color: '#10b981' }}>+1 pt</strong>.
+            </span>
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16,
+            background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)',
+            borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
+          }}>
+            <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
+            <span>
+              <strong style={{ color: 'var(--text)' }}>Nothing is collected about you.</strong>{' '}
+              No IP address is logged. No cookies. No account required.{' '}
+              <button onClick={() => setTab('reputation')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 12, padding: 0 }}>Create an account</button>{' '}
+              to earn reputation points.
+            </span>
+          </div>
+        )}
       </div>
 
       {submitted ? (
@@ -154,6 +176,14 @@ export default function SightingForm({ setTab }) {
         }}>
           <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
           <h2 style={{ fontWeight: 800, fontSize: 22, marginBottom: 8 }}>Sighting Submitted</h2>
+          {repEarned && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, justifyContent: 'center', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 8, padding: '10px 14px' }}>
+              <Shield size={14} style={{ color: '#10b981' }} />
+              <span style={{ fontSize: 13, fontWeight: 600 }}>
+                +{repEarned.points} reputation point{repEarned.points !== 1 ? 's' : ''} earned · {repEarned.newReputation} total · {repEarned.tierName}
+              </span>
+            </div>
+          )}
           <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 24px' }}>
             Your report is in the moderation queue. Once reviewed, it will be added to the surveillance map
             and tagged as community-reported.
