@@ -159,8 +159,8 @@ export default function App() {
         {!showAI && (
           <button
             onClick={() => setShowAI(true)}
-            aria-label="Ask Citeback AI — requires Ollama running locally"
-            title="Ask questions about Citeback — requires Ollama running locally"
+            aria-label="Ask Citeback AI"
+            title="Ask questions about surveillance, privacy rights, and Citeback"
             style={{
               position: 'fixed', bottom: 24, right: 24, zIndex: 999,
               padding: '12px 20px',

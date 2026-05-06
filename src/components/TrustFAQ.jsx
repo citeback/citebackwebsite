@@ -134,7 +134,7 @@ Campaign operators (who receive disbursements) are separately screened against t
 • **Fonts:** This site loads fonts from Bunny CDN (fonts.bunny.net). Bunny CDN logs standard CDN access requests including IP addresses.
 • **Map tiles:** The surveillance camera map loads tiles from CARTO (*.basemaps.cartocdn.com). CARTO receives tile requests including your IP address.
 • **External data APIs:** Features powered by CourtListener, USASpending.gov, the Senate LDA API, and api.congress.gov make client-side requests that expose your IP to those services.
-• **Form submissions:** Campaign proposals and registry applications submitted via this site are processed and stored by Netlify Forms, including any contact information you provide and your IP address at submission time.
+• **Form submissions:** Campaign proposals, sighting reports, and expert directory applications are submitted to our own server where IP address logging is disabled. No contact information is required or collected in any form. No form submission data is processed by Netlify.
 
 For maximum privacy when browsing this site, use Tor Browser, a trusted VPN, or a privacy-preserving proxy. Your XMR or ZANO donation remains private regardless of browsing method — coin-level privacy is at the protocol layer, not the application layer. These infrastructure disclosures do not affect donation privacy.`,
     },
