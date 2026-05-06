@@ -151,7 +151,10 @@ export default function SightingForm({ setTab }) {
             <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
             <span>
               <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>{' '}·{' '}
-              This sighting will count toward your reputation <strong style={{ color: '#10b981' }}>+1 pt</strong>.
+              Include a <strong style={{ color: 'var(--text)' }}>C2PA-verified photo</strong> to earn reputation points.
+              Use <a href="https://www.proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> or{' '}
+              <a href="https://www.numbersprotocol.io/capture" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Numbers Capture</a>,
+              or shoot on a Samsung Galaxy S24+.
             </span>
           </div>
         ) : (
@@ -165,7 +168,7 @@ export default function SightingForm({ setTab }) {
               <strong style={{ color: 'var(--text)' }}>Nothing is collected about you.</strong>{' '}
               No IP address is logged. No cookies. No account required.{' '}
               <button onClick={() => setTab('reputation')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 12, padding: 0 }}>Create an account</button>{' '}
-              to earn reputation points.
+              and add a C2PA photo to earn reputation points.
             </span>
           </div>
         )}
@@ -213,10 +216,10 @@ export default function SightingForm({ setTab }) {
               background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
               borderRadius: 10, padding: '14px 16px', marginBottom: 20, textAlign: 'left',
             }}>
-              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for this</div>
+              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
-                Create a free account to earn reputation points for your sightings.
-                10 points unlocks Tier 1 (Operator) access.
+                Create an account and submit with a C2PA-verified photo to earn points.
+                Use Proofmode, Numbers Capture, or a Samsung Galaxy S24+. 10 points unlocks Tier 1.
               </p>
               <button
                 onClick={() => setShowClaimModal(true)}

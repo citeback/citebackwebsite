@@ -268,9 +268,9 @@ export default function ReputationPage({ setTab }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { label: 'Submit a camera sighting while logged in', pts: '+1 pt' },
-            { label: 'Submit with verified photo (C2PA)', pts: '+2 pts', soon: true },
-            { label: 'Verified by community (Phase 2)', pts: '+3 pts', soon: true },
+            { label: 'C2PA-verified photo of a new camera (Proofmode, Numbers Capture, Galaxy S24+)', pts: '+1 pt' },
+            { label: 'New camera not in any existing database', pts: '+2 pts', soon: true },
+            { label: 'Community corroboration (Phase 2)', pts: '+3 pts', soon: true },
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
               <TrendingUp size={12} style={{ color: 'var(--muted)', flexShrink: 0 }} />
