@@ -268,7 +268,8 @@ export default function ReputationPage({ setTab }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { label: 'C2PA-verified photo via Proofmode (iOS/Android, free), Galaxy S24+, or Google Pixel 10', pts: '+1 pt' },
+            { label: 'Submit a sighting with a photo (account required)', pts: '+1 pt' },
+            { label: 'C2PA-verified photo (Proofmode, Galaxy S24+, Pixel 10) — skips admin queue', pts: '⚡ fast-track', soon: false },
             { label: 'New camera not in any existing database', pts: '+2 pts', soon: true },
             { label: 'Community corroboration (Phase 2)', pts: '+3 pts', soon: true },
           ].map((item, i) => (

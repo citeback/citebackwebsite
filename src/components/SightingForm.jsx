@@ -152,15 +152,12 @@ export default function SightingForm({ setTab }) {
             <div>
               <div style={{ marginBottom: 6 }}>
                 <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>
-                {' '}· Include a <strong style={{ color: 'var(--text)' }}>C2PA-verified photo</strong> to earn reputation points.
+                {' '}· Add a photo to earn <strong style={{ color: '#10b981' }}>+1 pt</strong>.
               </div>
               <div style={{ lineHeight: 1.7 }}>
-                <strong style={{ color: 'var(--text)' }}>📱 Any iPhone or Android:</strong>{' '}
-                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                — built by Guardian Project for human rights evidence. Free, open source, C2PA-signed.
-              </div>
-              <div style={{ marginTop: 4, opacity: 0.7 }}>
-                <strong style={{ color: 'var(--text)' }}>📲 Hardware-native:</strong> Samsung Galaxy S24+ or Google Pixel 10 sign photos automatically.
+                <strong style={{ color: 'var(--text)' }}>⚡ C2PA photo = instant map approval</strong> — no admin wait.
+                Shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
+                (iOS/Android, free — built for human rights evidence), Samsung Galaxy S24+, or Google Pixel 10.
               </div>
             </div>
           </div>
@@ -175,7 +172,7 @@ export default function SightingForm({ setTab }) {
               <strong style={{ color: 'var(--text)' }}>Nothing is collected about you.</strong>{' '}
               No IP address is logged. No cookies. No account required.{' '}
               <button onClick={() => setTab('reputation')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 12, padding: 0 }}>Create an account</button>{' '}
-              and add a C2PA photo to earn reputation points.
+              and add a photo to earn reputation points.
             </span>
           </div>
         )}
@@ -225,9 +222,9 @@ export default function SightingForm({ setTab }) {
             }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
-                Create an account and shoot through{' '}
+                Create an account and include a photo to earn points. Use{' '}
                 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                (iOS + Android, free) or on a Samsung Galaxy S24+ / Google Pixel 10. 10 points unlocks Tier 1.
+                for C2PA-verified photos that skip the admin queue. 10 points unlocks Tier 1.
               </p>
               <button
                 onClick={() => setShowClaimModal(true)}
