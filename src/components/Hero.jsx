@@ -5,6 +5,7 @@ const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 const stats = [
   { value: '7', label: 'Campaigns queued at launch' },
   { value: '$14,050', label: 'Total campaign funding goals' },
+  { value: '$0', label: 'Total raised to date' },
   { value: '4/10', label: 'Launch prerequisites cleared' },
   { value: 'XMR + ZANO', label: 'No account. No ID. No credit card.' },
 ]
