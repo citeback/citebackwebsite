@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { campaigns } from './data/campaigns'
+import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
 import LaunchTracker from './components/LaunchTracker'
@@ -25,9 +26,9 @@ import Operators from './components/Operators'
 import FrontlineFunds from './components/FrontlineFunds'
 import ScrollProgress from './components/ScrollProgress'
 import LiveFeed from './components/LiveFeed'
-import WaitlistBanner from './components/WaitlistBanner'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import TermsPage from './components/TermsPage'
+import SightingForm from './components/SightingForm'
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -51,6 +52,16 @@ const TAB_TO_PATH = {
   feed: '/intelligence-feed',
   privacy: '/privacy',
   terms: '/terms',
+  report: '/report',
+}
+
+function CampaignDeepLink({ setSelectedCampaign, setTab }) {
+  const { id } = useParams()
+  useEffect(() => {
+    const campaign = campaigns.find(c => String(c.id) === id)
+    if (campaign) setSelectedCampaign(campaign)
+  }, [id])
+  return <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
 }
 
 const PATH_TO_TAB = Object.fromEntries(Object.entries(TAB_TO_PATH).map(([k, v]) => [v, k]))
@@ -106,9 +117,9 @@ export default function App() {
               <Manifesto setTab={setTab} />
               <BuildWithUs setTab={setTab} />
               <LiveFeed setTab={setTab} />
-              <WaitlistBanner />
             </>
           } />
+          <Route path="/campaigns/:id" element={<CampaignDeepLink setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/map" element={<Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>} />
           <Route path="/expert-directory" element={<HumanRegistry />} />
@@ -120,6 +131,7 @@ export default function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
+          <Route path="/report" element={<SightingForm setTab={setTab} />} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />
@@ -135,7 +147,6 @@ export default function App() {
               <Manifesto setTab={setTab} />
               <BuildWithUs setTab={setTab} />
               <LiveFeed setTab={setTab} />
-              <WaitlistBanner />
             </>
           } />
         </Routes>

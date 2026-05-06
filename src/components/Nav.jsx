@@ -15,6 +15,7 @@ const moreLinks = [
   { id: 'frontline', label: 'Frontline Funds' },
   { id: 'registry', label: 'Expert Directory' },
   { id: 'feed', label: 'Intelligence Feed' },
+  { id: 'report', label: 'Report a Sighting' },
 ]
 
 export default function Nav({ tab, setTab }) {

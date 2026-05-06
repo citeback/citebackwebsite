@@ -28,7 +28,7 @@ Donation privacy is handled at the cryptocurrency protocol level (Monero XMR, Za
 • Use Google Analytics, Facebook Pixel, or any behavioral tracking
 • Sell or share visitor data with third parties for marketing
 
-There is no account system. There is no login. There is no newsletter (unless you opt in via the waitlist form).`,
+There is no account system. There is no login. There is no newsletter.`,
         },
         {
           title: '3. Infrastructure Data (Third-Party Processors)',
@@ -42,15 +42,16 @@ There is no account system. There is no login. There is no newsletter (unless yo
 For maximum privacy while browsing: use Tor Browser, a trusted VPN, or a privacy proxy. Your donation privacy is at the cryptocurrency protocol layer and is not affected by browsing method.`,
         },
         {
-          title: '4. Form Submissions',
-          body: `This site includes three optional forms processed by Netlify Forms:
+          title: '4. Form Submissions — What We Store and What We Don\u2019t',
+          body: `This site includes optional forms. We distinguish two categories:
 
-• Camera submission (report an ALPR camera location): collects lat/lng coordinates, location description, and optional notes. No identity required.
-• Campaign proposal: collects campaign type, title, location, description, funding goal, and an optional contact field. Submissions are stored by Netlify.
-• Registry application: collects role, location, background description, and an optional contact field. Submissions are stored by Netlify.
-• Launch waitlist: collects email address only. Stored by Netlify.
+\u25b8 Surveillance infrastructure reports (camera sightings, campaign proposals)
+These contain information about surveillance systems — not about you. A sighting report includes camera type, street address, and optional notes. A campaign proposal includes type, title, location, and description. No name, no email, no contact information is collected or required. These submissions are sent directly to our own server (Hetzner, Helsinki) where IP address logging is disabled at the infrastructure level. Submissions enter a moderation queue before any public display.
 
-If you include contact information in a form submission, that information is stored by Netlify and may be subject to legal process served to Netlify. For sensitive submissions, use a ProtonMail or other privacy-respecting email address, or omit contact information entirely.`,
+\u25b8 Expert Directory applications
+Role, location, and background description. An optional contact field exists — if you include one, use a privacy-respecting address (ProtonMail or similar). Stored by Netlify; subject to legal process served to Netlify.
+
+What we do not collect in any form: your name, your email address (unless you voluntarily include it in the Expert Directory), cookies, device fingerprint, or IP address from sighting and proposal submissions.`,
         },
         {
           title: '5. Campaign Operator Data',

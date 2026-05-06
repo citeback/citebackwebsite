@@ -82,7 +82,7 @@ const TYPES = [
     color: '#eab308',
     sections: {
       what: 'A network of microphones mounted on poles and buildings that claim to detect gunshots and alert police in real time. The company recently rebranded as "SoundThinking" — but the product is the same.',
-      affects: 'An AP investigation found ShotSpotter alerts sent Chicago police to innocent people at least 40,000 times in a single year. Cities pay $3–5 million per year for the system. Your neighborhood can be under microphone surveillance without any public vote or notice.',
+      affects: 'An AP investigation found ShotSpotter alerts sent Chicago police to innocent people more than 40,000 times over a 21-month period. Cities pay $3–5 million per year for the system. Your neighborhood can be under microphone surveillance without any public vote or notice.',
       problems: [
         'Approximately 89% of ShotSpotter alerts find no evidence of gunfire or a firearm, according to a MacArthur Justice Center analysis of Chicago data. Multiple independent analyses put the figure above 90%.',
         'In one case, ShotSpotter retrospectively altered its audio analysis after police requested it — the modified "evidence" was used in a murder prosecution.',

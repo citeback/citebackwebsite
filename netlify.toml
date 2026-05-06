@@ -3,6 +3,12 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# SPA routing — send all paths to index.html so React Router handles them
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [functions]
   node_bundler = "esbuild"
 

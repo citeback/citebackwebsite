@@ -1,4 +1,4 @@
-import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Bell, Camera, Lock, GitMerge, Zap, Award } from 'lucide-react'
+import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Camera, Lock, GitMerge, Zap, Award, ThumbsUp, Share2 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { typeColors } from '../data/campaigns'
 import { useState, useEffect, useRef } from 'react'
@@ -11,9 +11,51 @@ export default function CampaignModal({ campaign, onClose }) {
   const [copied, setCopied] = useState(false)
   const [walletTab, setWalletTab] = useState('address')
   const [currency, setCurrency] = useState('XMR')
-  const [interested, setInterested] = useState(false)
+  const [interested, setInterested] = useState(() => {
+    try { return !!localStorage.getItem(`cb_int_${campaign.id}`) } catch { return false }
+  })
+  const [interestCount, setInterestCount] = useState(0)
+  const [shared, setShared] = useState(false)
   const modalRef = useRef(null)
+  const AI_URL = 'https://ai.citeback.com'
   const headingId = 'campaign-modal-heading'
+
+  useEffect(() => {
+    fetch(`${AI_URL}/interest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'counts' }),
+    })
+      .then(r => r.json())
+      .then(d => { if (d.counts) setInterestCount(d.counts[campaign.id] || 0) })
+      .catch(() => {})
+  }, [campaign.id])
+
+  const handleInterest = async () => {
+    if (interested) return
+    try {
+      const r = await fetch(`${AI_URL}/interest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'increment', campaignId: campaign.id }),
+      })
+      const d = await r.json()
+      setInterestCount(d.count || interestCount + 1)
+    } catch { setInterestCount(c => c + 1) }
+    try { localStorage.setItem(`cb_int_${campaign.id}`, '1') } catch {}
+    setInterested(true)
+  }
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/campaigns/${campaign.id}`
+    if (navigator.share) {
+      navigator.share({ title: campaign.title, url }).catch(() => {})
+    } else {
+      navigator.clipboard.writeText(url).catch(() => {})
+      setShared(true)
+      setTimeout(() => setShared(false), 2000)
+    }
+  }
 
   useEffect(() => {
     const modal = modalRef.current
@@ -267,12 +309,55 @@ export default function CampaignModal({ campaign, onClose }) {
                 </p>
               </div>
 
+              {/* Interest signal */}
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <button
+                  onClick={handleInterest}
+                  disabled={interested}
+                  aria-label={interested ? 'Interest recorded' : 'Signal interest in this campaign'}
+                  style={{
+                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    background: interested ? 'rgba(46,204,113,0.1)' : 'var(--bg3)',
+                    border: `1px solid ${interested ? 'rgba(46,204,113,0.3)' : 'var(--border)'}`,
+                    color: interested ? 'var(--green)' : 'var(--text)',
+                    borderRadius: 10, padding: '12px 16px', fontWeight: 600, fontSize: 14,
+                    cursor: interested ? 'default' : 'pointer', transition: 'all 0.2s',
+                  }}
+                >
+                  <ThumbsUp size={15} />
+                  {interested ? 'Interest Recorded' : 'Signal Interest'}
+                  {interestCount > 0 && (
+                    <span style={{
+                      background: interested ? 'rgba(46,204,113,0.2)' : 'var(--bg2)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 100, padding: '1px 8px', fontSize: 11, fontWeight: 700,
+                    }}>
+                      {interestCount}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={handleShare}
+                  aria-label="Share this campaign"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    background: 'var(--bg3)', border: '1px solid var(--border)',
+                    color: shared ? 'var(--green)' : 'var(--muted)',
+                    borderRadius: 10, padding: '12px 16px', fontWeight: 600, fontSize: 13,
+                    cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
+                  }}
+                >
+                  <Share2 size={14} />
+                  {shared ? 'Copied!' : 'Share'}
+                </button>
+              </div>
+
               <div style={{
                 background: 'var(--bg3)', border: '1px solid var(--border)',
                 borderRadius: 10, padding: 16, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, textAlign: 'center',
               }}>
                 <strong style={{ color: 'var(--text)' }}>No notifications — by design.</strong><br />
-                Citeback doesn't collect emails or contact info. When wallets activate,
+                Anonymous interest signal only. When wallets activate,
                 both XMR and ZANO addresses will appear right here. Bookmark this page and check back.
               </div>
             </div>

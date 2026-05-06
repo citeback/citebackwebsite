@@ -49,10 +49,10 @@ export default function ProposeModal({ onClose, prefill = {} }) {
     if (!form.title || !form.location || !form.description || !form.goal) return
     setSending(true)
     try {
-      await fetch('/', {
+      await fetch('https://ai.citeback.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ 'form-name': 'campaign-proposal', ...form }).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: form.type, title: form.title, location: form.location, description: form.description, goal: form.goal }),
       })
     } catch (_) {}
     setSending(false)
@@ -114,7 +114,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 380, margin: '0 auto 20px' }}>
               {[
                 { step: '24–72h', text: 'Team reviews for legality, specificity, and verifiable public record support' },
-                { step: 'If approved', text: 'TEE generates dedicated XMR + ZANO wallets — no human touches the keys' },
+                { step: 'If approved', text: 'When the platform launches, a TEE will generate dedicated XMR + ZANO wallets — no human can access the keys' },
                 { step: 'Goes live', text: 'Wallet addresses appear on this page and funding opens immediately' },
               ].map(({ step, text }, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13 }}>
