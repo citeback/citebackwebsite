@@ -159,8 +159,8 @@ export default function App() {
         {!showAI && (
           <button
             onClick={() => setShowAI(true)}
-            aria-label="Ask Citeback AI"
-            title="Ask questions about surveillance, privacy rights, and Citeback"
+            aria-label="Ask questions about surveillance, campaigns, and the platform"
+            title="Ask questions about surveillance, campaigns, and the platform"
             style={{
               position: 'fixed', bottom: 24, right: 24, zIndex: 999,
               padding: '12px 20px',

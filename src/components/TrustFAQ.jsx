@@ -24,8 +24,8 @@ const sections = [
         a: `If a campaign deadline arrives with the goal unmet, funds automatically redirect to the highest-priority active campaign in the same category (billboard funds go to another billboard campaign, FOIA funds to another FOIA, etc.).\n\nOperators or community members can request an extension (see Campaign Extensions). Maximum 2 extensions per campaign. After that, redirect is automatic.\n\nAll donations are final and non-refundable. This is disclosed on every campaign card. Monero's privacy model makes identifying senders technically infeasible without asking donors to partially deanonymize themselves — we won't do that.`,
       },
       {
-        q: 'Where does the platform fee go?',
-        a: `A graduated platform fee on every donation goes to the operations wallet — also inside the TEE, also publicly verifiable via view key. Fees scale with 90-day rolling operator volume: 5% (up to $10k), 4.5% ($10,001–$25k), 4% ($25,001–$50k), 3% (above $50k). See GOVERNANCE.md §7.3 for the full schedule.\n\nThis covers: VPS and TEE infrastructure costs, Monero and Zano node operation, and a reserve buffer.\n\nThe operations wallet balance is public. Any surplus beyond 6 months of operating costs is put to a community vote for redistribution (additional campaigns, reserve increase, etc.). The founder cannot touch it.`,
+        q: 'How does Citeback sustain itself?',
+        a: `Citeback takes zero from campaigns. No platform fee. No percentage deducted. Every dollar donated goes directly to the campaign operator\'s wallet — Citeback never holds or touches campaign funds.\n\nOperating costs (server infrastructure, domains, tooling) are covered by the founding operator personally via capital contributions to the Wyoming DAO LLC. At current scale this is roughly $33/month — sustainable indefinitely without platform revenue.\n\nLonger term, the platform will pursue grant funding from aligned foundations (Open Technology Fund, Knight Foundation) specifically for technical infrastructure builds. Grants fund the build; the platform stays independent.\n\nThis model was chosen deliberately: a surveillance resistance platform that skims a percentage of campaigns has an extractive relationship with the causes it exists to support. Zero fees eliminate that tension entirely.`,
       },
       {
         q: 'Why Monero and Zano — and not Bitcoin or USDC?',
@@ -134,7 +134,7 @@ Campaign operators (who receive disbursements) are separately screened against t
 • **Fonts:** This site loads fonts from Bunny CDN (fonts.bunny.net). Bunny CDN logs standard CDN access requests including IP addresses.
 • **Map tiles:** The surveillance camera map loads tiles from CARTO (*.basemaps.cartocdn.com). CARTO receives tile requests including your IP address.
 • **External data APIs:** Features powered by CourtListener, USASpending.gov, the Senate LDA API, and api.congress.gov make client-side requests that expose your IP to those services.
-• **Form submissions:** Campaign proposals, sighting reports, and expert directory applications are submitted to our own server where IP address logging is disabled. No contact information is required or collected in any form. No form submission data is processed by Netlify.
+• **Form submissions:** Campaign proposals, camera sightings, and expert directory applications are sent directly to Citeback's own server infrastructure. No contact information is collected or required. IP address logging is disabled at the server level. Submission data goes into a moderation queue — no personal data is stored.
 
 For maximum privacy when browsing this site, use Tor Browser, a trusted VPN, or a privacy-preserving proxy. Your XMR or ZANO donation remains private regardless of browsing method — coin-level privacy is at the protocol layer, not the application layer. These infrastructure disclosures do not affect donation privacy.`,
     },

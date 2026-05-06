@@ -238,6 +238,12 @@ export default function Operators() {
             <ExternalLink size={14} /> Operator Technical Specs
           </a>
         </div>
+        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8 }}>
+          <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, margin: 0 }}>
+            <strong style={{ color: 'var(--text)' }}>Operator onboarding opens at launch.</strong>{' '}
+            Submit a campaign proposal now to be first in line — proposals are reviewed when the onboarding system goes live.
+          </p>
+        </div>
       </div>
     </div>
   )

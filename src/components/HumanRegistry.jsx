@@ -1,4 +1,4 @@
-import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu } from 'lucide-react'
+import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu, AlertCircle } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
 const typeConfig = {
@@ -21,6 +21,7 @@ const roles = [
 function ApplyModal({ onClose }) {
   const [form, setForm] = useState({ role: '', location: '', background: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
   const [sending, setSending] = useState(false)
   const modalRef = useRef(null)
   const headingId = 'apply-modal-heading'
@@ -63,15 +64,22 @@ function ApplyModal({ onClose }) {
   const handleSubmit = async () => {
     if (!form.role || !form.location || !form.background) return
     setSending(true)
+    setSubmitError(false)
     try {
-      await fetch('https://ai.citeback.com/registry', {
+      const res = await fetch('https://ai.citeback.com/registry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: form.role, location: form.location, background: form.background }),
       })
-    } catch (_) {}
+      if (res.ok) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(true)
+      }
+    } catch (_) {
+      setSubmitError(true)
+    }
     setSending(false)
-    setSubmitted(true)
   }
 
   return (
@@ -110,10 +118,18 @@ function ApplyModal({ onClose }) {
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Application Received</h3>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 360, margin: '0 auto 24px' }}>
-              Community review takes 48–72 hours. Verified operators are added to the registry
-              and become eligible to receive funded campaigns.
+            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 360, margin: '0 auto 16px' }}>
+              Your application is saved and queued for review.
             </p>
+            <div style={{
+              maxWidth: 360, margin: '0 auto 24px',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
+              borderRadius: 10, padding: '14px 16px', textAlign: 'left',
+            }}>
+              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> The expert directory and operator verification system open at platform launch. Applications submitted now are first in line when onboarding goes live.
+              </div>
+            </div>
             <button onClick={onClose} style={{
               background: 'var(--accent)', border: 'none', color: '#fff',
               padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: 'pointer',
@@ -179,6 +195,14 @@ function ApplyModal({ onClose }) {
               }}>
               {sending ? 'Submitting...' : 'Submit Application'}
             </button>
+            {submitError && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12,
+                background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
+                borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
+                <AlertCircle size={14} />
+                Submission failed — please try again. If the problem persists, email citeback@proton.me.
+              </div>
+            )}
           </div>
         )}
       </div>

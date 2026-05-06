@@ -234,16 +234,7 @@ export default function Governance({ setTab }) {
             ['$2,000 and above', 'Hold', '60% majority to approve'],
           ]}
         />
-        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--accent)' }}>Platform fee (graduated):</strong></p>
-        <Table
-          headers={['Volume', 'Fee']}
-          rows={[
-            ['$0 – $10k', '5.0%'],
-            ['$10,001 – $25k', '4.5%'],
-            ['$25,001 – $50k', '4.0%'],
-            ['Above $50k', '3.0%'],
-          ]}
-        />
+        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign donations. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 — see governance rationale below.</p>
       </Section>
 
       <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC — §9)" icon={Users}>
@@ -280,6 +271,12 @@ export default function Governance({ setTab }) {
       </Section>
 
       <Section id="bootstrapping" title="Bootstrapping & Founder Restrictions" icon={Users}>
+        <div style={{ marginBottom: 20, padding: '14px 16px', borderRadius: 8, background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)' }}>
+          <p style={{ margin: '0 0 6px', fontWeight: 700, fontSize: 13, color: '#818cf8' }}>Bootstrap Ratification — 2026-05-06</p>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+            The graduated 3–5% platform fee model was eliminated by founding operator Scott Hughes during the pre-launch formation period. Rationale: mission alignment (no extractive relationship with campaigns), operational simplicity, and legal architecture (pure pass-through strengthens agent-of-the-payee argument). This change was not made to avoid regulatory classification — it was made because it is the right structure for this platform’s mission. The timing is documented here so the rationale is on record. Valid under §14 bootstrap governance pending formal community ratification upon LLC formation and launch.
+          </p>
+        </div>
         <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> — enforced by the TEE-encoded founder address registry and immutable (§15).</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Bootstrapping ends when all three are met:</strong></p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>

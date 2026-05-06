@@ -4,12 +4,11 @@
 
 // Platform rules (enforced by TEE wallet agent)
 export const platformRules = {
-  // IMPORTANT: platformFeePercent below is a pre-launch placeholder.
-  // The published graduated fee schedule (Governance §7.3 / Transparency page) governs:
-  //   5% on rolling volume $0–$10k | 4.5% $10k–$25k | 4% $25k–$50k | 3% above $50k
-  // Update this value to 5 (and switch to graduated logic) before wallets go live.
-  platformFeePercent: 5,          // 5% base rate — see graduated schedule in GOVERNANCE.md §7.3
-  feeBufferPercent: 2,            // 2% added to campaign goals for tx fee variance
+  // Citeback takes zero platform fee from campaigns.
+  // All donated funds go directly to the campaign operator's wallet.
+  // See ARCHITECTURE-REPUTATION.md for the full platform sustainability model.
+  platformFeePercent: 0,          // Zero. No platform fee. Ratified 2026-05-06.
+  networkFeeBufferPercent: 2,     // 2% buffer for Monero/Zano network tx fee variance (NOT a platform fee)
   xmrTxFeeEstimate: 0.01,        // ~$0.01 per transaction (USD) — Monero fees set by RandomX PoW network
   zanoTxFeeEstimate: 0.01,       // ~$0.01 per transaction (USD) — Zano fees on hybrid PoW+PoS network
   maxExtensionsPerCampaign: 2,

@@ -1,7 +1,21 @@
-import { useState } from 'react'
-import { CheckCircle, AlertCircle, Eye } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { CheckCircle, AlertCircle, Eye, MapPin, Loader } from 'lucide-react'
 
 const AI_URL = 'https://ai.citeback.com'
+
+// Client-side geocoding via Nominatim — resolves address to lat/lng before submit
+async function geocodeAddress(address, city, state) {
+  const q = encodeURIComponent([address, city, state, 'USA'].filter(Boolean).join(', '))
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
+      { headers: { 'User-Agent': 'citeback.com surveillance map' } }
+    )
+    const data = await res.json()
+    if (data[0]) return { lat: data[0].lat, lng: data[0].lon, display: data[0].display_name }
+  } catch {}
+  return null
+}
 
 const CAMERA_TYPES = [
   { id: 'alpr', label: 'ALPR / License Plate Reader', desc: 'Flock Safety, Motorola, Genetec, or similar' },
@@ -21,11 +35,34 @@ export default function SightingForm({ setTab }) {
     notes: '',
     honeypot: '', // never shown to user — spam trap
   })
+  const [geo, setGeo] = useState(null)       // { lat, lng, display } — resolved coords
+  const [geoStatus, setGeoStatus] = useState(null) // null | 'resolving' | 'resolved' | 'failed'
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(false)
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const set = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }))
+    // Reset geo when location fields change
+    if (['address', 'city', 'state'].includes(k)) {
+      setGeo(null)
+      setGeoStatus(null)
+    }
+  }
+
+  // Resolve location to coordinates when address+city+state are all filled
+  const resolveLocation = useCallback(async () => {
+    if (!form.address || !form.city || !form.state) return
+    setGeoStatus('resolving')
+    setGeo(null)
+    const result = await geocodeAddress(form.address, form.city, form.state)
+    if (result) {
+      setGeo(result)
+      setGeoStatus('resolved')
+    } else {
+      setGeoStatus('failed')
+    }
+  }, [form.address, form.city, form.state])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -33,6 +70,14 @@ export default function SightingForm({ setTab }) {
     if (!form.cameraType || !form.address || !form.city || !form.state) return
     setSending(true)
     setError(false)
+
+    // Ensure we have coordinates — geocode now if not already resolved
+    let coords = geo
+    if (!coords) {
+      coords = await geocodeAddress(form.address, form.city, form.state)
+      if (coords) { setGeo(coords); setGeoStatus('resolved') }
+    }
+
     try {
       const res = await fetch(`${AI_URL}/sighting`, {
         method: 'POST',
@@ -43,6 +88,8 @@ export default function SightingForm({ setTab }) {
           city: form.city,
           state: form.state,
           notes: form.notes,
+          lat: coords?.lat ?? null,
+          lng: coords?.lng ?? null,
         }),
       })
       if (res.ok) {
@@ -203,10 +250,39 @@ export default function SightingForm({ setTab }) {
                 maxLength={2}
                 value={form.state}
                 onChange={e => set('state', e.target.value.toUpperCase())}
+                onBlur={() => form.address && form.city && form.state.length === 2 && resolveLocation()}
                 required
               />
             </div>
           </div>
+
+          {/* Location resolution status */}
+          {geoStatus === 'resolving' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+              <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} />
+              Resolving location…
+            </div>
+          )}
+          {geoStatus === 'resolved' && geo && (
+            <div style={{
+              display: 'flex', alignItems: 'flex-start', gap: 8,
+              background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)',
+              borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5,
+            }}>
+              <MapPin size={12} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
+              <span><strong style={{ color: 'var(--text)' }}>Location confirmed</strong> · {geo.display.split(',').slice(0, 3).join(',')}</span>
+            </div>
+          )}
+          {geoStatus === 'failed' && (
+            <div style={{
+              display: 'flex', alignItems: 'flex-start', gap: 8,
+              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
+              borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5,
+            }}>
+              <AlertCircle size={12} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+              <span>Couldn't auto-locate this address — double-check the street name, city, and state. Your sighting will still be submitted for manual review.</span>
+            </div>
+          )}
 
           {/* Notes */}
           <div>

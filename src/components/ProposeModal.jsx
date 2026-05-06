@@ -14,6 +14,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
   const modalRef = useRef(null)
   const headingId = 'propose-modal-heading'
 
@@ -48,15 +49,22 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const handleSubmit = async () => {
     if (!form.title || !form.location || !form.description || !form.goal) return
     setSending(true)
+    setSubmitError(false)
     try {
-      await fetch('https://ai.citeback.com/submit', {
+      const res = await fetch('https://ai.citeback.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: form.type, title: form.title, location: form.location, description: form.description, goal: form.goal }),
       })
-    } catch (_) {}
+      if (res.ok) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(true)
+      }
+    } catch (_) {
+      setSubmitError(true)
+    }
     setSending(false)
-    setSubmitted(true)
   }
 
   const inputStyle = {
@@ -109,23 +117,17 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Proposal Submitted</h3>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 20px' }}>
-              Your proposal is in the queue. Here’s what happens next:
+              Your proposal is saved. Operator onboarding and campaign review open at platform launch — submitted proposals are first in line.
             </p>
-            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 380, margin: '0 auto 20px' }}>
-              {[
-                { step: '24–72h', text: 'Team reviews for legality, specificity, and verifiable public record support' },
-                { step: 'If approved', text: 'When the platform launches, a TEE will generate dedicated XMR + ZANO wallets — no human can access the keys' },
-                { step: 'Goes live', text: 'Wallet addresses appear on this page and funding opens immediately' },
-              ].map(({ step, text }, i) => (
-                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13 }}>
-                  <span style={{ background: 'var(--accent)', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 100, whiteSpace: 'nowrap', marginTop: 2, flexShrink: 0 }}>{step}</span>
-                  <span style={{ color: 'var(--muted)', lineHeight: 1.55 }}>{text}</span>
-                </div>
-              ))}
+            <div style={{
+              textAlign: 'left', maxWidth: 380, margin: '0 auto 20px',
+              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
+              borderRadius: 10, padding: '14px 16px',
+            }}>
+              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform’s launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
+              </div>
             </div>
-            <p style={{ color: 'var(--muted)', fontSize: 12, lineHeight: 1.6, maxWidth: 380, margin: '0 auto 24px' }}>
-              Once governance goes live, community votes will govern approvals. Bookmark this page — if approved, your campaign will appear here.
-            </p>
             <button onClick={onClose} style={{
               background: 'var(--accent)', border: 'none', color: '#fff',
               padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 15,
@@ -153,7 +155,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             }}>
               <AlertCircle size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
               <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
-                All campaigns must be legal, public-facing actions. No illegal activity will be funded. 
+                All campaigns must be legal, public-facing actions. No illegal activity will be funded.
                 Community review ensures compliance before any wallet is generated.
               </p>
             </div>
@@ -174,7 +176,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
               <label htmlFor="prop-title" style={labelStyle}>Campaign Title</label>
-              <input id="prop-title" style={inputStyle} placeholder="e.g. Billboard — US-54 & Main St, Tucumcari NM"
+              <input id="prop-title" style={inputStyle} placeholder="e.g. Billboard - US-54 & Main St, Tucumcari NM"
                 value={form.title} onChange={e => set('title', e.target.value)} />
             </div>
             <div>
@@ -219,6 +221,14 @@ export default function ProposeModal({ onClose, prefill = {} }) {
                 {sending ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>
+            {submitError && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12,
+                background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
+                borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
+                <AlertCircle size={14} />
+                Submission failed - please try again. If the problem persists, email citeback@proton.me.
+              </div>
+            )}
           </div>
         )}
       </div>

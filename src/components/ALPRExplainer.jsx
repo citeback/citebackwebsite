@@ -95,7 +95,7 @@ export default function ALPRExplainer({ setTab }) {
             </div>
           )}
           <a
-            href="https://www.eff.org/pages/automated-license-plate-readers-alpr"
+            href="https://sls.eff.org/technologies/automated-license-plate-readers-alprs"
             target="_blank"
             rel="noopener noreferrer"
             style={{

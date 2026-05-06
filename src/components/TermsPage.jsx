@@ -52,7 +52,7 @@ Citeback is not a charitable organization. Donations are not tax-deductible. Cit
 • All donations are final and non-refundable. Monero's privacy model makes identifying senders technically infeasible; Citeback will not ask donors to deanonymize themselves to facilitate refunds.
 • If a campaign does not reach its goal by the deadline, funds redirect to the highest-priority active campaign in the same category. Operators or community members may request an extension vote. After two extensions, redirect is automatic.
 • Donations are not tax-deductible. Citeback is a Wyoming DAO LLC, not a 501(c)(3) exempt organization.
-• A platform fee (graduated 3–5% of donation amount, per GOVERNANCE.md §7.3) is deducted from each donation and directed to the operations wallet, which is also publicly auditable via view key.`,
+• Citeback takes no platform fee from campaign donations. Zero percent is deducted. All donated funds go directly to the campaign operator\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
         },
         {
           title: '5. OFAC Compliance',

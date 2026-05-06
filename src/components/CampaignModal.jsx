@@ -222,6 +222,22 @@ export default function CampaignModal({ campaign, onClose }) {
             /* Verification Bounty — full game theory breakdown */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
+              {/* Phase 2 architecture notice */}
+              <div style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)',
+                borderRadius: 10, padding: '12px 14px',
+              }}>
+                <span style={{ fontSize: 16, flexShrink: 0 }}>⚙️</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 12, color: '#818cf8', marginBottom: 3 }}>Phase 2 Architecture — In Development</div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
+                    The anti-fraud system below describes the planned verification infrastructure. Staking, consensus, and IPFS storage are not yet live. This campaign opens when the system is built and audited.
+                  </div>
+                </div>
+              </div>
+
+
               {/* How it works */}
               <div style={{ background: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: 12, padding: 18 }}>
                 <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 12, color: '#f39c12', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -325,7 +341,7 @@ export default function CampaignModal({ campaign, onClose }) {
                   }}
                 >
                   <ThumbsUp size={15} />
-                  {interested ? 'Interest Recorded' : 'Signal Interest'}
+                  {interested ? 'Interest Recorded' : 'Signal Interest — helps prioritize launch order'}
                   {interestCount > 0 && (
                     <span style={{
                       background: interested ? 'rgba(46,204,113,0.2)' : 'var(--bg2)',
