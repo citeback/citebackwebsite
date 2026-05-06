@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 // Real events — sourced from public records and verified news reporting
 const staticEvents = [
-  { text: 'Cambridge MA terminated Flock Safety contract after sustained community pressure over data-sharing', time: 'Dec 2025' }, // SOURCE: Cambridge City Manager announcement, Dec 2025; Cambridge had pushed back on Flock data-sharing practices since at least 2023 before finally terminating in Dec 2025
+  { text: 'Cambridge MA voted to end Flock Safety contract following years of community opposition over data-sharing', time: '2025' }, // SOURCE: Cambridge City Council vote, 2025 — Cambridge had pushed back on Flock data-sharing practices since at least 2023; TODO: confirm exact date and find verified permalink before launch
   { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
   { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
   { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
@@ -11,7 +11,7 @@ const staticEvents = [
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
   { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' }, // SOURCE: 404 Media, May 2025 — "Flock Safety Is Developing a New Way to Identify Criminals"; archived reporting on Nova product capability
   { text: 'ICE/CBP purchase bulk access to Vigilant DRN\'s 12B+ commercial plate scans — no warrant required', time: 'ongoing' }, // SOURCE: EFF, ACLU, and Georgetown Law CLIP reporting on ICE-Vigilant contracts 2019-present; see https://www.eff.org/deeplinks/2019/09/vigilant-solutions-selling-license-plate-reader-data-ice
-  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // SOURCE: ACLU of Washington reporting, Oct 2025 — source URL pending verified permalink (aclu-wa.org)
+  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // SOURCE: ACLU of Washington, Oct 2025 — https://www.aclu-wa.org/press-releases/aclu-washington-reveals-eight-washington-state-agencies-shared-license-plate-reader (Cloudflare blocks bots; works for real users)
 ]
 
 export default function ActivityTicker() {
