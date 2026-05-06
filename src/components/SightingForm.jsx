@@ -211,7 +211,7 @@ export default function SightingForm({ setTab }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, justifyContent: 'center', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 8, padding: '10px 14px' }}>
               <Shield size={14} style={{ color: '#10b981' }} />
               <span style={{ fontSize: 13, fontWeight: 600 }}>
-                +{repEarned.points} reputation point{repEarned.points !== 1 ? 's' : ''} earned · {repEarned.newReputation} total · {repEarned.tierName}
+                +{repEarned.points} pt{repEarned.points !== 1 ? 's' : ''}{repEarned.points === 2 ? ' — new camera, not in any database' : ' — confirmed existing camera'} · {repEarned.newReputation} total · {repEarned.tierName}
               </span>
             </div>
           )}
@@ -243,8 +243,7 @@ export default function SightingForm({ setTab }) {
           )}
 
           <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 24px' }}>
-            Your report is in the moderation queue. Once reviewed, it will appear on the map
-            as a community-verified sighting.
+            Your C2PA-verified photo has been confirmed. This camera is now live on the map.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
