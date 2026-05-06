@@ -268,7 +268,7 @@ export default function ReputationPage({ setTab }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { label: 'C2PA-verified photo of a new camera (Proofmode, Numbers Capture, Galaxy S24+)', pts: '+1 pt' },
+            { label: 'C2PA-verified photo via Proofmode (iOS/Android), Numbers Capture, Galaxy S24+, or Pixel 10', pts: '+1 pt' },
             { label: 'New camera not in any existing database', pts: '+2 pts', soon: true },
             { label: 'Community corroboration (Phase 2)', pts: '+3 pts', soon: true },
           ].map((item, i) => (

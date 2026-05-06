@@ -149,13 +149,22 @@ export default function SightingForm({ setTab }) {
             borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
           }}>
             <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
-            <span>
-              <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>{' '}·{' '}
-              Include a <strong style={{ color: 'var(--text)' }}>C2PA-verified photo</strong> to earn reputation points.
-              Use <a href="https://www.proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> or{' '}
-              <a href="https://www.numbersprotocol.io/capture" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Numbers Capture</a>,
-              or shoot on a Samsung Galaxy S24+.
-            </span>
+            <div>
+              <div style={{ marginBottom: 6 }}>
+                <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>
+                {' '}· Include a <strong style={{ color: 'var(--text)' }}>C2PA-verified photo</strong> to earn reputation points.
+              </div>
+              <div style={{ lineHeight: 1.7 }}>
+                <strong style={{ color: 'var(--text)' }}>📱 Any iPhone or Android:</strong>{' '}
+                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
+                — built by Guardian Project for human rights evidence. Free, open source, C2PA-signed.{' '}
+                Or{' '}
+                <a href="https://numbersprotocol.io/nit/capture-app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Numbers Capture</a>.
+              </div>
+              <div style={{ marginTop: 4, opacity: 0.7 }}>
+                <strong style={{ color: 'var(--text)' }}>📲 Hardware-native:</strong> Samsung Galaxy S24+ or Google Pixel 10 sign photos automatically.
+              </div>
+            </div>
           </div>
         ) : (
           <div style={{
@@ -218,8 +227,9 @@ export default function SightingForm({ setTab }) {
             }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
-                Create an account and submit with a C2PA-verified photo to earn points.
-                Use Proofmode, Numbers Capture, or a Samsung Galaxy S24+. 10 points unlocks Tier 1.
+                Create an account and shoot through{' '}
+                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
+                (iOS + Android, free) or on a Samsung Galaxy S24+ / Pixel 10 to earn points. 10 points unlocks Tier 1.
               </p>
               <button
                 onClick={() => setShowClaimModal(true)}
