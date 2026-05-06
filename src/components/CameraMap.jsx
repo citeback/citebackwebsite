@@ -668,6 +668,15 @@ function ZoomToState({ target }) {
   return null
 }
 
+const CAMERA_TYPE_LABELS = {
+  alpr: 'ALPR / License Plate Reader',
+  shotspotter: 'ShotSpotter / Gunshot Detection',
+  facial: 'Facial Recognition',
+  cctv: 'CCTV / General Surveillance',
+  drone: 'Police Drone / UAV',
+  unknown: 'Unknown / Unidentified',
+}
+
 // ─── EFF Atlas Overlay Definitions ──────────────────────────────────────────
 const EFF_LAYERS = [
   {
@@ -753,7 +762,7 @@ const LAYER_BLURBS = {
   predictive: 'Algorithms that score residents as future criminals, directing police based on bias-amplifying data.',
 }
 
-function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVictories }) {
+function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVictories, communitySightings }) {
   const [expandedBlurb, setExpandedBlurb] = useState(null)
 
   const toggle = (id) => {
@@ -837,6 +846,31 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         )
       })}
 
+      {/* Community reports */}
+      <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
+      <button
+        onClick={() => toggle('community')}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: activeLayers.has('community') ? 'rgba(249,115,22,0.1)' : 'transparent',
+          border: `1px solid ${activeLayers.has('community') ? 'rgba(249,115,22,0.4)' : 'var(--border)'}`,
+          borderRadius: 8, padding: '8px 10px',
+          cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
+        }}
+      >
+        <span style={{ fontSize: 14 }}>📍</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: activeLayers.has('community') ? '#f97316' : 'var(--muted)', lineHeight: 1.2 }}>Community Reports</div>
+          <div style={{ fontSize: 10, color: '#f97316', marginTop: 2, opacity: 0.8 }}>
+            {communitySightings.length > 0
+              ? `${communitySightings.length} sighting${communitySightings.length !== 1 ? 's' : ''} — pending verification`
+              : 'Be first — submit a sighting'
+            }
+          </div>
+        </div>
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: activeLayers.has('community') ? '#f97316' : 'var(--border)', flexShrink: 0, transition: 'background 0.15s' }} />
+      </button>
+
       {/* Victories divider */}
       <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
       <button
@@ -874,7 +908,8 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
 export default function CameraMap() {
   const cameraCount = useCameraCount()
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
-  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive']))
+  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive', 'community']))
+  const [communitySightings, setCommunitySightings] = useState([])
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false })
@@ -927,6 +962,14 @@ export default function CameraMap() {
       return { ...prev, [cameraId]: [...existing, photo] }
     })
   }
+
+  // Load community sightings from Hetzner
+  useEffect(() => {
+    fetch('https://ai.citeback.com/sightings/public')
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d.sightings)) setCommunitySightings(d.sightings) })
+      .catch(() => {})
+  }, [])
 
   // Load base dataset
   useEffect(() => {
@@ -1326,6 +1369,32 @@ export default function CameraMap() {
 
           <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} />
 
+          {/* Community-reported sightings layer */}
+          {activeLayers.has('community') && communitySightings.map((s, i) => (
+            <CircleMarker
+              key={`community-${i}`}
+              center={[parseFloat(s.lat), parseFloat(s.lng)]}
+              radius={9}
+              pathOptions={{
+                fillColor: '#f97316',
+                fillOpacity: 0.9,
+                color: 'rgba(249,115,22,0.5)',
+                weight: 2,
+              }}
+            >
+              <Popup>
+                <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 220, padding: 4 }}>
+                  <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#f97316' }}>📍 Community Report</div>
+                  <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
+                  {s.address && <div style={{ fontSize: 12, color: '#555', marginBottom: 1 }}>{s.address}</div>}
+                  {(s.city || s.state) && <div style={{ fontSize: 12, color: '#555', marginBottom: 6 }}>{[s.city, s.state].filter(Boolean).join(', ')}</div>}
+                  {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
+                  <div style={{ fontSize: 11, color: '#f97316', fontWeight: 600 }}>⏳ Pending verification</div>
+                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+
           {/* Non-ALPR surveillance overlay layers */}
           {EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data && activeLayers.has(l.id)).map(layer =>
             layer.data.filter(a => a.status !== 'terminated').map((agency, i) => (
@@ -1384,7 +1453,7 @@ export default function CameraMap() {
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg)', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
-              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} />
+              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} communitySightings={communitySightings} />
 
               <div style={{
                 marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border)',

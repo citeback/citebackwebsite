@@ -1,6 +1,7 @@
 functionsDirectory = "/Users/scotthughes/.openclaw/workspace/deflect/netlify/functions"
 functionsDirectoryOrigin = "config-v1"
 headersOrigin = "config"
+redirectsOrigin = "config"
 plugins = []
 
 [build]
