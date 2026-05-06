@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { CheckCircle, AlertCircle, Eye, MapPin, Loader, Shield, Star, Camera, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
+import * as Exifr from 'exifr'
 
 const AI_URL = 'https://ai.citeback.com'
 
@@ -33,6 +34,8 @@ export default function SightingForm({ setTab }) {
   const [showClaimModal, setShowClaimModal] = useState(false)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [photoGPS, setPhotoGPS] = useState(null) // { lat, lng } extracted from photo EXIF
+  const [gpsStatus, setGpsStatus] = useState(null) // null | 'reading' | 'found' | 'none'
   const [form, setForm] = useState({ cameraType: '', address: '', city: '', state: '', notes: '', honeypot: '' })
   const [geo, setGeo] = useState(null)
   const [geoStatus, setGeoStatus] = useState(null)
@@ -46,19 +49,38 @@ export default function SightingForm({ setTab }) {
     if (['address', 'city', 'state'].includes(k)) { setGeo(null); setGeoStatus(null) }
   }
 
-  const handlePhoto = (e) => {
+  const handlePhoto = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
     setPhotoFile(file)
+    setPhotoGPS(null)
+    setGpsStatus('reading')
+    setError(null)
+
+    // Show preview
     const reader = new FileReader()
     reader.onload = ev => setPhotoPreview(ev.target.result)
     reader.readAsDataURL(file)
-    setError(null)
+
+    // Extract GPS from EXIF
+    try {
+      const gps = await Exifr.gps(file)
+      if (gps?.latitude && gps?.longitude) {
+        setPhotoGPS({ lat: String(gps.latitude), lng: String(gps.longitude) })
+        setGpsStatus('found')
+      } else {
+        setGpsStatus('none')
+      }
+    } catch {
+      setGpsStatus('none')
+    }
   }
 
   const clearPhoto = () => {
     setPhotoFile(null)
     setPhotoPreview(null)
+    setPhotoGPS(null)
+    setGpsStatus(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -71,7 +93,9 @@ export default function SightingForm({ setTab }) {
     else setGeoStatus('failed')
   }, [form.address, form.city, form.state])
 
-  const canSubmit = form.cameraType && form.address && form.city && form.state && photoFile && !sending
+  // Address required only if photo has no GPS
+  const hasLocation = photoGPS || (form.address && form.city && form.state)
+  const canSubmit = form.cameraType && hasLocation && photoFile && !sending
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -87,14 +111,18 @@ export default function SightingForm({ setTab }) {
     }
 
     try {
+      // Use photo GPS if available (more accurate, C2PA-signed), else geocoded address
+      const finalLat = photoGPS?.lat ?? coords?.lat ?? ''
+      const finalLng = photoGPS?.lng ?? coords?.lng ?? ''
+
       const fd = new FormData()
       fd.append('cameraType', form.cameraType)
-      fd.append('address', form.address)
-      fd.append('city', form.city)
-      fd.append('state', form.state)
+      fd.append('address', form.address || '')
+      fd.append('city', form.city || '')
+      fd.append('state', form.state || '')
       fd.append('notes', form.notes)
-      fd.append('lat', coords?.lat ?? '')
-      fd.append('lng', coords?.lng ?? '')
+      fd.append('lat', finalLat)
+      fd.append('lng', finalLng)
       fd.append('photo', photoFile)
 
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -288,43 +316,56 @@ export default function SightingForm({ setTab }) {
             </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <label htmlFor="sighting-address" style={labelStyle}>Street Address or Intersection</label>
-            <input id="sighting-address" style={inputStyle} placeholder="e.g. 200 Central Ave NW"
-              value={form.address} onChange={e => set('address', e.target.value)} required />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-            <div>
-              <label htmlFor="sighting-city" style={labelStyle}>City</label>
-              <input id="sighting-city" style={inputStyle} placeholder="Albuquerque"
-                value={form.city} onChange={e => set('city', e.target.value)} required />
+          {/* Location — auto from photo GPS, or manual entry */}
+          {gpsStatus === 'found' ? (
+            <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
+                <MapPin size={13} style={{ color: '#10b981' }} />
+                GPS location from photo
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 10 }}>
+                {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)}
+                {' '}· embedded by Proofmode at capture time
+              </div>
+              <input style={{ ...inputStyle, fontSize: 13 }}
+                placeholder="Street name or landmark (optional — helps with map labels)"
+                value={form.address} onChange={e => set('address', e.target.value)} />
             </div>
-            <div>
-              <label htmlFor="sighting-state" style={labelStyle}>State</label>
-              <input id="sighting-state" style={inputStyle} placeholder="NM" maxLength={2}
-                value={form.state} onChange={e => set('state', e.target.value.toUpperCase())}
-                onBlur={() => form.address && form.city && form.state.length === 2 && resolveLocation()} required />
-            </div>
-          </div>
-
-          {geoStatus === 'resolving' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
-              <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Resolving location…
-            </div>
-          )}
-          {geoStatus === 'resolved' && geo && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
-              <MapPin size={12} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
-              <span><strong style={{ color: 'var(--text)' }}>Location confirmed</strong> · {geo.display.split(',').slice(0, 3).join(',')}</span>
-            </div>
-          )}
-          {geoStatus === 'failed' && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
-              <AlertCircle size={12} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
-              <span>Couldn't auto-locate — double-check the address. You can still submit; coordinates will be stored with what we have.</span>
-            </div>
+          ) : (
+            <>
+              <div>
+                <label htmlFor="sighting-address" style={labelStyle}>
+                  Street Address or Intersection
+                  {gpsStatus === 'none' && <span style={{ color: 'var(--accent)', fontWeight: 500, marginLeft: 6 }}>no GPS in photo — required</span>}
+                </label>
+                <input id="sighting-address" style={inputStyle} placeholder="e.g. 200 Central Ave NW"
+                  value={form.address} onChange={e => set('address', e.target.value)} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+                <div>
+                  <label htmlFor="sighting-city" style={labelStyle}>City</label>
+                  <input id="sighting-city" style={inputStyle} placeholder="Albuquerque"
+                    value={form.city} onChange={e => set('city', e.target.value)} />
+                </div>
+                <div>
+                  <label htmlFor="sighting-state" style={labelStyle}>State</label>
+                  <input id="sighting-state" style={inputStyle} placeholder="NM" maxLength={2}
+                    value={form.state} onChange={e => set('state', e.target.value.toUpperCase())}
+                    onBlur={() => form.address && form.city && form.state.length === 2 && resolveLocation()} />
+                </div>
+              </div>
+              {geoStatus === 'resolving' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+                  <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Resolving location…
+                </div>
+              )}
+              {geoStatus === 'resolved' && geo && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)' }}>
+                  <MapPin size={12} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
+                  <span><strong style={{ color: 'var(--text)' }}>Location confirmed</strong> · {geo.display.split(',').slice(0, 3).join(',')}</span>
+                </div>
+              )}
+            </>
           )}
 
           {/* Notes */}
@@ -385,7 +426,16 @@ export default function SightingForm({ setTab }) {
                   <CheckCircle size={14} style={{ color: 'var(--green)', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photoFile.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--muted)' }}>{(photoFile.size / 1024 / 1024).toFixed(1)} MB · C2PA check runs on upload</div>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                      {(photoFile.size / 1024 / 1024).toFixed(1)} MB
+                      {gpsStatus === 'reading' && ' · Reading GPS…'}
+                      {gpsStatus === 'found' && (
+                        <span style={{ color: '#10b981', fontWeight: 600 }}>
+                          {' '}· 📍 GPS found — {parseFloat(photoGPS.lat).toFixed(5)}, {parseFloat(photoGPS.lng).toFixed(5)}
+                        </span>
+                      )}
+                      {gpsStatus === 'none' && ' · No GPS in photo — enter address below'}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -425,7 +475,9 @@ export default function SightingForm({ setTab }) {
               ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying &amp; uploading…</>
               : !photoFile
                 ? 'Attach a C2PA photo to submit'
-                : 'Submit Verified Sighting'
+                : gpsStatus === 'reading'
+                  ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Reading GPS…</>
+                  : 'Submit Verified Sighting'
             }
           </button>
 
