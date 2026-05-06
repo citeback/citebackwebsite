@@ -77,7 +77,8 @@ export default function Operators() {
         {[
           { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it.', color: '#6ee7b7', anon: true },
           { role: 'Donor', req: 'No account. No identity. Send XMR or ZANO directly to any campaign wallet.', color: '#6ee7b7', anon: true },
-          { role: 'Campaign Operator', req: 'Identity + OFAC screening required. You control funds — accountability comes with that.', color: '#f59e0b', anon: false },
+          { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', color: '#6ee7b7', anon: true },
+          { role: 'Campaign Operator', req: 'Identity + OFAC screening required. You control other people\'s funds — accountability comes with that.', color: '#f59e0b', anon: false },
         ].map(p => (
           <div key={p.role} style={{ background: 'var(--bg2)', border: `1px solid ${p.anon ? 'rgba(110,231,183,0.2)' : 'rgba(245,158,11,0.3)'}`, borderRadius: 0, padding: '16px 18px' }}>
             <p style={{ fontWeight: 700, fontSize: 13, color: p.color, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{p.role}</p>
