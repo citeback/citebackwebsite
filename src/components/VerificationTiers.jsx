@@ -144,10 +144,10 @@ export function C2PAExplainer() {
             ))}
           </div>
           <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-            <strong style={{ color: 'var(--text)' }}>Recommended apps:</strong>{' '}
-            <a href="https://truepic.com" target="_blank" rel="noopener noreferrer" style={{ color: '#f1c40f' }}>Truepic</a> (iOS/Android) ·{' '}
-            <a href="https://contentcredentials.org/verify" target="_blank" rel="noopener noreferrer" style={{ color: '#f1c40f' }}>Content Credentials</a> ·{' '}
-            Leica M11-P · Samsung Galaxy AI camera (select models)
+            <strong style={{ color: 'var(--text)' }}>How to get a C2PA photo:</strong>{' '}
+            <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: '#f1c40f' }}>Proofmode</a>{' '}
+            (iOS/Android, free — built by Guardian Project for human rights evidence) ·{' '}
+            Samsung Galaxy S24+ · Google Pixel 10
           </div>
         </div>
       </div>

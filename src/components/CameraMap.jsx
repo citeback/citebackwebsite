@@ -912,7 +912,7 @@ export default function CameraMap() {
   const [communitySightings, setCommunitySightings] = useState([])
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false })
+  const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false, photoFile: null })
   const [submitted, setSubmitted] = useState(false)
   const [locating, setLocating] = useState(false)
   const [osmCameras, setOsmCameras] = useState([])
@@ -1019,20 +1019,21 @@ export default function CameraMap() {
 
   const submitCamera = async () => {
     if (!form.lat || !form.lng || !form.location) return
+    if (!form.photoFile) { alert('A C2PA-verified photo is required. Use Proofmode (iOS/Android), Samsung Galaxy S24+, or Google Pixel 10.'); return }
     try {
-      await fetch('https://ai.citeback.com/sighting', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cameraType: 'unknown',
-          address: form.location,
-          lat: form.lat,
-          lng: form.lng,
-          notes: form.notes,
-          source: form.source,
-          hasC2PA: form.hasC2PA,
-        }),
-      })
+      const token = localStorage.getItem('citeback_token')
+      const fd = new FormData()
+      fd.append('cameraType', 'unknown')
+      fd.append('address', form.location)
+      fd.append('lat', form.lat)
+      fd.append('lng', form.lng)
+      fd.append('notes', form.notes || '')
+      fd.append('source', form.source || '')
+      fd.append('photo', form.photoFile)
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', headers, body: fd })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) { alert(data.hint || data.error || 'Submission failed'); return }
     } catch (_) {}
     setSubmitted(true)
   }
@@ -1268,12 +1269,12 @@ export default function CameraMap() {
         <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, marginBottom: 16 }}>
           {submitted ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--green)', fontWeight: 600 }}>
-              <CheckCircle size={18} /> Submitted for review. We'll verify before adding to the map.
+              <CheckCircle size={18} /> Verified and live on the map.
             </div>
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 14 }}>
-                <AlertCircle size={13} /> No account required. Submissions reviewed before publishing.
+                <AlertCircle size={13} /> C2PA photo required. Verified submissions go live instantly.
               </div>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div style={{ flex: '0 0 130px' }}>
@@ -1306,15 +1307,15 @@ export default function CameraMap() {
                 <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <label style={{
                     display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                    background: form.hasC2PA ? 'rgba(241,196,15,0.1)' : 'var(--bg3)',
-                    border: `1px solid ${form.hasC2PA ? 'rgba(241,196,15,0.4)' : 'var(--border)'}`,
+                    background: form.photoFile ? 'rgba(241,196,15,0.1)' : 'var(--bg3)',
+                    border: `1px solid ${form.photoFile ? 'rgba(241,196,15,0.4)' : 'var(--border)'}`,
                     padding: '9px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                    color: form.hasC2PA ? '#f1c40f' : 'var(--muted)',
+                    color: form.photoFile ? '#f1c40f' : 'var(--muted)',
                   }}>
                     <Upload size={14} />
-                    {form.hasC2PA ? '🏆 C2PA Photo Attached' : 'Attach C2PA Photo (optional but recommended)'}
+                    {form.photoFile ? `🏆 ${form.photoFile.name}` : 'Attach C2PA Photo (required)'}
                     <input type="file" accept="image/*" style={{ display: 'none' }}
-                      onChange={e => { if (e.target.files[0]) set('hasC2PA', true) }}
+                      onChange={e => { if (e.target.files[0]) { set('photoFile', e.target.files[0]); set('hasC2PA', true) } }}
                     />
                   </label>
                   <button onClick={submitCamera} style={{
@@ -1325,7 +1326,7 @@ export default function CameraMap() {
                   </button>
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
-                  All submissions go into a moderation queue and are reviewed before appearing on the map.
+                  C2PA-verified photos go live on the map instantly. No review queue.
                 </div>
               </div>
             </>
