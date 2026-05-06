@@ -49,9 +49,9 @@ For maximum privacy while browsing: use Tor Browser, a trusted VPN, or a privacy
 These contain information about surveillance systems — not about you. A sighting report includes camera type, street address, and optional notes. A campaign proposal includes type, title, location, and description. No name, no email, no contact information is collected or required. These submissions are sent directly to our own server (Hetzner, Helsinki) where IP address logging is disabled at the infrastructure level. Submissions enter a moderation queue before any public display.
 
 \u25b8 Expert Directory applications
-Role, location, and background description. An optional contact field exists — if you include one, use a privacy-respecting address (ProtonMail or similar). Stored by Netlify; subject to legal process served to Netlify.
+Role type, geographic location, and professional background. No name, email, or contact information is collected or required. Stored on our own server (Hetzner, Helsinki) with IP logging disabled.
 
-What we do not collect in any form: your name, your email address (unless you voluntarily include it in the Expert Directory), cookies, device fingerprint, or IP address from sighting and proposal submissions.`,
+What we do not collect in any form: your name, your email address, cookies, device fingerprint, or IP address from any form submission on this site.`,
         },
         {
           title: '5. Campaign Operator Data',

@@ -64,10 +64,10 @@ function ApplyModal({ onClose }) {
     if (!form.role || !form.location || !form.background) return
     setSending(true)
     try {
-      await fetch('/', {
+      await fetch('https://ai.citeback.com/registry', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ 'form-name': 'registry-application', ...form }).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: form.role, location: form.location, background: form.background }),
       })
     } catch (_) {}
     setSending(false)
