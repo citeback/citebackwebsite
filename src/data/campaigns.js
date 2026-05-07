@@ -2,10 +2,10 @@
 // Sources: KOB 4 Investigates (Jan 2026), ProgressNow NM (Mar 2026),
 // NM Legislature records, 404 Media, ACLU of Massachusetts
 
-// Platform rules (enforced by TEE wallet agent)
+// Platform rules
 export const platformRules = {
   // Citeback takes zero platform fee from campaigns.
-  // All donated funds go directly to the campaign operator's wallet.
+  // All contributed funds go directly to the campaign operator's wallet.
   // See ARCHITECTURE-REPUTATION.md for the full platform sustainability model.
   platformFeePercent: 0,          // Zero. No platform fee. Ratified 2026-05-06.
   networkFeeBufferPercent: 2,     // 2% buffer for Monero/Zano network tx fee variance (NOT a platform fee)
