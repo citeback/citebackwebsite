@@ -177,13 +177,13 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
 
             <button
               type="submit"
-              disabled={loading || !form.username || !form.password}
+              disabled={loading || !form.username || !form.password || (tab === 'create' && (!strength || strength.score < 3))}
               style={{
-                background: (!loading && form.username && form.password) ? 'var(--accent)' : 'var(--bg3)',
+                background: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? 'var(--accent)' : 'var(--bg3)',
                 border: 'none',
-                color: (!loading && form.username && form.password) ? '#fff' : 'var(--muted)',
+                color: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? '#fff' : 'var(--muted)',
                 padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
-                cursor: (!loading && form.username && form.password) ? 'pointer' : 'not-allowed',
+                cursor: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 transition: 'all 0.15s',
               }}
