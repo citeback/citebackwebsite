@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 const AI_URL = 'https://ai.citeback.com'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
 import Nav from './components/Nav'
-import ActivityTicker from './components/ActivityTicker'
+// ActivityTicker removed per Scott 2026-05-07
 import LaunchTracker from './components/LaunchTracker'
 import Hero from './components/Hero'
 import StatsSection from './components/StatsSection'
@@ -117,7 +117,7 @@ export default function App() {
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
       <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column', paddingTop: 60 }}>
-        <ActivityTicker />
+        {/* ActivityTicker removed */}
 
         <Routes>
           <Route path="/" element={
