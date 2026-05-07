@@ -437,11 +437,11 @@ function buildAlprPopupHTML(camera, map, isDual) {
       ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
   const verifiedBadge = isDual
-    ? `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#f59e0b;margin-bottom:8px;letter-spacing:0.05em">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
-    : `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(107,114,128,0.1);border:1px solid rgba(107,114,128,0.25);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#9ca3af;margin-bottom:8px;letter-spacing:0.05em">📡 OPENSTREETMAP</div>`
+    ? `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.35);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#f97316;margin-bottom:8px;letter-spacing:0.05em">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
+    : `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#e63946;margin-bottom:8px;letter-spacing:0.05em">📡 OPENSTREETMAP</div>`
   return `<div style="font-family:Inter,sans-serif;padding:4px">
     ${verifiedBadge}
-    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:${isDual ? '#f59e0b' : '#9ca3af'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
+    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:${isDual ? '#f97316' : '#e63946'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
     ${camera.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${camera.op}</div>` : ''}
     <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
     <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${camera.id} →</a></div>
@@ -543,7 +543,7 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
         }
         if (nearest && minDist <= clickRadiusM) {
           const isDual = dualVerifiedIds && dualVerifiedIds.has(nearest.id)
-          nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟡' : '📡', color: isDual ? '#f59e0b' : '#6b7280' })
+          nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟠' : '📡', color: isDual ? '#f97316' : '#e63946' })
         }
       }
 
@@ -626,9 +626,9 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
         return L.circleMarker(latlng, {
           renderer,
           radius: touch ? 8 : 5,
-          fillColor: dual ? '#f59e0b' : '#6b7280',
-          fillOpacity: dual ? 0.85 : 0.5,
-          color: dual ? 'rgba(245,158,11,0.5)' : 'rgba(107,114,128,0.3)',
+          fillColor: dual ? '#f97316' : '#e63946',
+          fillOpacity: dual ? 0.9 : 0.65,
+          color: dual ? 'rgba(249,115,22,0.5)' : 'rgba(230,57,70,0.35)',
           weight: touch ? 2 : 1,
         })
       },
@@ -877,12 +877,12 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
           {communitySightings.length > 0 ? (
             <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ color: '#f59e0b' }}>{communitySightings.filter(s => !s.newCamera).length} confirmed with OSM</span>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f97316', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ color: '#f97316' }}>{communitySightings.filter(s => !s.newCamera).length} confirmed with OSM</span>
               </div>
               <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ color: '#e63946' }}>{communitySightings.filter(s => s.newCamera).length} Citeback-exclusive</span>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ color: '#f59e0b' }}>{communitySightings.filter(s => s.newCamera).length} Citeback-exclusive</span>
               </div>
             </div>
           ) : (
@@ -893,9 +893,9 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
       {/* Map legend */}
       <div style={{ marginTop: 8, padding: '8px 10px', background: 'var(--bg3)', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.06em', marginBottom: 2 }}>MAP LEGEND</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#6b7280', display: 'inline-block', flexShrink: 0 }} /> OSM only</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} /> OSM + Citeback verified</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} /> Citeback exclusive</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} /> OSM only</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f97316', display: 'inline-block', flexShrink: 0 }} /> OSM + Citeback verified</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} /> Citeback exclusive</div>
       </div>
 
       {/* Victories divider */}
@@ -1451,21 +1451,21 @@ export default function CameraMap() {
               center={[parseFloat(s.lat), parseFloat(s.lng)]}
               radius={9}
               pathOptions={{
-                fillColor: '#e63946',
+                fillColor: '#f59e0b',
                 fillOpacity: 0.9,
-                color: 'rgba(230,57,70,0.5)',
+                color: 'rgba(245,158,11,0.5)',
                 weight: 2,
               }}
             >
               <Popup>
                 <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 220, padding: 4 }}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.3)', borderRadius: 5, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#e63946', marginBottom: 8, letterSpacing: '0.05em' }}>
-                    🔴 CITEBACK EXCLUSIVE
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 5, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#f59e0b', marginBottom: 8, letterSpacing: '0.05em' }}>
+                    ⭐ CITEBACK EXCLUSIVE
                   </div>
                   <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
                   <div style={{ fontSize: 11, color: '#888', marginBottom: 6 }}>📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
                   {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#e63946', fontWeight: 600 }}>★ Not in OpenStreetMap or any other database</div>
+                  <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600 }}>★ Not in OpenStreetMap or any other database</div>
                 </div>
               </Popup>
             </CircleMarker>
