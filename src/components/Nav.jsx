@@ -56,7 +56,6 @@ export default function Nav({ tab, setTab }) {
   }, [userMenuOpen])
 
   return (
-    <>
     <nav aria-label="Main navigation" style={{
       position: 'fixed',
       top: 0,
@@ -265,7 +264,7 @@ export default function Nav({ tab, setTab }) {
           </button>
         </div>
 
-        {/* Mobile toggle */
+        {/* Mobile toggle */}
         <button
           className="nav-mobile-btn"
           onClick={() => setOpen(!open)}
@@ -345,8 +344,7 @@ export default function Nav({ tab, setTab }) {
           .nav-mobile-btn { display: flex !important; }
         }
       `}</style>
+      {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab="create" />}
     </nav>
-    {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab="create" />}
-  </>
   )
 }
