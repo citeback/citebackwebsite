@@ -19,10 +19,10 @@ export const platformRules = {
   unfundedRedirect: 'highest-priority-same-category',
 
   reputationCaps: [
-    { minScore: 0,   maxScore: 20,  maxGoalUSD: 500 },
-    { minScore: 21,  maxScore: 50,  maxGoalUSD: 2000 },
-    { minScore: 51,  maxScore: 100, maxGoalUSD: 10000 },
-    { minScore: 101, maxScore: Infinity, maxGoalUSD: Infinity },
+    { minScore: 0,   maxScore: 20,  maxGoalUSD: 1000 },    // $1k initial cap
+    { minScore: 21,  maxScore: 50,  maxGoalUSD: 7500 },    // $7.5k after 2.5k volume
+    { minScore: 51,  maxScore: 100, maxGoalUSD: 30000 },   // $30k after 12k volume
+    { minScore: 101, maxScore: Infinity, maxGoalUSD: Infinity }, // $125k+ via community vote
   ],
 
   reputationEvents: {

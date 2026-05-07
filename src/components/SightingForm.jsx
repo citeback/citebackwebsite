@@ -199,7 +199,7 @@ export default function SightingForm({ setTab }) {
             <div style={{ background: 'linear-gradient(135deg, rgba(230,57,70,0.12), rgba(245,158,11,0.12))', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 16, marginBottom: 20 }}>
               <Star size={28} style={{ color: '#f59e0b', marginBottom: 8 }} />
               <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>🎉 Tier {repEarned.newTier} Unlocked!</div>
-              <div style={{ fontSize: 13, color: 'var(--muted)' }}>You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $500 is now available.'}</div>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $1,000 is now available.'}</div>
             </div>
           )}
 

@@ -219,8 +219,8 @@ Platform verifies only that the operator submitted a factual attestation — sou
 ### 3.6 Operator Staking
 | Campaign Goal | Required Stake |
 |---|---|
-| $5,001 – $15,000 | 2% of campaign goal |
-| Above $15,000 | 5% of campaign goal |
+| $7,501 – $20,000 | 2% of campaign goal |
+| Above $20,000 | 5% of campaign goal |
 
 Stake returned within 7 days of final disbursement if no misconduct finding. **Stake is frozen (disbursement only, not operational capacity) from the moment a §8 complaint is formally filed** until resolution. Operators under active §8 investigation may continue running campaigns but cannot withdraw staked funds.
 
@@ -246,10 +246,10 @@ Requires clean challenge record AND cumulative volume:
 
 | Target Cap | Volume Required | Additional |
 |---|---|---|
-| $5,000 | $2,000 completed | — |
-| $25,000 | $10,000 completed | — |
-| $100,000 | $50,000 completed | KYC + DAO legal counsel |
-| Unlimited | $100,000 completed | Community vote |
+| $7,500 | $2,500 completed | — |
+| $30,000 | $12,000 completed | — |
+| $125,000 | $60,000 completed | KYC + DAO legal counsel |
+| Unlimited | $125,000 completed | Community vote |
 
 ### 4.3 Reputation Decay
 -10 points/month after 6 consecutive months inactive. Floor: 0.
@@ -261,9 +261,9 @@ Real-name identity data. Third-party API. Continuous monitoring, 30-day cycle.
 
 ### 4.5 KYC / Entity Requirements by Tier
 - **$1k cap:** Identity verified only
-- **$5k cap:** Legal entity on file required (after $2k completed volume)
-- **$25k cap:** Entity + DAO legal review (after $10k completed volume)
-- **$100k cap:** Entity + legal review + $1M liability insurance (after $50k completed volume)
+- **$7.5k cap:** Legal entity on file required (after $2.5k completed volume)
+- **$30k cap:** Entity + DAO legal review (after $12k completed volume)
+- **$125k cap:** Entity + legal review + $1M liability insurance (after $60k completed volume)
 
 Entity name, jurisdiction, and registration number required when applicable. DAO legal counsel review required at $25k+ tier.
 

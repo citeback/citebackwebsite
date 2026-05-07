@@ -10,7 +10,7 @@ const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_COLORS = ['#6b7280', '#e63946', '#f59e0b', '#10b981']
 const TIER_DESCRIPTIONS = [
   'Submit sightings and build your reputation.',
-  'Access to campaigns up to $500.',
+  'Access to campaigns up to $1,000.',
   'Unlock verification bounties.',
   'Full operator access + governance voting.',
 ]
