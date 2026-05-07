@@ -24,7 +24,8 @@ export default function SightingForm({ setTab }) {
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [photoGPS, setPhotoGPS] = useState(null)   // { lat, lng }
-  const [gpsStatus, setGpsStatus] = useState(null)  // null | 'reading' | 'found' | 'none'
+  const [gpsStatus, setGpsStatus] = useState(null)  // null | 'reading' | 'found' | 'none' | 'device_reading'
+  const [gpsSource, setGpsSource] = useState(null)   // null | 'exif' | 'device'
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)          // null | 'c2pa' | 'no_gps' | 'generic'
@@ -47,11 +48,14 @@ export default function SightingForm({ setTab }) {
       if (gps?.latitude && gps?.longitude) {
         setPhotoGPS({ lat: String(gps.latitude), lng: String(gps.longitude) })
         setGpsStatus('found')
+        setGpsSource('exif')
       } else {
         setGpsStatus('none')
+        setGpsSource(null)
       }
     } catch {
       setGpsStatus('none')
+      setGpsSource(null)
     }
   }
 
@@ -60,7 +64,25 @@ export default function SightingForm({ setTab }) {
     setPhotoPreview(null)
     setPhotoGPS(null)
     setGpsStatus(null)
+    setGpsSource(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const useDeviceLocation = () => {
+    if (!navigator.geolocation) return
+    setGpsStatus('device_reading')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setPhotoGPS({ lat: String(pos.coords.latitude), lng: String(pos.coords.longitude) })
+        setGpsStatus('found')
+        setGpsSource('device')
+      },
+      () => {
+        setGpsStatus('none')
+        setGpsSource(null)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
   }
 
   const canSubmit = cameraType && photoFile && gpsStatus === 'found' && !sending
@@ -288,15 +310,33 @@ export default function SightingForm({ setTab }) {
                   {gpsStatus === 'found' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#10b981', fontWeight: 600 }}>
                       <MapPin size={12} />
-                      {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)} — location confirmed from photo
+                      {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)}
+                      {' '}— {gpsSource === 'device' ? 'location from your device' : 'location from photo'}
+                    </div>
+                  )}
+                  {gpsStatus === 'device_reading' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+                      <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Getting your device location…
                     </div>
                   )}
                   {gpsStatus === 'none' && (
                     <div style={{ background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 12px', fontSize: 12 }}>
                       <div style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>No GPS found in this photo</div>
-                      <div style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
-                        This photo doesn't have GPS coordinates embedded. Make sure location access is enabled in Proofmode before shooting, then try again.
+                      <div style={{ color: 'var(--muted)', lineHeight: 1.6, marginBottom: 10 }}>
+                        GPS was stripped from this photo (common on iOS). You can use your device's current location instead, or retake with location enabled in Proofmode.
                       </div>
+                      <button
+                        type="button"
+                        onClick={useDeviceLocation}
+                        style={{
+                          background: 'var(--accent)', border: 'none', color: '#fff',
+                          padding: '8px 14px', borderRadius: 7, fontWeight: 700,
+                          fontSize: 12, cursor: 'pointer',
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                        }}
+                      >
+                        <MapPin size={12} /> Use my current location
+                      </button>
                     </div>
                   )}
                 </div>
