@@ -16,8 +16,8 @@ This document describes the full technical architecture, from wallet management 
 
 ## Design Principles
 
-1. **No trusted parties for financial operations** — Trust in financial execution is placed in open source code and cryptographic proofs, not people. The TEE enclave holds all private keys; no human — including the Wyoming DAO LLC operator — can access or extract wallet keys.
-2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the TEE governs only financial execution.
+1. **No trusted parties for financial operations** — Trust in financial execution is placed in open source code and cryptographic proofs, not people. The wallet layer holds all private keys; no human — including the Wyoming DAO LLC operator — can access or extract wallet keys.
+2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the wallet layer governs only financial execution.
 3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
 4. **Privacy-preserving** — Contributors are anonymous. Operators earn reputation without revealing identity.
 5. **Self-sustaining** — No platform fee on campaigns. 100% of contributed funds go directly to operators. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC and voluntary user tips. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation). This eliminates any extractive relationship between the platform and the causes it supports.
@@ -369,7 +369,7 @@ The entire platform is designed to outlive its founder.
 
 - Code is open source on GitHub (MIT or GPL — TBD)
 - Any community member can fork and redeploy
-- The TEE enclave can be migrated to a new provider with community vote
+- The wallet infrastructure can be migrated to a new provider with community vote
 - No domain lock-in: DNS can be community-transferred
 - No single point of failure
 
