@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-export default function AccountModal({ onClose }) {
+export default function AccountModal({ onClose, initialTab = 'login' }) {
   const { login, createAccount } = useAuth()
-  const [tab, setTab] = useState('login') // 'login' | 'create'
+  const [tab, setTab] = useState(initialTab) // 'login' | 'create'
   const [form, setForm] = useState({ username: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
