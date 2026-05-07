@@ -3,7 +3,7 @@ import https from 'https'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { randomUUID, timingSafeEqual } from 'crypto'
+import { randomUUID, timingSafeEqual, createCipheriv, createDecipheriv, randomBytes, createHash } from 'crypto'
 import Database from 'better-sqlite3'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -11,6 +11,45 @@ import busboy from 'busboy'
 import Exifr from 'exifr'
 import AdmZip from 'adm-zip'
 import { createC2pa } from 'c2pa-node'
+import nodemailer from 'nodemailer'
+
+// ── Password entropy check ───────────────────────────────────────────────────
+const COMMON_PASSWORDS = new Set([
+  'password','password1','password123','12345678','123456789','1234567890',
+  'qwerty123','qwerty','abc12345','letmein','welcome','monkey','dragon',
+  'master','sunshine','princess','shadow','superman','iloveyou','trustno1',
+  'baseball','football','soccer','hockey','batman','starwars','minecraft',
+  'passw0rd','p@ssword','p@ssw0rd','admin123','login123','secret','hunter2',
+  'citeback','surveillance','privacy','anonymous','freedom','liberty',
+])
+
+function checkPasswordStrength(pw) {
+  const lower = pw.toLowerCase()
+  if (COMMON_PASSWORDS.has(lower)) return 'Password is too common — choose something unique'
+
+  // Character class scoring
+  const hasLower = /[a-z]/.test(pw)
+  const hasUpper = /[A-Z]/.test(pw)
+  const hasDigit = /[0-9]/.test(pw)
+  const hasSymbol = /[^a-zA-Z0-9]/.test(pw)
+  const classes = [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length
+
+  // Rough entropy: log2(charset_size) * length
+  const charsetSize = (hasLower ? 26 : 0) + (hasUpper ? 26 : 0) + (hasDigit ? 10 : 0) + (hasSymbol ? 32 : 0)
+  const entropy = Math.log2(charsetSize) * pw.length
+
+  if (entropy < 55) {
+    if (classes === 1) {
+      return 'Password too weak — mix in uppercase letters, numbers, or symbols'
+    }
+    return 'Password too weak — try a longer password or mix character types'
+  }
+
+  // Reject all-same or simple sequences
+  if (/^(.)/u.test(pw) && pw.split('').every(c => c === pw[0])) return 'Password too weak — avoid repeated characters'
+
+  return null // passes
+}
 
 // Real cryptographic C2PA verification — not string matching
 const c2paReader = createC2pa()
@@ -54,6 +93,39 @@ const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET env var not set'); process.exit(1) }
 const JWT_EXPIRY = '7d'
 
+// Email encryption key — 32 bytes derived from JWT_SECRET for AES-256-GCM
+const EMAIL_ENC_KEY = createHash('sha256').update(JWT_SECRET + ':email-enc-v1').digest()
+
+function encryptEmail(email) {
+  const iv = randomBytes(12)
+  const cipher = createCipheriv('aes-256-gcm', EMAIL_ENC_KEY, iv)
+  const enc = Buffer.concat([cipher.update(email.toLowerCase().trim(), 'utf8'), cipher.final()])
+  const tag = cipher.getAuthTag()
+  return iv.toString('hex') + ':' + tag.toString('hex') + ':' + enc.toString('hex')
+}
+
+function decryptEmail(stored) {
+  try {
+    const [ivHex, tagHex, encHex] = stored.split(':')
+    const decipher = createDecipheriv('aes-256-gcm', EMAIL_ENC_KEY, Buffer.from(ivHex, 'hex'))
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'))
+    return decipher.update(Buffer.from(encHex, 'hex')) + decipher.final('utf8')
+  } catch { return null }
+}
+
+// Email transport — configured via SMTP_* env vars (optional; recovery disabled if unset)
+const SMTP_HOST = process.env.SMTP_HOST
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587')
+const SMTP_USER = process.env.SMTP_USER
+const SMTP_PASS = process.env.SMTP_PASS
+const SMTP_FROM = process.env.SMTP_FROM || 'Citeback <noreply@citeback.com>'
+const emailEnabled = !!(SMTP_HOST && SMTP_USER && SMTP_PASS)
+const mailer = emailEnabled ? nodemailer.createTransport({
+  host: SMTP_HOST, port: SMTP_PORT, secure: SMTP_PORT === 465,
+  auth: { user: SMTP_USER, pass: SMTP_PASS },
+}) : null
+console.log('Email recovery:', emailEnabled ? `enabled (${SMTP_HOST})` : 'disabled (no SMTP config)')
+
 // ── SQLite init ────────────────────────────────────────────────────────────────
 const db = new Database(path.join(DATA_DIR, 'citeback.db'))
 db.pragma('journal_mode = WAL')
@@ -64,8 +136,17 @@ db.exec(`
     password_hash TEXT NOT NULL,
     created_at TEXT NOT NULL,
     reputation INTEGER DEFAULT 0,
-    tier INTEGER DEFAULT 0
+    tier INTEGER DEFAULT 0,
+    email_enc TEXT DEFAULT NULL
   );
+  CREATE TABLE IF NOT EXISTS recovery_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    token_hash TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER DEFAULT 0
+  );
+  CREATE INDEX IF NOT EXISTS idx_recovery_user ON recovery_tokens(user_id);
   CREATE TABLE IF NOT EXISTS reputation_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
@@ -132,6 +213,26 @@ function checkRateLimit(ip) {
   if (entry.count >= RATE_LIMIT) return false
   entry.count++; return true
 }
+
+// Separate stricter rate limiter for auth endpoints (5 req / 15 min per IP)
+const authRateCounts = new Map()
+function checkAuthRateLimit(ip) {
+  const now = Date.now()
+  const AUTH_WINDOW = 15 * 60 * 1000
+  const AUTH_LIMIT = 5
+  const entry = authRateCounts.get(ip)
+  if (!entry || now - entry.start > AUTH_WINDOW) { authRateCounts.set(ip, { count: 1, start: now }); return true }
+  if (entry.count >= AUTH_LIMIT) return false
+  entry.count++; return true
+}
+
+// Clean up expired recovery tokens every hour
+setInterval(() => {
+  try {
+    const deleted = db.prepare('DELETE FROM recovery_tokens WHERE expires_at < ? OR used = 1').run(new Date().toISOString())
+    if (deleted.changes > 0) console.log(`Cleaned ${deleted.changes} expired/used recovery tokens`)
+  } catch (e) { console.error('Token cleanup error:', e.message) }
+}, 60 * 60 * 1000)
 
 let processing = false
 const queue = []
@@ -435,6 +536,11 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: create ────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/create') {
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    if (!checkAuthRateLimit(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes and try again' }))
+    }
     try {
       const body = await parseBody(req)
       const username = String(body.username || '').trim()
@@ -452,6 +558,11 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(400, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Password must be at least 8 characters' }))
       }
+      const pwStrengthError = checkPasswordStrength(password)
+      if (pwStrengthError) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: pwStrengthError }))
+      }
 
       const existing = db.prepare('SELECT id FROM users WHERE username = ?').get(username)
       if (existing) {
@@ -459,10 +570,17 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'Username already taken' }))
       }
 
+      const emailRaw = String(body.email || '').toLowerCase().trim()
+      if (emailRaw && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailRaw)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Invalid email address' }))
+      }
+      const emailEnc = emailRaw ? encryptEmail(emailRaw) : null
+
       const id = randomUUID()
       const password_hash = await bcrypt.hash(password, 12)
       const now = new Date().toISOString()
-      db.prepare('INSERT INTO users (id, username, password_hash, created_at) VALUES (?, ?, ?, ?)').run(id, username, password_hash, now)
+      db.prepare('INSERT INTO users (id, username, password_hash, created_at, email_enc) VALUES (?, ?, ?, ?, ?)').run(id, username, password_hash, now, emailEnc)
 
       const token = jwt.sign({ userId: id, username }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
       res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -481,6 +599,11 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: login ─────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/login') {
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    if (!checkAuthRateLimit(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes and try again' }))
+    }
     try {
       const body = await parseBody(req)
       const username = String(body.username || '').trim()
@@ -571,6 +694,172 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ sightings }))
     } catch {
+      res.writeHead(500, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Account: update email ────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/account/email') {
+    const claims = verifyToken(req)
+    if (!claims) {
+      res.writeHead(401, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Authentication required' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const email = String(body.email || '').toLowerCase().trim()
+      if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Invalid email address' }))
+      }
+      const enc = email ? encryptEmail(email) : null
+      db.prepare('UPDATE users SET email_enc = ? WHERE id = ?').run(enc, claims.userId)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, hasEmail: !!email }))
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Account: check if email set (masked) ─────────────────────────────────
+  if (req.method === 'GET' && req.url === '/account/email') {
+    const claims = verifyToken(req)
+    if (!claims) {
+      res.writeHead(401, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Authentication required' }))
+    }
+    const user = db.prepare('SELECT email_enc FROM users WHERE id = ?').get(claims.userId)
+    let maskedEmail = null
+    if (user?.email_enc) {
+      const plain = decryptEmail(user.email_enc)
+      if (plain) {
+        const [local, domain] = plain.split('@')
+        maskedEmail = local.slice(0,2) + '***@' + domain
+      }
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ hasEmail: !!user?.email_enc, maskedEmail }))
+  }
+
+  // ── Account: request password recovery ───────────────────────────────────
+  if (req.method === 'POST' && req.url === '/account/recover') {
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    if (!checkAuthRateLimit(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, message: 'If that account has a recovery email, a reset link has been sent.' })) // same response — don’t reveal rate limiting
+    }
+    try {
+      const body = await parseBody(req)
+      const username = String(body.username || '').trim()
+      if (!username) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Username required' }))
+      }
+      // Always respond OK — never confirm whether user/email exists
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ ok: true, message: 'If that account has a recovery email, a reset link has been sent.' }))
+
+      // Do the actual work after response (fire-and-forget)
+      const user = db.prepare('SELECT id, email_enc FROM users WHERE username = ? COLLATE NOCASE').get(username)
+      if (!user?.email_enc || !emailEnabled) return
+      const email = decryptEmail(user.email_enc)
+      if (!email) return
+
+      // Generate token
+      const token = randomBytes(32).toString('hex')
+      const tokenHash = await bcrypt.hash(token, 10)
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 min
+      const tokenId = randomUUID()
+      // Invalidate old tokens for this user
+      db.prepare('DELETE FROM recovery_tokens WHERE user_id = ?').run(user.id)
+      db.prepare('INSERT INTO recovery_tokens (id, user_id, token_hash, expires_at) VALUES (?,?,?,?)').run(tokenId, user.id, tokenHash, expiresAt)
+
+      const resetUrl = `https://citeback.com/reset-password?token=${token}&id=${tokenId}`
+      await mailer.sendMail({
+        from: SMTP_FROM,
+        to: email,
+        subject: 'Citeback — Password Reset',
+        text: `You requested a password reset for your Citeback account.\n\nReset link (valid for 30 minutes):\n${resetUrl}\n\nIf you didn't request this, ignore this email. Your password has not been changed.\n\nCiteback never stores your identity. This email was only kept for this purpose.`,
+        html: `<p>You requested a password reset for your Citeback account.</p><p><a href="${resetUrl}">Reset your password</a> (valid 30 minutes)</p><p>If you didn't request this, ignore this email. Your password has not been changed.</p><p style="color:#888;font-size:12px">Citeback never stores your identity. This email was only kept for this purpose.</p>`,
+      })
+    } catch (e) {
+      console.error('recovery error:', e.message)
+    }
+  }
+
+  // ── Account: reset password with token ───────────────────────────────────
+  if (req.method === 'POST' && req.url === '/account/reset-password') {
+    try {
+      const body = await parseBody(req)
+      const { token, id: tokenId, password } = body
+      if (!token || !tokenId || !password) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Missing required fields' }))
+      }
+      const pwError = checkPasswordStrength(password)
+      if (pwError) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: pwError }))
+      }
+      const row = db.prepare('SELECT * FROM recovery_tokens WHERE id = ?').get(tokenId)
+      if (!row || row.used || new Date(row.expires_at) < new Date()) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Reset link is invalid or has expired' }))
+      }
+      const valid = await bcrypt.compare(token, row.token_hash)
+      if (!valid) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Reset link is invalid or has expired' }))
+      }
+      const newHash = await bcrypt.hash(password, 12)
+      db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(newHash, row.user_id)
+      db.prepare('UPDATE recovery_tokens SET used = 1 WHERE id = ?').run(tokenId)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true }))
+    } catch (e) {
+      console.error('reset-password error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Account: step-up reauth (verify password for high-stakes actions) ─────
+  if (req.method === 'POST' && req.url === '/account/reauth') {
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    if (checkAuthRateLimit(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many requests — wait 15 minutes' }))
+    }
+    const claims = verifyToken(req)
+    if (!claims) {
+      res.writeHead(401, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Not authenticated' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const password = String(body.password || '')
+      if (!password) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Password required' }))
+      }
+      const row = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(claims.userId)
+      if (!row) {
+        res.writeHead(401, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Account not found' }))
+      }
+      const match = await bcrypt.compare(password, row.password_hash)
+      if (!match) {
+        res.writeHead(401, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Incorrect password' }))
+      }
+      // 5-minute reauth window returned to client
+      const reauthUntil = Date.now() + 5 * 60 * 1000
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, reauthUntil }))
+    } catch (e) {
+      console.error('account/reauth error:', e.message)
       res.writeHead(500, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Server error' }))
     }

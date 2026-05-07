@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 
 const AI_URL = 'https://ai.citeback.com'
 const TOKEN_KEY = 'citeback_token'
@@ -11,6 +11,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem(USER_KEY)) } catch { return null }
   })
+  // reauthUntil is NOT persisted — clears on page refresh for security
+  const reauthUntilRef = useRef(0)
 
   // Persist to localStorage whenever they change
   useEffect(() => {
@@ -62,6 +64,27 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     setToken(null)
     setUser(null)
+    reauthUntilRef.current = 0
+  }, [])
+
+  // Step-up auth: verify password for high-stakes actions
+  // Returns reauthUntil timestamp; throws on bad password
+  const reauth = useCallback(async (password) => {
+    if (!token) throw new Error('Not logged in')
+    const res = await fetch(`${AI_URL}/account/reauth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ password }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Reauth failed')
+    reauthUntilRef.current = data.reauthUntil
+    return data.reauthUntil
+  }, [token])
+
+  // Returns true if the user has re-authenticated within the last 5 minutes
+  const isReauthed = useCallback(() => {
+    return reauthUntilRef.current > Date.now()
   }, [])
 
   const refreshUser = useCallback(async () => {
@@ -92,7 +115,7 @@ export function AuthProvider({ children }) {
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : {}
 
   return (
-    <AuthContext.Provider value={{ token, user, login, createAccount, logout, refreshUser, authHeaders, isLoggedIn: !!token }}>
+    <AuthContext.Provider value={{ token, user, login, createAccount, logout, refreshUser, authHeaders, isLoggedIn: !!token, reauth, isReauthed }}>
       {children}
     </AuthContext.Provider>
   )

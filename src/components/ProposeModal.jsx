@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { X, CheckCircle, AlertCircle } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+import ReauthModal from './ReauthModal'
 
 const types = [
   { id: 'billboard', label: '📋 Billboard', desc: 'Place a public awareness sign next to a surveillance camera' },
@@ -10,11 +12,13 @@ const types = [
 ]
 
 export default function ProposeModal({ onClose, prefill = {} }) {
+  const { isLoggedIn, isReauthed } = useAuth()
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState(false)
+  const [showReauth, setShowReauth] = useState(false)
   const modalRef = useRef(null)
   const headingId = 'propose-modal-heading'
 
@@ -46,8 +50,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  const handleSubmit = async () => {
-    if (!form.title || !form.location || !form.description || !form.goal) return
+  const doSubmit = async () => {
     setSending(true)
     setSubmitError(false)
     try {
@@ -67,6 +70,16 @@ export default function ProposeModal({ onClose, prefill = {} }) {
     setSending(false)
   }
 
+  const handleSubmit = () => {
+    if (!form.title || !form.location || !form.description || !form.goal) return
+    // Logged-in users must re-authenticate before submitting (step-up auth)
+    if (isLoggedIn && !isReauthed()) {
+      setShowReauth(true)
+      return
+    }
+    doSubmit()
+  }
+
   const inputStyle = {
     width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
     color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
@@ -75,6 +88,14 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const labelStyle = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }
 
   return (
+    <>
+    {showReauth && (
+      <ReauthModal
+        actionLabel="submit campaign proposal"
+        onSuccess={() => { setShowReauth(false); doSubmit() }}
+        onCancel={() => setShowReauth(false)}
+      />
+    )}
     <div
       onClick={onClose}
       role="presentation"
@@ -233,5 +254,6 @@ export default function ProposeModal({ onClose, prefill = {} }) {
         )}
       </div>
     </div>
+    </>  
   )
 }
