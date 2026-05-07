@@ -3,7 +3,8 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield } from 'lucide-react'
+import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield, MapPin } from 'lucide-react'
+import * as Exifr from 'exifr'
 import { C2PAExplainer, ThreatDisclosure } from './VerificationTiers'
 import {
   facialRecognitionAgencies,
@@ -913,6 +914,7 @@ export default function CameraMap() {
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false, photoFile: null })
+  const [mapGpsStatus, setMapGpsStatus] = useState(null) // null | 'reading' | 'found' | 'none'
   const [submitted, setSubmitted] = useState(false)
   const [locating, setLocating] = useState(false)
   const [osmCameras, setOsmCameras] = useState([])
@@ -996,6 +998,23 @@ export default function CameraMap() {
   }, [typeFilter, osmCameras])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  const handleMapPhoto = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    set('photoFile', file)
+    set('hasC2PA', true)
+    setMapGpsStatus('reading')
+    try {
+      const gps = await Exifr.gps(file)
+      if (gps?.latitude && gps?.longitude) {
+        setForm(f => ({ ...f, lat: String(gps.latitude), lng: String(gps.longitude) }))
+        setMapGpsStatus('found')
+      } else {
+        setMapGpsStatus('none')
+      }
+    } catch { setMapGpsStatus('none') }
+  }
 
   const detectGPS = () => {
     if (!navigator.geolocation) {
@@ -1276,32 +1295,46 @@ export default function CameraMap() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 14 }}>
                 <AlertCircle size={13} /> C2PA photo required. Verified submissions go live instantly.
               </div>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                <div style={{ flex: '0 0 130px' }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Latitude</label>
-                  <input style={inputStyle} placeholder="35.0844" value={form.lat} onChange={e => set('lat', e.target.value)} />
+              {/* Location row — auto from photo GPS or manual */}
+              {mapGpsStatus === 'found' ? (
+                <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
+                    <MapPin size={12} style={{ color: '#10b981' }} /> GPS from photo
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>
+                    {parseFloat(form.lat).toFixed(6)}, {parseFloat(form.lng).toFixed(6)} · embedded at capture
+                  </div>
+                  <input style={{ ...inputStyle, fontSize: 12 }} placeholder="Street name or landmark (optional)"
+                    value={form.location} onChange={e => set('location', e.target.value)} />
                 </div>
-                <div style={{ flex: '0 0 130px' }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Longitude</label>
-                  <input style={inputStyle} placeholder="-106.6504" value={form.lng} onChange={e => set('lng', e.target.value)} />
+              ) : (
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                  <div style={{ flex: '0 0 130px' }}>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Latitude</label>
+                    <input style={inputStyle} placeholder="35.0844" value={form.lat} onChange={e => set('lat', e.target.value)} />
+                  </div>
+                  <div style={{ flex: '0 0 130px' }}>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Longitude</label>
+                    <input style={inputStyle} placeholder="-106.6504" value={form.lng} onChange={e => set('lng', e.target.value)} />
+                  </div>
+                  <button onClick={detectGPS} style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    background: 'var(--bg3)', border: '1px solid var(--border)',
+                    color: locating ? 'var(--accent)' : 'var(--muted)',
+                    padding: '9px 12px', borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+                  }}>
+                    <Crosshair size={13} /> {locating ? 'Locating...' : 'Use GPS'}
+                  </button>
+                  <div style={{ flex: 2, minWidth: 180 }}>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Location</label>
+                    <input style={inputStyle} placeholder="Intersection or address" value={form.location} onChange={e => set('location', e.target.value)} />
+                  </div>
+                  <div style={{ flex: 2, minWidth: 180 }}>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Source / Notes</label>
+                    <input style={inputStyle} placeholder="News article, public record, photo..." value={form.notes} onChange={e => set('notes', e.target.value)} />
+                  </div>
                 </div>
-                <button onClick={detectGPS} style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  background: 'var(--bg3)', border: '1px solid var(--border)',
-                  color: locating ? 'var(--accent)' : 'var(--muted)',
-                  padding: '9px 12px', borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
-                }}>
-                  <Crosshair size={13} /> {locating ? 'Locating...' : 'Use GPS'}
-                </button>
-                <div style={{ flex: 2, minWidth: 180 }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Location</label>
-                  <input style={inputStyle} placeholder="Intersection or address" value={form.location} onChange={e => set('location', e.target.value)} />
-                </div>
-                <div style={{ flex: 2, minWidth: 180 }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Source / Notes</label>
-                  <input style={inputStyle} placeholder="News article, public record, photo..." value={form.notes} onChange={e => set('notes', e.target.value)} />
-                </div>
-              </div>
+              )}
               <div style={{ marginTop: 12 }}>
                 <C2PAExplainer />
                 <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1315,7 +1348,7 @@ export default function CameraMap() {
                     <Upload size={14} />
                     {form.photoFile ? `🏆 ${form.photoFile.name}` : 'Attach C2PA Photo (required)'}
                     <input type="file" accept="image/*" style={{ display: 'none' }}
-                      onChange={e => { if (e.target.files[0]) { set('photoFile', e.target.files[0]); set('hasC2PA', true) } }}
+                      onChange={handleMapPhoto}
                     />
                   </label>
                   <button onClick={submitCamera} style={{
