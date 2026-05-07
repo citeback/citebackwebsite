@@ -1653,7 +1653,7 @@ export default function CameraMap() {
 
       <div style={{ marginTop: 12, fontSize: 12, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <span>
-          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{verifiedCameras.length}</span> Citeback-verified ·{' '}
+          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{verifiedCameras.length + communitySightings.filter(s => s.newCamera === true).length}</span> Citeback-verified ·{' '}
           <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{osmCameras.length.toLocaleString()}</span> loaded · Zoom into any city for full detail
         </span>
         <span>Data: OpenStreetMap contributors (ODbL) · {cameraCount} mapped nationally</span>
