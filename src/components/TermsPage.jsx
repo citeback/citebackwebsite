@@ -8,8 +8,15 @@ export default function TermsPage() {
       <h1 style={{ fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
         Terms of Use
       </h1>
-      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 16 }}>
         Last updated: May 2026 · Citeback (Wyoming DAO LLC, in formation)
+      </p>
+      <p style={{ color: 'var(--muted)', fontSize: 12, marginBottom: 24, lineHeight: 1.6 }}>
+        This page is a summary of key terms. The full draft Terms of Use (including OFAC disclosures, operator obligations,
+        §230 notice, immutable platform rules, and fund redirection mechanics) is available at{' '}
+        <a href="https://github.com/citeback/citebackwebsite/blob/main/TOS_DRAFT.md" target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--accent)' }}>TOS_DRAFT.md on GitHub</a>.
+        These terms will be expanded and consolidated following attorney review prior to launch.
       </p>
 
       {/* Attorney review banner */}
@@ -43,7 +50,7 @@ Citeback is not a charitable organization. Donations are not tax-deductible. Cit
         },
         {
           title: '3. No Wallets Are Live',
-          body: `As of the date of this draft, no campaign wallets have been activated and no funds are being accepted. This site is in a pre-launch state. Wallet addresses will only be published after all 10 public launch prerequisites are verified and disclosed. Do not send funds to any address claiming to represent Citeback until official wallet addresses are published through the verified GitHub repository.`,
+          body: `As of the date of this draft, no campaign wallets have been activated and no funds are being accepted. This site is in a pre-launch state. Wallet addresses will only be published after all 16 public launch prerequisites are verified and disclosed (see GOVERNANCE.md Launch Prerequisites for the full list). Do not send funds to any address claiming to represent Citeback until official wallet addresses are published through the verified GitHub repository.`,
         },
         {
           title: '4. Donation Terms',

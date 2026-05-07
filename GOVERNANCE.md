@@ -6,6 +6,14 @@
 
 ---
 
+## Changelog: v0.8 → v0.8.1 (2026-05-07)
+
+- **§7.3 fee model changed:** Graduated 3–5% platform fee replaced with zero-fee model. 100% of campaign funds disbursed to operators. Platform funded by founding operator capital contributions + voluntary user tips + long-term grant funding. Extractive relationship between platform and campaigns eliminated.
+- **§11 operations wallet:** Updated to reflect tips model; no TEE fee deduction.
+- **§15 Immutables:** OFAC SDN match override prohibition added as Immutable #10 — no community vote may override a denial based on an OFAC SDN list match.
+- **§6.2 canonical list:** Platform funding mechanism added as Governance-tier item.
+- **OPERATOR-ACCOUNTABILITY.md:** Operator accountability protocol drafted (pre-ratification).
+
 ## Changelog: v0.7 → v0.8
 
 - **Split operational model adopted:** Platform now reflects a human operator layer + autonomous TEE financial layer
@@ -343,6 +351,7 @@ Disbursements above $10,000 require approving votes from voters with **less than
 - The Immutables list (§15)
 - The minimum_threshold floor
 - Founder address registry rules
+- Platform funding mechanism and fee model (changes to fee-free model, introduction of any platform fee, or changes to the tips framework require Governance-tier vote)
 
 ### 6.3 Classification Confirmation
 Classification decisions require active confirmation from **3 reputation-weighted community members** within the 24-hour dispute window. If not received, classification defaults to next higher tier.
@@ -570,6 +579,7 @@ Encoded in TEE. Cannot be overridden by any vote — requires a fork.
 7. Multi-TEE permanence (minimum 3 instances)
 8. Minimum threshold floor ($1 equivalent)
 9. Founder address registry permanence
+10. OFAC SDN match override prohibition — no community vote may override a denial or rejection based on an OFAC SDN list match. This is a regulatory compliance requirement; it cannot be loosened by governance vote. A fork is required to change it.
 
 ---
 

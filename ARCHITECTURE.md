@@ -20,7 +20,7 @@ This document describes the full technical architecture, from wallet management 
 2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the TEE governs only financial execution.
 3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
 4. **Privacy-preserving** — Donors are anonymous. Operators earn reputation without revealing identity.
-5. **Self-sustaining** — The platform funds its own operations from a graduated 3–5% platform fee (see GOVERNANCE.md §7.3). No founder dependency.
+5. **Self-sustaining** — No platform fee on campaigns. 100% of donated funds go directly to operators. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC and voluntary user tips. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation). This eliminates any extractive relationship between the platform and the causes it supports.
 6. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
@@ -193,7 +193,7 @@ When a campaign is proposed, the AI calculates:
 - Estimated Monero transaction fee (~$0.01)
 - 2% buffer for fee variance
 
-Campaign goal = task cost + buffer. This is displayed transparently on the campaign card.
+The published campaign goal (task cost + buffer) is displayed transparently on each campaign card.
 
 ### Unfunded Campaign Handling
 
