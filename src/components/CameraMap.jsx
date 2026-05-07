@@ -1315,7 +1315,7 @@ export default function CameraMap() {
                       : mapGpsStatus === 'found' ? (form.lat === 'zip' ? '📍 Proofmode bundle — GPS from proof.json' : `📍 GPS confirmed · ${parseFloat(form.lat).toFixed(5)}, ${parseFloat(form.lng).toFixed(5)}`)
                       : mapGpsStatus === 'none' ? '⚠️ No GPS in photo — try Proofmode'
                       : form.photoFile ? `🏆 ${form.photoFile.name}`
-                      : 'Attach C2PA Photo (required)'}
+                      : 'Attach C2PA Photo or Proofmode ZIP'}
                     <input type="file" accept="image/*,application/zip,application/x-zip-compressed,.zip" style={{ display: 'none' }}
                       onChange={handleMapPhoto}
                     />
