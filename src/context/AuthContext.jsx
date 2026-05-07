@@ -39,6 +39,7 @@ export function AuthProvider({ children }) {
       reputation: data.reputation, tier: data.tier,
       tierName: data.tierName, pointsToNext: data.pointsToNext,
       tierThreshold: data.tierThreshold,
+      hasEmail: data.hasEmail ?? false,
     })
     return data
   }, [])
@@ -57,6 +58,7 @@ export function AuthProvider({ children }) {
       reputation: data.reputation, tier: data.tier,
       tierName: data.tierName, pointsToNext: data.pointsToNext,
       tierThreshold: data.tierThreshold,
+      hasEmail: data.hasEmail ?? false,
     })
     return data
   }, [])
@@ -103,6 +105,7 @@ export function AuthProvider({ children }) {
         tierThreshold: data.tierThreshold,
         createdAt: data.createdAt,
         recentEvents: data.recentEvents,
+        hasEmail: data.hasEmail ?? false,
       })
     } catch { /* network error, keep existing user state */ }
   }, [token, logout])

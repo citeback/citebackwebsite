@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, CheckCircle, AlertCircle } from 'lucide-react'
+import { X, CheckCircle, AlertCircle, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import ReauthModal from './ReauthModal'
 
@@ -12,7 +12,8 @@ const types = [
 ]
 
 export default function ProposeModal({ onClose, prefill = {} }) {
-  const { isLoggedIn, isReauthed } = useAuth()
+  const { isLoggedIn, isReauthed, user } = useAuth()
+  const needsEmail = isLoggedIn && user && !user.hasEmail
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '' })
   const [submitted, setSubmitted] = useState(false)
@@ -223,6 +224,27 @@ export default function ProposeModal({ onClose, prefill = {} }) {
               To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
+            {/* Email gate — logged-in operators must have a recovery email */}
+            {needsEmail && (
+              <div style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                background: 'rgba(244,162,97,0.08)', border: '1px solid rgba(244,162,97,0.35)',
+                borderRadius: 10, padding: '12px 14px',
+              }}>
+                <Mail size={15} style={{ color: '#f4a261', flexShrink: 0, marginTop: 1 }} />
+                <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.65 }}>
+                  <strong style={{ color: '#f4a261', display: 'block', marginBottom: 3 }}>Recovery email required to propose campaigns</strong>
+                  Operators must have a recovery email on file — not for identity, but so you can't lose access to an active campaign.
+                  A disposable address is fine.{' '}
+                  <a
+                    href="/reputation"
+                    onClick={onClose}
+                    style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+                  >Add one in your account settings →</a>
+                </div>
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
               <button onClick={() => setStep(1)} style={{
                 flex: 1, background: 'var(--bg3)', border: '1px solid var(--border)',
@@ -230,14 +252,14 @@ export default function ProposeModal({ onClose, prefill = {} }) {
               }}>← Back</button>
               <button
                 onClick={handleSubmit}
-                disabled={!form.title || !form.location || !form.description || !form.goal || sending}
+                disabled={!form.title || !form.location || !form.description || !form.goal || sending || needsEmail}
                 style={{
                   flex: 2,
-                  background: (form.title && form.location && form.description && form.goal && !sending) ? 'var(--accent)' : 'var(--bg3)',
+                  background: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? 'var(--accent)' : 'var(--bg3)',
                   border: 'none',
-                  color: (form.title && form.location && form.description && form.goal && !sending) ? '#fff' : 'var(--muted)',
+                  color: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? '#fff' : 'var(--muted)',
                   padding: '12px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-                  cursor: (form.title && form.location && form.description && form.goal && !sending) ? 'pointer' : 'not-allowed',
+                  cursor: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? 'pointer' : 'not-allowed',
                 }}>
                 {sending ? 'Submitting...' : 'Submit for Review'}
               </button>

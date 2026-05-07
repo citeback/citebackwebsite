@@ -589,6 +589,7 @@ const server = http.createServer(async (req, res) => {
         reputation: 0, tier: 0,
         tierName: TIER_NAMES[0], pointsToNext: TIER_THRESHOLDS[1],
         tierThreshold: TIER_THRESHOLDS[1],
+        hasEmail: !!emailEnc,
       }))
     } catch (e) {
       console.error('account/create error:', e.message)
@@ -634,6 +635,7 @@ const server = http.createServer(async (req, res) => {
         tierName: TIER_NAMES[user.tier],
         pointsToNext: getPointsToNextTier(user.reputation, user.tier),
         tierThreshold: TIER_THRESHOLDS[user.tier + 1] ?? null,
+        hasEmail: !!user.email_enc,
       }))
     } catch (e) {
       console.error('account/login error:', e.message)
@@ -650,7 +652,7 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify({ error: 'Authentication required' }))
     }
 
-    const user = db.prepare('SELECT id, username, reputation, tier, created_at FROM users WHERE id = ?').get(claims.userId)
+    const user = db.prepare('SELECT id, username, reputation, tier, created_at, email_enc FROM users WHERE id = ?').get(claims.userId)
     if (!user) {
       res.writeHead(404, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'User not found' }))
@@ -667,6 +669,7 @@ const server = http.createServer(async (req, res) => {
       tierThreshold: TIER_THRESHOLDS[user.tier + 1] ?? null,
       createdAt: user.created_at,
       recentEvents: events,
+      hasEmail: !!user.email_enc,
     }))
   }
 

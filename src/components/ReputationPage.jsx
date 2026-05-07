@@ -5,7 +5,7 @@ import AccountModal from './AccountModal'
 
 const AI_URL = 'https://ai.citeback.com'
 
-function EmailManager({ token }) {
+function EmailManager({ token, onEmailSaved }) {
   const [emailInfo, setEmailInfo] = useState(null) // { hasEmail, maskedEmail }
   const [editing, setEditing] = useState(false)
   const [newEmail, setNewEmail] = useState('')
@@ -32,6 +32,7 @@ function EmailManager({ token }) {
       setEmailInfo({ hasEmail: !!newEmail, maskedEmail: newEmail ? newEmail.replace(/^(.{2}).*@/, '$1***@') : null })
       setEditing(false); setSaved(true); setNewEmail('')
       setTimeout(() => setSaved(false), 3000)
+      if (newEmail && onEmailSaved) onEmailSaved()
     } catch (e) { setErr(e.message) }
     finally { setSaving(false) }
   }
@@ -46,19 +47,44 @@ function EmailManager({ token }) {
           <span style={{ fontSize: 13, fontWeight: 600 }}>Recovery Email</span>
           {saved && <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✓ Saved</span>}
         </div>
-        {!editing && (
+        {!editing && emailInfo.hasEmail && (
           <button onClick={() => { setEditing(true); setNewEmail('') }}
             style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer' }}>
-            {emailInfo.hasEmail ? 'Change' : 'Add email'}
+            Change
           </button>
         )}
       </div>
       {!editing && (
-        <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
-          {emailInfo.hasEmail
-            ? <>{emailInfo.maskedEmail} · <span style={{ color: '#10b981' }}>Recovery enabled</span></>
-            : <span style={{ color: '#f4a261' }}>No recovery email — if you lose your password, your account cannot be recovered.</span>}
-        </p>
+        emailInfo.hasEmail ? (
+          <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
+            {emailInfo.maskedEmail} · <span style={{ color: '#10b981' }}>Recovery enabled</span>
+          </p>
+        ) : (
+          <div style={{
+            marginTop: 10,
+            background: 'rgba(244,162,97,0.08)', border: '1px solid rgba(244,162,97,0.35)',
+            borderRadius: 8, padding: '12px 14px',
+          }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#f4a261', marginBottom: 4 }}>
+              ⚠️ No recovery email set
+            </p>
+            <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.65, marginBottom: 10 }}>
+              Without a recovery email, a forgotten password means permanent loss of your account and reputation.
+              A recovery email is also <strong style={{ color: 'var(--text)' }}>required before you can propose or accept campaign contributions</strong> — to prevent operators from claiming a lost account after receiving funds.
+              A disposable email address is fine.
+            </p>
+            <button
+              onClick={() => { setEditing(true); setNewEmail('') }}
+              style={{
+                background: '#f4a261', border: 'none', color: '#000',
+                padding: '8px 16px', borderRadius: 7, fontWeight: 700,
+                fontSize: 12, cursor: 'pointer',
+              }}
+            >
+              Add Recovery Email
+            </button>
+          </div>
+        )
       )}
       {editing && (
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -366,7 +392,7 @@ export default function ReputationPage({ setTab }) {
       </div>
 
       {/* Email recovery management */}
-      <EmailManager token={token} />
+      <EmailManager token={token} onEmailSaved={refreshUser} />
 
       {/* CTA */}
       <button

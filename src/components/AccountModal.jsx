@@ -253,7 +253,10 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
             {tab === 'create' && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div>
-                  <label style={labelStyle}>Recovery Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional)</span></label>
+                  <label style={labelStyle}>
+                    Recovery Email{' '}
+                    <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — required to run campaigns)</span>
+                  </label>
                   <input
                     type="email"
                     style={inputStyle}
@@ -264,8 +267,21 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
                   />
                 </div>
                 <p style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
-                  ⚠️ Your email will be stored — encrypted with AES-256 and never shared or used for anything except password recovery. If your account holds campaign funds, this is strongly recommended.
+                  AES-256 encrypted · never shared · used only for password recovery
                 </p>
+                {/* Warning shown only when user leaves email blank */}
+                {!form.email && (
+                  <div style={{
+                    background: 'rgba(244,162,97,0.08)', border: '1px solid rgba(244,162,97,0.35)',
+                    borderRadius: 8, padding: '10px 12px',
+                    fontSize: 12, color: '#f4a261', lineHeight: 1.65,
+                  }}>
+                    <strong style={{ display: 'block', marginBottom: 3 }}>⚠️ No recovery email</strong>
+                    If you forget your password, your account and reputation cannot be recovered.
+                    A recovery email is also required before you can accept campaign contributions.
+                    You can add one later in your account settings.
+                  </div>
+                )}
               </div>
             )}
             {tab === 'login' && (
@@ -276,7 +292,7 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
             )}
             {tab === 'create' && (
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
-                No email required. No personal info stored beyond what you choose to add. Your password is hashed and never readable.
+                Scouts don't need an email — browse and report anonymously. Email is only required if you want to run campaigns.
               </p>
             )}
           </form>
