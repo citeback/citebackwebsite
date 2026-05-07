@@ -238,18 +238,27 @@ Public vantage points only. Campaigns to disable, damage, or interfere with surv
 
 ## 4. Operator Reputation
 
+Citeback uses **two separate reputation tracks** that gate different things:
+
+- **Camera reputation** (sighting submissions) — earns points toward platform tiers (Scout → Operator → Verifier → Guardian). Reaching Tier 1 (10 pts) unlocks the ability to run campaigns up to the initial $1,000 cap.
+- **Campaign success score** (completed campaigns) — a separate count of successfully completed campaigns with clean challenge records. This is what unlocks higher caps. Dollar volume does not determine advancement — execution track record does.
+
 ### 4.1 Initial Caps
-- Reputation: 0 | Maximum campaign: $1,000
+- New operator | Maximum campaign: **$1,000**
+- Requires: identity verified + camera reputation Tier 1 (10 sighting points)
 
 ### 4.2 Cap Escalation
-Requires clean challenge record AND cumulative volume:
 
-| Target Cap | Volume Required | Additional |
+Requires clean challenge record throughout.
+
+| Target Cap | Requirement | Legal Entity Required |
 |---|---|---|
-| $7,500 | $2,500 completed | — |
-| $30,000 | $12,000 completed | — |
-| $125,000 | $60,000 completed | KYC + DAO legal counsel |
-| Unlimited | $125,000 completed | Community vote |
+| **$7,500** | 10 successfully completed campaigns | No |
+| **$30,000** | Legal entity registered + any prior completed volume | Yes |
+| **$125,000** | Legal entity + DAO legal counsel review + $1M insurance | Yes |
+| **Unlimited** | $125k completed volume + community governance vote | Yes |
+
+**"Successfully completed"** means: campaign funded, milestones met, proof submitted, disbursement released with no upheld challenge. A challenged campaign that resolved in the operator’s favor still counts. A campaign with an upheld challenge does not count and resets the consecutive clean run.
 
 ### 4.3 Reputation Decay
 -10 points/month after 6 consecutive months inactive. Floor: 0.
@@ -260,12 +269,12 @@ Requires clean challenge record AND cumulative volume:
 Real-name identity data. Third-party API. Continuous monitoring, 30-day cycle.
 
 ### 4.5 KYC / Entity Requirements by Tier
-- **$1k cap:** Identity verified only
-- **$7.5k cap:** Legal entity on file required (after $2.5k completed volume)
-- **$30k cap:** Entity + DAO legal review (after $12k completed volume)
-- **$125k cap:** Entity + legal review + $1M liability insurance (after $60k completed volume)
+- **$1k cap:** Identity verified (government ID). No legal entity required.
+- **$7,500 cap:** Identity verified + 10 successful campaigns. No legal entity required.
+- **$30k cap:** Registered legal entity on file (LLC, nonprofit, or equivalent). Entity name, jurisdiction, and registration number required.
+- **$125k cap:** Legal entity + DAO legal counsel review + $1M liability insurance certificate.
 
-Entity name, jurisdiction, and registration number required when applicable. DAO legal counsel review required at $25k+ tier.
+Legal entity is **not required** until the $30k tier. Operators who have demonstrated execution track record through 10 successful campaigns may access the $7,500 cap as individuals.
 
 ### 4.6 Liability Insurance
 Campaigns above $100k cap: minimum $1M per-occurrence, coverage type specified by DAO counsel (must cover civil rights claims, defamation, and intentional acts). DAO legal entity named as additional insured.

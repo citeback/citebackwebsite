@@ -9,10 +9,10 @@ const TIER_NAMES = ['Scout', 'Operator', 'Verifier', 'Guardian']
 const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_COLORS = ['#6b7280', '#e63946', '#f59e0b', '#10b981']
 const TIER_DESCRIPTIONS = [
-  'Submit sightings and build your reputation.',
-  'Access to campaigns up to $1,000.',
-  'Unlock verification bounties.',
-  'Full operator access + governance voting.',
+  'Submit camera sightings to build your reputation score.',
+  'Run campaigns up to $1,000. After 10 successful campaigns, cap rises to $7,500 — no legal entity required.',
+  'Unlock verification bounties + enhanced governance weight.',
+  'Full operator access + governance voting weight.',
 ]
 
 const CAMERA_TYPE_LABELS = {

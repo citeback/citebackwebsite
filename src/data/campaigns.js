@@ -18,11 +18,18 @@ export const platformRules = {
   campaignApprovalThreshold: 0.51, // simple majority to approve campaign
   unfundedRedirect: 'highest-priority-same-category',
 
-  reputationCaps: [
-    { minScore: 0,   maxScore: 20,  maxGoalUSD: 1000 },    // $1k initial cap
-    { minScore: 21,  maxScore: 50,  maxGoalUSD: 7500 },    // $7.5k after 2.5k volume
-    { minScore: 51,  maxScore: 100, maxGoalUSD: 30000 },   // $30k after 12k volume
-    { minScore: 101, maxScore: Infinity, maxGoalUSD: Infinity }, // $125k+ via community vote
+  // Camera reputation (sighting points) gates initial campaign ACCESS
+  // Campaign success score (separate counter) gates higher CAPS
+  cameraReputationTiers: [
+    { minScore: 0,  maxScore: 9,   canRunCampaigns: false },  // Scout — build rep first
+    { minScore: 10, maxScore: Infinity, canRunCampaigns: true, maxGoalUSD: 1000 }, // Operator+
+  ],
+  campaignSuccessCaps: [
+    { successfulCampaigns: 0,  maxGoalUSD: 1000,      entityRequired: false },
+    { successfulCampaigns: 10, maxGoalUSD: 7500,      entityRequired: false },
+    { successfulCampaigns: 10, maxGoalUSD: 30000,     entityRequired: true  }, // entity unlocks this
+    { successfulCampaigns: 10, maxGoalUSD: 125000,    entityRequired: true, legalReviewRequired: true },
+    { successfulCampaigns: 10, maxGoalUSD: Infinity,  entityRequired: true, communityVoteRequired: true },
   ],
 
   reputationEvents: {
