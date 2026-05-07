@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { campaigns } from '../data/campaigns'
+import { useState, useEffect } from 'react'
 import CampaignCard from './CampaignCard'
 import { lazy, Suspense } from 'react'
 const ProposeModal = lazy(() => import('./ProposeModal'))
@@ -17,11 +16,22 @@ function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
 }
 
+const AI_URL = 'https://ai.citeback.com'
+
 export default function CampaignList({ full, setSelectedCampaign, setTab }) {
   const [filter, setFilter] = useState('All')
   const [sort, setSort] = useState('urgent')
   const [query, setQuery] = useState('')
   const [proposing, setProposing] = useState(false)
+  const [campaigns, setCampaigns] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch(`${AI_URL}/api/campaigns`)
+      .then(r => r.json())
+      .then(data => { setCampaigns(data); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
 
   const base = full ? campaigns : campaigns.slice(0, 3)
 
@@ -35,6 +45,12 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       if (sort === 'newest') return b.id - a.id
       return 0
     })
+
+  if (loading) return (
+    <section style={{ padding: full ? '48px 24px' : '64px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+      <div style={{ color: 'var(--muted)', fontSize: 15, textAlign: 'center', padding: 48 }}>Loading campaigns…</div>
+    </section>
+  )
 
   return (
     <section style={{ padding: full ? '48px 24px' : '64px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>

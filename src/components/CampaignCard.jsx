@@ -1,4 +1,4 @@
-import { MapPin, Clock, CheckCircle, Share2, Flame, Rocket, ExternalLink } from 'lucide-react'
+import { MapPin, Clock, CheckCircle, Share2, Flame, Rocket, ExternalLink, Users } from 'lucide-react'
 import { typeColors } from '../data/campaigns'
 import { useState } from 'react'
 
@@ -8,7 +8,9 @@ function getDaysLeft(deadline) {
 
 export default function CampaignCard({ campaign, onClick }) {
   const [shared, setShared] = useState(false)
-  const prelaunch = !campaign.walletXMR
+  const unclaimed = campaign.status === 'unclaimed'
+  const claimed = campaign.status === 'claimed'
+  const prelaunch = unclaimed || claimed || !campaign.walletXMR
   const pct = prelaunch ? 0 : Math.min(100, Math.round((campaign.raised / campaign.goal) * 100))
   const tc = typeColors[campaign.type]
   const funded = campaign.status === 'funded'
@@ -54,7 +56,9 @@ export default function CampaignCard({ campaign, onClick }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {funded && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--green)', fontSize: 12, fontWeight: 600 }}><CheckCircle size={13} /> Funded</span>}
-          {prelaunch && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Rocket size={12} /> Pre-Launch</span>}
+          {unclaimed && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#9b59b6', fontSize: 11, fontWeight: 700 }}><Users size={12} /> Seeking Operator</span>}
+          {claimed && !unclaimed && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Rocket size={12} /> Wallet Pending</span>}
+          {!unclaimed && !claimed && prelaunch && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Rocket size={12} /> Pre-Launch</span>}
           {urgent && <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#f39c12', fontSize: 11, fontWeight: 700 }}><Flame size={12} /> {daysLeft}d left</span>}
           <button onClick={handleShare} aria-label={shared ? 'Link copied' : 'Copy campaign link'} style={{ background: 'none', border: 'none', color: shared ? 'var(--green)' : 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 36, minHeight: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {shared ? <CheckCircle size={14} /> : <Share2 size={14} />}
@@ -74,7 +78,7 @@ export default function CampaignCard({ campaign, onClick }) {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 7, fontSize: 13 }}>
           <span style={{ fontWeight: 700, color: prelaunch ? 'var(--muted)' : 'var(--text)' }}>
-            {prelaunch ? 'Wallet pending' : `$${campaign.raised.toLocaleString()} raised`}
+            {unclaimed ? 'Awaiting operator' : claimed ? 'Wallet pending' : prelaunch ? 'Pre-launch' : `$${campaign.raised.toLocaleString()} raised`}
           </span>
           <span style={{ color: 'var(--muted)' }}>${campaign.goal.toLocaleString()} goal</span>
         </div>
@@ -92,7 +96,7 @@ export default function CampaignCard({ campaign, onClick }) {
         <div style={{ display: 'flex', gap: 14 }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{campaign.location}</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={11} />
-            {funded ? 'Complete' : prelaunch ? 'Launching soon' : `${daysLeft} days left`}
+            {funded ? 'Complete' : unclaimed ? 'Open to claim' : prelaunch ? 'Launching soon' : `${daysLeft} days left`}
           </span>
         </div>
         {campaign.source && (

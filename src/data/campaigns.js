@@ -41,7 +41,10 @@ export const platformRules = {
   },
 }
 
-export const campaigns = [
+// Campaigns are now fetched from the API (https://ai.citeback.com/api/campaigns)
+// See CampaignList.jsx for the fetch logic.
+// The array below is kept only as a reference — it is NOT used at runtime.
+export const _campaignsSeedRef = [
   {
     id: 1,
     type: 'foia',

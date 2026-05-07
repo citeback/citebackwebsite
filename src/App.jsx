@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
 import { AuthProvider } from './context/AuthContext'
-import { campaigns } from './data/campaigns'
+const AI_URL = 'https://ai.citeback.com'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
 import Nav from './components/Nav'
 import ActivityTicker from './components/ActivityTicker'
@@ -66,8 +66,13 @@ const TAB_TO_PATH = {
 function CampaignDeepLink({ setSelectedCampaign, setTab }) {
   const { id } = useParams()
   useEffect(() => {
-    const campaign = campaigns.find(c => String(c.id) === id)
-    if (campaign) setSelectedCampaign(campaign)
+    fetch(`${AI_URL}/api/campaigns`)
+      .then(r => r.json())
+      .then(all => {
+        const campaign = all.find(c => String(c.id) === id)
+        if (campaign) setSelectedCampaign(campaign)
+      })
+      .catch(() => {})
   }, [id])
   return <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
 }

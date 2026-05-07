@@ -1,23 +1,32 @@
-import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Camera, Lock, GitMerge, Zap, Award, ThumbsUp, Share2 } from 'lucide-react'
+import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Camera, Lock, GitMerge, Zap, Award, ThumbsUp, Share2, Users, Wallet } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { typeColors } from '../data/campaigns'
 import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '../context/AuthContext'
 
 function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
 }
 
-export default function CampaignModal({ campaign, onClose }) {
+export default function CampaignModal({ campaign: initialCampaign, onClose }) {
+  const [campaign, setCampaign] = useState(initialCampaign)
   const [copied, setCopied] = useState(false)
   const [walletTab, setWalletTab] = useState('address')
   const [currency, setCurrency] = useState('XMR')
   const [interested, setInterested] = useState(() => {
-    try { return !!localStorage.getItem(`cb_int_${campaign.id}`) } catch { return false }
+    try { return !!localStorage.getItem(`cb_int_${initialCampaign.id}`) } catch { return false }
   })
   const [interestCount, setInterestCount] = useState(0)
   const [shared, setShared] = useState(false)
+  const [claiming, setClaiming] = useState(false)
+  const [claimError, setClaimError] = useState('')
+  const [operatorForm, setOperatorForm] = useState({ walletXmr: '', walletZano: '', operatorName: '', operatorBio: '' })
+  const [savingWallet, setSavingWallet] = useState(false)
+  const [saveError, setSaveError] = useState('')
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const modalRef = useRef(null)
   const AI_URL = 'https://ai.citeback.com'
+  const { isLoggedIn, user, token } = useAuth()
   const headingId = 'campaign-modal-heading'
 
   useEffect(() => {
@@ -87,13 +96,53 @@ export default function CampaignModal({ campaign, onClose }) {
   const pct = campaign.walletXMR ? Math.min(100, Math.round((campaign.raised / campaign.goal) * 100)) : 0
   const tc = typeColors[campaign.type]
   const funded = campaign.status === 'funded'
+  const unclaimed = campaign.status === 'unclaimed'
   const prelaunch = !campaign.walletXMR
   const daysLeft = getDaysLeft(campaign.deadline)
+  const isUserOperator = isLoggedIn && user && campaign.operatorId === user.id
+  const canClaim = isLoggedIn && user && (user.tier >= 1) && unclaimed
 
   const activeWallet = currency === 'XMR' ? campaign.walletXMR : campaign.walletZANO
   const hasZano = !!campaign.walletZANO
   const hasXMR = !!campaign.walletXMR
   const hasWallet = hasXMR || hasZano
+
+  const handleClaim = async () => {
+    setClaiming(true); setClaimError('')
+    try {
+      const r = await fetch(`${AI_URL}/api/campaigns/${campaign.id}/claim`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const d = await r.json()
+      if (!r.ok) { setClaimError(d.error || 'Claim failed'); setClaiming(false); return }
+      // Refresh campaign data
+      const cr = await fetch(`${AI_URL}/api/campaigns`)
+      const all = await cr.json()
+      const updated = all.find(c => c.id === campaign.id)
+      if (updated) setCampaign(updated)
+      setClaiming(false)
+    } catch (e) { setClaimError('Network error — try again'); setClaiming(false) }
+  }
+
+  const handleSaveOperator = async () => {
+    setSavingWallet(true); setSaveError(''); setSaveSuccess(false)
+    try {
+      const r = await fetch(`${AI_URL}/api/campaigns/${campaign.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(operatorForm),
+      })
+      const d = await r.json()
+      if (!r.ok) { setSaveError(d.error || 'Save failed'); setSavingWallet(false); return }
+      // Refresh campaign
+      const cr = await fetch(`${AI_URL}/api/campaigns`)
+      const all = await cr.json()
+      const updated = all.find(c => c.id === campaign.id)
+      if (updated) setCampaign(updated)
+      setSaveSuccess(true); setSavingWallet(false)
+    } catch (e) { setSaveError('Network error — try again'); setSavingWallet(false) }
+  }
 
   const copyWallet = () => {
     navigator.clipboard.writeText(activeWallet)
@@ -163,10 +212,10 @@ export default function CampaignModal({ campaign, onClose }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-1px' }}>
-                {prelaunch ? 'Pre-Launch' : `$${campaign.raised.toLocaleString()}`}
+                {unclaimed ? 'Seeking Operator' : prelaunch ? 'Pre-Launch' : `$${campaign.raised.toLocaleString()}`}
               </div>
               <div style={{ color: 'var(--muted)', fontSize: 12 }}>
-                {prelaunch ? 'Wallet pending — collecting interest' : `of $${campaign.goal.toLocaleString()} goal`}
+                {unclaimed ? 'Campaign available to claim' : prelaunch ? 'Wallet pending — being set up' : `of $${campaign.goal.toLocaleString()} goal`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -308,8 +357,105 @@ export default function CampaignModal({ campaign, onClose }) {
               </div>
             </div>
 
+          ) : unclaimed ? (
+            /* Unclaimed — needs an operator */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ background: 'rgba(155,89,182,0.07)', border: '1px solid rgba(155,89,182,0.25)', borderRadius: 12, padding: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
+                  <Users size={16} style={{ color: '#9b59b6' }} /> This Campaign Needs an Operator
+                </div>
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+                  This is a suggested campaign — fully researched and ready to run. An Operator claims it, adds their own
+                  XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the operator\'s wallet.
+                  Citeback never holds funds.
+                </p>
+                {campaign.operatorName && (
+                  <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8 }}>Operator: <strong style={{ color: 'var(--text)' }}>{campaign.operatorName}</strong></p>
+                )}
+              </div>
+
+              {!isLoggedIn ? (
+                <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, color: 'var(--muted)' }}>
+                  <strong style={{ color: 'var(--text)' }}>Log in to claim this campaign.</strong><br />
+                  You need an Operator account (10+ reputation points).
+                </div>
+              ) : !canClaim ? (
+                <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, color: 'var(--muted)' }}>
+                  <strong style={{ color: 'var(--text)' }}>Operator tier required.</strong><br />
+                  Earn 10+ reputation points by submitting verified camera sightings. You have {user?.reputation || 0} pts ({10 - (user?.reputation || 0)} more needed).
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {claimError && <div style={{ color: 'var(--accent)', fontSize: 13, textAlign: 'center' }}>{claimError}</div>}
+                  <button
+                    onClick={handleClaim}
+                    disabled={claiming}
+                    style={{
+                      background: 'rgba(155,89,182,0.15)', border: '1px solid rgba(155,89,182,0.4)',
+                      color: '#bb8fce', borderRadius: 10, padding: '14px 20px',
+                      fontWeight: 700, fontSize: 15, cursor: claiming ? 'default' : 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    }}
+                  >
+                    <Users size={16} />
+                    {claiming ? 'Claiming…' : 'Claim this Campaign'}
+                  </button>
+                  <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
+                    After claiming, add your XMR and ZANO wallet addresses to activate the campaign.
+                  </p>
+                </div>
+              )}
+            </div>
+
+          ) : isUserOperator && !hasWallet ? (
+            /* Operator — needs to add wallet */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ background: 'rgba(155,89,182,0.07)', border: '1px solid rgba(155,89,182,0.25)', borderRadius: 12, padding: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
+                  <Wallet size={16} style={{ color: '#9b59b6' }} /> You\'re the Operator — Add Your Wallets
+                </div>
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+                  Add your XMR and ZANO wallet addresses to activate this campaign. Contributors will send funds directly to your wallets — Citeback never holds funds.
+                </p>
+              </div>
+
+              {[['Monero (XMR) wallet address', 'walletXmr', 'Your XMR address…'], ['Zano (ZANO) wallet address', 'walletZano', 'Your ZANO address…'], ['Your name or alias (public)', 'operatorName', 'e.g. Taos Privacy Coalition'], ['About you / this effort (public)', 'operatorBio', 'Brief background on who\'s running this campaign…']].map(([label, key, placeholder]) => (
+                <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 600 }}>{label}</label>
+                  {key === 'operatorBio' ? (
+                    <textarea
+                      value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
+                      placeholder={placeholder} rows={3}
+                      style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 8, padding: '9px 12px', fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+                    />
+                  ) : (
+                    <input
+                      value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
+                      placeholder={placeholder}
+                      style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 8, padding: '9px 12px', fontSize: 13, outline: 'none', fontFamily: 'inherit' }}
+                    />
+                  )}
+                </div>
+              ))}
+
+              {saveError && <div style={{ color: 'var(--accent)', fontSize: 13 }}>{saveError}</div>}
+              {saveSuccess && <div style={{ color: 'var(--green)', fontSize: 13 }}>✓ Saved! Campaign will activate once both wallets are set.</div>}
+
+              <button
+                onClick={handleSaveOperator}
+                disabled={savingWallet || (!operatorForm.walletXmr && !operatorForm.walletZano && !operatorForm.operatorName && !operatorForm.operatorBio)}
+                style={{
+                  background: 'rgba(155,89,182,0.15)', border: '1px solid rgba(155,89,182,0.4)',
+                  color: '#bb8fce', borderRadius: 10, padding: '12px 20px',
+                  fontWeight: 700, fontSize: 14, cursor: savingWallet ? 'default' : 'pointer',
+                }}
+              >
+                {savingWallet ? 'Saving…' : 'Save & Activate'}
+              </button>
+            </div>
+
           ) : !hasWallet ? (
-            /* Pre-launch state */
+            /* Pre-launch state (generic — claimed by someone else, no wallet yet) */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{
                 background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
@@ -319,9 +465,7 @@ export default function CampaignModal({ campaign, onClose }) {
                   <Rocket size={16} style={{ color: 'var(--accent)' }} /> Pre-Launch Campaign
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-                  This campaign is verified and ready to launch. Dedicated Monero (XMR) and Zano (ZANO) wallets
-                  are held in an independently-auditable, multi-party wallet system where no human,
-                  including the founders, can access the keys. Wallets will appear here once the wallet infrastructure is live.
+                  This campaign has been claimed and is being prepared for launch. The operator is setting up their wallet addresses. Check back soon.
                 </p>
               </div>
 
