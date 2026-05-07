@@ -151,7 +151,7 @@ export default function Governance({ setTab }) {
       <Section id="philosophy" title="Philosophy" icon={Shield} defaultOpen>
         <p>Citeback exists because surveillance is asymmetric. Institutions document individuals constantly, at scale, with impunity. Individuals have almost no reciprocal capacity to challenge them or fund accountability work.</p>
         <p style={{ marginTop: 12 }}>The platform ensures that financial access, legal pressure, and platform deplatforming <strong style={{ color: 'var(--fg)' }}>cannot silence lawful accountability work.</strong> It operates within applicable law and supports First Amendment-protected activity.</p>
-        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding campaigns those organizations cannot touch.</p>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding coordination that established organizations are structurally unable to provide — donors who need privacy, coalitions that can’t share mailing lists, causes that require deniability for participants.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)'

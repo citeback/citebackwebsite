@@ -5,8 +5,8 @@ const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 const stats = [
   { value: '7', label: 'Campaigns queued at launch' },
   { value: '$14,050', label: 'Total campaign funding goals' },
-  { value: '$0', label: 'Total raised to date' },
-  { value: '4/10', label: 'Launch prerequisites cleared' },
+  { value: '$0', label: 'Raised to date — wallets not yet live' },
+  { value: '4/16', label: 'Launch prerequisites cleared' },
   { value: 'XMR + ZANO', label: 'No account. No ID. No credit card.' },
 ]
 
@@ -128,7 +128,7 @@ export default function Hero({ setTab }) {
               The{' '}
               <span
                 ref={el => redactedRefs.current[0] = el}
-                className="redacted"
+                className="redacted redacted-1"
                 role="mark"
                 aria-label="surveillance (redacted — hover or tap to reveal)"
                 tabIndex={0}
@@ -140,7 +140,7 @@ export default function Hero({ setTab }) {
               watches{' '}
               <span
                 ref={el => redactedRefs.current[1] = el}
-                className="redacted"
+                className="redacted redacted-2"
                 role="mark"
                 aria-label="everyone (redacted — hover or tap to reveal)"
                 tabIndex={0}
@@ -152,7 +152,7 @@ export default function Hero({ setTab }) {
               We fund the people{' '}
               <span
                 ref={el => redactedRefs.current[2] = el}
-                className="redacted"
+                className="redacted redacted-3"
                 role="mark"
                 aria-label="fighting (redacted — hover or tap to reveal)"
                 tabIndex={0}
@@ -239,7 +239,7 @@ export default function Hero({ setTab }) {
               letterSpacing: '0.03em',
               opacity: 0.7,
             }}>
-              No wallets activate until 10 public prerequisites are verified. At launch, wallet keys will be sealed inside a TEE enclave — no human can access them by architectural design.
+              Pre-launch — no wallets are active yet. 4 of 16 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, wallet keys will be sealed inside a TEE enclave — no human can access them by architectural design.
             </p>
           </div>
 
@@ -333,8 +333,12 @@ export default function Hero({ setTab }) {
           transition: opacity 0.2s ease;
           pointer-events: none;
           z-index: 2;
-          animation: redactedReveal 6s ease-in-out 1 forwards;
+          animation: redactedReveal 9s ease-in-out 1 forwards;
         }
+        /* Staggered reveal — each word blinks independently at different times */
+        .redacted-1::before { animation-delay: 0s; }
+        .redacted-2::before { animation-delay: 2.5s; }
+        .redacted-3::before { animation-delay: 5s; }
         .redacted.revealed::before {
           animation: none;
           opacity: 0;

@@ -60,7 +60,7 @@ export const campaigns = [
     description: 'Public records confirm 18 Flock cameras installed near Taos Plaza and along residential streets since 2023 — without a public disclosure process or community notification. A billboard at the plaza\'s main entrance will change that — directly notifying thousands of tourists and locals that their plates are being scanned and stored.',
     winCondition: 'Physical billboard installed at Taos Plaza main entrance — permanent public notice reaching thousands of visitors and residents every week',
     location: 'Taos, NM',
-    goal: 750,
+    goal: 4500,
     raised: 0,
     walletXMR: null,
     walletZANO: null,
@@ -154,7 +154,7 @@ export const campaigns = [
     id: 7,
     type: 'verify',
     title: 'Verification Bounty — New Mexico',
-    description: '872 ALPR cameras are mapped across New Mexico — but mapped isn\'t verified. Unconfirmed data weakens every lawsuit, news story, and legislative hearing that cites it. This bounty pays verifiers in XMR or ZANO to physically confirm camera locations with GPS-tagged photos. Each confirmed camera becomes a permanent, litigation-grade, citable record. C2PA-authenticated photos earn gold-tier status instantly. Standard submissions require 3-of-3 independent consensus. Economic staking makes fraud costly — a well-resourced adversary cannot manufacture false confirmations without burning real money.',
+    description: '872 ALPR cameras are mapped across New Mexico — but mapped isn\'t verified. Unconfirmed data weakens every lawsuit, news story, and legislative hearing that cites it. Community members physically confirm camera locations with GPS-tagged photos and earn reputation points. Each confirmed camera becomes a permanent, litigation-grade, citable record. C2PA-authenticated photos earn gold-tier status instantly. Standard submissions require 3-of-3 independent consensus. Economic staking makes fraud costly — a well-resourced adversary cannot manufacture false confirmations without burning real money.',
     winCondition: '872 OSM-mapped cameras verified, GPS-confirmed, and permanently citable across litigation, journalism, and legislation',
     location: 'New Mexico (Statewide)',
     goal: 1500,
@@ -168,7 +168,7 @@ export const campaigns = [
     source: 'https://www.openstreetmap.org',
     verifyMeta: {
       camerasTargeted: 872,
-      bountyPerCamera: 1.50,
+      repPointsPerCamera: 2,  // verifiers earn +2 reputation points per confirmed camera
       confirmationsRequired: 3,
       stakeRequired: 0.25,
       bonusNewArea: 2.00,
