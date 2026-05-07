@@ -148,6 +148,84 @@ const TYPES = [
       { label: 'Brennan Center: predictive policing explainer', url: 'https://www.brennancenter.org/our-work/research-reports/predictive-policing-explained' },
     ],
   },
+  {
+    id: 'ring',
+    icon: '🔔',
+    name: 'Ring / Smart Doorbell Networks',
+    tagline: '2,500+ law enforcement partnerships. Your neighbor’s doorbell is a police camera.',
+    color: '#f97316',
+    sections: {
+      what: 'Amazon’s Ring sells doorbell cameras to homeowners, then operates a platform called “Neighbors” that lets police departments request footage from any camera in any area — without a warrant, without the homeowner’s active consent, and without the subject’s knowledge.',
+      affects: 'Your movements on public streets, sidewalks, and in front of private homes are recorded by a private camera network that feeds directly to police. Ring has shared footage with law enforcement in response to emergency requests that bypassed homeowner consent entirely. You have no way to know how many Ring cameras cover your route to work.',
+      problems: [
+        'Amazon provided footage to police 11 times in 2022 without homeowner consent or a warrant, using an “emergency” exception.',
+        'Over 2,500 US law enforcement agencies have formal partnerships with Ring as of 2024 — giving them expedited access to camera location data and footage requests.',
+        'Police can request footage from Ring’s Neighbors app without a warrant, subpoena, or court order. Homeowners receive a request but are not legally required to comply — however, Amazon can comply without the homeowner if it chooses.',
+        'Ring cameras are disproportionately deployed in gentrifying neighborhoods, extending surveillance networks into communities of color without any public vote or police body camera accountability equivalent.',
+      ],
+      resistance: [
+        'Jackson, MS passed an ordinance in 2021 prohibiting city use of Ring data without a warrant.',
+        'EFF and ACLU have published model ordinances prohibiting law enforcement Ring partnerships.',
+      ],
+      cta: 'Ask your city council whether your police department has a Ring Neighbors partnership. File a FOIA for the partnership agreement.',
+    },
+    links: [
+      { label: 'EFF: Ring and Neighbors app surveillance concerns', url: 'https://www.eff.org/deeplinks/2021/10/amazons-ring-cops-and-us-all' },
+      { label: 'Model ordinance: prohibiting law enforcement camera partnerships', url: 'https://www.eff.org/document/model-ordinance-prohibiting-real-time-face-recognition-surveillance-technology' },
+    ],
+  },
+  {
+    id: 'geofence',
+    icon: '📍',
+    name: 'Geofence & Keyword Search Warrants',
+    tagline: 'Police can demand every phone near a crime scene. Or everyone who searched a word.',
+    color: '#8b5cf6',
+    sections: {
+      what: 'A geofence warrant compels Google (and other tech companies) to identify every device present in a geographic area during a specific time window — with no prior suspect, no probable cause for any individual, and often with a secrecy order preventing the affected person from ever knowing. Keyword warrants do the same for search terms.',
+      affects: 'If you were near a protest, a crime scene, a medical clinic, or any place that attracted police attention, your device could be handed over to law enforcement. Google received 20,000+ geofence warrants in 2020 alone. People have been wrongfully investigated because their running route took them past a crime scene.',
+      problems: [
+        'A man in Arizona was wrongfully investigated for a murder because his cycling route passed the victim’s house repeatedly. He was identified solely through geofence data.',
+        'Geofence warrants covering Black Lives Matter protests were issued in multiple cities in 2020 — effectively giving police the identity of everyone who attended a constitutionally protected protest.',
+        'Keyword warrants have been issued for searches like “abortion pill” and “how to find an abortion.” Google has complied.',
+        'The secrecy orders attached to many geofence warrants mean you may never know your data was searched.',
+      ],
+      resistance: [
+        'In 2023, a federal court in Virginia ruled that geofence warrants are categorically unconstitutional under the Fourth Amendment — the first federal court to do so.',
+        'Google announced in 2023 that it would store location data locally on devices rather than in the cloud, limiting its ability to comply with future geofence warrants.',
+      ],
+      cta: 'Contact your US Representative and Senator and ask them to support the Fourth Amendment Is Not For Sale Act, which limits geofence warrants.',
+    },
+    links: [
+      { label: 'EFF: geofence warrants explainer', url: 'https://www.eff.org/deeplinks/2020/08/deep-dive-geofence-warrants' },
+      { label: 'ACLU: Google geofence warrant compliance', url: 'https://www.aclu.org/news/privacy-technology/google-is-giving-data-to-police-based-on-what-people-search' },
+    ],
+  },
+  {
+    id: 'fusion',
+    icon: '🕸️',
+    name: 'Fusion Centers',
+    tagline: 'The hidden backbone connecting every surveillance system you’ve read about.',
+    color: '#64748b',
+    sections: {
+      what: 'Fusion centers are federally-funded state and regional intelligence hubs that aggregate data from dozens of surveillance systems — ALPR, facial recognition, social media monitoring, Stingray intercepts, ShotSpotter, and more — and share it across local, state, and federal agencies including ICE, FBI, and DHS. There are 79 of them in the United States.',
+      affects: 'Fusion centers are why ALPR data ends up with ICE. They are the connective tissue that explains how a traffic camera scan in Albuquerque becomes an immigration enforcement action. They also monitor First Amendment-protected activity: a 2012 Senate investigation found that fusion centers produced reports on Occupy Wall Street, anti-war protesters, and Muslim community groups with no terrorism nexus.',
+      problems: [
+        'A 2012 Senate Permanent Subcommittee on Investigations report found that fusion centers produced “threat” reports on innocent Americans engaged in constitutionally protected activity.',
+        'Fusion centers operate with minimal public oversight, inconsistent privacy policies, and no uniform standards for what data can be collected or how long it can be kept.',
+        'DHS has poured over $1.4 billion into fusion centers since 2003. Independent audits have found their intelligence value to be negligible — while their civil liberties harm is documented and ongoing.',
+        'In New Mexico, the NM Fusion Center (NMFUSION) sits inside the Department of Homeland Security and shares data with all 33 county sheriffs, municipal police, and federal agencies including CBP and ICE.',
+      ],
+      resistance: [
+        'The ACLU has published model state legislation requiring fusion centers to obtain a warrant before sharing data with federal immigration authorities.',
+        'Several state legislatures have introduced bills requiring fusion center transparency reports and privacy audits.',
+      ],
+      cta: 'Your state has a fusion center. FOIA it for its privacy policy, data retention policy, and any reports it produced mentioning First Amendment-protected activity.',
+    },
+    links: [
+      { label: 'ACLU: fusion center surveillance report', url: 'https://www.aclu.org/report/what-are-fusion-centers' },
+      { label: '2012 Senate investigation: fusion center failures', url: 'https://www.hsgac.senate.gov/media/minority-media/senate-investigation-finds-little-value-in-dhs-fusion-centers' },
+    ],
+  },
 ]
 
 function AccordionCard({ item, defaultOpen = false }) {

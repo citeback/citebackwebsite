@@ -103,13 +103,25 @@ const STATIC_RESPONSES = {
   'Is this legal?':
     'Yes. Funding FOIA litigation, billboard campaigns, and legal defense funds is protected activity under the First Amendment. The platform is being organized as a Wyoming DAO LLC — entity formation, attorney review of regulatory questions (including FinCEN/MSB classification and OFAC compliance), and written legal guidance are all required before any funds are accepted. Monero and Zano are legal to hold and transmit in the United States. No campaign on Citeback may fund illegal activity.',
   'When do wallets go live?':
-    'Wallets are activating soon. Governance prerequisites are being completed and community ratification is required before mainnet. Follow the Transparency and Governance tabs for real-time status updates.',
+    'Wallets activate at Phase 2 launch, which requires completing all 16 governance prerequisites — including Wyoming DAO LLC formation, written attorney guidance on regulatory questions, and deployment of TEE wallet infrastructure. The current prerequisite status is visible on the LaunchTracker on the home page. Phase 2 is targeted for late 2026, though the critical path depends on legal counsel timeline and TEE development. No funds will be accepted until every prerequisite is publicly verified.',
   'What is a Stingray?':
     'A Stingray is an IMSI catcher — a device that mimics a cell tower to force nearby phones to connect to it, exposing device identifiers, location, and sometimes call content. Law enforcement agencies use them without warrants in many jurisdictions. Citeback funds campaigns to require warrant disclosure and ban warrantless use.',
   'What is ShotSpotter?':
     'ShotSpotter (now SoundThinking) is an acoustic gunshot detection system deployed across dozens of US cities. Independent audits have found high false-positive rates and the system has been used to justify stops with little evidence. Citeback funds vendor accountability campaigns targeting ShotSpotter contracts.',
   'How do I propose a campaign?':
     'Go to the "Run a Campaign" section to review requirements and prepare your proposal. Operators must verify their real identity privately with the platform\'s legal entity — your name is never published on-chain or in any public forum. The platform operator reviews proposals for legal viability and alignment with the mission. Once approved, a TEE-managed wallet will be provisioned and the campaign will go live. Note: operator identity verification is required; donor anonymity is separate and fully preserved.',
+  'What is ALPR?':
+    'ALPR stands for Automatic License Plate Recognition. Cameras photograph every passing vehicle and log the plate number, exact location, and timestamp — without any suspicion required. Flock Safety is the dominant private vendor, with cameras deployed in thousands of US cities. The data is stored in the cloud, often for 30+ days, and can be shared with other agencies and federal immigration enforcement without a warrant. APD in Albuquerque retains scans for 365 days — 12x longer than county policy.',
+  'What is a geofence warrant?':
+    'A geofence warrant compels Google or other tech companies to identify every device present in a geographic area during a specific time window. Police can use this to identify everyone near a crime scene, a protest, or a medical clinic — with no prior suspect and no individual probable cause. Google received 20,000+ geofence warrants in 2020 alone. In 2023 a federal court ruled geofence warrants are categorically unconstitutional, but they are still used in many jurisdictions.',
+  'What is a fusion center?':
+    'Fusion centers are 79 federally-funded intelligence hubs that aggregate data from ALPR cameras, facial recognition, social media monitoring, Stingray intercepts, ShotSpotter, and more — then share it across local, state, and federal agencies including ICE, FBI, and DHS. They are why ALPR data ends up with immigration enforcement. A 2012 Senate investigation found fusion centers produced reports on Occupy protesters, anti-war groups, and Muslim community organizations with no terrorism nexus.',
+  'What is Ring?':
+    'Ring is Amazon\'s home doorbell camera. Over 2,500 US law enforcement agencies have formal partnerships with Ring\'s "Neighbors" platform, allowing them to request footage without a warrant. Amazon has handed footage to police without homeowner consent 11 times using "emergency" exceptions. Ring cameras are not regulated like police body cameras, but they feed the same surveillance network.',
+  'How do I get Monero?':
+    'Monero (XMR) can be purchased on several exchanges. Cake Wallet (iOS/Android, free) has a built-in swap feature that converts Bitcoin or other crypto to Monero without requiring an account. Kraken and Binance.US list XMR for direct purchase. For maximum privacy, use a non-KYC peer-to-peer exchange or an atomic swap service. Once you have XMR in Cake Wallet or Feather Wallet (desktop), you can send it to campaign wallet addresses once Citeback Phase 2 launches.',
+  'What can I do before launch?':
+    'While wallets are not yet live, you can: (1) Report surveillance cameras you see — go to /report to submit a C2PA-verified sighting photo and add it to the community map. (2) Build reputation by reporting sightings — 10 points unlocks Tier 1 access. (3) Propose a campaign — use the "Run a Campaign" form. (4) Browse the Intelligence Feed to stay current on surveillance news and litigation.',
 }
 
 function getStaticResponse(userText) {
@@ -127,6 +139,12 @@ function getStaticResponse(userText) {
   if (lower.includes('stingray') || lower.includes('imsi')) return STATIC_RESPONSES['What is a Stingray?']
   if (lower.includes('shotspotter') || lower.includes('gunshot') || lower.includes('acoustic')) return STATIC_RESPONSES['What is ShotSpotter?']
   if (lower.includes('propos') || lower.includes('campaign') || lower.includes('submit') || lower.includes('run a')) return STATIC_RESPONSES['How do I propose a campaign?']
+  if (lower.includes('alpr') || lower.includes('license plate') || lower.includes('flock')) return STATIC_RESPONSES['What is ALPR?']
+  if (lower.includes('geofence') || lower.includes('geo-fence') || lower.includes('keyword warrant')) return STATIC_RESPONSES['What is a geofence warrant?']
+  if (lower.includes('fusion center') || lower.includes('fusion centres')) return STATIC_RESPONSES['What is a fusion center?']
+  if (lower.includes('ring') && (lower.includes('amazon') || lower.includes('doorbell') || lower.includes('camera'))) return STATIC_RESPONSES['What is Ring?']
+  if (lower.includes('get monero') || lower.includes('buy monero') || lower.includes('how to get xmr') || lower.includes('acquire monero')) return STATIC_RESPONSES['How do I get Monero?']
+  if ((lower.includes('before launch') || lower.includes('right now') || lower.includes('pre-launch') || lower.includes('do now')) && !lower.includes('wallet')) return STATIC_RESPONSES['What can I do before launch?']
   return null
 }
 

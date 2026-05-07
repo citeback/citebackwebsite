@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { campaigns } from '../data/campaigns'
 import CampaignCard from './CampaignCard'
-import ProposeModal from './ProposeModal'
+import { lazy, Suspense } from 'react'
+const ProposeModal = lazy(() => import('./ProposeModal'))
 import { Plus, Search, SlidersHorizontal } from 'lucide-react'
 
 const typeFilters = ['All', 'Billboard', 'Legal', 'FOIA', 'Verify']
@@ -127,7 +128,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
         </div>
       )}
 
-      {proposing && <ProposeModal onClose={() => setProposing(false)} />}
+      {proposing && <Suspense fallback={null}><ProposeModal onClose={() => setProposing(false)} /></Suspense>}
     </section>
   )
 }

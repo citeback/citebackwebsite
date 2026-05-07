@@ -12,26 +12,29 @@ import CampaignSelector from './components/CampaignSelector'
 import CampaignList from './components/CampaignList'
 import HowItWorks from './components/HowItWorks'
 import BuildWithUs from './components/BuildWithUs'
-import HumanRegistry from './components/HumanRegistry'
+// HumanRegistry — lazy loaded below
 import ALPRExplainer from './components/ALPRExplainer'
 import SurveillanceExplainer from './components/SurveillanceExplainer'
 import Manifesto from './components/Manifesto'
 import GuaranteeSection from './components/GuaranteeSection'
-import Transparency from './components/Transparency'
+// Transparency — lazy loaded below
 import Footer from './components/Footer'
-import CampaignModal from './components/CampaignModal'
-import ProposeModal from './components/ProposeModal'
-import TrustFAQ from './components/TrustFAQ'
-import Governance from './components/Governance'
-import Operators from './components/Operators'
-import FrontlineFunds from './components/FrontlineFunds'
 import ScrollProgress from './components/ScrollProgress'
 import LiveFeed from './components/LiveFeed'
-import PrivacyPolicy from './components/PrivacyPolicy'
-import TermsPage from './components/TermsPage'
-import SightingForm from './components/SightingForm'
-import ReputationPage from './components/ReputationPage'
-import AdminPanel from './components/AdminPanel'
+// Route-level components — lazy loaded to keep main bundle lean
+const CampaignModal = lazy(() => import('./components/CampaignModal'))
+const ProposeModal = lazy(() => import('./components/ProposeModal'))
+const TrustFAQ = lazy(() => import('./components/TrustFAQ'))
+const Governance = lazy(() => import('./components/Governance'))
+const Operators = lazy(() => import('./components/Operators'))
+const FrontlineFunds = lazy(() => import('./components/FrontlineFunds'))
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'))
+const TermsPage = lazy(() => import('./components/TermsPage'))
+const SightingForm = lazy(() => import('./components/SightingForm'))
+const ReputationPage = lazy(() => import('./components/ReputationPage'))
+const AdminPanel = lazy(() => import('./components/AdminPanel'))
+const HumanRegistry = lazy(() => import('./components/HumanRegistry'))
+const Transparency = lazy(() => import('./components/Transparency'))
 
 // Lazy-loaded heavy components
 const CameraMap = lazy(() => import('./components/CameraMap'))
@@ -131,18 +134,18 @@ export default function App() {
           <Route path="/campaigns/:id" element={<CampaignDeepLink setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/map" element={<Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>} />
-          <Route path="/expert-directory" element={<HumanRegistry />} />
-          <Route path="/transparency" element={<Transparency setTab={setTab} />} />
-          <Route path="/how-it-works" element={<TrustFAQ setTab={setTab} />} />
-          <Route path="/governance" element={<Governance setTab={setTab} />} />
-          <Route path="/run-a-campaign" element={<Operators />} />
-          <Route path="/frontline-funds" element={<FrontlineFunds />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/expert-directory" element={<Suspense fallback={<LazyFallback label="Loading…" />}><HumanRegistry /></Suspense>} />
+          <Route path="/transparency" element={<Suspense fallback={<LazyFallback label="Loading…" />}><Transparency setTab={setTab} /></Suspense>} />
+          <Route path="/how-it-works" element={<Suspense fallback={<LazyFallback label="Loading…" />}><TrustFAQ setTab={setTab} /></Suspense>} />
+          <Route path="/governance" element={<Suspense fallback={<LazyFallback label="Loading…" />}><Governance setTab={setTab} /></Suspense>} />
+          <Route path="/run-a-campaign" element={<Suspense fallback={<LazyFallback label="Loading…" />}><Operators /></Suspense>} />
+          <Route path="/frontline-funds" element={<Suspense fallback={<LazyFallback label="Loading…" />}><FrontlineFunds /></Suspense>} />
+          <Route path="/privacy" element={<Suspense fallback={<LazyFallback label="Loading…" />}><PrivacyPolicy /></Suspense>} />
+          <Route path="/terms" element={<Suspense fallback={<LazyFallback label="Loading…" />}><TermsPage /></Suspense>} />
           <Route path="/intelligence-feed" element={<Suspense fallback={<LazyFallback label="Loading feed…" />}><SurveillanceFeed setTab={setTab} /></Suspense>} />
-          <Route path="/report" element={<SightingForm setTab={setTab} />} />
-          <Route path="/reputation" element={<ReputationPage setTab={setTab} />} />
-          <Route path="/cx-admin" element={<AdminPanel />} />
+          <Route path="/report" element={<Suspense fallback={<LazyFallback label="Loading…" />}><SightingForm setTab={setTab} /></Suspense>} />
+          <Route path="/reputation" element={<Suspense fallback={<LazyFallback label="Loading…" />}><ReputationPage setTab={setTab} /></Suspense>} />
+          <Route path="/cx-admin" element={<Suspense fallback={<LazyFallback label="Loading…" />}><AdminPanel /></Suspense>} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />
@@ -187,10 +190,10 @@ export default function App() {
 
 
       {selectedCampaign && (
-        <CampaignModal campaign={selectedCampaign} onClose={() => setSelectedCampaign(null)} />
+        <Suspense fallback={null}><CampaignModal campaign={selectedCampaign} onClose={() => setSelectedCampaign(null)} /></Suspense>
       )}
       {proposePrefill && (
-        <ProposeModal prefill={proposePrefill} onClose={() => setProposePrefill(null)} />
+        <Suspense fallback={null}><ProposeModal prefill={proposePrefill} onClose={() => setProposePrefill(null)} /></Suspense>
       )}
     </div>
     </CameraCountProvider>

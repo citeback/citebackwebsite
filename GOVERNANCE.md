@@ -1,4 +1,4 @@
-# GOVERNANCE.md — Citeback / Fourthright Platform
+# GOVERNANCE.md — Citeback Platform
 
 **Version:** 0.8 — Active
 **Status:** Pre-launch governance specification

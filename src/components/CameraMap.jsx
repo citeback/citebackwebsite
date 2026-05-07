@@ -1562,7 +1562,7 @@ export default function CameraMap() {
           {overlayPanelOpen && (
             <div style={{
               background: 'var(--card-bg)', border: '1px solid var(--border)',
-              borderRadius: 12, padding: 14, width: 260,
+              borderRadius: 12, padding: 14, width: 260, maxWidth: 'calc(100vw - 20px)',
               backdropFilter: 'blur(12px)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
               maxHeight: 460, overflowY: 'auto',
