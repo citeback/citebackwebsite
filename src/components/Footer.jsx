@@ -109,8 +109,27 @@ export default function Footer({ setTab }) {
         Questions, press inquiries, or operator applications: <a href="mailto:citeback@proton.me" style={{ color: 'inherit', textDecoration: 'underline' }}>citeback@proton.me</a>
       </div>
 
+      {/* Tip section */}
+      <div style={{
+        borderTop: '1px solid var(--border)',
+        paddingTop: 14,
+        marginTop: 14,
+        fontSize: 11,
+        color: 'var(--gray)',
+        opacity: 0.65,
+        lineHeight: 1.7,
+      }}>
+        <span style={{ fontWeight: 600, opacity: 0.9 }}>Support the platform.</span>{' '}
+        Citeback is funded by voluntary tips — not by taking a cut of campaigns.{' '}
+        Tips go directly to the Wyoming DAO LLC to cover infrastructure costs.{' '}
+        <span style={{ fontStyle: 'italic' }}>Not accepting tips until Wyoming DAO LLC is formed.</span>
+      </div>
+
       {/* Data attribution */}
       <div style={{
+        borderTop: '1px solid var(--border)',
+        paddingTop: 14,
+        marginTop: 14,
         fontSize: 11,
         color: 'var(--gray)',
         opacity: 0.6,

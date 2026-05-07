@@ -21,7 +21,7 @@ This document describes the full technical architecture, from wallet management 
 3. **Verification without control** — Operators provide view keys (read-only) to their campaign wallets. Citeback uses view keys to verify wallet balances and contribution activity — not to access or move funds.
 4. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
 5. **Privacy-preserving** — Contributors are anonymous. Operators earn reputation without revealing identity.
-6. **Self-sustaining** — The platform charges a graduated fee of 3–5% (GOVERNANCE.md §7.3) on operator withdrawals. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation).
+6. **Self-sustaining** — The platform charges no fee on campaign funds. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC, supplemented by voluntary user tips to the LLC. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation).
 7. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
@@ -176,21 +176,15 @@ Operator completion logged: campaign ID, proof hash, timestamp
 
 ### Fee Model
 
-The platform charges a graduated fee (GOVERNANCE.md §7.3) on operator withdrawals based on 90-day rolling volume:
-- 5.0% on volume $0–$10k
-- 4.5% on volume $10k–$25k
-- 4.0% on volume $25k–$50k
-- 3.0% on volume above $50k
-
-Fees are self-reported by operators at withdrawal and enforced by the reputation and accountability system. Operators who underreport fees face reputation penalties.
+**The platform charges no fee on campaign funds.** 100% of donated funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
 
 **Platform operations funding:**
 Infrastructure costs (VPS, Monero node, domains) are covered by:
 1. Founding operator capital contributions to the Wyoming DAO LLC
-2. Platform fees on operator withdrawals
+2. Voluntary user tips to the Wyoming DAO LLC (optional contributions from users who want to support platform operations — separate from campaign donations, no effect on campaign funds or governance weight)
 3. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation, etc.)
 
-All fee inflows and operational outflows are publicly documented in the quarterly transparency report.
+All tip inflows and operational outflows are publicly documented in the quarterly transparency report.
 
 ### Unfunded Campaign Handling
 
@@ -266,7 +260,7 @@ Deployment logged: commit hash, PR number, voter count, timestamp
 
 ## 4. Action Logger
 
-Every action taken by the Wallet Agent or Site Agent is written to an **append-only public log**.
+Every action taken by the Site Agent is written to an **append-only public log**.
 
 Format:
 ```json

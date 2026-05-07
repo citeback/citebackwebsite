@@ -12,10 +12,11 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Until then, founder is the sole operator
 - LaunchTracker reflects this as unchecked
 
-### 2. TEE Wallets — Deploy
-- No wallet addresses published until TEE is live (Phala or Marlin)
-- Programmatic XMR + ZANO wallets via RPC
-- Zero funds accepted until this is done
+### 2. Direct Wallet Infrastructure — Ready
+- Direct wallet model: operators post their own XMR/ZANO wallet addresses at campaign approval — no platform-held wallets required
+- TEE approach was evaluated and scrapped in favor of the direct wallet model (see ARCHITECTURE.md §1)
+- Pre-launch requirements: operator wallet submission form built, view key publication workflow tested, view key monitoring operational (anomaly detection for early drain events)
+- Zero funds accepted until operator onboarding is tested end-to-end (see GOVERNANCE.md §14 handoff checklist)
 
 ### 3. Attorney Review
 - ATTORNEY-BRIEF.md has 12 open questions
@@ -33,11 +34,11 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Verification required before **May 14, 2026** or domain risks suspension
 - Check scotthughes070@proton.me for the ICANN verification email
 
-### 6. ARCHITECTURE.md + GOVERNANCE.md + TOS — Fee Model — ✅ FIXED 2026-05-07
+### 6. All Docs — Fee Model + TEE References — ✅ FIXED 2026-05-07
 - All fee references updated to reflect current model: **no platform fee**
-- 100% of campaign funds go to operators
-- Platform funded by founding operator capital contributions + voluntary tips
-- Files updated: `ARCHITECTURE.md`, `GOVERNANCE.md` §7.3 & §11, `TOS_DRAFT.md` §7
+- 100% of campaign funds go to operators; platform funded by founding operator capital contributions + voluntary tips
+- All TEE references updated to reflect direct wallet model (TEE scrapped)
+- Files updated: `ARCHITECTURE.md`, `GOVERNANCE.md` §7.3 & §11, `TOS_DRAFT.md` §7, `ATTORNEY-BRIEF.md`, `LAUNCH_PLAN.md`, `LAUNCH_TIMELINE.md`
 
 ---
 
@@ -101,11 +102,6 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Optional: a more branded/visual version with the Citeback logo
 - Current version is good enough for launch
 
-### 15. TEE Provider — Decision Needed Before Development
-- Must choose between Phala Network, Marlin Oyster, or self-hosted SGX before TEE development begins
-- Decision drives contractor requirements, development approach, and cost
-- See LAUNCH_PLAN.md T-1 for evaluation criteria
-
 ### 16. Fiat Disbursement Pathway — Phase 2 Design
 - GOVERNANCE.md §3.4 identifies this as the highest-priority operational gap
 - Lawyers, billboard vendors, and filing fees are paid in fiat
@@ -113,10 +109,10 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Requires legal + operational design. Document as Phase 2 priority, not launch blocker.
 
 ### 17. Security Audit — Pre-Launch
-- TEE code must be independently audited before wallets go live
-- Audit firm must be separate from development contractor
-- Budget: $5,000–20,000 depending on scope
-- Schedule audit concurrent with TEE development (book early — good firms have backlogs)
+- View key monitoring code and operator onboarding system should be independently reviewed before wallets go live
+- Audit firm must be separate from any development contractor used
+- Budget: $1,000–5,000 depending on scope (simpler than TEE audit; direct wallet model has much smaller attack surface)
+- Schedule early — good firms have backlogs
 
 ---
 
@@ -131,7 +127,6 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - All surveillance claims fact-checked and sourced ✅
 - Vendor contract amounts verified ✅
 - Wyoming DAO LLC framing: future tense everywhere ✅
-- TEE claims: "at launch" framing everywhere ✅
 - Fee schedule boundary fixed ($10k ambiguity resolved) ✅
 - WCAG AA contrast compliance ✅
 - Focus traps on all modals ✅

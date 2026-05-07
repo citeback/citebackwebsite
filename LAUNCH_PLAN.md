@@ -414,15 +414,11 @@ These are not all binary gates, but each is needed before the platform operates 
 
 ---
 
-### T-11. ARCHITECTURE.md Stale Fee Reference — Fix
+### T-11. Stale Fee + TEE References — ✅ FIXED 2026-05-07
 
-**What it is:** ARCHITECTURE.md currently references "1% platform fee" in two places (Design Principles section and Wallet Agent section). The correct fee is the graduated 3–5% schedule per GOVERNANCE.md §7.3. This should be fixed to avoid internal documentation contradictions.
+**What it was:** Multiple documents still referenced a graduated 3–5% platform fee and TEE (Trusted Execution Environment) infrastructure that were both scrapped. The current model is zero-fee + voluntary tips, direct wallet (no TEE).
 
-**Cost:** 30 minutes.
-
-**Time:** Immediate.
-
-**Who does it:** Scott or agent.
+**Fixed:** ARCHITECTURE.md, ATTORNEY-BRIEF.md, PRE-LAUNCH.md, LAUNCH_TIMELINE.md, LAUNCH_PLAN.md, GOVERNANCE.md all updated in one pass.
 
 ---
 
@@ -474,13 +470,13 @@ These are not all binary gates, but each is needed before the platform operates 
 
 ### O-4. Operations Wallet — Established
 
-**What it is:** The platform operations wallet (also TEE-secured) that receives the graduated fee. Needs a view key published, transparency reporting plan, and community notification threshold ($10k+ balance triggers community notification).
+**What it is:** The Wyoming DAO LLC's operational wallet for receiving voluntary user tips. Needs a public view key published for transparency, a quarterly report plan, and a community notification threshold ($10k+ balance triggers community notification).
 
-**Cost:** $0 marginal (part of TEE build)
+**Cost:** $0 (Scott creates a standard XMR/ZANO wallet; no TEE required)
 
-**Time:** Concurrent with TEE deployment.
+**Time:** 1 hour setup; transparency reporting ongoing.
 
-**Who does it:** TEE contractor.
+**Who does it:** Scott.
 
 ---
 
@@ -492,7 +488,7 @@ These are not all binary gates, but each is needed before the platform operates 
 
 **Time:** 1–2 weeks testing.
 
-**Who does it:** Scott with TEE contractor.
+**Who does it:** Scott.
 
 ---
 
@@ -604,7 +600,7 @@ These are not all binary gates, but each is needed before the platform operates 
 **Do not pitch press until:**
 1. Wyoming LLC is filed
 2. Attorney opinion in hand
-3. TEE is live and attested
+3. Direct wallet infrastructure is live (operator wallet submission, view key monitoring operational)
 4. At least one wallet address is published
 
 **Target press for launch:**
@@ -637,7 +633,6 @@ These cannot be decided by planning documents. They require Scott's judgment (or
 | # | Decision | Options | When Needed |
 |---|---|---|---|
 | D-1 | Direct wallet monitoring | Build in-house vs. use Monero RPC service | Before T-2 begins |
-| D-2 | Fee self-reporting enforcement | Reputation-only vs. additional verification mechanism | Before first withdrawal |
 | D-3 | Attorney firm | Which firm for main engagement | Immediately after LLC files |
 | D-4 | Which campaigns launch first? | FOIA-only to start, then billboard after §230 clearance? | After attorney opinion |
 | D-5 | Will Scott be the first operator? | Self-operate first campaigns vs. recruit external operator | Before operator onboarding |
@@ -697,7 +692,7 @@ O-7 (Billboard procurement) ─────────────── Before
 | **TOTAL ONGOING/YR** | **~$8,000** | **~$20,000** |
 
 **Funding the build:**
-- The platform earns 3–5% fees. On $100k annual campaign volume, that's $3,000–5,000. Not enough to fund the build.
+- The platform earns no fees. Platform revenue is voluntary tips only — unpredictable and not a reliable funding source at early stage.
 - Grant options: EFF grants, Mozilla Foundation, Open Technology Fund, FOIA Machine community, Protocol Labs (if Filecoin/IPFS integration considered).
 - Scott's own capital is the most likely path to initial build.
 - Consider: a pre-launch community fundraise where early supporters fund platform development. Requires attorney review of whether this constitutes securities or charitable solicitation.

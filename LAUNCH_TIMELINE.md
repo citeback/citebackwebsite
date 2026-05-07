@@ -40,7 +40,7 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 **Critical — do this week:**
 - [ ] **File Wyoming DAO LLC** at wyomingbusiness.gov. 30 minutes, $100 + registered agent. There is no reason to delay. *(Scott)*
 - [ ] **Verify citeback.com ICANN registration** — scotthughes070@proton.me must verify before May 14 or domain could be suspended. *(Scott)*
-- [ ] **Fix stale ARCHITECTURE.md fee references** — "1% fee" appears 3x and is incorrect (should be graduated 3–5%). *(Agent/Scott)*
+- [x] **Fix stale fee + TEE references across all docs** — fee model eliminated (zero-fee + voluntary tips); TEE scrapped in favor of direct wallet model. All docs updated. *(Agent — 2026-05-07)*
 - [ ] **Add ToS link to site footer** pointing to /tos (even as "Coming soon" placeholder) to close the credibility gap flagged in red-team audit.
 
 **Begin research this week:**
@@ -108,39 +108,26 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 ### PHASE 2 — Direct Wallet Model + Operator Onboarding (Weeks 4–10)
 > June 16 – September 28, 2026 (Scenario A) or later (Scenario B)
 
-**Direct wallet model milestones:**
+**Direct wallet model development scope is much simpler than TEE — estimated 2–4 weeks total (no hardware enclave, no contractor required).**
 
-**Weeks 1–4 of development (Architecture + Core):**
-- Direct wallet submission workflow implemented and tested
-- Monero wallet RPC daemon running inside enclave
-- Basic wallet creation and key generation working
-- Attestation report generation
+**Week 1–2 (Core workflow):**
+- Operator wallet submission form built and tested (operator submits XMR/ZANO address + view key at approval)
+- View key publication workflow: view key displayed on campaign page for independent verification
+- View key monitoring: anomaly detection for early drain events (outflow before campaign goal triggers permanent ban)
+- Action Logger writing to append-only public format
 
-**Weeks 5–8 of development (Financial Logic):**
-- Fund receipt detection and custody
-- 2-of-3 threshold signature implementation
-- Disbursement flow: proof submission → challenge window → auto-release
-- Fee collection (graduated 3–5%) to operations wallet
-
-**Weeks 9–12 of development (Integration + Testing):**
-- Action Logger writing to append-only format
-- OFAC SDN screening at disbursement (operator wallet addresses)
-- Multi-instance coordination (3 nodes, 2-of-3)
+**Week 2–3 (Governance + Accountability):**
+- Disbursement challenge flow: proof submission → challenge window → community vote
+- OFAC SDN screening workflow for operator onboarding (operator identity vs. SDN list at onboarding)
 - Emergency pause mechanism
-- Testnet end-to-end: create wallet → receive funds → disburse → log
-
-**Weeks 12–16 of development (Hardening + Audit):**
-- Independent security audit (separate firm from development contractor)
-- Threat model document published for community review
-- Attestation verified against published GitHub commit hash
 - Founder address registry encoded
 
-**Weeks 16–20 of development (Pre-Launch Integration):**
-- Site integration: operator wallet addresses displayed publicly with view keys
-- Community voting interface for disbursement challenges
-- View keys published
+**Week 3–4 (Integration + Test):**
+- Community voting interface for disbursement challenges live on site
 - Action logger publishing to GitHub
-- End-to-end mainnet test with tiny real amounts
+- Threat model document published for community review
+- End-to-end test: operator submits wallet → view key published → test contribution verifiable via view key
+- Security review of view key monitoring code (see PRE-LAUNCH.md item 17)
 
 ---
 
@@ -223,9 +210,7 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 |---|---|
 | Wyoming LLC | Must be first. Everything else follows. |
 | Attorney engagement | Sequential after LLC. Priority: MSB + OFAC first. |
-| TEE provider research | Can start Day 1, parallel to LLC filing. |
-| TEE contractor sourcing | Start Week 2, parallel to attorney engagement. |
-| TEE development | Sequential after contractor hired. Longest item on critical path. |
+| Direct wallet workflow | 2–4 weeks, start immediately after LLC + attorney engaged. No contractor required. |
 | Operator Accountability Protocol | Parallel to attorney, can draft while waiting. |
 | Governance ratification | After attorney reviews governance doc. |
 | Community advisory board recruitment | Parallel — can start outreach any time. |
@@ -234,7 +219,7 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 | ToS draft (TOS_DRAFT.md) | Done. Attorney review after engagement begins. |
 | FOIA filing capability confirmation | Parallel, quick. |
 | Billboard procurement research | Parallel, quick. |
-| Community voting UI | Start Week 12 of TEE dev, after architecture is stable. |
+| Community voting UI | Start Week 2 of direct wallet dev, can be done concurrently. |
 | Press prep | Parallel — draft materials, embargo until launch. |
 
 ---
@@ -244,12 +229,10 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 ```
 Week 1:   FILE WYOMING LLC ◄ CRITICAL
 Week 2:   RETAIN ATTORNEY  ◄ CRITICAL
-Week 2:   TEE CONTRACTOR SEARCH (parallel)
-Week 6:   TEE CONTRACTOR HIRED ◄ CRITICAL (Scenario A)
+Week 2:   DIRECT WALLET DEVELOPMENT BEGINS (parallel with attorney) ◄ CRITICAL
+Week 4:   DIRECT WALLET WORKFLOW COMPLETE ◄ CRITICAL
 Week 8:   MSB/OFAC OPINION RECEIVED ◄ CRITICAL
-Week 8:   TEE DEVELOPMENT BEGINS ◄ CRITICAL (Scenario B)
-Week 20:  TEE DEVELOPMENT COMPLETE ◄ CRITICAL (Scenario A: Week 14)
-Week 22:  SECURITY AUDIT COMPLETE ◄ CRITICAL
+Week 10:  SECURITY REVIEW COMPLETE ◄ CRITICAL
 Week 24:  ALL GATES CLEARED ◄ CRITICAL
 Week 25:  FIRST WALLET LIVE ◄ LAUNCHED
 ```
@@ -265,9 +248,7 @@ Week 25:  FIRST WALLET LIVE ◄ LAUNCHED
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
 | Attorney finds MSB registration required | Medium | High — adds AML program build, could delay 4–12 weeks | Start attorney engagement immediately; AML program design can begin in parallel |
-| Attorney finds state MTL required in multiple states | Medium-Low | Very High — could block launch or require restructuring | Have attorney assess non-custodial/TEE exemptions; prepare alternative structures |
-| TEE contractor unavailable / too expensive | Medium | High — extends timeline 4–8 weeks | Post job early; have backup contractor candidates; Phala ecosystem developers are a concentrated talent pool |
-| TEE development exceeds 16 weeks | Medium | High | Add buffer in timeline; do not commit to a public launch date until TEE is in testing phase |
+| Attorney finds state MTL required in multiple states | Medium-Low | Very High — could block launch or require restructuring | Have attorney assess non-custodial direct wallet exemptions; prepare alternative structures |
 | Security audit finds critical vulnerability | Medium-Low | Critical — must fix before launch, add 4–8 weeks | Use reputable audit firm; build audit time into timeline from the start |
 | Campaign Advisory Board recruitment fails | Low | Medium — can soft-launch without, but GOVERNANCE.md requires it | Start outreach early; Scott's direct EFF/ACLU contacts are the fastest path |
 | citeback.com domain suspended (ICANN non-verify) | Medium | High | VERIFY BY MAY 14. Do it today. |
@@ -277,7 +258,7 @@ Week 25:  FIRST WALLET LIVE ◄ LAUNCHED
 ## What "Soft Launch" vs "Full Launch" Means
 
 **Soft Launch (recommended first step):**
-- TEE live and attested
+- Direct wallet infrastructure live (operator wallet submission, view key monitoring operational)
 - 1–2 FOIA campaigns with active wallet addresses
 - ToS published
 - Limited announcement (mailing list + Nostr)

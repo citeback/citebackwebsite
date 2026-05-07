@@ -578,7 +578,7 @@ All three must be met:
 
 ### 14.4 Formal Handoff Checklist
 - [ ] Wallet architecture published and independently verified
-- [ ] Wallet Agent running with first real campaign
+- [ ] Operator wallet submission + view key publication workflow operational with first real campaign
 - [ ] Action Logger publishing to public GitHub
 - [ ] Community voting interface live
 - [ ] Governance doc ratified
