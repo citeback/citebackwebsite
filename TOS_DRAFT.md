@@ -29,8 +29,8 @@ Citeback is a surveillance accountability crowdfunding platform that enables ano
 
 **⚠️ PRE-LAUNCH DISCLOSURE:** At the time these Terms are first published, the Platform is in a pre-launch operational state. Specifically:
 
-- **No Trusted Execution Environment (TEE) is currently live.** The Platform's published governance framework describes a TEE-based wallet custody system (using Intel SGX or ARM TrustZone hardware enclaves) in which no human - including the Platform Operator - has access to private wallet keys. This system is under development and is NOT operational. [ATTORNEY REVIEW REQUIRED - update this section when TEE goes live; consider a versioned notice]
-- **No campaign wallet addresses are currently published.** The Platform does not accept cryptocurrency donations until the TEE system is live and all governance launch prerequisites are met.
+- **Direct wallet model is in use.** Campaign operators post their own XMR/ZANO wallet addresses. Contributions go directly from contributors to operator wallets. The Platform never holds, receives, or transmits campaign funds. The Platform monitors balances via read-only view keys provided by operators.
+- **No campaign wallet addresses are currently published.** The Platform does not accept contributions until all governance launch prerequisites are met.
 - **Wallet addresses displayed on the Platform as "null" or "not yet assigned" reflect the Platform's pre-launch status** - they are not errors.
 - The Platform Operator will publish a notice when the Platform transitions to operational status.
 
@@ -146,11 +146,11 @@ Operators engaging in legislative advocacy acknowledge that they - not the Platf
 
 In particular, and without limiting the foregoing:
 
-(a) **Pre-launch technology:** The TEE wallet custody system is under development. Until the TEE is live, no funds are accepted. After the TEE goes live, the Platform makes no warranty that it is free from security vulnerabilities, side-channel attacks, or technical failure. The Platform's security model is publicly documented in the published threat model.
+(a) **Pre-launch status:** Until the Platform transitions to operational status, no contributions are accepted. After launch, the Platform makes no warranty that it is free from security vulnerabilities or technical failure. The Platform's security model is publicly documented in the published threat model.
 
 (b) **No guarantee of campaign success:** The Platform does not guarantee that funded campaigns will achieve their stated goals. FOIA requests may be denied. Legislation may fail. Billboard permits may be refused. The Platform's role is to facilitate funding, not to guarantee outcomes.
 
-(c) **No guarantee of fund recovery:** In the event of a catastrophic TEE failure affecting 2+ nodes simultaneously, all disbursements pause automatically and community governance determines the recovery path (key rotation, supervised wind-down, or fork). The Platform does not guarantee the recovery of funds in such circumstances.
+(c) **No guarantee of fund recovery:** Because contributions go directly to operator wallets, the Platform has no ability to reverse or recover funds once sent. Contributors accept all custody and recovery risk. In the event of operator misconduct, the Platform's sole remedy is banning the operator from future campaigns.
 
 (d) **Network congestion and transaction fees:** Monero and Zano network fees are set by network conditions outside the Platform’s control. The 2% transaction fee buffer included in campaign goals is an estimate, not a guarantee.
 
@@ -166,7 +166,7 @@ TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE PLATFORM OPERATOR AND ITS
 
 (a) Any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Platform;
 
-(b) Loss of cryptocurrency contributions due to campaign failure, TEE failure, or network conditions;
+(b) Loss of cryptocurrency contributions due to campaign failure, operator misconduct, or network conditions;
 
 (c) Any third-party claims arising from campaign content created and submitted by operators;
 
@@ -224,17 +224,16 @@ If you believe campaign content contains a materially false statement of fact, c
 
 Certain Platform rules cannot be modified by any community governance vote and can only be changed by a fork of the Platform software. These include:
 
-- No human access to wallet private keys (TEE-enforced)
+- Platform never holds wallet private keys (direct wallet model — operators hold their own keys)
 - Criminal defense funding prohibition
 - Illegal activity funding prohibition
 - Camera tampering or interference prohibition
 - No individual distribution of operations wallet surplus
 - Founder governance ceiling permanence
-- Minimum TEE node count (3 instances)
-- Minimum donation threshold floor
+- Minimum contribution threshold floor
 - Founder address registry permanence
 
-These rules are encoded in the Platform's TEE software and cannot be overridden by the Platform Operator, community governance, or any other mechanism short of a platform fork.
+These rules are encoded in the Platform's governance documentation and cannot be overridden by the Platform Operator, community governance, or any other mechanism short of a platform fork.
 
 ---
 
@@ -312,7 +311,7 @@ The following items require specific attorney attention before this ToS is publi
 
 7. **§17 - Operator pre-screening:** Confirm this creates the documented compliance process OFAC analysis requires.
 
-8. **Pre-launch to operational transition:** How does the ToS update when TEE goes live? Should we version the ToS? Consider a clearly versioned system.
+8. **Pre-launch to operational transition:** How does the ToS update when Platform goes live? Consider a clearly versioned system.
 
 9. **International users:** Wyoming law governs but international users may have GDPR or other rights. Consider whether EU users need additional disclosure.
 

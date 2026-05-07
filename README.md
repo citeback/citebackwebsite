@@ -15,7 +15,7 @@ Citeback is an open-source platform that funds community-driven legal action aga
 
 Citeback is designed so no individual — including its founder — can unilaterally control funds or censor campaigns.
 
-- **TEE-secured wallets** (Phase 2) — Trusted Execution Environment; wallet keys never leave the enclave
+- **Direct operator wallets** (Phase 2) — Operators post their own XMR/ZANO wallet addresses; contributions go directly to operator-controlled wallets; Citeback never holds funds
 - **Community governance** — votes trigger AI execution; no human key holders
 - **Open source rules** — all disbursement logic, fee models, and governance thresholds are in this repo
 - **Append-only action log** — every wallet action is signed and logged permanently
@@ -40,7 +40,7 @@ npm run dev -- --port 3002
 
 **Phase 1 — Design & Community Review**
 
-Campaign wallets are not yet live. Architecture and governance specs are open for community review. Phase 2 brings the TEE enclave and live wallets.
+Campaign wallets are not yet live. Architecture and governance specs are open for community review. Phase 2 brings the direct wallet model: operators post their own XMR/ZANO addresses, contributions go directly to their wallets, and Citeback monitors via view keys.
 
 ## Contributing
 

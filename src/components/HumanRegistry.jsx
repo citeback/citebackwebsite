@@ -14,7 +14,7 @@ const roles = [
   { id: 'billboard', label: '📋 Media Coordinator', desc: 'Verified vendor relationships with billboard and print media operators — identity confirmed privately, vendor access verified before campaigns go live' },
   { id: 'foia', label: '🗂 FOIA Specialist', desc: 'Public records requests, tracking, escalation' },
   { id: 'verifier', label: '📸 Camera Verifier', desc: 'Physical verification of ALPR cameras with GPS-tagged photos' },
-  { id: 'technical', label: '🖥 Technical Contributor', desc: 'TEE engineering, Zano/XMR RPC integration, frontend dev, FOIA automation — pseudonymous OK' },
+  { id: 'technical', label: '🖥 Technical Contributor', desc: 'backend engineering, Zano/XMR RPC integration, frontend dev, FOIA automation — pseudonymous OK' },
   { id: 'other', label: '🛠 Other', desc: 'Any other skill useful to funded campaigns' },
 ]
 
@@ -273,7 +273,7 @@ export default function HumanRegistry() {
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{cfg.label}</div>
               {key === 'technical' ? (
                 <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
-                  TEE engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
+                  backend engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
                   <span style={{ display: 'block', marginTop: 6, color: `rgba(${cfg.colorRaw},0.9)`, fontWeight: 600 }}>
                     🔒 Pseudonymous — XMR or ZANO address as identity. No real name required.
                   </span>

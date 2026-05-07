@@ -2,7 +2,7 @@
 
 > Status: Pre-launch design specification  
 > Last updated: 2026-05-04  
-> Operational model: Split — Wyoming DAO LLC (human operator) + Autonomous TEE (financial operations)
+> Operational model: Split — Wyoming DAO LLC (human operator) + Direct Operator Wallets (no platform custody)
 
 ---
 
@@ -16,12 +16,13 @@ This document describes the full technical architecture, from wallet management 
 
 ## Design Principles
 
-1. **No trusted parties for financial operations** — Trust in financial execution is placed in open source code and cryptographic proofs, not people. The wallet layer holds all private keys; no human — including the Wyoming DAO LLC operator — can access or extract wallet keys.
-2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the wallet layer governs only financial execution.
-3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
-4. **Privacy-preserving** — Contributors are anonymous. Operators earn reputation without revealing identity.
-5. **Self-sustaining** — No platform fee on campaigns. 100% of contributed funds go directly to operators. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC and voluntary user tips. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation). This eliminates any extractive relationship between the platform and the causes it supports.
-6. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
+1. **Citeback never holds funds** — Operators post their own XMR/ZANO wallet addresses. Contributions go directly to operator-controlled wallets. Citeback has no private keys, no custody, no automated disbursements. The platform is a coordination and accountability layer, not a financial intermediary.
+2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions.
+3. **Verification without control** — Operators provide view keys (read-only) to their campaign wallets. Citeback uses view keys to verify wallet balances and contribution activity — not to access or move funds.
+4. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
+5. **Privacy-preserving** — Contributors are anonymous. Operators earn reputation without revealing identity.
+6. **Self-sustaining** — The platform charges a graduated fee of 3–5% (GOVERNANCE.md §7.3) on operator withdrawals. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation).
+7. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
 
@@ -40,28 +41,21 @@ This document describes the full technical architecture, from wallet management 
 │  └──────────────────────┬───────────────────────────┘   │
 │                         │ (approved campaigns)           │
 │  ┌──────────────────────▼───────────────────────────┐   │
-│  │    WALLET LAYER  (Phase 2 — architecture published before launch)     │   │
+│  │    DIRECT WALLET LAYER  (Operator-Controlled)   │   │
 │  │                                                  │   │
-│  │  ┌─────────────────────────────────────────┐    │   │
-│  │  │  Wallet Agent                           │    │   │
-│  │  │                                         │    │   │
-│  │  │  XMR/ZANO RPC   · Wallet creation       │    │   │
-│  │  │  Fund custody   · Disbursements         │    │   │
-│  │  │  Disbursement rules · Attestation           │    │   │
-│  │  └───────────────────┬─────────────────────┘    │   │
-│  │                      │                          │   │
-│  │              ┌───────▼────────┐                 │   │
-│  │              │  Action Logger │                 │   │
-│  │              │  (append-only) │                 │   │
-│  │              └───────┬────────┘                 │   │
-│  └──────────────────────┼─────────────────────────┘   │
+│  │  Operator posts own XMR/ZANO wallet address      │   │
+│  │  Contributions go directly to operator wallet    │   │
+│  │  Citeback NEVER holds funds or private keys      │   │
+│  │  View key provided → platform verifies balance   │   │
+│  │  Early drain = permanent operator ban            │   │
+│  └──────────────────────┬───────────────────────────┘   │
 │                         │                               │
 │  ┌──────────────────────▼─────────────────────────┐    │
 │  │              PUBLIC LAYER                       │    │
 │  │                                                 │    │
 │  │  GitHub repo (code + action log)                │    │
-│  │  Monero view keys (wallet transparency)         │    │
-│  │  Community voting interface (site)              │    │
+│  │  View keys (campaign wallet transparency)       │    │
+│  │  Community governance interface (site)          │    │
 │  │  Campaign proposals + proofs                    │    │
 │  └─────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
@@ -72,7 +66,7 @@ This document describes the full technical architecture, from wallet management 
 
 ### What It Is
 
-The Wyoming DAO LLC is the identified human operator of the Citeback platform. It serves as the legal entity responsible for governance and compliance functions that require human editorial judgment and documented legal process. The LLC does **not** have access to wallet private keys at any point; financial execution is delegated entirely to the TEE.
+The Wyoming DAO LLC is the identified human operator of the Citeback platform. It serves as the legal entity responsible for governance and compliance functions that require human editorial judgment and documented legal process. The LLC does **not** have access to campaign wallet private keys at any point; operators hold their own keys under the direct wallet model.
 
 ### Responsibilities
 
@@ -84,128 +78,128 @@ The Wyoming DAO LLC is the identified human operator of the Citeback platform. I
 | OFAC SDN pre-screening of operators | Wyoming DAO LLC |
 | Legal compliance and regulatory response | Wyoming DAO LLC |
 | Campaign taxonomy enforcement (editorial) | Wyoming DAO LLC |
-| Wallet creation | TEE (triggered after LLC approval) |
-| Fund custody and private key management | TEE only |
-| Automated disbursements | TEE only |
-| Attestation | TEE only |
+| View key monitoring (balance verification) | Wyoming DAO LLC |
+| Operator ban enforcement (early drain rule) | Wyoming DAO LLC |
+| Wallet creation and custody | Operator (their own wallet) |
+| Fund receipt and management | Operator (direct to their wallet) |
+| Disbursements | Operator (controls their own funds) |
 
 ### What the Operational Layer Cannot Do
 
-- It cannot access or extract TEE wallet private keys
-- It cannot force disbursements outside governance rules
-- It cannot modify the TEE's attestation-verified code unilaterally
+- It cannot access operator wallet private keys (operators never share them)
+- It cannot move or freeze funds in operator wallets
 - It cannot retroactively alter the append-only action log
 
 ### Legal Significance
 
-The Wyoming DAO LLC's role creates an identifiable legal entity for regulatory purposes (FinCEN registration, OFAC compliance documentation, §230 platform status, MSB AML program) while keeping financial custody in the TEE where no single human actor can misappropriate funds.
+The Wyoming DAO LLC's role creates an identifiable legal entity for regulatory purposes (FinCEN registration, OFAC compliance documentation, §230 platform status, MSB AML program). Critically, because Citeback never holds funds — operators maintain full custody of their own wallets — the platform's custodial exposure is minimal. View keys allow balance verification without spending access.
 
 ---
 
-## 1. Trusted Execution Environment (TEE)
+## 1. Direct Operator Wallet Model
 
 ### What It Is
 
-A TEE is a hardware-level secure enclave where code runs in an isolated, tamper-proof environment. Even the server owner cannot inspect memory, extract keys, or modify the running code without invalidating a cryptographic attestation proof.
+Citeback uses a direct wallet model: operators post their own XMR or ZANO wallet addresses when a campaign is approved. Contributors send funds directly to those operator-controlled addresses. **Citeback never touches the funds.**
 
-**Key property:** Anyone can verify that a specific, publicly auditable version of the code is running — and that nobody has tampered with it.
+**Key properties:**
+- Citeback has zero private key access — no custody, no escrow, no automated disbursements
+- Operators control their own wallets and are responsible for fulfilling campaign obligations
+- Citeback uses view keys (read-only) to verify wallet balances and contribution activity
+- Operators who drain funds before campaign completion face permanent platform ban
 
-### Why Citeback Uses It
+### Why This Model
 
-Without a TEE, whoever controls the VPS controls the wallets. A TEE removes this attack surface entirely. The Wyoming DAO LLC bootstraps the enclave, then has no more access to wallet keys than any other party. This is the security guarantee that separates financial custody from operational governance.
+The direct wallet model was chosen over a TEE (Trusted Execution Environment) approach because:
 
-### TEE Providers (target)
+1. **Lower complexity** — TEE infrastructure (Phala/Marlin/SGX) introduces complex hardware trust dependencies. Direct wallets have no such layer.
+2. **Faster deployment** — No months-long TEE build required. Operators can go live as soon as their wallet address is verified.
+3. **No platform custody** — Without holding funds, Citeback has a fundamentally cleaner regulatory posture. FinCEN's money transmitter analysis focuses on entities that *receive, transmit, or control* funds. Citeback does none of these.
+4. **Operator accountability via transparency** — View keys make wallet balances publicly verifiable. The community can monitor campaign funding status in real time. Early drain is detectable and triggers a permanent ban.
 
-- **Phala Network** — Substrate-based, WASM smart contracts in Intel SGX enclaves
-- **Marlin Oyster** — TEE-based serverless, supports arbitrary code
-- **AWS Nitro Enclaves** — Enterprise-grade, cryptographic attestation, harder to independently verify
-- **Self-hosted SGX** — Maximum control, more operational complexity
+### View Key Verification
 
-**Recommended:** Phala or Marlin for launch (open verification, lower ops burden)
+For each approved campaign:
+1. Operator provides a Monero view key (read-only, cannot spend) or equivalent ZANO audit capability
+2. Citeback publishes the view key alongside the wallet address
+3. Anyone can independently verify the current campaign balance and contribution history
+4. Platform monitors for anomalous drain events (large outflows before campaign milestone completion)
 
-### Attestation
+### Operator Accountability: The Early Drain Rule
 
-The enclave produces a cryptographic attestation: a signed proof that contains:
-- Hash of the running code
-- TEE platform certificate chain
-- Timestamp
-
-This hash matches the published GitHub commit. Community members can independently verify the enclave is running the audited code — not a backdoored version.
+Operators who withdraw campaign funds before milestone completion without community approval face:
+- Immediate permanent ban from the platform
+- Public notation on their operator profile
+- Reporting to the community via the public action log
 
 ---
 
-## 2. Wallet Agent
+## 2. Wallet Model
 
-### Technology
+### How It Works
 
-- **Monero wallet RPC daemon** (`monero-wallet-rpc`) running inside the TEE
-- One wallet created per campaign at proposal approval
-- All wallet private keys exist only inside the enclave — never extracted
+- Operator creates and controls their own XMR or ZANO wallet
+- One wallet address per campaign (operator may use a dedicated campaign wallet)
+- Operator provides their wallet address at campaign proposal time
+- Operator provides a view key so Citeback and the public can verify balance activity
 
-### Wallet Creation Flow
+### Wallet Publication Flow
 
 ```
 Campaign proposal approved (community vote threshold met)
          ↓
-Wallet Agent creates new Monero wallet via RPC
+Operator provides XMR/ZANO wallet address + view key
          ↓
 Campaign wallet address posted publicly to site + action log
          ↓
-View key published — anyone can verify balance and transaction history
+View key published — anyone can verify balance and contribution history
          ↓
-Campaign goes live for donations
+Campaign goes live for contributions
+         ↓
+Contributors send XMR/ZANO directly to published wallet address
 ```
 
-### Disbursement Flow
+### Completion and Withdrawal Flow
 
 ```
 Operator submits completion proof (receipt, photo, court filing, etc.)
          ↓
-Wallet Agent verifies: proof document present, campaign ID matches, amount ≤ goal
-         ↓
 48-hour public challenge window opens (logged publicly)
          ↓
-No challenge filed → Wallet Agent sends XMR to operator's provided address
+No challenge filed → Operator withdraws funds from their own wallet
 Challenge filed → Community vote triggered (see Governance)
          ↓
-Disbursement logged: campaign ID, amount, XMR tx ID, timestamp, proof hash
+Operator completion logged: campaign ID, proof hash, timestamp
 ```
+
+*Note: Citeback does not send or control the disbursement — the operator withdraws from their own wallet. The platform records the milestone completion event in the public action log.*
 
 ### Fee Model
 
-**No platform fee.** 100% of donated campaign funds are disbursed directly to the campaign operator. Nothing is deducted at disbursement.
+The platform charges a graduated fee (GOVERNANCE.md §7.3) on operator withdrawals based on 90-day rolling volume:
+- 5.0% on volume $0–$10k
+- 4.5% on volume $10k–$25k
+- 4.0% on volume $25k–$50k
+- 3.0% on volume above $50k
 
-At disbursement:
-- 100% → operator's provided address
+Fees are self-reported by operators at withdrawal and enforced by the reputation and accountability system. Operators who underreport fees face reputation penalties.
 
 **Platform operations funding:**
-Infrastructure costs (VPS, TEE instances, Monero node, domains) are covered by:
+Infrastructure costs (VPS, Monero node, domains) are covered by:
 1. Founding operator capital contributions to the Wyoming DAO LLC
-2. Voluntary tips from users who want to support the platform (separate from campaign donations)
+2. Platform fees on operator withdrawals
 3. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation, etc.)
 
-All tip inflows and operational outflows are publicly documented in the quarterly transparency report.
-
-**Campaign goal fee buffer:**
-
-When a campaign is proposed, the AI calculates:
-- Task cost (operator-provided estimate)
-- Estimated Monero transaction fee (~$0.01)
-- 2% buffer for fee variance
-
-The published campaign goal (task cost + buffer) is displayed transparently on each campaign card.
+All fee inflows and operational outflows are publicly documented in the quarterly transparency report.
 
 ### Unfunded Campaign Handling
 
 Each campaign has a **deadline** and **funding goal**.
 
 If deadline is reached with goal unmet:
-1. Wallet Agent checks for active extension request (see Campaign Extensions)
-2. If no extension pending: funds redirect to highest-priority active campaign in same category
-3. Redirect is logged publicly with reason
-4. Original donors are notified via the public action log (no personal data — just the campaign)
-
-**No refunds.** Monero's privacy model makes identifying senders technically complex and would require donors to provide a return address at donation time (partial deanonymization). The redirect model is disclosed upfront on every campaign card.
+1. Platform checks for active extension request (see Campaign Extensions)
+2. If no extension pending: operator returns any accumulated funds to the highest-priority active campaign in same category (or refunds via agreed process)
+3. Outcome logged publicly with reason
 
 ### Campaign Extensions
 
@@ -217,15 +211,15 @@ Rules:
 - 48-hour voting window
 - Simple majority to approve
 - Extension duration options: 7, 14, or 30 days (requestor specifies, community approves)
-- If second extension expires unfunded → redirect, no third chance
+- If second extension expires unfunded → operator closes campaign per agreed terms
 
 Extension requests are logged publicly with reasoning. Community can see the full extension history on the campaign card.
 
 ---
 
-## 3. Site Agent (Human-Operated)
+## 3. Site Operations (Human-Operated)
 
-Under the split model, site management functions are performed by the Wyoming DAO LLC (human operator) rather than an autonomous TEE agent. The TEE's former Site Agent responsibilities — GitHub PR review, Netlify deployment, code auditing — are now human-executed operations governed by the same change classification rules below.
+Site management functions are performed by the Wyoming DAO LLC (human operator). Operations are governed by the same change classification rules below.
 
 ### Responsibilities
 
@@ -240,7 +234,7 @@ Under the split model, site management functions are performed by the Wyoming DA
 - Cannot merge PRs unilaterally without meeting vote thresholds
 - Cannot push code without a qualifying community vote
 - Cannot modify governance rules without the time-lock expiring
-- Cannot access or direct the TEE Wallet Agent
+- Cannot access operator wallet private keys (direct wallet model — operators hold their own keys)
 
 ### Deployment Flow
 
@@ -292,7 +286,7 @@ Format:
 The log is:
 - Published to GitHub (permanent, immutable)
 - Displayed in the site's Transparency section
-- Signed by the TEE attestation key (tamper-evident)
+- Cryptographically timestamped and append-only (tamper-evident)
 
 ---
 
@@ -344,22 +338,24 @@ No email, no KYC, no registration. Identity is a cryptographic key. Reputation f
 
 ### What Is Trusted
 
-- The TEE hardware (Intel SGX / ARM TrustZone)
 - The open source code (publicly audited)
-- The cryptographic attestation (verifiable by anyone)
+- View key transparency (anyone can verify campaign wallet balances)
+- The community challenge and governance process
+- Operator reputation staking (skin in the game)
 
 ### What Is Not Trusted
 
 - The founder
 - The VPS provider
 - Any individual operator or community member
+- Platform claims without view key verification
 
 ### Known Limitations
 
-- TEE side-channel attacks (Spectre/Meltdown variants) — mitigated by TEE provider patches
 - Social engineering of community voters — mitigated by time-locks and supermajority thresholds
 - Fake proof submissions — mitigated by challenge window and reputation staking
-- TEE provider compromise — mitigated by open source code + community ability to fork and redeploy
+- Operator early drain — mitigated by view key monitoring, permanent ban enforcement, and reputation system
+- Platform downtime — funds in operator wallets are unaffected; only the coordination layer (site, governance) is unavailable
 
 ---
 
@@ -382,8 +378,8 @@ If Citeback disappears, the code lives. Communities can rebuild.
 | Phase | Description |
 |---|---|
 | Phase 1 (now) | Static site, manual wallet ops, reputation scaffolding |
-| Phase 2 | TEE wallet agent, automated disbursements, public action log |
-| Phase 3 | TEE site agent, automated deployments, community voting UI |
+| Phase 2 | Direct wallet model live: operators post own wallets, view keys published, community voting UI, public action log |
+| Phase 3 | Automated view key monitoring, operator staking system, governance tooling |
 | Phase 4 | Full DAO-equivalent governance, cross-chain expansion |
 
 ---

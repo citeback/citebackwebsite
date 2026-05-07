@@ -9,11 +9,11 @@
 
 **Where we are:** Static site live. Governance documented. 4/10 launch gates cleared. No wallets, no entity, no attorney, no ToS.
 
-**What launch actually means:** The first XMR/ZANO wallet address is published for a real campaign. Donors can send real crypto. The TEE is doing its job.
+**What launch actually means:** The first XMR/ZANO wallet address for a real campaign is published. Contributors can send real crypto directly to the operator's wallet.
 
-**Minimum viable path to soft launch:** Wyoming LLC → Attorney (Items 1 & 3 minimum) → TEE deployed → One wallet live. That's it. Everything else can phase in.
+**Minimum viable path to soft launch:** Wyoming LLC → Attorney (Items 1 & 3 minimum) → First operator onboarded with direct wallet → One campaign wallet address published. That's it. Everything else can phase in.
 
-**Realistic fastest timeline:** ~4–5 months (September 2026) if Scott is aggressive on LLC + attorney + TEE simultaneously. Safe/responsible timeline: 6–7 months (November 2026).
+**Realistic fastest timeline:** ~2–3 months (August 2026) if Scott is aggressive on LLC + attorney + first operator onboarding simultaneously. The direct wallet model eliminates the long TEE build. Safe/responsible timeline: 3–4 months (September 2026).
 
 ---
 
@@ -73,7 +73,7 @@ These are binary gates. The platform does not accept any funds until every one i
 - Money laundering disbursement chain (Issue 5)
 - FARA/LDA for legislative advocacy campaigns (Issue 7)
 - Operator identity compelled disclosure / NSL exposure (Issue 8)
-- Securities law — proof-of-donation governance (Issue 10)
+- Securities law — proof-of-contribution governance (Issue 10)
 - Charitable solicitation registration (Issue 11)
 - Tax treatment / constructive receipt (Issue 12)
 - Insurance coverage specification (Issue 9)
@@ -82,50 +82,27 @@ These are binary gates. The platform does not accept any funds until every one i
 
 ---
 
-### HB-3. TEE Infrastructure — Deploy Minimum 3 Nodes
+### HB-3. Direct Wallet Infrastructure — Operator Onboarding Ready
 
-**What it is:** Deploy the TEE-based wallet infrastructure. Minimum 3 instances across different hardware providers, live with 2-of-3 threshold signatures. Each instance runs Monero wallet RPC daemon inside an Intel SGX or ARM TrustZone enclave. Cryptographic attestation is published and verifiable.
+**What it is:** Confirm that the platform is ready to accept campaign proposals from operators using the direct wallet model. Operators post their own XMR/ZANO wallet addresses. No TEE infrastructure is required.
 
-**Why it's needed:** This is the core technical innovation. Without it, someone (Scott) controls the wallet keys, which defeats the platform's entire trust model and creates direct custodial MSB liability. Every campaign goal, every claim in the governance docs, every trust guarantee on the site depends on this being real.
+**Why it's needed:** The direct wallet model (adopted instead of TEE) means Citeback never holds funds. Operators control their own wallets entirely. The platform's job is to verify wallet addresses, publish view keys, monitor balance activity, and enforce accountability via the reputation/ban system.
 
-**Cost:** This is the biggest unknown. Options:
-- **Phala Network (recommended):** $200–500/mo per node hosting. ~3 nodes = ~$600–1,500/mo infrastructure. Plus development cost: custom Rust/WASM contract for XMR wallet RPC integration. Estimated development: $15,000–50,000 (contractor) or 3–6 months (solo dev familiar with Substrate + XMR RPC).
-- **Marlin Oyster:** Similar pricing. Docker container deployment is simpler than Phala's Substrate-based approach.
-- **AWS Nitro Enclaves:** More expensive ($500–2,000/mo per node), less community-verifiable, enterprise grade. Not ideal for this mission.
-- **Self-hosted SGX:** Most control. Requires SGX-capable servers ($1,500–3,000 hardware per node). Higher ops complexity but lowest ongoing cost and maximum community verifiability.
+**What's needed for go-live:**
+- Operator agreement drafted + attorney-reviewed (references direct wallet model, view key requirement, early drain policy)
+- OFAC pre-screening process for operators documented
+- View key publication workflow confirmed (where/how view keys are published on site)
+- Early drain monitoring process defined
 
-**Total estimated cost:** $30,000–80,000 for initial build (contractor) + $600–1,500/mo ongoing infra.
+**Cost:** Minimal — no TEE build cost. Mostly legal/process work.
+- Attorney review of operator agreement: $1,000–3,000 (bundled with HB-2)
+- Site updates to display operator wallet addresses + view keys: 1–2 days dev
 
-**Time:** This is the longest item on the critical path. Realistically:
-- Provider selection and research: 2–4 weeks
-- Contractor sourcing: 2–4 weeks  
-- Development: 8–16 weeks
-- Testing, audit, attestation publication: 4–8 weeks
-- **Total: 4–7 months from decision to go-live**
+**Time:** 1–2 weeks once attorney guidance is in hand.
 
-**Who does it:** Either a specialized contractor (Rust + Intel SGX + Monero RPC experience required), or Scott if he has deep systems programming background (not recommended for solo first build given the security stakes). The platform's security model depends on this being correct.
+**Who does it:** Scott, with attorney input.
 
-**Dependencies:** HB-1 (entity), HB-2 (attorney — need to know if MSB registration affects TEE architecture design). Can begin provider research and contractor sourcing in parallel with attorney work.
-
-**CRITICAL INTERIM QUESTION:** Can the platform soft-launch with human-held interim escrow while TEE is built? See HB-3-INTERIM below.
-
----
-
-### HB-3-INTERIM. Human Escrow Interim Option (Decision Point for Scott)
-
-**What it is:** Rather than waiting for the full TEE build (4–7 months), consider a "Phase 1 Soft Launch" where campaign funds are held in a multisig arrangement by identified humans (Scott + 1–2 trustees) under a formal escrow agreement, with full disclosure to donors that this is interim non-TEE custody.
-
-**Why consider it:** Gets the platform generating real campaign activity and donor trust faster. First campaigns ($800–$1,500 each) are small enough that the custody risk is manageable. Real campaigns help attract operators and refine the product before the TEE is live.
-
-**Why it's risky:**
-- Destroys the "no human key access" trust guarantee for early campaigns
-- Creates direct custodial liability for Scott
-- May affect MSB analysis (human custodian = clearer money transmitter)
-- Could damage credibility with early donors who believe the TEE story
-
-**Decision:** Scott must decide this with his attorney. It should not be done without explicit legal sign-off. If done, it requires full, prominent disclosure on every campaign card ("Interim custody: funds held by Wyoming DAO LLC in [structure] pending TEE deployment. TEE deployment expected [date].").
-
-**Recommendation:** Probably not worth the legal and credibility risk. The TEE is the product. Ship the real thing.
+**Dependencies:** HB-1 (entity), HB-2 (attorney — MSB analysis and operator agreement). No TEE build required.
 
 ---
 
@@ -152,15 +129,15 @@ These are binary gates. The platform does not accept any funds until every one i
 
 ### HB-5. First Campaign Wallet — Activated
 
-**What it is:** The TEE generates and publishes the first real XMR wallet address for a live campaign. This is the final launch gate — the moment Citeback is operational.
+**What it is:** The first operator posts their XMR/ZANO wallet address for a live campaign. This is the final launch gate — the moment Citeback is operational.
 
 **Why it's needed:** This is what "launched" means.
 
-**Cost:** $0 marginal (TEE is already running at this point)
+**Cost:** $0 (direct wallet model — no infrastructure build required)
 
-**Time:** Minutes, once TEE is live and first campaign approved.
+**Time:** Minutes, once operator has been onboarded, their campaign proposal reviewed and approved, and their wallet address verified.
 
-**Dependencies:** ALL other hard blockers (HB-1 through HB-4). Plus: first operator has been onboarded, their campaign proposal reviewed and approved, wallet agent running.
+**Dependencies:** ALL other hard blockers (HB-1 through HB-4). Plus: first operator has been onboarded and campaign proposal approved.
 
 ---
 
@@ -280,87 +257,69 @@ These are not all binary gates, but each is needed before the platform operates 
 
 ---
 
-### T-1. TEE Provider Selection
+### T-1. Direct Wallet Operations — Workflow Defined
 
-**What it is:** Evaluate Phala Network, Marlin Oyster, and self-hosted SGX. Make a binding decision before development begins.
+**What it is:** Define and document the end-to-end workflow for the direct wallet model:
+- Operator submits wallet address + view key at campaign proposal time
+- Platform verifies address format (XMR/ZANO)
+- View key published to public campaign page
+- Platform monitors view key for balance anomalies
+- Early drain detection triggers operator ban review
 
-**Evaluation criteria:**
-- Open-source attestation verifiability (community can independently verify)
-- Monero RPC daemon support inside enclave
-- Multi-instance 2-of-3 threshold signature support
-- Operational cost
-- Recovery path if provider shuts down (self-sovereignty)
-- Track record / production deployments
+**Note:** TEE infrastructure (Phala, Marlin, SGX) was evaluated and **not adopted**. The direct wallet model achieves the platform's non-custodial goals with simpler, faster deployment. Operators control their own wallets entirely.
 
-**Recommendation:** Phala or Marlin for first deployment. Phala has more documentation and community; Marlin has simpler arbitrary code deployment. Self-hosted SGX is the long-term ideal but adds operational burden.
+**Cost:** 1–2 days implementation. $0 infrastructure cost beyond existing VPS.
 
-**Time:** 2–4 weeks research and decision.
+**Time:** 1–2 weeks.
 
-**Who does it:** Scott + technical contractor (who will do T-2).
+**Who does it:** Scott.
 
-**Cost:** $0 for evaluation, but decision drives T-2 cost.
-
----
-
-### T-2. TEE Wallet Agent — Development
-
-**What it is:** Build the software that runs inside the TEE enclave:
-- Monero wallet RPC daemon integration
-- Wallet creation per campaign
-- Fund custody
-- Automated disbursement logic per governance rules
-- OFAC screening at disbursement
-- Cryptographic attestation
-- Action logger output
-
-**Technology stack:**
-- Rust (for Phala/Marlin WASM targets)
-- `monero-rpc` or `monero-rs` crate integration
-- 2-of-3 threshold signature implementation (FROST or similar)
-- Attestation report generation
-
-**This is the hardest technical problem on the board.** The combination of TEE isolation + Monero RPC + threshold signatures + governance logic integration is non-trivial engineering. Finding a contractor with all four skills simultaneously is a challenge.
-
-**Cost:** $25,000–75,000 depending on contractor rate and complexity. Could be $100,000+ with a premium Rust/TEE specialist firm.
-
-**Time:** 8–16 weeks development, 4–8 weeks testing and audit.
-
-**Who does it:** Specialized contractor. Ideal profile: Rust developer with TEE (SGX/TrustZone) experience + familiarity with privacy coins. 
-
-**Recruiting options:**
-- Upwork (filter: Rust + Intel SGX — 50–100 results)
-- jobs.rust-lang.org
-- Web3 job boards: Cryptocurrency Jobs, CryptoJobsList
-- Direct outreach to Phala or Marlin ecosystem developers
-- Referrals from EFF, Privacy Guides community
+**Dependencies:** HB-2 (attorney — confirm direct wallet model's regulatory posture).
 
 ---
 
-### T-3. TEE Threat Model — Publish and Ratify
+### T-2. View Key Monitoring — Implementation
 
-**What it is:** A written, published, community-ratified threat model document covering: side-channel risks (Spectre/Meltdown variants), provider dependency analysis, supply-chain trust assumptions, hardware vs. software trust boundaries, and the platform's mitigations.
+**What it is:** Build lightweight monitoring that uses operator-provided view keys to track campaign wallet balances and flag anomalous outflows before milestone completion.
+
+**Technology:**
+- Monero view key integration via `monero-wallet-rpc` in view-only mode
+- Balance polling (daily or on-demand)
+- Alert threshold: significant outflow before campaign milestone verified
+
+**Cost:** $0–$5,000 (Scott can build; simple Python/Node script using Monero RPC)
+
+**Time:** 1–2 weeks.
+
+**Who does it:** Scott or junior contractor.
+
+---
+
+### T-3. Security Model Document — Publish and Ratify
+
+**What it is:** A written, published, community-ratified security model document covering: direct wallet trust assumptions, view key limitations, early drain risks and mitigations, and the platform's accountability enforcement.
 
 **Why it's needed:** Required launch prerequisite in GOVERNANCE.md §10.4. Community cannot ratify the security model they don't understand.
 
-**Cost:** $2,000–8,000 (security consultant review) or self-authored with community review.
+**Cost:** $0–$2,000 (security consultant review) or self-authored with community review.
 
-**Time:** 2 weeks to draft; community ratification 1–2 weeks.
+**Time:** 1 week to draft; community ratification 1–2 weeks.
 
-**Who does it:** Scott drafts; security-minded community members review. Professional security audit highly recommended before mainnet.
+**Who does it:** Scott drafts; community reviews.
 
 ---
 
-### T-4. TEE Remote Attestation — Published and Verifiable
+### T-4. Operator Wallet Display — Site Implementation
 
-**What it is:** Live cryptographic attestation published publicly so anyone can independently verify the TEE is running the audited code (matches GitHub commit hash).
+**What it is:** Update the site UI to display operator wallet addresses and view keys prominently on campaign cards, so contributors can independently verify wallet activity before contributing.
 
-**Why it's needed:** LaunchTracker gate. The core trust guarantee.
+**Why it's needed:** Transparency core to the trust model. Contributors should see the wallet address and be able to verify the view key independently.
 
-**Cost:** $0 marginal (produced by TEE deployment)
+**Cost:** 1–2 days frontend dev (Scott).
 
-**Time:** Concurrent with T-2 deployment.
+**Time:** 1–2 days.
 
-**Who does it:** TEE contractor delivers this as part of deployment.
+**Who does it:** Scott.
 
 ---
 
@@ -374,27 +333,27 @@ These are not all binary gates, but each is needed before the platform operates 
 
 **Time:** Concurrent with first wallet activation.
 
-**Who does it:** TEE contractor sets up publication pipeline.
+**Who does it:** Scott or backend developer sets up Monero daemon publication pipeline.
 
 ---
 
 ### T-6. Action Logger — Live, Publishing to GitHub
 
-**What it is:** The append-only public log of all TEE actions (wallet creation, disbursements, challenges) publishing to GitHub automatically.
+**What it is:** The append-only public log of all platform actions (wallet activations, view-key checks, accountability events) publishing to GitHub automatically.
 
 **Why it's needed:** GOVERNANCE.md §14 Formal Handoff Checklist item. Transparency foundation.
 
-**Cost:** $0 marginal (part of TEE build)
+**Cost:** Small — part of platform backend build.
 
-**Time:** Concurrent with T-2.
+**Time:** Concurrent with first wallet activation.
 
-**Who does it:** TEE contractor.
+**Who does it:** Scott or backend developer.
 
 ---
 
 ### T-7. Community Voting Interface — Live
 
-**What it is:** A functional UI where community members (proof-of-donation holders) can see and vote on disbursement challenges and campaign governance questions.
+**What it is:** A functional UI where community members (proof-of-contribution holders) can see and vote on campaign governance questions.
 
 **Why it's needed:** Without this, governance exists only on paper. Community cannot exercise challenge rights without a functional interface.
 
@@ -408,17 +367,17 @@ These are not all binary gates, but each is needed before the platform operates 
 
 ---
 
-### T-8. Founder Address Registry — TEE-Encoded, Attested
+### T-8. Founder Address Registry — Platform-Encoded at Launch
 
-**What it is:** Scott's wallet addresses encoded into the TEE at launch, so the system can enforce the 5% founder voting cap and taint tracking defined in GOVERNANCE.md §14.2.
+**What it is:** Scott's wallet addresses encoded into the platform rules at launch to enforce the 5% founder voting cap and taint tracking defined in GOVERNANCE.md §14.2.
 
 **Why it's needed:** GOVERNANCE.md §14 Formal Handoff Checklist item. Prevents founder from having outsized governance influence post-launch.
 
-**Cost:** $0 marginal (part of TEE setup)
+**Cost:** $0 (configuration, no special hardware required)
 
-**Time:** Concurrent with TEE deployment.
+**Time:** Before first campaign goes live.
 
-**Who does it:** TEE contractor + Scott provides addresses.
+**Who does it:** Scott (provides addresses) + platform deployment.
 
 ---
 
@@ -657,7 +616,7 @@ These are not all binary gates, but each is needed before the platform operates 
 - ProgressNow NM (already sourced — NM policy angle)
 - Monero-specific: Monero Observer, Localmonero community
 
-**Press angle:** "The first anonymous surveillance-resistance crowdfunding platform built to be lawsuit-resistant" — lead with TEE attestation as the differentiator.
+**Press angle:** "The first anonymous surveillance-resistance crowdfunding platform built to be lawsuit-resistant" — lead with direct wallet model (Citeback never holds funds) and view key transparency as the differentiators.
 
 ---
 
@@ -677,8 +636,8 @@ These cannot be decided by planning documents. They require Scott's judgment (or
 
 | # | Decision | Options | When Needed |
 |---|---|---|---|
-| D-1 | TEE provider | Phala vs. Marlin vs. self-hosted SGX | Before T-2 begins |
-| D-2 | Soft launch with interim escrow? | Yes (with full disclosure) vs. No (wait for TEE) | Before any wallet discussion |
+| D-1 | Direct wallet monitoring | Build in-house vs. use Monero RPC service | Before T-2 begins |
+| D-2 | Fee self-reporting enforcement | Reputation-only vs. additional verification mechanism | Before first withdrawal |
 | D-3 | Attorney firm | Which firm for main engagement | Immediately after LLC files |
 | D-4 | Which campaigns launch first? | FOIA-only to start, then billboard after §230 clearance? | After attorney opinion |
 | D-5 | Will Scott be the first operator? | Self-operate first campaigns vs. recruit external operator | Before operator onboarding |
@@ -698,13 +657,13 @@ HB-1 (Wyoming LLC)
     │                                  ├─► HB-4 (ToS published)
     │                                  └─► O-2 (Operator agreement)
     │
-    └─► T-1 (TEE provider selection)
-          └─► T-2 (TEE development) ───┬─► T-3 (Threat model)
-                                        ├─► T-4 (Attestation published)
-                                        ├─► T-5 (View keys published)
-                                        ├─► T-6 (Action logger live)
-                                        ├─► T-8 (Founder address registry)
-                                        └─► O-4 (Operations wallet)
+    └─► T-1 (Direct wallet workflow defined)
+          └─► T-2 (View key monitoring) ─┬─► T-3 (Security model doc)
+                                          ├─► T-4 (Wallet display on site)
+                                          ├─► T-5 (View keys published)
+                                          ├─► T-6 (Action logger live)
+                                          ├─► T-8 (Founder address registry)
+                                          └─► O-4 (Operations wallet)
 
 HB-2 + T-2 + HB-4 + O-2 ──────────────► O-3 (First operator onboarded)
                                                └─► HB-5 (First campaign wallet LIVE)
@@ -727,9 +686,8 @@ O-7 (Billboard procurement) ─────────────── Before
 |---|---|---|
 | Wyoming LLC (one-time) | $150 | $200 |
 | Attorney engagement (all 12 questions) | $20,000 | $40,000 |
-| TEE development (contractor) | $30,000 | $80,000 |
-| TEE infrastructure ongoing | $600/mo | $1,500/mo |
-| Security audit | $5,000 | $20,000 |
+| View key monitoring (simple) | $0 | $5,000 |
+| Security audit | $1,000 | $5,000 |
 | Community voting UI | $0 (Scott) | $15,000 |
 | ToS attorney review | $500 | $2,000 |
 | Operator agreement | $1,000 | $3,000 |
@@ -742,7 +700,7 @@ O-7 (Billboard procurement) ─────────────── Before
 - The platform earns 3–5% fees. On $100k annual campaign volume, that's $3,000–5,000. Not enough to fund the build.
 - Grant options: EFF grants, Mozilla Foundation, Open Technology Fund, FOIA Machine community, Protocol Labs (if Filecoin/IPFS integration considered).
 - Scott's own capital is the most likely path to initial build.
-- Consider: a "pre-launch donor campaign" where early supporters fund the TEE build (with full disclosure that no operational funds are accepted until TEE is live). This aligns incentives and builds community. Requires attorney review of whether this constitutes securities or charitable solicitation.
+- Consider: a pre-launch community fundraise where early supporters fund platform development. Requires attorney review of whether this constitutes securities or charitable solicitation.
 
 ---
 

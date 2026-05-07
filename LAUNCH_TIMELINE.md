@@ -10,11 +10,11 @@
 The critical path is:
 1. **Wyoming LLC** (1–3 days) → 
 2. **Attorney retained** (1 week) → 
-3. **MSB/OFAC opinion received** (6–8 weeks) + **TEE contractor sourced** (2–4 weeks) → 
-4. **TEE development** (8–16 weeks) + **TEE testing + audit** (4–8 weeks) →
+3. **MSB/OFAC opinion received** (6–8 weeks) + **Direct wallet workflow implemented** (1–2 weeks) → 
+4. **First operator onboarded + wallet published** (2–4 weeks) →
 5. **First wallet live**
 
-The TEE development is the long pole in the tent. Everything else either blocks the TEE or runs in parallel.
+Attorney engagement and operator onboarding are the critical path. The direct wallet model eliminates the TEE build entirely — no months-long contractor engagement required.
 
 ---
 
@@ -22,13 +22,13 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 
 ### Scenario A — Aggressive (Fast Path)
 > Best case: launch October 2026 (~5 months)
-> Assumes: LLC files week 1, attorney retained week 2, TEE contractor starts week 6, no major legal surprises, 8-week TEE dev cycle, first wallet October 2026.
+> Assumes: LLC files week 1, attorney retained week 2, direct wallet workflow implemented week 4, first operator onboarded week 6, first wallet live August 2026.
 
 ### Scenario B — Responsible (Safe Path)  
 > Realistic: launch January–February 2027 (~9 months)
-> Assumes: attorney engagement takes full 8 weeks for comprehensive opinions, TEE requires 16-week dev + 6-week audit, community advisory board recruitment takes time, all gates cleared properly before wallets go live.
+> Assumes: attorney engagement takes full 8 weeks for comprehensive opinions, community advisory board recruitment takes time, all gates cleared properly before wallets go live.
 
-**Recommendation:** Plan for Scenario B. Hope for Scenario A. Every week saved on attorney/TEE is borrowed time.
+**Recommendation:** Plan for Scenario B. Hope for Scenario A. Every week saved on attorney work is borrowed time. The direct wallet model means TEE build time is no longer on the critical path.
 
 ---
 
@@ -46,7 +46,7 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 **Begin research this week:**
 - [ ] Start reading ATTORNEY-BRIEF.md cover to cover to prepare for attorney search. *(Scott)*
 - [ ] Identify 3–5 law firms to contact for engagement (see LAUNCH_PLAN.md HB-2 for firm list).
-- [ ] Begin TEE provider research: Phala Network vs Marlin Oyster vs self-hosted SGX.
+- [ ] Implement direct wallet workflow: operator wallet submission form, view key publication.
 
 ---
 
@@ -56,7 +56,7 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 **After LLC is filed:**
 - [ ] Contact law firms with ATTORNEY-BRIEF.md. Request engagement on priority items (MSB + OFAC first; full 12-question engagement preferred).
 - [ ] Set up Wyoming LLC's registered email and banking (separate from personal). citeback@proton.me is fine for platform; LLC needs a business bank account before any operational funds flow.
-- [ ] Make TEE provider decision (Scenario A: decide this week; Scenario B: take 2 more weeks).
+- [ ] Direct wallet model implementation confirmed with attorney. View key monitoring defined.
 
 **Parallel track — site work:**
 - [ ] Fix broken source links (Cambridge ALPR, WA state ALPR) per PRE-LAUNCH.md items 5 and 7.
@@ -73,10 +73,10 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 - [ ] Attorney working on OFAC analysis (Item 3) — parallel with Item 1.
 - [ ] Attorney drafting operator agreement (O-2) — can often be done concurrently.
 
-**TEE development begins (Scenario A starts here; Scenario B starts Week 8):**
-- [ ] Post contractor job description for TEE developer (Rust + Intel SGX + Monero RPC).
-- [ ] Review applications and interview candidates.
-- [ ] Select contractor and begin TEE development under NDA.
+**Direct wallet model implementation + first operator onboarding (Scenario A starts here; Scenario B starts Week 8):**
+- [ ] Direct wallet submission flow built into site.
+- [ ] Recruit and vet first operator candidate.
+- [ ] First operator onboarded, wallet address + view key collected.
 
 **Parallel track — operational prep:**
 - [ ] Draft Operator Accountability Protocol (L-4) — 1 week.
@@ -105,13 +105,13 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 
 ---
 
-### PHASE 2 — TEE Development (Weeks 6–22, varies)
+### PHASE 2 — Direct Wallet Model + Operator Onboarding (Weeks 4–10)
 > June 16 – September 28, 2026 (Scenario A) or later (Scenario B)
 
-**TEE development milestones:**
+**Direct wallet model milestones:**
 
 **Weeks 1–4 of development (Architecture + Core):**
-- TEE provider environment set up (Phala testnet or Marlin sandbox)
+- Direct wallet submission workflow implemented and tested
 - Monero wallet RPC daemon running inside enclave
 - Basic wallet creation and key generation working
 - Attestation report generation
@@ -136,8 +136,8 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 - Founder address registry encoded
 
 **Weeks 16–20 of development (Pre-Launch Integration):**
-- Site integration: wallet addresses fetched from TEE (not hardcoded)
-- Community voting interface connected to TEE disbursement logic
+- Site integration: operator wallet addresses displayed publicly with view keys
+- Community voting interface for disbursement challenges
 - View keys published
 - Action logger publishing to GitHub
 - End-to-end mainnet test with tiny real amounts
@@ -155,8 +155,8 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 - [ ] ToS published and attorney-reviewed: ✅
 - [ ] Operator Accountability Protocol: ✅
 - [ ] Governance v1.0 ratified: ✅
-- [ ] TEE 3 nodes deployed: ✅
-- [ ] TEE attestation published and verifiable: ✅
+- [ ] Direct wallet submission workflow live: ✅
+- [ ] View key monitoring operational: ✅
 - [ ] Threat model ratified: ✅
 - [ ] Security audit complete: ✅
 - [ ] Community voting interface live: ✅
@@ -183,7 +183,7 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 **Soft launch sequence:**
 1. First operator (Scott) submits Campaign #1 (FOIA — Bernalillo County Sheriff Flock Contract)
 2. Campaign reviewed and approved by platform entity (Scott)
-3. TEE generates XMR wallet address
+3. Operator submits XMR wallet address + view key
 4. Address published on site
 5. Announce to mailing list + Nostr only (no press yet)
 6. Monitor: first donations received, action logger working, no anomalies
@@ -211,7 +211,7 @@ The TEE development is the long pole in the tent. Everything else either blocks 
 - [ ] Monero community announcement: r/Monero, Monero Talk, Cake Wallet community
 - [ ] Privacy community: r/privacy, r/privacyguides, Surveillance Technology Oversight Project
 - [ ] EFF/ACLU partner outreach
-- [ ] Blog post: "How Citeback works — and why the TEE matters"
+- [ ] Blog post: "How Citeback works — and why the direct wallet model matters"
 - [ ] Open operator applications publicly
 - [ ] Governance community vote (bootstrapping era begins)
 

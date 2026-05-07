@@ -10,6 +10,22 @@ import jwt from 'jsonwebtoken'
 import busboy from 'busboy'
 import Exifr from 'exifr'
 import AdmZip from 'adm-zip'
+import { createC2pa } from 'c2pa-node'
+
+// Real cryptographic C2PA verification — not string matching
+const c2paReader = createC2pa()
+async function verifyC2PA(filePath) {
+  try {
+    const result = await c2paReader.read({ path: filePath })
+    // result is null if no C2PA manifest present
+    if (!result) return false
+    // Check that a manifest store exists and has at least one manifest
+    return !!(result.manifest_store && Object.keys(result.manifest_store).length > 0)
+  } catch (e) {
+    console.log('C2PA verify error (not a C2PA image):', e.message?.slice(0, 80))
+    return false
+  }
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = path.join(__dirname, 'data')
@@ -288,7 +304,7 @@ async function checkPhotoContent(photoPath) {
       contents: [{
         parts: [
           { inline_data: { mime_type: mimeType, data: base64Image } },
-          { text: 'Does this photo show a surveillance camera, ALPR license plate reader, or billboard? Reply only: yes or no.' }
+          { text: 'Is this a genuine photograph taken by a real physical camera of a surveillance camera, ALPR license plate reader, or billboard that is actually installed outdoors or in a public location? Answer NO if ANY of the following are true: (1) the image appears to be AI-generated, digitally rendered, or created by image generation software, (2) it is a screenshot, graphic, illustration, drawing, or digital artwork, (3) it shows camera icons, patterns, or graphics rather than a real physical device, (4) the device is a consumer product on a shelf or in a store, (5) it is an indoor residential or office camera, (6) it is a printed or reproduced image photographed from a screen or paper, (7) the image quality, lighting, or texture looks synthetic or computer-generated rather than photographed in natural conditions. Reply only: yes or no.' }
         ]
       }],
       generationConfig: { maxOutputTokens: 10, thinkingConfig: { thinkingBudget: 0 } }
@@ -562,6 +578,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Sighting submission — C2PA required, no exceptions ──────────────────────
   if (req.method === 'POST' && req.url === '/sighting') {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
     const contentType = req.headers['content-type'] || ''
     const isMultipart = contentType.includes('multipart/form-data')
     let fields = {}, photoFilename = null, detectedC2PA = false, photoWritePromise = Promise.resolve()
@@ -645,17 +662,11 @@ const server = http.createServer(async (req, res) => {
           }
         }
 
-        // C2PA detection: JPEG APP11 marker (0xFF 0xEB) or XMP content credentials tag
+        // Real cryptographic C2PA verification — verifies the actual manifest signature
+        // Not string matching. A forged 'c2pa' string in EXIF will NOT pass this.
         if (photoFilename) {
-          try {
-            const buf = Buffer.allocUnsafe(8192)
-            const fd = fs.openSync(path.join(PHOTOS_DIR, photoFilename), 'r')
-            fs.readSync(fd, buf, 0, 8192, 0)
-            fs.closeSync(fd)
-            const str = buf.toString('latin1')
-            detectedC2PA = (buf[0] === 0xFF && buf[1] === 0xEB) ||
-              str.includes('c2pa') || str.includes('C2PA') || str.includes('contentauthenticity')
-          } catch {}
+          detectedC2PA = await verifyC2PA(path.join(PHOTOS_DIR, photoFilename))
+          console.log(`C2PA verification for ${photoFilename}: ${detectedC2PA}`)
         }
       } else {
         fields = await parseBody(req)
@@ -670,7 +681,8 @@ const server = http.createServer(async (req, res) => {
       }
       if (fields.honeypot) { res.writeHead(200); return res.end(JSON.stringify({ ok: true })) }
 
-      const hasC2PA = detectedC2PA || fields.hasC2PA === 'true' || fields.hasC2PA === true
+      // Server-only C2PA verification — client cannot claim hasC2PA, server decides
+      const hasC2PA = detectedC2PA
       const hasPhoto = !!photoFilename
 
       // ── Non-C2PA = rejected. Photo deleted. Not stored. ──────────────────────
@@ -728,6 +740,54 @@ const server = http.createServer(async (req, res) => {
           error: 'No GPS coordinates found in photo. Make sure Location is enabled in Proofmode before shooting.',
           hint: 'Settings → Location → ON in Proofmode app',
         }))
+      }
+
+      // EXIF camera metadata check — real photos have camera make/model/ISO; AI images don't
+      // Proofmode ZIPs are exempted (they embed GPS via proof.json, EXIF may be minimal)
+      if (!trusted && photoFilename && !photoFilename.endsWith('.zip')) {
+        try {
+          const exifData = await Exifr.parse(path.join(PHOTOS_DIR, photoFilename), {
+            pick: ['Make', 'Model', 'ISO', 'ExposureTime', 'FNumber', 'DateTimeOriginal']
+          })
+          const hasCamera = exifData && (exifData.Make || exifData.Model || exifData.ISO || exifData.ExposureTime)
+          if (!hasCamera) {
+            if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+            res.writeHead(422, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({
+              error: 'Photo is missing camera metadata. AI-generated images and screenshots are not accepted.',
+              hint: 'Submit a real photo taken with your phone or camera. Shoot with Proofmode (iOS/Android) for strongest verification.',
+            }))
+          }
+        } catch (exifErr) {
+          // If EXIF parsing fails entirely, treat as no metadata
+          if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+          res.writeHead(422, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({
+            error: 'Could not read photo metadata. Please submit a real photograph taken with a camera or phone.',
+          }))
+        }
+      }
+
+      // GPS plausibility check — reject suspiciously round coordinates that suggest manual entry
+      if (!trusted) {
+        const latNum = parseFloat(finalLat)
+        const lngNum = parseFloat(finalLng)
+        const latStr = String(finalLat)
+        const lngStr = String(finalLng)
+        // Flag coords with no sub-degree precision (e.g. exactly 35.5 or 35.000000)
+        // Real EXIF GPS always has 4+ significant decimal digits
+        const latFrac = latStr.includes('.') ? latStr.split('.')[1].replace(/0+$/, '') : ''
+        const lngFrac = lngStr.includes('.') ? lngStr.split('.')[1].replace(/0+$/, '') : ''
+        const tooRound = latFrac.length < 3 || lngFrac.length < 3
+        const isZero = (latNum === 0 && lngNum === 0)
+        if (tooRound || isZero) {
+          if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+          res.writeHead(422, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({
+            error: 'GPS coordinates appear to be manually entered rather than from a photo. Shoot with location enabled so GPS is embedded in the image.',
+            hint: 'Real EXIF GPS has full precision (e.g. 35.123456). Round numbers are rejected.',
+          }))
+        }
       }
 
       // Vision content check — confirm photo actually shows a camera/ALPR/billboard

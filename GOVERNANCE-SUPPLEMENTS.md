@@ -19,7 +19,7 @@ During the bootstrapping period:
 - All commits are public and auditable
 - A GitHub Actions workflow enforces that PRs touching Governance-tier files (TEE logic, disbursement rules, voting weight) cannot be merged without a recorded vote outcome in the PR comments
 
-**Post-bootstrapping:** The Site Agent (TEE-based) takes over merge authority. Founder loses unilateral merge access.
+**Post-bootstrapping:** Site management transitions to Wyoming DAO LLC governed operations with community vote requirements for merges. Founder loses unilateral merge access.
 
 ---
 
@@ -46,7 +46,11 @@ overlap(A, B) = |proposals_voted_by_A ∩ proposals_voted_by_B in past 180 days|
 
 ---
 
-## S3. TEE Architecture — Legal Posture on Subpoenas
+## S3. Platform Architecture — Legal Posture on Subpoenas (Historical TEE Analysis)
+
+> **Note (2026-04-26):** The TEE architecture was evaluated but not adopted. Citeback uses a direct wallet model: operators post their own XMR/ZANO wallets; Citeback never holds funds or private keys. The subpoena posture has fundamentally changed — Citeback cannot be compelled to produce wallet keys it never possessed. The analysis below is preserved for historical reference and may inform future architecture decisions.
+
+---
 
 **Status: Partially resolved. Architecture is a genuine strength with important limitations. Several items require attorney confirmation.**
 
@@ -166,9 +170,11 @@ The platform does not recommend specific off-ramp services. Operators are respon
 
 ---
 
-## S5. TEE Provider Selection
+## S5. Platform Architecture Decision — TEE Evaluated, Direct Wallet Model Adopted
 
-**Resolved: Phala Network + Marlin/Oyster + Azure Confidential Computing.**
+> **Status (2026-04-26):** TEE architecture was evaluated and **not adopted** for Phase 2. Citeback uses the direct wallet model: operators post their own XMR/ZANO wallet addresses; contributions go directly to operator-controlled wallets; Citeback never holds funds or private keys. TEE provider analysis below is preserved for historical reference.
+
+**Original TEE provider evaluation (historical):** Phala Network + Marlin/Oyster + Azure Confidential Computing were evaluated.
 
 ### Security Context (2025/2026)
 
@@ -277,13 +283,13 @@ Hash-linked log entries (SHA-256 chain). Daily hash anchored to Monero's blockch
 | **LocalMonero** | ❌ Shut down Nov 2024 | N/A | Dead — do not reference |
 | **Kraken** | ⚠️ Full KYC, delisted in UK/AU/IE/BE | Full KYC | Wrong fit for this platform |
 
-### Privacy Warning for Donors
+### Privacy Warning for Contributors
 
-Buying XMR via a KYC'd exchange (Kraken, Coinbase, etc.) and sending directly to campaign wallets creates a deanonymization risk: law enforcement can subpoena the exchange for withdrawal records and use blockchain timing analysis to link the donor to the donation.
+Buying XMR via a KYC'd exchange (Kraken, Coinbase, etc.) and sending directly to campaign wallets creates a deanonymization risk: law enforcement can subpoena the exchange for withdrawal records and use blockchain timing analysis to link the contributor to the contribution.
 
-**Recommended donor path for maximum privacy:**
+**Recommended contributor path for maximum privacy:**
 1. Acquire XMR or ZANO via a method compliant with applicable law in your jurisdiction
-2. Broadcast the donation transaction over Tor (Tor Browser or Tails OS)
+2. Broadcast the contribution transaction over Tor (Tor Browser or Tails OS)
 3. Do not reuse Monero addresses
 
 ### Platform Recommendation Page
@@ -300,7 +306,7 @@ The site should include a "How to Donate Privately" guide linking to:
 The following remain as Open Questions in GOVERNANCE.md and cannot be resolved by research or design:
 
 - **Monero + AML legal question:** Whether Monero acceptance is compatible with the OFAC/KYC framework given Monero's privacy features and exchange delistings. FinCEN and FATF have specifically flagged privacy coins.
-- **Legislative advocacy compliance mechanism:** Whether the anonymous donor structure is compatible with LDA/state lobbying disclosure requirements. Attorney must produce a compliant structure or prohibit the campaign type.
+- **Legislative advocacy compliance mechanism:** Whether the anonymous contributor structure is compatible with LDA/state lobbying disclosure requirements. Attorney must produce a compliant structure or prohibit the campaign type.
 - **"Accountability vs. extortion" bright line policy:** Operational definition of where accountability campaigns cross into Hobbs Act territory. Must be attorney-produced and integrated into operator onboarding.
-- **TEE compelled-assistance analysis:** Whether a court can compel *execution* of signing logic (not just key production) under current doctrine. Different from key possession.
+- **Direct wallet compelled-assistance analysis:** Whether a court can compel Citeback to produce view key data or action logs under current doctrine. Platform never holds private keys, substantially reducing exposure.
 - **FISA exposure assessment:** Given the platform's surveillance-resistance mission, whether FISA-tier national security interest is plausible and what that means operationally.

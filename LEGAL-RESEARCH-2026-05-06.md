@@ -1,7 +1,7 @@
 # Citeback Legal Risk Research
 **Prepared:** 2026-05-06  
 **Prepared by:** Remmy (AI Research Assistant)  
-**For:** Scott Hughes, Citeback / Fourthright  
+**For:** Scott Hughes, Citeback  
 **Status:** Pre-attorney engagement research — NOT legal advice. For attorney briefing use only.
 
 > **Methodology note:** Web search was unavailable at time of preparation. Research draws on FinCEN, OFAC, and DOJ primary sources retrieved via web_fetch, combined with comprehensive training-data knowledge of cited statutes, regulations, guidance, and case law through early 2026. All citations should be independently verified before attorney use. Where specific 2025–2026 developments are referenced, they are flagged.

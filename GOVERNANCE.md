@@ -51,7 +51,7 @@
 
 **Disbursement / HOLD State**
 - Auto-release prohibition added: if the original challenge received any affirmative votes, auto-release is prohibited regardless of subsequent quorum failures — a human-review flag is required before release
-- HOLD state clarified: frozen donations apply to new campaign donations only, not existing donor governance participation
+- HOLD state clarified: frozen contributions apply to new campaign contributions only, not existing contributor governance participation
 
 **Staking Freeze Clarified**
 - §8 complaint-triggered freeze applies to disbursement of staked funds only — not operational capacity. Operators under investigation can continue running campaigns
@@ -140,8 +140,8 @@ This platform exists to correct that asymmetry. It enables anonymous, coordinati
 
 ## 2. Participants
 
-### 2.1 Donors
-Anyone who sends Monero to a campaign wallet is a donor. No registration required. No identity collected. Platform records contribution amounts and timing for voting weight only, verified via operator-provided view keys.
+### 2.1 Contributors
+Anyone who sends Monero to a campaign wallet is a contributor. No registration required. No identity collected. Platform records contribution amounts and timing for voting weight only, verified via operator-provided view keys.
 
 ### 2.2 Operators
 Operators create and manage campaigns. They must:
@@ -289,9 +289,9 @@ Donations must be **72+ hours old at proposal submission** to qualify for voting
 
 ### 5.3 Voting Weight Formula
 ```
-weight = max(1, log₂(donation_amount / minimum_threshold) + 1)
+weight = max(1, log₂(contribution_amount / minimum_threshold) + 1)
 ```
-Floor of 1.0 ensures no donation produces negative or zero weight.
+Floor of 1.0 ensures no contribution produces negative or zero weight.
 `minimum_threshold` = $5 initial (Governance-tier parameter, §5.7).
 
 | Donation | Weight |
@@ -327,7 +327,7 @@ Quorum failure: extend 48h (max ×2), then expires with no pass/fail.
 
 **Human review:** DAO legal counsel, 48-hour SLA. If unavailable within SLA, escalates to Major-tier community vote automatically. Cannot be the founder.
 
-During HOLD: new campaign donations frozen; existing donor governance participation unaffected.
+During HOLD: new campaign contributions frozen; existing contributor governance participation unaffected.
 
 ### 5.7 Minimum Threshold Governance
 Governance-tier parameter (75% supermajority, 14-day time-lock). Hard floor: **$1**. Governance immutable (§15).
@@ -405,7 +405,7 @@ This model was chosen deliberately: a surveillance resistance platform that skim
 - After **3 challenges rejected with <25% community support** against the same pair within 90 days → 90-day cooldown for that challenger-operator pair only
 - Challenges receiving 25%+ support are contested (not frivolous) and do not trigger cooldown
 - Experienced challengers (>50% lifetime confirmation rate): threshold raised to 5 frivolous challenges
-- **Challenge eligibility:** reputation ≥ 5 OR donation history ≥ 30 days old
+- **Challenge eligibility:** reputation ≥ 5 OR contribution history ≥ 30 days old
 - **Rate limit:** Max 2 challenges per challenger per 90-day window regardless of outcome
 
 ---
@@ -495,7 +495,7 @@ The pre-screening by the platform entity is the OFAC compliance layer for operat
 - Controversy alone, provided the campaign meets published guidelines
 
 ### 9.5 Wallet Blacklisting Limitation
-Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour donation age, logarithmic weighting, and challenge eligibility.
+Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour contribution age, logarithmic weighting, and challenge eligibility.
 
 ---
 
@@ -503,23 +503,23 @@ Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour do
 
 **Platform Role:** Citeback is a coordination platform, not a custodian. The platform never holds, receives, or transmits campaign funds. Operators post their own wallet addresses; contributions go directly from contributors to operator wallets. The platform monitors balances via operator-provided Monero view keys (read-only).
 
-- Wallet keypair generation (XMR + ZANO) — inside the enclave only
-- Fund receipt and custody
-- Disbursement execution per community-approved rules
-- Cryptographic attestation of execution
-- OFAC screening at disbursement time (§10.4)
+- Operators generate their own XMR/ZANO wallet keypair
+- Contributions flow directly from contributors to operator wallet — platform never touches funds
+- Operator provides a read-only Monero view key so platform can verify balance/activity
+- OFAC screening is operator's responsibility, per ToS and Operator Accountability protocol
+- Early drain of campaign funds = permanent platform ban
 
-### 10.1 Multi-TEE (3 Instances, 2-of-3)
+### 10.1 Direct Wallet Model
 No platform custody. Operators hold their own keys. Platform monitors via view key. Governance immutable (§15).
 
-### 10.2 No Human Key Access
-Never. Governance immutable (§15).
+### 10.2 No Platform Key Access
+Citeback never holds, receives, or controls wallet private keys. Governance immutable (§15).
 
-### 10.3 Near-Zero Custody
-Balances exceeding 120% of active campaign obligations trigger community notification within 24 hours.
+### 10.3 Near-Zero Platform Exposure
+No custodial liability. Platform role is coordination and transparency: publishing wallet addresses, monitoring view-key balances, and enforcing operator accountability rules.
 
-### 10.5 Multi-TEE Failure Recovery
-If the platform monitoring system fails, all campaign activity pauses automatically. A Major-tier vote must be held within 7 days defining recovery: (a) emergency key rotation to new TEE instances, (b) supervised campaign wind-down, or (c) fork. No disbursements occur during recovery without a community-approved plan.
+### 10.5 Platform Monitoring Failure Recovery
+If the platform monitoring system fails, all campaign activity pauses automatically. A Major-tier vote must be held within 7 days defining recovery: (a) restore monitoring with operator re-attestation, (b) supervised campaign wind-down, or (c) fork. No new campaigns are accepted during recovery without a community-approved plan.
 
 ### 10.4 Threat Model
 Published and community-ratified before launch. Must address side-channel risks, provider dependencies, supply-chain trust.
@@ -565,13 +565,13 @@ All changes via GitHub. Classification governed by §6.2 canonical list — this
 ### 14.1 Founder Voting Restriction
 No votes during bootstrapping. After: permanently capped at **5% of any vote total**. Founders cannot vote on their own ceiling removal (§15).
 
-### 14.2 TEE-Enforced Founder Address Registry
+### 14.2 Founder Address Registry
 Encoded in platform rules at launch. Cannot be modified by any vote. Founder taint tracking: 3-hop minimum, 50% decay per hop. Any account with >1% residual founder taint counts fully toward the 5% cap — no further discounting. Wallet transfers from founder addresses flagged for community review.
 
 ### 14.3 Bootstrapping End Conditions
 All three must be met:
 1. Platform has been live for at least **6 months**
-2. **3 qualifying governance votes** within a 90-day window (50-voter quorum, median donation ≥ $20, without founder participation)
+2. **3 qualifying governance votes** within a 90-day window (50-voter quorum, median contribution ≥ $20, without founder participation)
 3. **30-day transition period** where both governance regimes apply simultaneously
 
 **Stagnation escape:** If platform has been active for **36 months** without meeting conditions 1-2, bootstrapping ends automatically. Post-escape governance is identical to post-bootstrapping — founder retains permanent 5% cap, all standard tiers apply. No constraints are relaxed.

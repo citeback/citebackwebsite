@@ -136,7 +136,7 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - WCAG AA contrast compliance ✅
 - Focus traps on all modals ✅
 - Mobile responsive on iPhone (390px) ✅
-- No Fourthright references anywhere ✅
+- No outdated branding references ✅
 - robots.txt published ✅
 - sitemap.xml published ✅
 - FrontlineFunds component exists ✅

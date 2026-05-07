@@ -332,7 +332,7 @@ When a campaign deadline passes and funds redirect, donors won't know unless the
 ---
 
 ## Also: Rename ARCHITECTURE.md Header
-The file still says "Fourthright — System Architecture" at the top. Should be "Citeback."
+ARCHITECTURE.md has been updated: Citeback branding confirmed, direct wallet model adopted (TEE scrapped), diagram and all sections updated. ✅ RESOLVED (2026-05-07)
 
 ---
 
