@@ -523,7 +523,7 @@ function openItemPopup(map, entry, latlng) {
 }
 
 // ─── Unified tap handler + ALPR canvas renderer ──────────────────────────────
-function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
+function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osmCount }) {
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng
@@ -535,7 +535,7 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
       const nearby = []
 
       // ALPR cameras (canvas layer)
-      if (cameras.length && activeLayers.has('alpr')) {
+      if (cameras.length && (activeLayers.has('alpr') || activeLayers.has('dual'))) {
         let nearest = null, minDist = Infinity
         for (const c of cameras) {
           const d = distanceM(lat, lng, c.lat, c.lon)
@@ -623,13 +623,19 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
     const layer = L.geoJSON(geojson, {
       pointToLayer: (feature, latlng) => {
         const dual = dualVerifiedIds && dualVerifiedIds.has(feature.properties.id)
+        // If this is a dual-verified camera but that layer is off, hide it or show as OSM-only
+        const showAsDual = dual && activeLayers.has('dual')
+        const showAsOSM = !dual && activeLayers.has('alpr')
+        const showAsDualAsOSM = dual && !activeLayers.has('dual') && activeLayers.has('alpr')
+        const visible = showAsDual || showAsOSM || showAsDualAsOSM
         return L.circleMarker(latlng, {
           renderer,
           radius: touch ? 8 : 5,
-          fillColor: dual ? '#f97316' : '#e63946',
-          fillOpacity: dual ? 0.9 : 0.65,
-          color: dual ? 'rgba(249,115,22,0.5)' : 'rgba(230,57,70,0.35)',
+          fillColor: showAsDual ? '#f97316' : '#e63946',
+          fillOpacity: visible ? (showAsDual ? 0.9 : 0.65) : 0,
+          color: visible ? (showAsDual ? 'rgba(249,115,22,0.5)' : 'rgba(230,57,70,0.35)') : 'transparent',
           weight: touch ? 2 : 1,
+          interactive: visible,
         })
       },
     })
@@ -775,7 +781,7 @@ const LAYER_BLURBS = {
   predictive: 'Algorithms that score residents as future criminals, directing police based on bias-amplifying data.',
 }
 
-function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVictories, communitySightings }) {
+function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVictories, communitySightings, dualVerifiedIds, osmCount }) {
   const [expandedBlurb, setExpandedBlurb] = useState(null)
 
   const toggle = (id) => {
@@ -859,44 +865,58 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         )
       })}
 
-      {/* Community reports */}
+      {/* Citeback verification tiers */}
       <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
-      <button
-        onClick={() => toggle('community')}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: activeLayers.has('community') ? 'rgba(230,57,70,0.07)' : 'transparent',
-          border: `1px solid ${activeLayers.has('community') ? 'rgba(230,57,70,0.35)' : 'var(--border)'}`,
-          borderRadius: 8, padding: '8px 10px',
-          cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
-        }}
-      >
-        <span style={{ fontSize: 14 }}>📍</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: activeLayers.has('community') ? 'var(--text)' : 'var(--muted)', lineHeight: 1.2 }}>Citeback Verified</div>
-          {communitySightings.length > 0 ? (
-            <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f97316', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ color: '#f97316' }}>{communitySightings.filter(s => !s.newCamera).length} confirmed with OSM</span>
+
+      {[{
+        id: 'alpr',
+        color: '#e63946',
+        icon: '🔴',
+        label: 'OSM Only',
+        desc: 'Documented by OpenStreetMap contributors — not yet Citeback-verified',
+        count: osmCount - (dualVerifiedIds?.size || 0),
+        countLabel: 'cameras in database',
+      }, {
+        id: 'dual',
+        color: '#f97316',
+        icon: '🟠',
+        label: 'OSM + Citeback',
+        desc: 'Verified by both OpenStreetMap and a Citeback C2PA field submission',
+        count: dualVerifiedIds?.size || 0,
+        countLabel: 'dual-verified cameras',
+      }, {
+        id: 'cb-exclusive',
+        color: '#f59e0b',
+        icon: '⭐',
+        label: 'Citeback Exclusive',
+        desc: 'Discovered only by Citeback community — not in OpenStreetMap or any other database',
+        count: communitySightings.filter(s => s.newCamera).length,
+        countLabel: 'unique discoveries',
+      }].map(tier => {
+        const isOn = activeLayers.has(tier.id)
+        return (
+          <button key={tier.id}
+            onClick={() => toggle(tier.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              background: isOn ? `${tier.color}14` : 'transparent',
+              border: `1px solid ${isOn ? `${tier.color}55` : 'var(--border)'}`,
+              borderRadius: 8, padding: '8px 10px', marginBottom: 4,
+              cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
+            }}
+          >
+            <span style={{ fontSize: 13 }}>{tier.icon}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? 'var(--text)' : 'var(--muted)', lineHeight: 1.2 }}>{tier.label}</div>
+              <div style={{ fontSize: 10, color: tier.color, marginTop: 2, opacity: 0.85 }}>
+                {tier.count.toLocaleString()} {tier.countLabel}
               </div>
-              <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ color: '#f59e0b' }}>{communitySightings.filter(s => s.newCamera).length} Citeback-exclusive</span>
-              </div>
+              {isOn && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2, lineHeight: 1.4 }}>{tier.desc}</div>}
             </div>
-          ) : (
-            <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>Be first — submit a C2PA sighting</div>
-          )}
-        </div>
-      </button>
-      {/* Map legend */}
-      <div style={{ marginTop: 8, padding: '8px 10px', background: 'var(--bg3)', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.06em', marginBottom: 2 }}>MAP LEGEND</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} /> OSM only</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f97316', display: 'inline-block', flexShrink: 0 }} /> OSM + Citeback verified</div>
-        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} /> Citeback exclusive</div>
-      </div>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: isOn ? tier.color : 'var(--border)', flexShrink: 0, transition: 'background 0.15s' }} />
+          </button>
+        )
+      })}
 
       {/* Victories divider */}
       <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
@@ -935,7 +955,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
 export default function CameraMap() {
   const cameraCount = useCameraCount()
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
-  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive', 'community']))
+  const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'dual', 'cb-exclusive', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive']))
   const [communitySightings, setCommunitySightings] = useState([])
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
@@ -1439,11 +1459,11 @@ export default function CameraMap() {
             </CircleMarker>
           ))}
 
-          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} dualVerifiedIds={dualVerifiedIds} />
+          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} />
 
           {/* Community sightings: only show Citeback-EXCLUSIVE cameras (red)
               Dual-verified ones are shown on the OSM layer as gold — no double markers */}
-          {activeLayers.has('community') && communitySightings
+          {activeLayers.has('cb-exclusive') && communitySightings
             .filter(s => s.newCamera === true && s.lat && s.lng)
             .map((s, i) => (
             <CircleMarker
@@ -1524,13 +1544,14 @@ export default function CameraMap() {
               backdropFilter: 'blur(12px)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
               maxHeight: 460, overflowY: 'auto',
-            }}>
+              scrollbarWidth: 'thin', scrollbarColor: 'var(--muted) transparent',
+            }} className="layers-scroll">
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
                 <Shield size={13} style={{ color: '#a855f7' }} />
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg)', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
-              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} communitySightings={communitySightings} />
+              <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} communitySightings={communitySightings} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} />
 
               <div style={{
                 marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border)',
