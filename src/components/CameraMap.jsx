@@ -1037,8 +1037,8 @@ export default function CameraMap() {
   }
 
   const submitCamera = async () => {
-    if (!form.lat || !form.lng || !form.location) return
     if (!form.photoFile) { alert('A C2PA-verified photo is required. Use Proofmode (iOS/Android), Samsung Galaxy S24+, or Google Pixel 10.'); return }
+    if (!form.lat || !form.lng) { alert('Location required. Click "Use GPS" to detect your current location, or enter coordinates manually.'); return }
     try {
       const token = localStorage.getItem('citeback_token')
       const fd = new FormData()
@@ -1293,8 +1293,14 @@ export default function CameraMap() {
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 14 }}>
-                <AlertCircle size={13} /> C2PA photo required. Verified submissions go live instantly.
+                <AlertCircle size={13} /> C2PA photo required. Verified submissions go live instantly — no review queue.
               </div>
+              {mapGpsStatus === 'none' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#f59e0b', marginBottom: 10 }}>
+                  <AlertCircle size={12} />
+                  No GPS found in photo — click <strong style={{ margin: '0 4px' }}>Use GPS</strong> to use your current location, or enter coordinates manually.
+                </div>
+              )}
               {/* Location row — auto from photo GPS or manual */}
               {mapGpsStatus === 'found' ? (
                 <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
