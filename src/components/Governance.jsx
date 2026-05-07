@@ -165,7 +165,7 @@ export default function Governance({ setTab }) {
       <Section id="participants" title="Participants" icon={Users}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {[
-            { label: 'Donors', color: 'var(--green)', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative donations.' },
+            { label: 'Donors', color: 'var(--green)', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
             { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
             { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator — manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (TEE-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
@@ -207,8 +207,8 @@ export default function Governance({ setTab }) {
       <Section id="voting" title="Voting Mechanics" icon={CheckCircle}>
         <p>Voting power is proportional to economic participation. A logarithmic curve rewards participation while limiting concentration.</p>
         <p style={{ marginTop: 12, fontWeight: 600, color: 'var(--fg)' }}>Weight Formula:</p>
-        <Code>weight = max(1, log₂(donation / $5) + 1){'\n\n'}Floor: 1.0 — no donation produces negative or zero weight{'\n'}$5 donation  → weight 1.0{'\n'}$10 donation → weight 2.0{'\n'}Cap: $1,280   → weight 9.0 (maximum)</Code>
-        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>72-hour rule:</strong> Donations must be at least 72 hours old at proposal submission to qualify. No last-minute flooding.</p>
+        <Code>weight = max(1, log₂(contribution / $5) + 1){'\n\n'}Floor: 1.0 — no contribution produces negative or zero weight{'\n'}$5 contribution  → weight 1.0{'\n'}$10 contribution → weight 2.0{'\n'}Cap: $1,280   → weight 9.0 (maximum)</Code>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>72-hour rule:</strong> Contributions must be at least 72 hours old at proposal submission to qualify. No last-minute flooding.</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Quorum requirements:</strong></p>
         <Table
           headers={['Change Tier', 'Quorum', 'Vote to Pass', 'Time-lock']}
@@ -234,7 +234,7 @@ export default function Governance({ setTab }) {
             ['$2,000 and above', 'Hold', '60% majority to approve'],
           ]}
         />
-        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign donations. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 — see governance rationale below.</p>
+        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign contributions. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 — see governance rationale below.</p>
       </Section>
 
       <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC — §9)" icon={Users}>
@@ -250,7 +250,7 @@ export default function Governance({ setTab }) {
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', borderLeft: '3px solid #a78bfa' }}>
             <strong style={{ color: '#a78bfa' }}>OFAC Screening — Two Layers (§9.3)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> TEE automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO donor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> TEE automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #60a5fa' }}>
             <strong style={{ color: '#60a5fa' }}>Community accountability for the platform entity (§9.2)</strong>
@@ -282,7 +282,7 @@ export default function Governance({ setTab }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
           {[
             'Platform has been live for at least 6 months',
-            '3 qualifying governance votes within a 90-day window (50-voter quorum, median donation ≥ $20, without founder participation)',
+            '3 qualifying governance votes within a 90-day window (50-voter quorum, median contribution ≥ $20, without founder participation)',
             '30-day transition period where both governance regimes apply simultaneously',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>

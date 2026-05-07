@@ -474,7 +474,7 @@ export default function CampaignModal({ campaign, onClose }) {
 
               {/* Official domains disclaimer */}
               <div style={{ background: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: 10, padding: '12px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.65 }}>
-                ⚠️ <strong style={{ color: '#f39c12' }}>Only donate from an official Citeback domain.</strong>{' '}
+                ⚠️ <strong style={{ color: '#f39c12' }}>Only contribute to campaigns from an official Citeback domain.</strong>{' '}
                 Official sites: citeback.com · citeback.net · citeback.org
               </div>
             </>

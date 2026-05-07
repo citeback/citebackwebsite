@@ -34,7 +34,7 @@ const tracks = [
     label: 'Operator',
     tag: 'Organizers · Advocates · Community Leads',
     description:
-      'Run a campaign on behalf of your community. Operators propose actions, manage public documentation, and coordinate with funded parties — all without exposing donor identities.',
+      'Run a campaign on behalf of your community. Operators propose actions, manage public documentation, and coordinate with funded parties — all without exposing contributor identities.',
     details: [
       'Propose campaigns for community review',
       'Manage public-facing documentation',

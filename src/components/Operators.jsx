@@ -206,7 +206,7 @@ export default function Operators() {
           <li>Funds disburse milestone-by-milestone as verified deliverables are submitted</li>
           <li>Campaign closes with a public outcome record</li>
         </ol>
-        <p style={{ marginTop: 12 }}>All donations are final and non-refundable. Campaign wallets are operator-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
+        <p style={{ marginTop: 12 }}>All contributions are final and non-refundable. Campaign wallets are operator-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
       </Accordion>
 
       {/* CTA */}

@@ -17,12 +17,12 @@ export default function PrivacyPolicy() {
           title: '1. Overview',
           body: `Citeback is a surveillance resistance platform. We are committed to collecting as little data as possible about our visitors and donors. This policy documents what data flows occur when you use this site and why.
 
-Donation privacy is handled at the cryptocurrency protocol level (Monero XMR, Zano ZANO) — not by us. We cannot see who donated, how much, or from where. This policy covers site browsing and form submissions only.`,
+Contribution privacy is handled at the cryptocurrency protocol level (Monero XMR, Zano ZANO) — not by us. We cannot see who contributed, how much, or from where. This policy covers site browsing and form submissions only.`,
         },
         {
           title: '2. Data We Do Not Collect',
           body: `We do not:
-• Require account creation to browse or donate
+• Require account creation to browse or contribute
 • Collect names, email addresses, or identifiers from visitors
 • Use cookies, tracking pixels, or analytics scripts
 • Use Google Analytics, Facebook Pixel, or any behavioral tracking
@@ -39,7 +39,7 @@ There is no account system. There is no login. There is no newsletter.`,
 • CARTO (map tiles): The surveillance camera map loads tiles from *.basemaps.cartocdn.com. CARTO receives tile request data including IP addresses. See carto.com/privacy.
 • CourtListener, USASpending.gov, api.congress.gov, Senate LDA: Some features make client-side API requests to these public services, which may log your IP address.
 
-For maximum privacy while browsing: use Tor Browser, a trusted VPN, or a privacy proxy. Your donation privacy is at the cryptocurrency protocol layer and is not affected by browsing method.`,
+For maximum privacy while browsing: use Tor Browser, a trusted VPN, or a privacy proxy. Your contribution privacy is at the cryptocurrency protocol layer and is not affected by browsing method.`,
         },
         {
           title: '4. Form Submissions — What We Store and What We Don\u2019t',
@@ -60,15 +60,15 @@ What we do not collect in any form: your name, your email address, cookies, devi
 Operator identity information may be subject to legal process. The privacy protections described in this policy do not apply to operator identity data collected for legal compliance purposes.`,
         },
         {
-          title: '6. Donation Privacy',
-          body: `Donations are made in Monero (XMR) or Zano (ZANO). Both are privacy cryptocurrencies that enforce transaction privacy at the protocol level:
+          title: '6. Privacy When Contributing',
+          body: `Contributions are sent in Monero (XMR) or Zano (ZANO). Both are privacy cryptocurrencies that enforce transaction privacy at the protocol level:
 
 • Monero: Ring signatures, stealth addresses, and RingCT hide sender identity, recipient address, and transaction amount on-chain.
 • Zano: Confidential assets hide sender, recipient, amount, and asset type at the protocol level.
 
-Citeback cannot identify donors. We cannot comply with legal demands to identify donors because the information does not exist. This is a structural property of the cryptocurrencies used — not a policy promise.
+Citeback cannot identify contributors. We cannot comply with legal demands to identify contributors because the information does not exist. This is a structural property of the cryptocurrencies used — not a policy promise.
 
-OFAC note: Donations from OFAC-sanctioned individuals are prohibited by our Terms of Use. The platform has no technical ability to screen anonymous donors on-chain. See the OFAC gap disclosure in our How It Works section for full detail.`,
+OFAC note: Contributions from OFAC-sanctioned individuals are prohibited by our Terms of Use. The platform has no technical ability to screen anonymous contributors on-chain. See the OFAC gap disclosure in our How It Works section for full detail.`,
         },
         {
           title: '7. Changes to This Policy',

@@ -46,26 +46,26 @@ If you do not agree to these terms, do not use the Site or send funds to any cam
           title: '2. What Citeback Is',
           body: `Citeback is a pre-launch crowdfunding platform designed to fund surveillance resistance campaigns — including FOIA requests, legal challenges, and ordinance campaigns — using privacy cryptocurrencies (Monero XMR and Zano ZANO). Citeback is organized as a Wyoming DAO LLC (formation is a pre-launch prerequisite and has not yet been completed as of this writing).
 
-Citeback is not a charitable organization. Donations are not tax-deductible. Citeback does not provide legal services and nothing on this Site constitutes legal advice.`,
+Citeback is not a charitable organization. Contributions are not tax-deductible. Citeback does not provide legal services and nothing on this Site constitutes legal advice.`,
         },
         {
           title: '3. No Wallets Are Live',
           body: `As of the date of this draft, no campaign wallets have been activated and no funds are being accepted. This site is in a pre-launch state. Wallet addresses will only be published after all 16 public launch prerequisites are verified and disclosed (see GOVERNANCE.md Launch Prerequisites for the full list). Do not send funds to any address claiming to represent Citeback until official wallet addresses are published through the verified GitHub repository.`,
         },
         {
-          title: '4. Donation Terms',
+          title: '4. Contribution Terms',
           body: `When campaign wallets activate:
 
-• All donations are final and non-refundable. Monero's privacy model makes identifying senders technically infeasible; Citeback will not ask donors to deanonymize themselves to facilitate refunds.
+• All contributions are final and non-refundable. Monero's privacy model makes identifying senders technically infeasible; Citeback will not ask donors to deanonymize themselves to facilitate refunds.
 • If a campaign does not reach its goal by the deadline, funds redirect to the highest-priority active campaign in the same category. Operators or community members may request an extension vote. After two extensions, redirect is automatic.
-• Donations are not tax-deductible. Citeback is a Wyoming DAO LLC, not a 501(c)(3) exempt organization.
-• Citeback takes no platform fee from campaign donations. Zero percent is deducted. All donated funds go directly to the campaign operator\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
+• Contributions are not tax-deductible. Citeback is a Wyoming DAO LLC, not a 501(c)(3) exempt organization.
+• Citeback takes no platform fee from campaign contributions. Zero percent is deducted. All campaign funds go directly to the campaign operator\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
         },
         {
           title: '5. OFAC Compliance',
-          body: `Donations from individuals or entities on the U.S. Treasury OFAC Specially Designated Nationals (SDN) list are strictly prohibited. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise subject to U.S. sanctions.
+          body: `Contributions from individuals or entities on the U.S. Treasury OFAC Specially Designated Nationals (SDN) list are strictly prohibited. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise subject to U.S. sanctions.
 
-OFAC gap disclosure: Because Monero and Zano transactions are private at the protocol level, the platform has no technical ability to screen anonymous donors against the OFAC SDN list. This structural limitation is documented in GOVERNANCE.md §9.3. The Terms prohibition is a binding legal condition; on-chain enforcement is not possible on the donor side. Campaign disbursement recipients (operators) are separately screened against the OFAC SDN list before onboarding and at every disbursement event.
+OFAC gap disclosure: Because Monero and Zano transactions are private at the protocol level, the platform has no technical ability to screen anonymous contributors against the OFAC SDN list. This structural limitation is documented in GOVERNANCE.md §9.3. The Terms prohibition is a binding legal condition; on-chain enforcement is not possible on the contributor side. Campaign disbursement recipients (operators) are separately screened against the OFAC SDN list before onboarding and at every disbursement event.
 
 No campaign wallets go live until written attorney guidance on this gap is received.`,
         },
@@ -81,7 +81,7 @@ No campaign wallets go live until written attorney guidance on this gap is recei
 
 You may not use this Site to:
 • Submit false, fraudulent, or malicious camera locations or campaign proposals
-• Attempt to identify donors, operators, or other participants
+• Attempt to identify contributors, operators, or other participants
 • Interfere with the TEE attestation system or governance mechanisms
 • Use the platform to fund activities that are unlawful in the relevant jurisdiction
 • Violate OFAC sanctions or any applicable financial sanctions regime`,
@@ -105,7 +105,7 @@ Fraudulent proof submissions result in permanent misconduct flags and forfeiture
           title: '9. Limitation of Liability',
           body: `TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, CITEBACK AND ITS OPERATORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF YOUR USE OF THE SITE OR DONATION TO ANY CAMPAIGN.
 
-Citeback charges no platform fee on campaign donations. Citeback's total liability for any claim arising out of these Terms shall not exceed the greater of (a) US $10.00 or (b) the amount of any voluntary tip or payment you made directly to the Citeback platform (excluding campaign donations, which flow entirely to operators) in the twelve months preceding the claim.`,
+Citeback charges no platform fee on campaign contributions. Citeback's total liability for any claim arising out of these Terms shall not exceed US $10.00.`,
         },
         {
           title: '10. Modifications',

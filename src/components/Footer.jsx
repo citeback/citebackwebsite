@@ -104,8 +104,8 @@ export default function Footer({ setTab }) {
         lineHeight: 1.7,
         marginBottom: 12,
       }}>
-        Donations to Citeback are <strong>not tax-deductible</strong>. Citeback is a Wyoming DAO LLC (in formation), not a 501(c)(3) charitable organization.
-        All donations are final and non-refundable. Content on this site is for educational purposes only and does not constitute legal advice.{' '}
+        Contributions to Citeback campaigns are <strong>not tax-deductible</strong>. Citeback is a Wyoming DAO LLC (in formation), not a 501(c)(3) charitable organization.
+        All contributions are final and non-refundable. Content on this site is for educational purposes only and does not constitute legal advice.{' '}
         Questions, press inquiries, or operator applications: <a href="mailto:citeback@proton.me" style={{ color: 'inherit', textDecoration: 'underline' }}>citeback@proton.me</a>
       </div>
 
