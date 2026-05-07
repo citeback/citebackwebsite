@@ -7,7 +7,7 @@ const stats = [
   { value: '$14,050', label: 'Total campaign funding goals' },
   { value: '$0', label: 'Raised to date — wallets not yet live' },
   { value: '4/16', label: 'Launch prerequisites cleared' },
-  { value: 'XMR + ZANO', label: 'No account. No ID. No credit card.' },
+  { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
 ]
 
 export default function Hero({ setTab }) {
@@ -183,7 +183,7 @@ export default function Hero({ setTab }) {
               fontWeight: 400,
               marginBottom: 40,
             }}>
-              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — funded with Monero (XMR) or Zano, privacy cryptocurrencies that leave no on-chain link between sender and recipient. No account. No contributor identity collected. Your contribution is private at the protocol level.
+              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — funded with Monero (XMR) or Zano, privacy cryptocurrencies that leave no on-chain link between sender and recipient. Contributors need no account and no ID — your contribution is private at the protocol level. Operators who run campaigns create a free account to ensure accountability.
             </p>
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
