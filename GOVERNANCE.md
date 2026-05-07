@@ -369,6 +369,22 @@ Classification decisions require active confirmation from **3 reputation-weighte
 
 ## 7. Disbursement
 
+### 7.0 Two-Wallet Model
+
+Every campaign uses two distinct wallets:
+
+**Collection wallet** — Created and controlled by the platform wallet system. This is the address published on the campaign page where contributors send funds. **No operator has access to this wallet at any time during an active campaign.** The platform wallet system holds these keys exclusively.
+
+**Payout address** — The operator’s own wallet address, provided at campaign creation. This is where funds are sent *after* a campaign successfully completes, milestones are verified, and the challenge window closes without a block.
+
+**Early withdrawal protection:** An operator cannot access collection wallet funds during an active campaign — because they do not hold the keys. Any attempt to circumvent this (e.g., submitting false proof to trigger early disbursement, social engineering the platform, or exploiting a wallet system bug to extract funds before campaign completion) constitutes an Immutable violation and results in:
+- Immediate permanent ban from the platform
+- All active campaign stakes forfeited
+- Permanent public misconduct record
+- Referral to applicable law enforcement if funds were extracted
+
+This protection is architectural — operators cannot drain collection wallets because they never hold those keys.
+
 ### 7.1 Rolling Volume (Total Operator)
 The $2,000 threshold applies to **total operator rolling volume across all campaigns in the past 90 days**.
 

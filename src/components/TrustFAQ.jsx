@@ -75,7 +75,7 @@ const sections = [
       },
       {
         q: 'What stops someone from grinding reputation then stealing a large campaign fund?',
-        a: `Several layers:\n\n1. At launch, no human holds wallet keys — the wallet system holds funds, not operators. Operators submit proof and receive payment, they don't hold the campaign wallet.\n\n2. The 48-hour challenge window catches fraudulent proofs before disbursement.\n\n3. Reputation caps mean you need a real track record (not just grinded small jobs) to access large campaigns.\n\n4. Confirmed misconduct is permanent and public — there's no clean escape.\n\n5. Any community member with sufficient reputation (score ≥ 25) can trigger a 12-hour provisional pause if something looks wrong. The pause is then put to a community vote to confirm or expire.\n\nCould someone game this? Theoretically. But the cost-benefit is heavily weighted against it.`,
+        a: `Several layers:\n\n1. Two-wallet architecture: operators provide a payout address but never hold the collection wallet keys. Contributions arrive in a platform-controlled wallet — not the operator's. An operator literally cannot drain a campaign before it succeeds because they have no access to the collection wallet.\n\n2. Early withdrawal = permanent ban. Any attempt to extract funds before campaign completion (false proof, social engineering, or exploit) results in immediate permanent blacklisting, stake forfeiture, and public misconduct record.\n\n3. The 48-hour community challenge window catches fraudulent proof submissions before any disbursement is triggered.\n\n4. Reputation caps mean you need a real execution track record to access large campaigns — you can't create a throwaway account and immediately run a $7,500 campaign.\n\n5. Confirmed misconduct is permanent and public — there's no clean escape or second chance after an upheld challenge.\n\n6. Any community member with sufficient reputation (score ≥ 25) can trigger a provisional pause if something looks wrong.`,
       },
       {
         q: 'Can campaigns be extended if they\'re close to their goal?',
@@ -220,7 +220,7 @@ export default function TrustFAQ({ setTab }) {
       {/* Trust Pillars */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 48 }}>
         {[
-          { icon: '🔐', title: 'No Human Keyholders', desc: 'At launch: no human holds keys. Not even the founder.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
+          { icon: '🔐', title: 'Platform-Controlled Collection', desc: 'Operators provide a payout address. Contributions go to a platform-held wallet — not the operator. Funds move only after the campaign succeeds.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
           { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'View on GitHub' },
           { icon: '🔍', title: 'Verifiable Proofs', desc: 'Cryptographic attestation proves what\'s running.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Attestation spec', prelaunch: 'Live attestation published at mainnet' },
           { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'Governance doc' },

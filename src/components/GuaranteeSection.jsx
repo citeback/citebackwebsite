@@ -1,5 +1,5 @@
 const facts = [
-  'No human holds the keys — wallet architecture is finalized and published before any funds go live',
+  'Platform holds the collection wallet during every campaign — operators cannot access contributions before a campaign succeeds',
   'Multi-party threshold signatures — a single compromised server cannot unlock funds',
   'Minimum 3 independent wallet nodes across separate hardware providers — a hard launch prerequisite',
   'Wyoming DAO LLC formation — a hard launch prerequisite before wallets activate',
@@ -54,7 +54,7 @@ export default function GuaranteeSection({ setTab }) {
               marginBottom: '36px',
             }}
           >
-            At launch: no human holds the keys.
+            Platform-controlled collection wallets. Operators can’t touch contributions until their campaign succeeds.
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
