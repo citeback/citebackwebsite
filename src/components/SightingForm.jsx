@@ -1,23 +1,10 @@
-import { useState, useCallback, useRef } from 'react'
-import { CheckCircle, AlertCircle, Eye, MapPin, Loader, Shield, Star, Camera, X } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { CheckCircle, AlertCircle, Eye, Loader, Shield, Star, Camera, X, MapPin } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 import * as Exifr from 'exifr'
 
 const AI_URL = 'https://ai.citeback.com'
-
-async function geocodeAddress(address, city, state) {
-  const q = encodeURIComponent([address, city, state, 'USA'].filter(Boolean).join(', '))
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
-      { headers: { 'User-Agent': 'citeback.com surveillance map' } }
-    )
-    const data = await res.json()
-    if (data[0]) return { lat: data[0].lat, lng: data[0].lon, display: data[0].display_name }
-  } catch {}
-  return null
-}
 
 const CAMERA_TYPES = [
   { id: 'alpr', label: 'ALPR / License Plate Reader', desc: 'Flock Safety, Motorola, Genetec, or similar' },
@@ -32,22 +19,16 @@ export default function SightingForm({ setTab }) {
   const { user, isLoggedIn, token } = useAuth()
   const [repEarned, setRepEarned] = useState(null)
   const [showClaimModal, setShowClaimModal] = useState(false)
+  const [cameraType, setCameraType] = useState('')
+  const [notes, setNotes] = useState('')
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
-  const [photoGPS, setPhotoGPS] = useState(null) // { lat, lng } extracted from photo EXIF
-  const [gpsStatus, setGpsStatus] = useState(null) // null | 'reading' | 'found' | 'none'
-  const [form, setForm] = useState({ cameraType: '', address: '', city: '', state: '', notes: '', honeypot: '' })
-  const [geo, setGeo] = useState(null)
-  const [geoStatus, setGeoStatus] = useState(null)
+  const [photoGPS, setPhotoGPS] = useState(null)   // { lat, lng }
+  const [gpsStatus, setGpsStatus] = useState(null)  // null | 'reading' | 'found' | 'none'
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
-  const [error, setError] = useState(null) // string | null
+  const [error, setError] = useState(null)          // null | 'c2pa' | 'no_gps' | 'generic'
   const fileInputRef = useRef(null)
-
-  const set = (k, v) => {
-    setForm(f => ({ ...f, [k]: v }))
-    if (['address', 'city', 'state'].includes(k)) { setGeo(null); setGeoStatus(null) }
-  }
 
   const handlePhoto = async (e) => {
     const file = e.target.files?.[0]
@@ -57,12 +38,10 @@ export default function SightingForm({ setTab }) {
     setGpsStatus('reading')
     setError(null)
 
-    // Show preview
     const reader = new FileReader()
     reader.onload = ev => setPhotoPreview(ev.target.result)
     reader.readAsDataURL(file)
 
-    // Extract GPS from EXIF
     try {
       const gps = await Exifr.gps(file)
       if (gps?.latitude && gps?.longitude) {
@@ -84,50 +63,23 @@ export default function SightingForm({ setTab }) {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  const resolveLocation = useCallback(async () => {
-    if (!form.address || !form.city || !form.state) return
-    setGeoStatus('resolving')
-    setGeo(null)
-    const result = await geocodeAddress(form.address, form.city, form.state)
-    if (result) { setGeo(result); setGeoStatus('resolved') }
-    else setGeoStatus('failed')
-  }, [form.address, form.city, form.state])
-
-  // Address required only if photo has no GPS
-  const hasLocation = photoGPS || (form.address && form.city && form.state)
-  const canSubmit = form.cameraType && hasLocation && photoFile && !sending
+  const canSubmit = cameraType && photoFile && gpsStatus === 'found' && !sending
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (form.honeypot) return
     if (!canSubmit) return
     setSending(true)
     setError(null)
 
-    let coords = geo
-    if (!coords) {
-      coords = await geocodeAddress(form.address, form.city, form.state)
-      if (coords) { setGeo(coords); setGeoStatus('resolved') }
-    }
-
     try {
-      // Use photo GPS if available (more accurate, C2PA-signed), else geocoded address
-      const finalLat = photoGPS?.lat ?? coords?.lat ?? ''
-      const finalLng = photoGPS?.lng ?? coords?.lng ?? ''
-
       const fd = new FormData()
-      fd.append('cameraType', form.cameraType)
-      fd.append('address', form.address || '')
-      fd.append('city', form.city || '')
-      fd.append('state', form.state || '')
-      fd.append('notes', form.notes)
-      fd.append('lat', finalLat)
-      fd.append('lng', finalLng)
+      fd.append('cameraType', cameraType)
+      fd.append('notes', notes)
+      fd.append('lat', photoGPS.lat)
+      fd.append('lng', photoGPS.lng)
       fd.append('photo', photoFile)
 
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
-      // Note: do NOT set Content-Type — browser sets it with multipart boundary automatically
-
       const res = await fetch(`${AI_URL}/sighting`, { method: 'POST', headers, body: fd })
       const data = await res.json().catch(() => ({}))
 
@@ -143,7 +95,6 @@ export default function SightingForm({ setTab }) {
         }
         setSubmitted(true)
       } else if (res.status === 422) {
-        // C2PA not detected
         setError('c2pa')
       } else {
         setError('generic')
@@ -181,36 +132,24 @@ export default function SightingForm({ setTab }) {
           Report a Surveillance Sighting
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 15, lineHeight: 1.7, maxWidth: 520 }}>
-          Spotted a license plate reader, ShotSpotter, or surveillance camera?
-          Submit a C2PA-verified photo. It goes live on the map instantly — no review queue.
+          Take a C2PA-verified photo of the camera. The location is read directly from the photo — no manual entry.
+          Verified sightings go live on the map instantly.
         </p>
 
-        {/* Auth / C2PA info banner */}
         {isLoggedIn ? (
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16,
-            background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)',
-            borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
-          }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16, background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
             <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
             <div>
               <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>
-              {' '}· C2PA photo = <strong style={{ color: '#10b981' }}>+1 pt</strong> (existing camera) or{' '}
-              <strong style={{ color: '#10b981' }}>+2 pts</strong> (new discovery).<br />
-              Shoot with{' '}
-              <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-              (iOS/Android, free) · Samsung Galaxy S24+ · Google Pixel 10
+              {' '}· C2PA photo = <strong style={{ color: '#10b981' }}>+1 pt</strong> (existing camera) or <strong style={{ color: '#10b981' }}>+2 pts</strong> (new discovery)<br />
+              Shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> (iOS/Android, free) · Samsung Galaxy S24+ · Google Pixel 10
             </div>
           </div>
         ) : (
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16,
-            background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)',
-            borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
-          }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16, background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
             <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
             <span>
-              <strong style={{ color: 'var(--text)' }}>Anonymous submissions accepted.</strong>{' '}
+              Anonymous submissions accepted.{' '}
               <button onClick={() => setTab('reputation')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 12, padding: 0 }}>Create an account</button>{' '}
               to earn reputation points for verified sightings.
             </span>
@@ -218,25 +157,14 @@ export default function SightingForm({ setTab }) {
         )}
       </div>
 
-      {/* ── Success screen ── */}
+      {/* Success */}
       {submitted ? (
         <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, textAlign: 'center' }}>
-
-          {/* Tier unlock */}
           {repEarned?.newTier > 0 && (
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(230,57,70,0.12), rgba(245,158,11,0.12))',
-              border: '1px solid rgba(245,158,11,0.3)',
-              borderRadius: 12, padding: '16px', marginBottom: 20,
-            }}>
+            <div style={{ background: 'linear-gradient(135deg, rgba(230,57,70,0.12), rgba(245,158,11,0.12))', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 16, marginBottom: 20 }}>
               <Star size={28} style={{ color: '#f59e0b', marginBottom: 8 }} />
-              <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>
-                🎉 Tier {repEarned.newTier} Unlocked!
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
-                You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.
-                {repEarned.newTier === 1 && ' Campaign access up to $500 is now available.'}
-              </div>
+              <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>🎉 Tier {repEarned.newTier} Unlocked!</div>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $500 is now available.'}</div>
             </div>
           )}
 
@@ -245,26 +173,22 @@ export default function SightingForm({ setTab }) {
             {repEarned?.newCamera ? '📍 New Camera Documented' : '✅ Sighting Verified'}
           </h2>
 
-          {/* Rep earned */}
           {repEarned && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, justifyContent: 'center', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 8, padding: '10px 14px' }}>
               <Shield size={14} style={{ color: '#10b981' }} />
               <span style={{ fontSize: 13, fontWeight: 600 }}>
                 +{repEarned.points} pt{repEarned.points !== 1 ? 's' : ''}{' '}
-                {repEarned.newCamera ? '— new camera, not in any existing database' : '— confirmed existing camera location'}{' '}
+                {repEarned.newCamera ? '— new camera, not in any existing database' : '— confirmed existing camera'}{' '}
                 · {repEarned.newReputation} total · {repEarned.tierName}
               </span>
             </div>
           )}
 
-          {/* Anonymous claim prompt */}
           {!isLoggedIn && (
             <div style={{ background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)', borderRadius: 10, padding: '14px 16px', marginBottom: 20, textAlign: 'left' }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
-                Create an account and shoot with{' '}
-                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1 operator access.
+                Create an account and shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1.
               </p>
               <button onClick={() => setShowClaimModal(true)} style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '9px 16px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 <Shield size={13} /> Create Account →
@@ -273,17 +197,16 @@ export default function SightingForm({ setTab }) {
           )}
 
           <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 24px' }}>
-            C2PA signature verified. This camera is now live on the map.
+            C2PA signature verified. Location read from photo. Camera is live on the map.
           </p>
 
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => { setForm({ cameraType: '', address: '', city: '', state: '', notes: '', honeypot: '' }); setSubmitted(false); setRepEarned(null); clearPhoto() }}
-              style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-            >
+            <button onClick={() => { setCameraType(''); setNotes(''); setSubmitted(false); setRepEarned(null); clearPhoto() }}
+              style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
               Report Another
             </button>
-            <button onClick={() => setTab('map')} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px 24px', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+            <button onClick={() => setTab('map')}
+              style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px 24px', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
               View the Map
             </button>
           </div>
@@ -291,22 +214,17 @@ export default function SightingForm({ setTab }) {
         </div>
 
       ) : (
-        /* ── Form ── */
+        /* Form */
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-          {/* Spam trap */}
-          <input type="text" value={form.honeypot} onChange={e => set('honeypot', e.target.value)}
-            style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
-            tabIndex={-1} aria-hidden="true" autoComplete="off" />
 
           {/* Camera type */}
           <div>
             <label style={{ ...labelStyle, marginBottom: 10 }}>What did you spot?</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {CAMERA_TYPES.map(t => (
-                <button key={t.id} type="button" onClick={() => set('cameraType', t.id)} style={{
-                  background: form.cameraType === t.id ? 'rgba(230,57,70,0.08)' : 'var(--bg3)',
-                  border: `1px solid ${form.cameraType === t.id ? 'rgba(230,57,70,0.4)' : 'var(--border)'}`,
+                <button key={t.id} type="button" onClick={() => setCameraType(t.id)} style={{
+                  background: cameraType === t.id ? 'rgba(230,57,70,0.08)' : 'var(--bg3)',
+                  border: `1px solid ${cameraType === t.id ? 'rgba(230,57,70,0.4)' : 'var(--border)'}`,
                   borderRadius: 10, padding: '12px 16px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s',
                 }}>
                   <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)', marginBottom: 2 }}>{t.label}</div>
@@ -316,104 +234,40 @@ export default function SightingForm({ setTab }) {
             </div>
           </div>
 
-          {/* Location — auto from photo GPS, or manual entry */}
-          {gpsStatus === 'found' ? (
-            <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
-                <MapPin size={13} style={{ color: '#10b981' }} />
-                GPS location from photo
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 10 }}>
-                {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)}
-                {' '}· embedded by Proofmode at capture time
-              </div>
-              <input style={{ ...inputStyle, fontSize: 13 }}
-                placeholder="Street name or landmark (optional — helps with map labels)"
-                value={form.address} onChange={e => set('address', e.target.value)} />
-            </div>
-          ) : (
-            <>
-              <div>
-                <label htmlFor="sighting-address" style={labelStyle}>
-                  Street Address or Intersection
-                  {gpsStatus === 'none' && <span style={{ color: 'var(--accent)', fontWeight: 500, marginLeft: 6 }}>no GPS in photo — required</span>}
-                </label>
-                <input id="sighting-address" style={inputStyle} placeholder="e.g. 200 Central Ave NW"
-                  value={form.address} onChange={e => set('address', e.target.value)} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-                <div>
-                  <label htmlFor="sighting-city" style={labelStyle}>City</label>
-                  <input id="sighting-city" style={inputStyle} placeholder="Albuquerque"
-                    value={form.city} onChange={e => set('city', e.target.value)} />
-                </div>
-                <div>
-                  <label htmlFor="sighting-state" style={labelStyle}>State</label>
-                  <input id="sighting-state" style={inputStyle} placeholder="NM" maxLength={2}
-                    value={form.state} onChange={e => set('state', e.target.value.toUpperCase())}
-                    onBlur={() => form.address && form.city && form.state.length === 2 && resolveLocation()} />
-                </div>
-              </div>
-              {geoStatus === 'resolving' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
-                  <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Resolving location…
-                </div>
-              )}
-              {geoStatus === 'resolved' && geo && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--muted)' }}>
-                  <MapPin size={12} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
-                  <span><strong style={{ color: 'var(--text)' }}>Location confirmed</strong> · {geo.display.split(',').slice(0, 3).join(',')}</span>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Notes */}
-          <div>
-            <label htmlFor="sighting-notes" style={labelStyle}>
-              Additional Notes <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span>
-            </label>
-            <textarea id="sighting-notes" style={{ ...inputStyle, height: 90, resize: 'vertical' }}
-              placeholder="Vendor branding visible? Mounted on a pole or building? Facing which direction?"
-              value={form.notes} onChange={e => set('notes', e.target.value)} />
-          </div>
-
-          {/* ── Photo upload — required ── */}
+          {/* Photo — the location source */}
           <div>
             <label style={{ ...labelStyle, marginBottom: 10 }}>
-              C2PA-Verified Photo <span style={{ color: 'var(--accent)', fontWeight: 700 }}>required</span>
+              C2PA Photo <span style={{ color: 'var(--accent)', fontWeight: 700 }}>required</span>
+              <span style={{ color: 'var(--muted)', fontWeight: 400, marginLeft: 8 }}>— GPS read from photo automatically</span>
             </label>
 
             {!photoFile ? (
               <>
                 <button type="button" onClick={() => fileInputRef.current?.click()} style={{
                   width: '100%', background: 'var(--bg3)', border: '2px dashed var(--border)',
-                  borderRadius: 10, padding: '24px', cursor: 'pointer', textAlign: 'center',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                  transition: 'border-color 0.15s',
+                  borderRadius: 10, padding: '28px', cursor: 'pointer', textAlign: 'center',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, transition: 'border-color 0.15s',
                 }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
                 >
-                  <Camera size={24} style={{ color: 'var(--muted)' }} />
+                  <Camera size={28} style={{ color: 'var(--muted)' }} />
                   <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Tap to attach photo</span>
-                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>JPEG, PNG, WEBP, HEIC · max 12MB</span>
+                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>JPEG · PNG · WEBP · HEIC · max 12MB</span>
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic"
                   style={{ display: 'none' }} onChange={handlePhoto} />
+
                 <div style={{ marginTop: 10, padding: '10px 14px', background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)', borderRadius: 8, fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-                  <strong style={{ color: 'var(--text)' }}>Shoot with a C2PA-capable app or device:</strong><br />
-                  📱{' '}
-                  <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                  — iOS & Android, free, built by Guardian Project for human rights evidence<br />
+                  <strong style={{ color: 'var(--text)' }}>Shoot with a C2PA app or device — location must be enabled:</strong><br />
+                  📱 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> — iOS & Android, free, built by Guardian Project for human rights evidence<br />
                   📲 Samsung Galaxy S24+ or Google Pixel 10 — signs photos automatically
                 </div>
               </>
             ) : (
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
-                {/* Preview */}
                 <div style={{ position: 'relative' }}>
-                  <img src={photoPreview} alt="Sighting preview" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
+                  <img src={photoPreview} alt="Sighting" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
                   <button type="button" onClick={clearPhoto} style={{
                     position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)',
                     border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28,
@@ -422,37 +276,54 @@ export default function SightingForm({ setTab }) {
                     <X size={14} />
                   </button>
                 </div>
-                <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <CheckCircle size={14} style={{ color: 'var(--green)', flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photoFile.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                      {(photoFile.size / 1024 / 1024).toFixed(1)} MB
-                      {gpsStatus === 'reading' && ' · Reading GPS…'}
-                      {gpsStatus === 'found' && (
-                        <span style={{ color: '#10b981', fontWeight: 600 }}>
-                          {' '}· 📍 GPS found — {parseFloat(photoGPS.lat).toFixed(5)}, {parseFloat(photoGPS.lng).toFixed(5)}
-                        </span>
-                      )}
-                      {gpsStatus === 'none' && ' · No GPS in photo — enter address below'}
+
+                <div style={{ padding: '12px 14px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photoFile.name}</div>
+
+                  {gpsStatus === 'reading' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+                      <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Reading location from photo…
                     </div>
-                  </div>
+                  )}
+                  {gpsStatus === 'found' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#10b981', fontWeight: 600 }}>
+                      <MapPin size={12} />
+                      {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)} — location confirmed from photo
+                    </div>
+                  )}
+                  {gpsStatus === 'none' && (
+                    <div style={{ background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 12px', fontSize: 12 }}>
+                      <div style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>No GPS found in this photo</div>
+                      <div style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+                        This photo doesn't have GPS coordinates embedded. Make sure location access is enabled in Proofmode before shooting, then try again.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Error states */}
+          {/* Notes */}
+          <div>
+            <label htmlFor="sighting-notes" style={labelStyle}>
+              Notes <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span>
+            </label>
+            <textarea id="sighting-notes" style={{ ...inputStyle, height: 80, resize: 'vertical' }}
+              placeholder="Vendor branding? Pole or building mount? Direction it faces?"
+              value={notes} onChange={e => setNotes(e.target.value)} />
+          </div>
+
+          {/* Errors */}
           {error === 'c2pa' && (
             <div style={{ background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.25)', borderRadius: 10, padding: '14px 16px' }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--accent)', fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
                 <AlertCircle size={14} /> C2PA signature not detected
               </div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0, lineHeight: 1.6 }}>
-                This photo doesn't contain a C2PA cryptographic signature. Only verified photos are accepted.<br />
-                Shoot with{' '}
-                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>{' '}
-                (iOS/Android), Samsung Galaxy S24+, or Google Pixel 10, then try again.
+                This photo doesn't contain a verified C2PA signature. Shoot with{' '}
+                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>,{' '}
+                Samsung Galaxy S24+, or Google Pixel 10, then try again.
               </p>
             </div>
           )}
@@ -472,12 +343,12 @@ export default function SightingForm({ setTab }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}>
             {sending
-              ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying &amp; uploading…</>
-              : !photoFile
-                ? 'Attach a C2PA photo to submit'
-                : gpsStatus === 'reading'
-                  ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Reading GPS…</>
-                  : 'Submit Verified Sighting'
+              ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying & uploading…</>
+              : !photoFile ? 'Attach a C2PA photo to continue'
+              : gpsStatus === 'reading' ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Reading location…</>
+              : gpsStatus === 'none' ? 'No GPS in photo — retake with location enabled'
+              : !cameraType ? 'Select camera type above'
+              : 'Submit Verified Sighting'
             }
           </button>
 

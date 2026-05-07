@@ -1037,22 +1037,20 @@ export default function CameraMap() {
   }
 
   const submitCamera = async () => {
-    if (!form.photoFile) { alert('A C2PA-verified photo is required. Use Proofmode (iOS/Android), Samsung Galaxy S24+, or Google Pixel 10.'); return }
-    if (!form.lat || !form.lng) { alert('Location required. Click "Use GPS" to detect your current location, or enter coordinates manually.'); return }
+    if (!form.photoFile) return
+    if (!form.lat || !form.lng) return // GPS must come from photo
     try {
       const token = localStorage.getItem('citeback_token')
       const fd = new FormData()
       fd.append('cameraType', 'unknown')
-      fd.append('address', form.location)
       fd.append('lat', form.lat)
       fd.append('lng', form.lng)
       fd.append('notes', form.notes || '')
-      fd.append('source', form.source || '')
       fd.append('photo', form.photoFile)
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
       const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', headers, body: fd })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) { alert(data.hint || data.error || 'Submission failed'); return }
+      if (!res.ok) { alert(data.error || 'Submission failed'); return }
     } catch (_) {}
     setSubmitted(true)
   }
@@ -1292,58 +1290,12 @@ export default function CameraMap() {
             </div>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 14 }}>
-                <AlertCircle size={13} /> C2PA photo required. Verified submissions go live instantly — no review queue.
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 12 }}>
+                <AlertCircle size={13} /> C2PA photo required — location is read from the photo automatically.
               </div>
-              {mapGpsStatus === 'none' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#f59e0b', marginBottom: 10 }}>
-                  <AlertCircle size={12} />
-                  No GPS found in photo — click <strong style={{ margin: '0 4px' }}>Use GPS</strong> to use your current location, or enter coordinates manually.
-                </div>
-              )}
-              {/* Location row — auto from photo GPS or manual */}
-              {mapGpsStatus === 'found' ? (
-                <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
-                    <MapPin size={12} style={{ color: '#10b981' }} /> GPS from photo
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>
-                    {parseFloat(form.lat).toFixed(6)}, {parseFloat(form.lng).toFixed(6)} · embedded at capture
-                  </div>
-                  <input style={{ ...inputStyle, fontSize: 12 }} placeholder="Street name or landmark (optional)"
-                    value={form.location} onChange={e => set('location', e.target.value)} />
-                </div>
-              ) : (
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                  <div style={{ flex: '0 0 130px' }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Latitude</label>
-                    <input style={inputStyle} placeholder="35.0844" value={form.lat} onChange={e => set('lat', e.target.value)} />
-                  </div>
-                  <div style={{ flex: '0 0 130px' }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Longitude</label>
-                    <input style={inputStyle} placeholder="-106.6504" value={form.lng} onChange={e => set('lng', e.target.value)} />
-                  </div>
-                  <button onClick={detectGPS} style={{
-                    display: 'flex', alignItems: 'center', gap: 5,
-                    background: 'var(--bg3)', border: '1px solid var(--border)',
-                    color: locating ? 'var(--accent)' : 'var(--muted)',
-                    padding: '9px 12px', borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
-                  }}>
-                    <Crosshair size={13} /> {locating ? 'Locating...' : 'Use GPS'}
-                  </button>
-                  <div style={{ flex: 2, minWidth: 180 }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Location</label>
-                    <input style={inputStyle} placeholder="Intersection or address" value={form.location} onChange={e => set('location', e.target.value)} />
-                  </div>
-                  <div style={{ flex: 2, minWidth: 180 }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 5 }}>Source / Notes</label>
-                    <input style={inputStyle} placeholder="News article, public record, photo..." value={form.notes} onChange={e => set('notes', e.target.value)} />
-                  </div>
-                </div>
-              )}
               <div style={{ marginTop: 12 }}>
                 <C2PAExplainer />
-                <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label style={{
                     display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
                     background: form.photoFile ? 'rgba(241,196,15,0.1)' : 'var(--bg3)',
@@ -1352,20 +1304,35 @@ export default function CameraMap() {
                     color: form.photoFile ? '#f1c40f' : 'var(--muted)',
                   }}>
                     <Upload size={14} />
-                    {form.photoFile ? `🏆 ${form.photoFile.name}` : 'Attach C2PA Photo (required)'}
+                    {mapGpsStatus === 'reading' ? 'Reading GPS…'
+                      : mapGpsStatus === 'found' ? `📍 GPS confirmed · ${parseFloat(form.lat).toFixed(5)}, ${parseFloat(form.lng).toFixed(5)}`
+                      : mapGpsStatus === 'none' ? '⚠️ No GPS in photo — try Proofmode'
+                      : form.photoFile ? `🏆 ${form.photoFile.name}`
+                      : 'Attach C2PA Photo (required)'}
                     <input type="file" accept="image/*" style={{ display: 'none' }}
                       onChange={handleMapPhoto}
                     />
                   </label>
-                  <button onClick={submitCamera} style={{
-                    background: 'var(--accent)', border: 'none', color: '#fff',
-                    padding: '9px 18px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer',
-                  }}>
-                    Submit
+                  {mapGpsStatus === 'none' && (
+                    <div style={{ fontSize: 11, color: '#f59e0b', padding: '6px 10px', background: 'rgba(245,158,11,0.08)', borderRadius: 6, lineHeight: 1.5 }}>
+                      No GPS found. Enable location in Proofmode before shooting, or use a Samsung Galaxy S24+ / Pixel 10.
+                    </div>
+                  )}
+                  {mapGpsStatus === 'found' && (
+                    <input style={{ ...inputStyle, fontSize: 12 }} placeholder="Notes (optional) — vendor, mounting, direction"
+                      value={form.notes || ''} onChange={e => set('notes', e.target.value)} />
+                  )}
+                  <button onClick={submitCamera}
+                    disabled={!form.photoFile || mapGpsStatus !== 'found'}
+                    style={{
+                      background: (form.photoFile && mapGpsStatus === 'found') ? 'var(--accent)' : 'var(--bg3)',
+                      border: 'none',
+                      color: (form.photoFile && mapGpsStatus === 'found') ? '#fff' : 'var(--muted)',
+                      padding: '9px 18px', borderRadius: 7, fontWeight: 700, fontSize: 13,
+                      cursor: (form.photoFile && mapGpsStatus === 'found') ? 'pointer' : 'not-allowed',
+                    }}>
+                    Submit Verified Sighting
                   </button>
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
-                  C2PA-verified photos go live on the map instantly. No review queue.
                 </div>
               </div>
             </>
