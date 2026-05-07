@@ -424,7 +424,7 @@ function distanceM(lat1, lon1, lat2, lon2) {
 
 // ─── OSM Canvas Layer ─────────────────────────────────────────────────────────
 // ─── Popup HTML builders ────────────────────────────────────────────────────
-function buildAlprPopupHTML(camera, map, isDual) {
+function buildAlprPopupHTML(camera, map, isDual, sighting) {
   const osmUrl = `https://www.openstreetmap.org/node/${camera.id}`
   const googleUrl = `https://www.google.com/maps?q=${camera.lat},${camera.lon}`
   const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${camera.lat},${camera.lon}`
@@ -436,10 +436,18 @@ function buildAlprPopupHTML(camera, map, isDual) {
     : pending.length > 0
       ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
+  const sightingStrip = sighting?.photoFilename
+    ? `<div style="margin-bottom:10px">
+        <img src="https://ai.citeback.com/photos/${sighting.photoFilename}" alt="Citeback verified photo" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px" />
+        <div style="font-size:10px;color:#f97316;font-weight:700;letter-spacing:0.05em">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
+        ${sighting.notes ? `<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4">${sighting.notes}</div>` : ''}
+      </div>`
+    : ''
   const verifiedBadge = isDual
     ? `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.35);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#f97316;margin-bottom:8px;letter-spacing:0.05em">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
     : `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#e63946;margin-bottom:8px;letter-spacing:0.05em">📡 OPENSTREETMAP</div>`
   return `<div style="font-family:Inter,sans-serif;padding:4px">
+    ${sightingStrip}
     ${verifiedBadge}
     <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:${isDual ? '#f97316' : '#e63946'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
     ${camera.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${camera.op}</div>` : ''}
@@ -488,7 +496,7 @@ function buildAgencyPopupHTML(agency, layer) {
 
 function openItemPopup(map, entry, latlng) {
   const html = entry.type === 'alpr'
-    ? buildAlprPopupHTML(entry.item, map, entry.isDual)
+    ? buildAlprPopupHTML(entry.item, map, entry.isDual, entry.matchingSighting)
     : buildAgencyPopupHTML(entry.item, entry.layer)
   const lat = entry.type === 'alpr' ? entry.item.lat : entry.item.lat
   const lng = entry.type === 'alpr' ? entry.item.lon : entry.item.lng
@@ -523,7 +531,7 @@ function openItemPopup(map, entry, latlng) {
 }
 
 // ─── Unified tap handler + ALPR canvas renderer ──────────────────────────────
-function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osmCount }) {
+function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osmCount, communitySightings }) {
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng
@@ -543,7 +551,11 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osm
         }
         if (nearest && minDist <= clickRadiusM) {
           const isDual = dualVerifiedIds && dualVerifiedIds.has(nearest.id)
-          nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟠' : '📡', color: isDual ? '#f97316' : '#e63946' })
+          // Find matching Citeback sighting within 100m for this camera
+          const matchingSighting = isDual && communitySightings
+            ? communitySightings.find(s => s.lat && s.lng && distanceM(parseFloat(s.lat), parseFloat(s.lng), nearest.lat, nearest.lon) <= 100)
+            : null
+          nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, matchingSighting, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟠' : '📡', color: isDual ? '#f97316' : '#e63946' })
         }
       }
 
@@ -1461,7 +1473,7 @@ export default function CameraMap() {
             </CircleMarker>
           ))}
 
-          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} />
+          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} communitySightings={communitySightings} />
 
           {/* Community sightings: only show Citeback-EXCLUSIVE cameras (red)
               Dual-verified ones are shown on the OSM layer as gold — no double markers */}
