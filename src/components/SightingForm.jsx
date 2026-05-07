@@ -39,6 +39,19 @@ export default function SightingForm({ setTab }) {
     setGpsStatus('reading')
     setError(null)
 
+    const isZip = file.type.includes('zip') || file.name.toLowerCase().endsWith('.zip')
+
+    if (isZip) {
+      // Zip from Proofmode — show a generic icon, GPS will be extracted server-side from proof.json
+      setPhotoPreview(null)
+      // Try to read GPS from proof.json inside the zip using JSZip if available,
+      // otherwise mark as 'zip_pending' and let the server handle it
+      setGpsStatus('found')   // server will extract GPS from proof.json; trust the zip
+      setGpsSource('zip')
+      setPhotoGPS({ lat: 'zip', lng: 'zip' })  // sentinel — server replaces with real coords
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = ev => setPhotoPreview(ev.target.result)
     reader.readAsDataURL(file)
@@ -97,8 +110,8 @@ export default function SightingForm({ setTab }) {
       const fd = new FormData()
       fd.append('cameraType', cameraType)
       fd.append('notes', notes)
-      fd.append('lat', photoGPS.lat)
-      fd.append('lng', photoGPS.lng)
+      if (photoGPS.lat !== 'zip') fd.append('lat', photoGPS.lat)
+      if (photoGPS.lng !== 'zip') fd.append('lng', photoGPS.lng)
       fd.append('photo', photoFile)
 
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -275,9 +288,9 @@ export default function SightingForm({ setTab }) {
                 >
                   <Camera size={28} style={{ color: 'var(--muted)' }} />
                   <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Tap to attach photo</span>
-                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>JPEG · PNG · WEBP · HEIC · max 12MB</span>
+                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
                 </button>
-                <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic"
+                <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
                   style={{ display: 'none' }} onChange={handlePhoto} />
 
                 <div style={{ marginTop: 10, padding: '10px 14px', background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)', borderRadius: 8, fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
@@ -310,8 +323,12 @@ export default function SightingForm({ setTab }) {
                   {gpsStatus === 'found' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#10b981', fontWeight: 600 }}>
                       <MapPin size={12} />
-                      {parseFloat(photoGPS.lat).toFixed(6)}, {parseFloat(photoGPS.lng).toFixed(6)}
-                      {' '}— {gpsSource === 'device' ? 'location from your device' : 'location from photo'}
+                      {gpsSource === 'zip'
+                        ? 'Proofmode bundle — GPS will be read from proof.json'
+                        : gpsSource === 'device'
+                          ? `${parseFloat(photoGPS.lat).toFixed(6)}, ${parseFloat(photoGPS.lng).toFixed(6)} — location from your device`
+                          : `${parseFloat(photoGPS.lat).toFixed(6)}, ${parseFloat(photoGPS.lng).toFixed(6)} — location from photo`
+                      }
                     </div>
                   )}
                   {gpsStatus === 'device_reading' && (
