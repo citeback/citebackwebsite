@@ -14,6 +14,22 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(null) }
 
+  // Client-side password strength (mirrors server logic)
+  const pwStrength = (pw) => {
+    if (!pw || pw.length < 8) return { score: 0, label: '', color: '' }
+    const hasLower = /[a-z]/.test(pw)
+    const hasUpper = /[A-Z]/.test(pw)
+    const hasDigit = /[0-9]/.test(pw)
+    const hasSymbol = /[^a-zA-Z0-9]/.test(pw)
+    const charsetSize = (hasLower?26:0)+(hasUpper?26:0)+(hasDigit?10:0)+(hasSymbol?32:0)
+    const entropy = Math.log2(charsetSize||1) * pw.length
+    if (entropy < 40) return { score: 1, label: 'Weak', color: '#e63946' }
+    if (entropy < 55) return { score: 2, label: 'Fair', color: '#f4a261' }
+    if (entropy < 70) return { score: 3, label: 'Good', color: '#2a9d8f' }
+    return { score: 4, label: 'Strong', color: '#6ee7b7' }
+  }
+  const strength = tab === 'create' ? pwStrength(form.password) : null
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.username || !form.password) return
@@ -174,6 +190,14 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               {loading ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
             </button>
 
+            {tab === 'create' && form.password.length >= 8 && strength && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
+                </div>
+                <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 40 }}>{strength.label}</span>
+              </div>
+            )}
             {tab === 'create' && (
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
                 No email required. No personal info stored. Your password is hashed and never readable.
