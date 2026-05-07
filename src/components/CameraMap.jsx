@@ -916,6 +916,8 @@ export default function CameraMap() {
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false, photoFile: null })
   const [mapGpsStatus, setMapGpsStatus] = useState(null) // null | 'reading' | 'found' | 'none'
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
   const [locating, setLocating] = useState(false)
   const [osmCameras, setOsmCameras] = useState([])
   const [filteredCameras, setFilteredCameras] = useState([])
@@ -1044,8 +1046,10 @@ export default function CameraMap() {
   }
 
   const submitCamera = async () => {
-    if (!form.photoFile) return
-    if (!form.lat || !form.lng) return // GPS must come from photo
+    console.log('[submitCamera] called, photoFile:', form.photoFile?.name, 'lat:', form.lat, 'mapGpsStatus:', mapGpsStatus)
+    if (!form.photoFile) { console.log('[submitCamera] bailing: no photoFile'); return }
+    setSubmitError(null)
+    setSubmitting(true)
     try {
       const token = localStorage.getItem('citeback_token')
       const fd = new FormData()
@@ -1054,12 +1058,22 @@ export default function CameraMap() {
       if (form.lng !== 'zip') fd.append('lng', form.lng)
       fd.append('notes', form.notes || '')
       fd.append('photo', form.photoFile)
+      console.log('[submitCamera] sending FormData to ai.citeback.com/sighting')
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
       const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', headers, body: fd })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) { alert(data.error || 'Submission failed'); return }
-    } catch (_) {}
-    setSubmitted(true)
+      console.log('[submitCamera] response:', res.status, data)
+      if (!res.ok) {
+        setSubmitError(data.error || `Server error ${res.status}`)
+        setSubmitting(false)
+        return
+      }
+      setSubmitted(true)
+    } catch (err) {
+      console.error('[submitCamera] fetch error:', err)
+      setSubmitError(`Network error: ${err.message}`)
+    }
+    setSubmitting(false)
   }
 
   const handleBoundsChange = useCallback((bounds, zoom) => {
@@ -1329,16 +1343,21 @@ export default function CameraMap() {
                     <input style={{ ...inputStyle, fontSize: 12 }} placeholder="Notes (optional) — vendor, mounting, direction"
                       value={form.notes || ''} onChange={e => set('notes', e.target.value)} />
                   )}
+                  {submitError && (
+                    <div style={{ fontSize: 12, color: 'var(--accent)', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 6, padding: '8px 12px' }}>
+                      ⚠️ {submitError}
+                    </div>
+                  )}
                   <button onClick={submitCamera}
-                    disabled={!form.photoFile || mapGpsStatus !== 'found'}
+                    disabled={!form.photoFile || mapGpsStatus !== 'found' || submitting}
                     style={{
-                      background: (form.photoFile && mapGpsStatus === 'found') ? 'var(--accent)' : 'var(--bg3)',
+                      background: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? 'var(--accent)' : 'var(--bg3)',
                       border: 'none',
-                      color: (form.photoFile && mapGpsStatus === 'found') ? '#fff' : 'var(--muted)',
+                      color: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? '#fff' : 'var(--muted)',
                       padding: '9px 18px', borderRadius: 7, fontWeight: 700, fontSize: 13,
-                      cursor: (form.photoFile && mapGpsStatus === 'found') ? 'pointer' : 'not-allowed',
+                      cursor: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? 'pointer' : 'not-allowed',
                     }}>
-                    Submit Verified Sighting
+                    {submitting ? 'Uploading…' : 'Submit Verified Sighting'}
                   </button>
                 </div>
               </div>
