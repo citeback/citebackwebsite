@@ -553,7 +553,7 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osm
           const isDual = dualVerifiedIds && dualVerifiedIds.has(nearest.id)
           // Find matching Citeback sighting within 100m for this camera
           const matchingSighting = isDual && communitySightings
-            ? communitySightings.find(s => s.lat && s.lng && distanceM(parseFloat(s.lat), parseFloat(s.lng), nearest.lat, nearest.lon) <= 100)
+            ? communitySightings.find(s => s.lat && s.lng && distanceM(parseFloat(s.lat), parseFloat(s.lng), nearest.lat, nearest.lon) <= 150)
             : null
           nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, matchingSighting, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟠' : '📡', color: isDual ? '#f97316' : '#e63946' })
         }
@@ -1041,7 +1041,7 @@ export default function CameraMap() {
       if (!s.lat || !s.lng) continue
       const slat = parseFloat(s.lat), slng = parseFloat(s.lng)
       for (const c of osmCameras) {
-        if (distanceM(slat, slng, c.lat, c.lon) <= 50) { ids.add(c.id); break }
+        if (distanceM(slat, slng, c.lat, c.lon) <= 100) { ids.add(c.id); break }
       }
     }
     return ids
