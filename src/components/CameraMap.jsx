@@ -957,6 +957,7 @@ export default function CameraMap() {
   const [overlayPanelOpen, setOverlayPanelOpen] = useState(false)
   const [activeLayers, setActiveLayers] = useState(() => new Set(['alpr', 'dual', 'cb-exclusive', 'facial', 'stingray', 'shotspotter', 'drones', 'predictive']))
   const [communitySightings, setCommunitySightings] = useState([])
+  const [sightingVersion, setSightingVersion] = useState(0)
   const [showVictories, setShowVictories] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ lat: '', lng: '', location: '', notes: '', source: '', hasC2PA: false, photoFile: null })
@@ -1013,13 +1014,13 @@ export default function CameraMap() {
     })
   }
 
-  // Load community sightings
+  // Load community sightings — re-runs whenever sightingVersion bumps (post-submit)
   useEffect(() => {
     fetch('https://ai.citeback.com/sightings/public')
       .then(r => r.json())
       .then(d => { if (Array.isArray(d.sightings)) setCommunitySightings(d.sightings) })
       .catch(() => {})
-  }, [])
+  }, [sightingVersion])
 
   // Compute which OSM cameras have a Citeback-verified sighting within 50m
   const dualVerifiedIds = useMemo(() => {
@@ -1128,6 +1129,7 @@ export default function CameraMap() {
         return
       }
       setSubmitted(true)
+      setSightingVersion(v => v + 1) // refresh map layer
     } catch (err) {
       console.error('[submitCamera] fetch error:', err)
       setSubmitError(`Network error: ${err.message}`)
