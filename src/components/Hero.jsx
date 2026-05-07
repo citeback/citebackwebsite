@@ -62,7 +62,7 @@ export default function Hero({ setTab }) {
       ref={sectionRef}
       className="hero-section"
       style={{
-        paddingTop: 100,
+        paddingTop: 48,
         paddingBottom: 0,
         background: 'var(--bg)',
         position: 'relative',
