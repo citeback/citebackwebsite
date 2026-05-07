@@ -881,13 +881,13 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
       <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
 
       {[{
-        id: 'alpr',
-        color: '#e63946',
-        icon: '🔴',
-        label: 'OSM Only',
-        desc: 'Documented by OpenStreetMap contributors — not yet Citeback-verified',
-        count: osmCount - (dualVerifiedIds?.size || 0),
-        countLabel: 'cameras in database',
+        id: 'cb-exclusive',
+        color: '#f59e0b',
+        icon: '⭐',
+        label: 'Citeback Exclusive',
+        desc: 'Discovered only by Citeback community — not in OpenStreetMap or any other database',
+        count: communitySightings.filter(s => s.newCamera).length,
+        countLabel: 'unique discoveries',
       }, {
         id: 'dual',
         color: '#f97316',
@@ -897,13 +897,13 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         count: dualVerifiedIds?.size || 0,
         countLabel: 'dual-verified cameras',
       }, {
-        id: 'cb-exclusive',
-        color: '#f59e0b',
-        icon: '⭐',
-        label: 'Citeback Exclusive',
-        desc: 'Discovered only by Citeback community — not in OpenStreetMap or any other database',
-        count: communitySightings.filter(s => s.newCamera).length,
-        countLabel: 'unique discoveries',
+        id: 'alpr',
+        color: '#e63946',
+        icon: '🔴',
+        label: 'OSM Only',
+        desc: 'Documented by OpenStreetMap contributors — not yet Citeback-verified',
+        count: osmCount - (dualVerifiedIds?.size || 0),
+        countLabel: 'cameras in database',
       }].map(tier => {
         const isOn = activeLayers.has(tier.id)
         return (
