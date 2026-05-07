@@ -5,14 +5,31 @@ import { useAuth } from '../context/AuthContext'
 
 export default function AccountModal({ onClose, initialTab = 'login' }) {
   const { login, createAccount } = useAuth()
-  const [tab, setTab] = useState(initialTab) // 'login' | 'create'
-  const [form, setForm] = useState({ username: '', password: '' })
+  const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover'
+  const [form, setForm] = useState({ username: '', password: '', email: '' })
+  const [recoverUsername, setRecoverUsername] = useState('')
+  const [recoverSent, setRecoverSent] = useState(false)
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(null) }
+
+  const handleRecover = async (e) => {
+    e.preventDefault()
+    if (!recoverUsername) return
+    setLoading(true)
+    try {
+      await fetch('https://ai.citeback.com/account/recover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: recoverUsername }),
+      })
+      setRecoverSent(true)
+    } catch {}
+    setLoading(false)
+  }
 
   // Client-side password strength (mirrors server logic)
   const pwStrength = (pw) => {
@@ -42,7 +59,7 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
         setSuccess('Logged in!')
         setTimeout(onClose, 800)
       } else {
-        await createAccount(form.username, form.password)
+        await createAccount(form.username, form.password, form.email || null)
         setSuccess('Account created!')
         setTimeout(onClose, 800)
       }
@@ -98,30 +115,61 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--bg3)', borderRadius: 8, padding: 4 }}>
-          {['login', 'create'].map(t => (
-            <button
-              key={t}
-              onClick={() => { setTab(t); setError(null); setSuccess(null) }}
-              style={{
-                flex: 1, padding: '8px', borderRadius: 6, border: 'none',
-                background: tab === t ? 'var(--bg2)' : 'transparent',
-                color: tab === t ? 'var(--text)' : 'var(--muted)',
-                fontWeight: tab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-            >
-              {t === 'login' ? 'Log In' : 'Create Account'}
-            </button>
-          ))}
-        </div>
+        {tab !== 'recover' && (
+          <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--bg3)', borderRadius: 8, padding: 4 }}>
+            {['login', 'create'].map(t => (
+              <button
+                key={t}
+                onClick={() => { setTab(t); setError(null); setSuccess(null) }}
+                style={{
+                  flex: 1, padding: '8px', borderRadius: 6, border: 'none',
+                  background: tab === t ? 'var(--bg2)' : 'transparent',
+                  color: tab === t ? 'var(--text)' : 'var(--muted)',
+                  fontWeight: tab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {t === 'login' ? 'Log In' : 'Create Account'}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {success ? (
+        {/* Forgot password / recover flow */}
+        {tab === 'recover' && (
+          <div>
+            <button onClick={() => { setTab('login'); setRecoverSent(false); setRecoverUsername('') }}
+              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, padding: '0 0 16px 0' }}>
+              ← Back to login
+            </button>
+            <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Forgot your password?</h3>
+            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 20, lineHeight: 1.5 }}>
+              Enter your username. If your account has a recovery email, we’ll send a reset link valid for 30 minutes.
+            </p>
+            {recoverSent ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px', background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 10 }}>
+                <CheckCircle size={20} style={{ color: '#6ee7b7', flexShrink: 0 }} />
+                <span style={{ fontWeight: 600, fontSize: 14 }}>If a recovery email exists, it’s on its way.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleRecover} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <input style={{ ...inputStyle }} placeholder="Your username" value={recoverUsername}
+                  onChange={e => setRecoverUsername(e.target.value)} autoFocus required />
+                <button type="submit" disabled={loading || !recoverUsername}
+                  style={{ background: recoverUsername ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: recoverUsername ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: recoverUsername ? 'pointer' : 'not-allowed' }}>
+                  {loading ? 'Sending…' : 'Send Reset Link'}
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+
+        {tab !== 'recover' && success ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px', background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 10 }}>
             <CheckCircle size={20} style={{ color: 'var(--green)', flexShrink: 0 }} />
             <span style={{ fontWeight: 600, fontSize: 14 }}>{success}</span>
           </div>
-        ) : (
+        ) : tab !== 'recover' ? (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <label style={labelStyle}>Username</label>
@@ -200,12 +248,36 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               </div>
             )}
             {tab === 'create' && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div>
+                  <label style={labelStyle}>Recovery Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional)</span></label>
+                  <input
+                    type="email"
+                    style={inputStyle}
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={e => set('email', e.target.value)}
+                    autoComplete="email"
+                  />
+                </div>
+                <p style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+                  ⚠️ Your email will be stored — encrypted with AES-256 and never shared or used for anything except password recovery. If your account holds campaign funds, this is strongly recommended.
+                </p>
+              </div>
+            )}
+            {tab === 'login' && (
+              <button type="button" onClick={() => { setTab('recover'); setError(null) }}
+                style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, textAlign: 'left', padding: 0, textDecoration: 'underline' }}>
+                Forgot your password?
+              </button>
+            )}
+            {tab === 'create' && (
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
-                No email required. No personal info stored. Your password is hashed and never readable.
+                No email required. No personal info stored beyond what you choose to add. Your password is hashed and never readable.
               </p>
             )}
           </form>
-        )}
+        ) : null}
       </div>
     </div>
   )

@@ -41,11 +41,11 @@ export function AuthProvider({ children }) {
     return data
   }, [])
 
-  const createAccount = useCallback(async (username, password) => {
+  const createAccount = useCallback(async (username, password, email = null) => {
     const res = await fetch(`${AI_URL}/account/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, ...(email ? { email } : {}) }),
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Account creation failed')
