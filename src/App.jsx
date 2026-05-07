@@ -110,7 +110,7 @@ export default function App() {
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
-      <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column', paddingTop: 60 }}>
         <ActivityTicker />
 
         <Routes>
