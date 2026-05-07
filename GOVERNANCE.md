@@ -362,15 +362,12 @@ The $2,000 threshold applies to **total operator rolling volume across all campa
 
 **Lookback grace:** If disbursement would cause rolling total to cross $2,000 at submission, hold-default applies immediately.
 
-### 7.3 Fee Schedule (Graduated)
-| Rolling 90-Day Volume | Platform Fee |
-|---|---|
-| $0 – $10,000 | 5.0% |
-| $10,001 – $25,000 | 4.5% |
-| $25,001 – $50,000 | 4.0% |
-| Above $50,000 | 3.0% |
+### 7.3 Fee Schedule
+**The platform charges no fee on campaign funds.** 100% of donated funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
 
-Graduated schedule eliminates cliff-gaming. Tiers apply to the same 90-day rolling operator volume as disbursement thresholds — not per-disbursement.
+**Platform funding model:** Platform infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC, supplemented by voluntary tips from users who want to support platform operations. Tips are separate from campaign donations — they are contributions to the LLC and do not affect campaign funds or governance weight. Long-term, the platform will pursue grant funding from aligned foundations (e.g., Open Technology Fund, Knight Foundation).
+
+This model was chosen deliberately: a surveillance resistance platform that skims campaign funds has an extractive relationship with the causes it exists to support. Zero platform fees eliminate that tension entirely.
 
 ### 7.4 Challenge Anti-Griefing
 - After **3 challenges rejected with <25% community support** against the same pair within 90 days → 90-day cooldown for that challenger-operator pair only
@@ -499,9 +496,10 @@ Published and community-ratified before launch. Must address side-channel risks,
 
 ## 11. Operations Wallet
 
-- Graduated platform fee per §7.3
-- Surplus above 6 months projected operating costs → community vote on redistribution
-- Cannot flow to any individual (immutable §15)
+- **No platform fee deducted from campaigns** (§7.3)
+- Platform operations funded by founding operator capital contributions and voluntary user tips to the Wyoming DAO LLC
+- Tip inflows and all operational outflows are publicly documented in the quarterly transparency report
+- Cannot flow to any individual as profit (immutable §15)
 - Quarterly transparency report
 
 ---

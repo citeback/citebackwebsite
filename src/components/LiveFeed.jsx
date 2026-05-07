@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 const ALL_EVENTS = [
   {
     category: 'CAMPAIGN',
-    text: 'Cambridge MA terminated Flock Safety contract following community pressure',
+    text: 'Cambridge MA terminated Flock Safety contract after company installed unauthorized cameras — city called it a material breach of trust — Dec 2025',
   },
   {
     category: 'CAMERA',

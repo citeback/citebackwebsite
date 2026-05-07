@@ -173,25 +173,18 @@ Disbursement logged: campaign ID, amount, XMR tx ID, timestamp, proof hash
 
 ### Fee Model
 
-**Graduated platform fee** applied at disbursement (per GOVERNANCE.md §7.3):
+**No platform fee.** 100% of donated campaign funds are disbursed directly to the campaign operator. Nothing is deducted at disbursement.
 
-| Rolling 90-Day Operator Volume | Platform Fee |
-|---|---|
-| $0 – $10,000 | 5.0% |
-| $10,001 – $25,000 | 4.5% |
-| $25,001 – $50,000 | 4.0% |
-| Above $50,000 | 3.0% |
+At disbursement:
+- 100% → operator's provided address
 
-Fee tiers apply to rolling 90-day operator volume. At disbursement:
-- (100% - applicable fee%) → operator
-- applicable fee% → platform operations wallet (also inside TEE)
+**Platform operations funding:**
+Infrastructure costs (VPS, TEE instances, Monero node, domains) are covered by:
+1. Founding operator capital contributions to the Wyoming DAO LLC
+2. Voluntary tips from users who want to support the platform (separate from campaign donations)
+3. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation, etc.)
 
-The operations wallet covers:
-- VPS / TEE infrastructure costs
-- Monero node operation
-- Buffer reserve for unforeseen costs
-
-Operations wallet balance and all outflows are publicly visible via view key. Any surplus beyond 6 months of operating costs is voted on by the community (additional campaigns, reserve, etc.).
+All tip inflows and operational outflows are publicly documented in the quarterly transparency report.
 
 **Campaign goal fee buffer:**
 
@@ -273,7 +266,7 @@ Deployment logged: commit hash, PR number, voter count, timestamp
 | UI/UX change | 48 hours | Simple majority |
 | Campaign rules change | 7 days | 60% supermajority |
 | Governance rule change | 14 days | 75% supermajority |
-| Fee model change | 14 days | 75% supermajority |
+| Funding model change | 14 days | 75% supermajority |
 
 ---
 

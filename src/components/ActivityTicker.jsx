@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 // Real events — sourced from public records and verified news reporting
 const staticEvents = [
-  { text: 'Cambridge MA voted to end Flock Safety contract following years of community opposition over data-sharing', time: '2025' }, // SOURCE: Cambridge City Council, 2025 — community pressure building since 2023; source verification pending before next push
+  { text: 'Cambridge MA terminated Flock Safety contract after company installed two unauthorized ALPR cameras without city knowledge — called a "material breach of trust"', time: 'Dec 2025' }, // SOURCE: City of Cambridge official statement Dec 10 2025 — https://www.cambridgema.gov/news/2025/12/statementontheflocksafetyalprcontracttermination
   { text: 'Flock Safety deploying 90,000+ cameras across the US as of mid-2025', time: 'Jul 2025' },
   { text: 'Bernalillo County deputy caught misusing ALPR data — written reprimand only', time: '2025' },
   { text: 'Taos NM: 18 Flock cameras near main plaza confirmed via public records', time: '2023–present' },
@@ -11,7 +11,7 @@ const staticEvents = [
   { text: 'Albuquerque PD retains your plate scan for 365 days — 12× longer than county policy', time: 'ongoing' },
   { text: 'Flock developing "Nova" — combining plate data with breach databases and commercial records', time: 'May 2025' }, // SOURCE: 404 Media, May 2025 — "Flock Safety Is Developing a New Way to Identify Criminals"; archived reporting on Nova product capability
   { text: 'ICE/CBP purchase bulk access to Vigilant DRN\'s 12B+ commercial plate scans — no warrant required', time: 'ongoing' }, // SOURCE: EFF, ACLU, and Georgetown Law CLIP reporting on ICE-Vigilant contracts 2019-present; see https://www.eff.org/deeplinks/2019/09/vigilant-solutions-selling-license-plate-reader-data-ice
-  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025', time: 'Oct 2025' }, // SOURCE: ACLU of Washington, Oct 2025 — aclu-wa.org (Cloudflare-protected; loads for real users)
+  { text: '8 Washington state agencies shared ALPR data directly with US Border Patrol in 2025 — agencies never told their communities', time: 'Jan 2026' }, // SOURCE: ACLU of Washington, Jan 2026 — https://www.aclu-wa.org/news/its-time-to-regulate-flock-cameras-and-alprs-with-the-driver-privacy-act/
 ]
 
 export default function ActivityTicker() {

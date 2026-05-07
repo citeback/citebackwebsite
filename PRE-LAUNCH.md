@@ -33,31 +33,29 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Verification required before **May 14, 2026** or domain risks suspension
 - Check scotthughes070@proton.me for the ICANN verification email
 
-### 6. ARCHITECTURE.md — Stale Fee Reference
-- ARCHITECTURE.md references "1% platform fee" in two places
-- Actual fee is graduated 3–5% per GOVERNANCE.md §7.3
-- Fix this before next push to avoid internal documentation contradiction
-- Files: `ARCHITECTURE.md` lines 23 and 176-179
+### 6. ARCHITECTURE.md + GOVERNANCE.md + TOS — Fee Model — ✅ FIXED 2026-05-07
+- All fee references updated to reflect current model: **no platform fee**
+- 100% of campaign funds go to operators
+- Platform funded by founding operator capital contributions + voluntary tips
+- Files updated: `ARCHITECTURE.md`, `GOVERNANCE.md` §7.3 & §11, `TOS_DRAFT.md` §7
 
 ---
 
 ## 🟠 Verify Before Launch (Soft Blockers)
 
-### 5. Cambridge MA ALPR Timeline
-- ALPRExplainer says "terminated in 2023"
-- ActivityTicker says "Dec 2025" — source URL returns 404
-- Are these two separate events? Verify and fix the dead link
-- File: `src/components/ActivityTicker.jsx`
+### 5. Cambridge MA ALPR Timeline — ✅ FIXED 2026-05-07
+- Updated ActivityTicker, LiveFeed, SurveillanceExplainer to reflect accurate story:
+  - Real cause: Flock Safety installed 2 unauthorized cameras ("material breach of trust"), Dec 10 2025
+  - Source: https://www.cambridgema.gov/news/2025/12/statementontheflocksafetyalprcontracttermination
 
-### 6. ShotSpotter "40,000 times in a single year"
-- Source data may cover 21 months, not one year
-- Change to "over 21 months" or "over nearly two years" if confirmed
-- File: `src/components/ALPRExplainer.jsx` or `SurveillanceExplainer.jsx`
+### 6. ShotSpotter "40,000 times in a single year" — ✅ FIXED 2026-05-07
+- SurveillanceExplainer updated: "21 months" (July 2019–April 2021) is accurate per MacArthur Justice Center
+- Attribution corrected to "MacArthur Justice Center study" (not AP)
 
-### 7. Washington State ALPR/Border Patrol Sharing
-- ActivityTicker source link returns 403 — needs working permalink
-- Underlying ACLU-WA reporting is plausible but link must be live before launch
-- File: `src/components/ActivityTicker.jsx`
+### 7. Washington State ALPR/Border Patrol Sharing — ✅ FIXED 2026-05-07
+- Source updated to ACLU-WA article (Jan 2026):
+  https://www.aclu-wa.org/news/its-time-to-regulate-flock-cameras-and-alprs-with-the-driver-privacy-act/
+- Date corrected to "Jan 2026" (original reporting was Oct 2025 but definitive ACLU piece is Jan 2026)
 
 ---
 
@@ -143,3 +141,6 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - TOS_DRAFT.md created (awaiting attorney review) ✅
 - LAUNCH_PLAN.md created ✅
 - LAUNCH_TIMELINE.md created ✅
+- Photo upload for sightings — fully built (C2PA gate, EXIF GPS, Proofmode ZIP support, +1/+2 pts reputation) ✅
+- Photo serving endpoint (`GET /photos/:filename`) added to server-hetzner.js ✅
+- Reputation system live (tiers 0–3, points, events log) ✅

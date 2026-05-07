@@ -17,7 +17,7 @@ const TYPES = [
         '"Hot list" errors have led to guns-drawn traffic stops of innocent drivers.',
       ],
       resistance: [
-        'Cambridge, MA terminated its Flock Safety contract in December 2025 after sustained community pressure over data-sharing practices — a process that had been building since at least 2023.',
+        'Cambridge, MA terminated its Flock Safety contract in December 2025 after Flock Safety installed two unauthorized ALPR cameras without the city’s knowledge — the city called it a material breach of trust. (Source: City of Cambridge official statement, Dec 10 2025)',
         'NM Sen. Wirth introduced legislation requiring a warrant before ALPR data can be shared with federal agencies.',
       ],
       cta: 'FOIA your local agency\'s Flock contract. Find out how long they retain data and who they share it with.',
@@ -83,7 +83,7 @@ const TYPES = [
     color: '#eab308',
     sections: {
       what: 'A network of microphones mounted on poles and buildings that claim to detect gunshots and alert police in real time. The company recently rebranded as "SoundThinking" — but the product is the same.',
-      affects: 'An AP/MacArthur Justice Center investigation found 40,000+ ShotSpotter alerts in Chicago over 21 months resulted in no evidence of a gun crime. Cities pay $3–5 million per year for the system. Your neighborhood can be under microphone surveillance without any public vote or notice.',
+      affects: 'A MacArthur Justice Center study found 40,000+ ShotSpotter alerts in Chicago over 21 months (July 2019–April 2021) resulted in no evidence of a gun crime. Cities pay $3–5 million per year for the system. Your neighborhood can be under microphone surveillance without any public vote or notice.',
       problems: [
         'Approximately 89% of ShotSpotter alerts find no evidence of gunfire or a firearm, according to a MacArthur Justice Center analysis of Chicago data. Multiple independent analyses put the figure above 90%.',
         'In one case, ShotSpotter retrospectively altered its audio analysis after police requested it — the modified "evidence" was used in a murder prosecution.',

@@ -1,17 +1,17 @@
-# Citeback — Terms of Service
-> **DRAFT — Requires attorney review before publication**  
-> Draft version: 0.1 | Prepared: 2026-05-05  
-> Contact: citeback@proton.me  
+# Citeback - Terms of Service
+> **DRAFT - Requires attorney review before publication**
+> Draft version: 0.1 | Prepared: 2026-05-05
+> Contact: citeback@proton.me
 > ⚠️ THIS DOCUMENT IS A DRAFT. It has NOT been reviewed by an attorney. It MUST NOT be published on the live site until a qualified attorney has reviewed and approved it. Specific items marked [ATTORNEY REVIEW REQUIRED] need particular attention before publication.
 
 ---
 
-## Terms of Service — Citeback
+## Terms of Service - Citeback
 
-**Effective Date:** [DATE — to be set on attorney-approved publication]  
-**Operator:** Wyoming DAO LLC [ENTITY CONFIRMATION REQUIRED]  
-**Contact:** citeback@proton.me  
-**Governing Law:** Wyoming, United States  
+**Effective Date:** [DATE - to be set on attorney-approved publication]
+**Operator:** Wyoming DAO LLC [ENTITY CONFIRMATION REQUIRED]
+**Contact:** citeback@proton.me
+**Governing Law:** Wyoming, United States
 
 ---
 
@@ -29,9 +29,9 @@ Citeback is a surveillance accountability crowdfunding platform that enables ano
 
 **⚠️ PRE-LAUNCH DISCLOSURE:** At the time these Terms are first published, the Platform is in a pre-launch operational state. Specifically:
 
-- **No Trusted Execution Environment (TEE) is currently live.** The Platform's published governance framework describes a TEE-based wallet custody system (using Intel SGX or ARM TrustZone hardware enclaves) in which no human — including the Platform Operator — has access to private wallet keys. This system is under development and is NOT operational. [ATTORNEY REVIEW REQUIRED — update this section when TEE goes live; consider a versioned notice]
+- **No Trusted Execution Environment (TEE) is currently live.** The Platform's published governance framework describes a TEE-based wallet custody system (using Intel SGX or ARM TrustZone hardware enclaves) in which no human - including the Platform Operator - has access to private wallet keys. This system is under development and is NOT operational. [ATTORNEY REVIEW REQUIRED - update this section when TEE goes live; consider a versioned notice]
 - **No campaign wallet addresses are currently published.** The Platform does not accept cryptocurrency donations until the TEE system is live and all governance launch prerequisites are met.
-- **Wallet addresses displayed on the Platform as "null" or "not yet assigned" reflect the Platform's pre-launch status** — they are not errors.
+- **Wallet addresses displayed on the Platform as "null" or "not yet assigned" reflect the Platform's pre-launch status** - they are not errors.
 - The Platform Operator will publish a notice when the Platform transitions to operational status.
 
 The Platform's governance framework, including voting mechanics, disbursement rules, and operator requirements, is published at [GOVERNANCE_URL] and on GitHub at github.com/citeback/citebackwebsite.
@@ -58,7 +58,7 @@ If you do not meet these eligibility requirements, you are prohibited from using
 
 You may not use the Platform to:
 
-(a) **Violate OFAC sanctions.** Contributions from persons or entities listed on the OFAC SDN list or any U.S. sanctions list are expressly prohibited. By sending any contribution to a Platform campaign wallet, you represent that you are not an OFAC-sanctioned individual or entity. [ATTORNEY REVIEW REQUIRED — verify this representation is adequate given the structural limitation in §5 below]
+(a) **Violate OFAC sanctions.** Contributions from persons or entities listed on the OFAC SDN list or any U.S. sanctions list are expressly prohibited. By sending any contribution to a Platform campaign wallet, you represent that you are not an OFAC-sanctioned individual or entity. [ATTORNEY REVIEW REQUIRED - verify this representation is adequate given the structural limitation in §5 below]
 
 (b) **Fund illegal activity.** Campaigns must target government entities, government programs, or government-contracted surveillance vendors. Campaigns targeting private individuals, funding criminal defense (as defined in the Platform governance), or funding activity that violates applicable law are prohibited.
 
@@ -74,7 +74,7 @@ You may not use the Platform to:
 
 ---
 
-### 5. OFAC Compliance Disclosure — Anonymous Donor Limitation
+### 5. OFAC Compliance Disclosure - Anonymous Donor Limitation
 
 **This section describes a structural limitation of the Platform's privacy architecture that you must understand before making any contribution.**
 
@@ -84,13 +84,13 @@ The Platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively. Th
 - **OFAC compliance at the operator level:** The Platform does perform OFAC pre-screening of campaign operators (the organizations and individuals who receive disbursements) before any campaign wallet is created. Operators are screened against the SDN list by the Platform Operator at the time of onboarding. This is the Platform's primary OFAC compliance mechanism.
 - **Donor-level OFAC compliance relies on your representation:** By contributing to any campaign wallet, you represent that you are not an OFAC-sanctioned individual or entity and that your contribution does not violate applicable OFAC sanctions.
 
-**The Platform makes no representation that anonymous donor contributions are screened for OFAC compliance.** If you are subject to OFAC sanctions, you are prohibited from contributing to the Platform and doing so may constitute a violation of federal law for which you — not the Platform — bear responsibility.
+**The Platform makes no representation that anonymous donor contributions are screened for OFAC compliance.** If you are subject to OFAC sanctions, you are prohibited from contributing to the Platform and doing so may constitute a violation of federal law for which you - not the Platform - bear responsibility.
 
-[ATTORNEY REVIEW REQUIRED — attorney must confirm this disclosure adequately documents the good-faith compliance posture and whether additional language is needed.]
+[ATTORNEY REVIEW REQUIRED - attorney must confirm this disclosure adequately documents the good-faith compliance posture and whether additional language is needed.]
 
 ---
 
-### 6. Campaign Contributions — No Refund Policy
+### 6. Campaign Contributions - No Refund Policy
 
 **All contributions to Citeback campaigns are final and non-refundable.** This policy exists by design and is inherent to the Platform's privacy architecture.
 
@@ -110,17 +110,13 @@ By contributing to any campaign wallet, you acknowledge and accept this no-refun
 
 ### 7. Campaign Goals and Platform Fees
 
-**Platform fees:** The Platform charges a graduated fee on campaign funds as follows:
-- 5.0% on rolling 90-day operator volume of $0–$10,000
-- 4.5% on rolling 90-day operator volume of $10,001–$25,000  
-- 4.0% on rolling 90-day operator volume of $25,001–$50,000
-- 3.0% on rolling 90-day operator volume above $50,000
+**No platform fee.** The Platform charges no fee on campaign funds. 100% of donated funds are disbursed directly to the campaign operator. No percentage is deducted at disbursement.
 
-These fees are deducted automatically by the Platform's TEE-based financial system at disbursement. Fees support Platform infrastructure and operations. Fee calculation is based on rolling 90-day operator volume, not per-transaction.
+**Platform funding:** Infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC and by voluntary tips from users who support the platform. Tips are entirely separate from campaign donations, are not required, and have no effect on campaign funds or governance weight.
 
-**Campaign goals include a fee buffer:** Published campaign goals include a 2% buffer for Monero transaction fee variance. This buffer is disclosed transparently on each campaign card.
+**Campaign goals include a transaction buffer:** Published campaign goals include a 2% buffer for Monero network transaction fee variance. This buffer is disclosed transparently on each campaign card. Any unused buffer amount is disbursed to the operator at campaign close alongside campaign funds.
 
-**The operations wallet is publicly visible** via published Monero view keys. Any operations wallet surplus beyond six months of projected operating costs is subject to community governance vote for redistribution.
+**Operational transparency:** All tip inflows and operational expenditures are documented in the Platform's quarterly transparency report.
 
 ---
 
@@ -138,9 +134,9 @@ Operators are solely responsible for:
 
 (d) OFAC compliance for their own disbursement activities and any downstream use of campaign funds.
 
-(e) Proper reporting of cryptocurrency income received as campaign disbursements to applicable tax authorities. The Platform makes no representation about the tax treatment of disbursements. [ATTORNEY REVIEW REQUIRED — add IRS Notice 2014-21 reference and appropriate disclaimer]
+(e) Proper reporting of cryptocurrency income received as campaign disbursements to applicable tax authorities. The Platform makes no representation about the tax treatment of disbursements. [ATTORNEY REVIEW REQUIRED - add IRS Notice 2014-21 reference and appropriate disclaimer]
 
-Operators engaging in legislative advocacy acknowledge that they — not the Platform — are responsible for compliance with the Lobbying Disclosure Act and FARA where applicable. [ATTORNEY REVIEW REQUIRED — confirm this adequately shifts FARA/LDA responsibility]
+Operators engaging in legislative advocacy acknowledge that they - not the Platform - are responsible for compliance with the Lobbying Disclosure Act and FARA where applicable. [ATTORNEY REVIEW REQUIRED - confirm this adequately shifts FARA/LDA responsibility]
 
 ---
 
@@ -156,15 +152,15 @@ In particular, and without limiting the foregoing:
 
 (c) **No guarantee of fund recovery:** In the event of a catastrophic TEE failure affecting 2+ nodes simultaneously, all disbursements pause automatically and community governance determines the recovery path (key rotation, supervised wind-down, or fork). The Platform does not guarantee the recovery of funds in such circumstances.
 
-(d) **Network congestion and transaction fees:** Monero and Zano network fees are set by network conditions outside the Platform's control. The 2% fee buffer on campaign goals is an estimate, not a guarantee.
+(d) **Network congestion and transaction fees:** Monero and Zano network fees are set by network conditions outside the Platform’s control. The 2% transaction fee buffer included in campaign goals is an estimate, not a guarantee.
 
-(e) **Regulatory risk:** The Platform operates in a rapidly evolving regulatory environment. Changes in applicable law — including cryptocurrency regulation, OFAC enforcement posture, or MSB classification rules — could affect the Platform's operations. The Platform makes no warranty of regulatory stability.
+(e) **Regulatory risk:** The Platform operates in a rapidly evolving regulatory environment. Changes in applicable law - including cryptocurrency regulation, OFAC enforcement posture, or MSB classification rules - could affect the Platform's operations. The Platform makes no warranty of regulatory stability.
 
 ---
 
 ### 10. Limitation of Liability
 
-[ATTORNEY REVIEW REQUIRED — this section needs jurisdiction-specific carve-outs and caps. Below is a placeholder framework.]
+[ATTORNEY REVIEW REQUIRED - this section needs jurisdiction-specific carve-outs and caps. Below is a placeholder framework.]
 
 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE PLATFORM OPERATOR AND ITS MEMBERS, MANAGERS, OFFICERS, CONTRACTORS, AND AGENTS SHALL NOT BE LIABLE FOR:
 
@@ -186,7 +182,7 @@ The Platform is an interactive computer service within the meaning of 47 U.S.C. 
 
 Platform review of campaign proposals is limited to eligibility determination (campaign type, target legitimacy, documentation adequacy) and does not constitute the Platform's authorship or development of operator campaign content.
 
-[ATTORNEY REVIEW REQUIRED — §230 analysis specific to this platform model (human-operator funding review) is required. This section should reflect attorney's guidance on what review posture preserves §230 protection under the Roommates.com material contribution standard.]
+[ATTORNEY REVIEW REQUIRED - §230 analysis specific to this platform model (human-operator funding review) is required. This section should reflect attorney's guidance on what review posture preserves §230 protection under the Roommates.com material contribution standard.]
 
 ---
 
@@ -194,7 +190,7 @@ Platform review of campaign proposals is limited to eligibility determination (c
 
 These Terms are governed by the laws of the State of Wyoming, without regard to conflicts of law principles.
 
-[ATTORNEY REVIEW REQUIRED — Wyoming DAO LLC governing law. Consider: mandatory arbitration clause? Class action waiver? Venue? Wyoming courts have not extensively addressed DAO LLC disputes. Attorney should advise on appropriate dispute resolution mechanism.]
+[ATTORNEY REVIEW REQUIRED - Wyoming DAO LLC governing law. Consider: mandatory arbitration clause? Class action waiver? Venue? Wyoming courts have not extensively addressed DAO LLC disputes. Attorney should advise on appropriate dispute resolution mechanism.]
 
 ---
 
@@ -214,7 +210,7 @@ The Platform is designed to protect your privacy. Specifically:
 
 ---
 
-### 14. Campaign Content — Accuracy and Attestation
+### 14. Campaign Content - Accuracy and Attestation
 
 Operators are required to attest to the accuracy of all factual claims in campaign descriptions at the time of submission. For billboard campaigns, operators must provide source URLs or documents supporting each specific factual claim.
 
@@ -270,7 +266,7 @@ Operator identity records are held privately by the Platform Operator. Passing o
 
 The Platform Operator may modify these Terms at any time. If material changes are made, notice will be provided via the Platform website and the Platform's governance announcement channel. Continued use of the Platform after modification constitutes acceptance of the modified Terms.
 
-[ATTORNEY REVIEW REQUIRED — Wyoming DAO LLC consent mechanism. Consider whether governance changes to Terms require a vote under GOVERNANCE.md.]
+[ATTORNEY REVIEW REQUIRED - Wyoming DAO LLC consent mechanism. Consider whether governance changes to Terms require a vote under GOVERNANCE.md.]
 
 ---
 
@@ -284,9 +280,9 @@ The Platform may be discontinued. In the event of Platform discontinuation, outs
 
 ### 20. Contact
 
-**Platform Operator:** Wyoming DAO LLC  
-**Contact:** citeback@proton.me  
-**Repository:** github.com/citeback/citebackwebsite  
+**Platform Operator:** Wyoming DAO LLC
+**Contact:** citeback@proton.me
+**Repository:** github.com/citeback/citebackwebsite
 
 For legal service of process: Contact citeback@proton.me to obtain the Wyoming DAO LLC's registered agent information.
 
@@ -302,19 +298,19 @@ These Terms, together with the Platform's published Governance Framework (GOVERN
 
 The following items require specific attorney attention before this ToS is published:
 
-1. **§4 and §5 — OFAC donor-side disclosure:** Confirm the self-representation approach is a legally cognizable good-faith compliance mechanism and revise language if needed.
+1. **§4 and §5 - OFAC donor-side disclosure:** Confirm the self-representation approach is a legally cognizable good-faith compliance mechanism and revise language if needed.
 
-2. **§8 — Operator tax obligations:** Add IRS Notice 2014-21 reference and appropriate crypto income reporting disclaimer.
+2. **§8 - Operator tax obligations:** Add IRS Notice 2014-21 reference and appropriate crypto income reporting disclaimer.
 
-3. **§8 — FARA/LDA shift:** Confirm that ToS language adequately shifts legislative advocacy compliance responsibility to operators.
+3. **§8 - FARA/LDA shift:** Confirm that ToS language adequately shifts legislative advocacy compliance responsibility to operators.
 
-4. **§10 — Limitation of Liability:** Jurisdiction-specific drafting needed. Wyoming DAO LLC liability shield scope. Cap amounts?
+4. **§10 - Limitation of Liability:** Jurisdiction-specific drafting needed. Wyoming DAO LLC liability shield scope. Cap amounts?
 
-5. **§11 — §230 posture:** Revise to reflect attorney's analysis of the Roommates.com material contribution standard as applied to this platform's review-and-fund model.
+5. **§11 - §230 posture:** Revise to reflect attorney's analysis of the Roommates.com material contribution standard as applied to this platform's review-and-fund model.
 
-6. **§12 — Dispute Resolution:** Wyoming governing law. Arbitration? Class action waiver? Venue selection?
+6. **§12 - Dispute Resolution:** Wyoming governing law. Arbitration? Class action waiver? Venue selection?
 
-7. **§17 — Operator pre-screening:** Confirm this creates the documented compliance process OFAC analysis requires.
+7. **§17 - Operator pre-screening:** Confirm this creates the documented compliance process OFAC analysis requires.
 
 8. **Pre-launch to operational transition:** How does the ToS update when TEE goes live? Should we version the ToS? Consider a clearly versioned system.
 
@@ -324,4 +320,4 @@ The following items require specific attorney attention before this ToS is publi
 
 ---
 
-*DRAFT v0.1 — Prepared 2026-05-05 | NOT APPROVED FOR PUBLICATION | Requires attorney review before any live use*
+*DRAFT v0.1 - Prepared 2026-05-05 | NOT APPROVED FOR PUBLICATION | Requires attorney review before any live use*
