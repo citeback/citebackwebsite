@@ -16,7 +16,8 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
 
   // Client-side password strength (mirrors server logic)
   const pwStrength = (pw) => {
-    if (!pw || pw.length < 8) return { score: 0, label: '', color: '' }
+    if (!pw) return { score: 0, label: '', color: '' }
+    if (pw.length < 8) return { score: 1, label: 'Too short', color: '#e63946' }
     const hasLower = /[a-z]/.test(pw)
     const hasUpper = /[A-Z]/.test(pw)
     const hasDigit = /[0-9]/.test(pw)
@@ -190,7 +191,7 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               {loading ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
             </button>
 
-            {tab === 'create' && form.password.length >= 8 && strength && (
+            {tab === 'create' && form.password.length >= 1 && strength && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
