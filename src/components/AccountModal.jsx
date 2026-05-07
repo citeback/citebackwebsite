@@ -73,13 +73,13 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
   const overlay = {
     position: 'fixed', inset: 0, zIndex: 1000,
     background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: '16px',
+    display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+    padding: '16px', overflowY: 'auto',
   }
   const modal = {
     background: 'var(--bg2)', border: '1px solid var(--border)',
     borderRadius: 16, padding: '32px 28px', width: '100%', maxWidth: 400,
-    position: 'relative',
+    position: 'relative', margin: 'auto',
   }
   const inputStyle = {
     width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
@@ -105,13 +105,15 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
           <h2 style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em', marginBottom: 6 }}>
-            {tab === 'login' ? 'Welcome back' : 'Join Citeback'}
+            {tab === 'login' ? 'Welcome back' : tab === 'create' ? 'Join Citeback' : 'Recover your account'}
           </h2>
-          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
-            {tab === 'login'
-              ? 'Sign in to track your surveillance sightings and reputation score.'
-              : 'No email. No real name. Just a username and password.'}
-          </p>
+          {tab !== 'recover' && (
+            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
+              {tab === 'login'
+                ? 'Sign in to track your surveillance sightings and reputation score.'
+                : 'No email. No real name. Just a username and password.'}
+            </p>
+          )}
         </div>
 
         {/* Tabs */}
@@ -223,6 +225,15 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               </div>
             )}
 
+            {tab === 'create' && form.password.length >= 1 && strength && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
+                </div>
+                <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 40 }}>{strength.label}</span>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading || !form.username || !form.password || (tab === 'create' && (!strength || strength.score < 3))}
@@ -239,14 +250,6 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               {loading ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
             </button>
 
-            {tab === 'create' && form.password.length >= 1 && strength && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
-                </div>
-                <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 40 }}>{strength.label}</span>
-              </div>
-            )}
             {tab === 'create' && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div>

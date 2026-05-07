@@ -1,9 +1,89 @@
 import { useState, useEffect } from 'react'
-import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader } from 'lucide-react'
+import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 
 const AI_URL = 'https://ai.citeback.com'
+
+function EmailManager({ token }) {
+  const [emailInfo, setEmailInfo] = useState(null) // { hasEmail, maskedEmail }
+  const [editing, setEditing] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [err, setErr] = useState(null)
+
+  useEffect(() => {
+    fetch(`${AI_URL}/account/email`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json()).then(d => setEmailInfo(d)).catch(() => {})
+  }, [token])
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setSaving(true); setErr(null)
+    try {
+      const res = await fetch(`${AI_URL}/account/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: newEmail }),
+      })
+      const d = await res.json()
+      if (!res.ok) throw new Error(d.error || 'Failed to save')
+      setEmailInfo({ hasEmail: !!newEmail, maskedEmail: newEmail ? newEmail.replace(/^(.{2}).*@/, '$1***@') : null })
+      setEditing(false); setSaved(true); setNewEmail('')
+      setTimeout(() => setSaved(false), 3000)
+    } catch (e) { setErr(e.message) }
+    finally { setSaving(false) }
+  }
+
+  if (!emailInfo) return null
+
+  return (
+    <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: editing ? 12 : 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Mail size={14} style={{ color: 'var(--muted)' }} />
+          <span style={{ fontSize: 13, fontWeight: 600 }}>Recovery Email</span>
+          {saved && <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✓ Saved</span>}
+        </div>
+        {!editing && (
+          <button onClick={() => { setEditing(true); setNewEmail('') }}
+            style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer' }}>
+            {emailInfo.hasEmail ? 'Change' : 'Add email'}
+          </button>
+        )}
+      </div>
+      {!editing && (
+        <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6, lineHeight: 1.5 }}>
+          {emailInfo.hasEmail
+            ? <>{emailInfo.maskedEmail} · <span style={{ color: '#10b981' }}>Recovery enabled</span></>
+            : <span style={{ color: '#f4a261' }}>No recovery email — if you lose your password, your account cannot be recovered.</span>}
+        </p>
+      )}
+      {editing && (
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input type="email" placeholder="your@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)}
+            style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '9px 12px', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box', width: '100%' }}
+            autoFocus />
+          <p style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
+            Encrypted with AES-256 · never shared · used only for password recovery
+          </p>
+          {err && <p style={{ fontSize: 12, color: '#e63946' }}>{err}</p>}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="submit" disabled={saving}
+              style={{ flex: 1, background: 'var(--accent)', border: 'none', color: '#fff', padding: '9px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button type="button" onClick={() => { setEditing(false); setErr(null) }}
+              style={{ flex: 1, background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--muted)', padding: '9px', borderRadius: 7, fontSize: 13, cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  )
+}
 
 const TIER_NAMES = ['Scout', 'Operator', 'Verifier', 'Guardian']
 const TIER_THRESHOLDS = [0, 10, 50, 200]
@@ -284,6 +364,9 @@ export default function ReputationPage({ setTab }) {
           ))}
         </div>
       </div>
+
+      {/* Email recovery management */}
+      <EmailManager token={token} />
 
       {/* CTA */}
       <button

@@ -33,6 +33,7 @@ const TermsPage = lazy(() => import('./components/TermsPage'))
 const SightingForm = lazy(() => import('./components/SightingForm'))
 const ReputationPage = lazy(() => import('./components/ReputationPage'))
 const AdminPanel = lazy(() => import('./components/AdminPanel'))
+const ResetPasswordPage = lazy(() => import('./components/ResetPasswordPage'))
 const HumanRegistry = lazy(() => import('./components/HumanRegistry'))
 const Transparency = lazy(() => import('./components/Transparency'))
 
@@ -146,6 +147,7 @@ export default function App() {
           <Route path="/report" element={<Suspense fallback={<LazyFallback label="Loading…" />}><SightingForm setTab={setTab} /></Suspense>} />
           <Route path="/reputation" element={<Suspense fallback={<LazyFallback label="Loading…" />}><ReputationPage setTab={setTab} /></Suspense>} />
           <Route path="/cx-admin" element={<Suspense fallback={<LazyFallback label="Loading…" />}><AdminPanel /></Suspense>} />
+          <Route path="/reset-password" element={<Suspense fallback={<LazyFallback label="Loading…" />}><ResetPasswordPage setTab={setTab} /></Suspense>} />
           <Route path="*" element={
             <>
               <Hero setTab={setTab} />
