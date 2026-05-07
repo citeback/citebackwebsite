@@ -1004,6 +1004,13 @@ export default function CameraMap() {
     if (!file) return
     set('photoFile', file)
     set('hasC2PA', true)
+    const isZip = file.type.includes('zip') || file.name.toLowerCase().endsWith('.zip')
+    if (isZip) {
+      // Proofmode zip — GPS extracted server-side from proof.json
+      setMapGpsStatus('found')
+      setForm(f => ({ ...f, lat: 'zip', lng: 'zip' }))
+      return
+    }
     setMapGpsStatus('reading')
     try {
       const gps = await Exifr.gps(file)
@@ -1043,8 +1050,8 @@ export default function CameraMap() {
       const token = localStorage.getItem('citeback_token')
       const fd = new FormData()
       fd.append('cameraType', 'unknown')
-      fd.append('lat', form.lat)
-      fd.append('lng', form.lng)
+      if (form.lat !== 'zip') fd.append('lat', form.lat)
+      if (form.lng !== 'zip') fd.append('lng', form.lng)
       fd.append('notes', form.notes || '')
       fd.append('photo', form.photoFile)
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -1305,11 +1312,11 @@ export default function CameraMap() {
                   }}>
                     <Upload size={14} />
                     {mapGpsStatus === 'reading' ? 'Reading GPS…'
-                      : mapGpsStatus === 'found' ? `📍 GPS confirmed · ${parseFloat(form.lat).toFixed(5)}, ${parseFloat(form.lng).toFixed(5)}`
+                      : mapGpsStatus === 'found' ? (form.lat === 'zip' ? '📍 Proofmode bundle — GPS from proof.json' : `📍 GPS confirmed · ${parseFloat(form.lat).toFixed(5)}, ${parseFloat(form.lng).toFixed(5)}`)
                       : mapGpsStatus === 'none' ? '⚠️ No GPS in photo — try Proofmode'
                       : form.photoFile ? `🏆 ${form.photoFile.name}`
                       : 'Attach C2PA Photo (required)'}
-                    <input type="file" accept="image/*" style={{ display: 'none' }}
+                    <input type="file" accept="image/*,application/zip,application/x-zip-compressed,.zip" style={{ display: 'none' }}
                       onChange={handleMapPhoto}
                     />
                   </label>
