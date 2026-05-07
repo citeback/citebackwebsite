@@ -73,7 +73,7 @@ export default function Operators() {
         {/* How this works — honest model */}
         <div style={{ marginTop: 16, color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 0, padding: '16px 20px' }}>
           <p style={{ margin: '0 0 10px' }}>
-            <strong style={{ color: 'var(--text)' }}>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Donors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
+            <strong style={{ color: 'var(--text)' }}>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
           </p>
           <p style={{ margin: 0 }}>
             Campaigns are funded milestone by milestone. Operators define deliverables upfront (FOIA filed, billboard live, legal action taken). Each milestone is verified before the next tranche of funding is promoted. Operators start with small campaign caps and earn access to larger amounts through track record.
@@ -85,7 +85,7 @@ export default function Operators() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
         {[
           { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward operator access.', color: '#6ee7b7', anon: true },
-          { role: 'Donor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', color: '#6ee7b7', anon: true },
+          { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', color: '#6ee7b7', anon: true },
           { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', color: '#6ee7b7', anon: true },
           { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', color: '#f59e0b', anon: false },
         ].map(p => (
@@ -187,7 +187,7 @@ export default function Operators() {
           <div>
             <p style={{ fontWeight: 700, color: '#6ee7b7', marginBottom: 8 }}>How Disbursement Works</p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-              Operators hold their own XMR wallet. Donors send directly to that wallet — Citeback never holds funds. Operators publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
+              Operators hold their own XMR wallet. Contributors send directly to that wallet — Citeback never holds funds. Operators publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
             </p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, marginTop: 8 }}>
               For Tier 2+ campaigns, funding is released milestone by milestone. Each milestone has a defined deliverable verified by Citeback (C2PA photo, MuckRock FOIA URL, court filing number) before the next tranche is promoted. Converting XMR to fiat for vendor payments is the operator's responsibility.

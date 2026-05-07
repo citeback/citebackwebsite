@@ -15,20 +15,20 @@ export default function PrivacyPolicy() {
       {[
         {
           title: '1. Overview',
-          body: `Citeback is a surveillance resistance platform. We are committed to collecting as little data as possible about our visitors and donors. This policy documents what data flows occur when you use this site and why.
+          body: `Citeback is a surveillance resistance platform. We are committed to collecting as little data as possible about our visitors and contributors. This policy documents what data flows occur when you use this site and why.
 
-Contribution privacy is handled at the cryptocurrency protocol level (Monero XMR, Zano ZANO) — not by us. We cannot see who contributed, how much, or from where. This policy covers site browsing and form submissions only.`,
+Contribution privacy is handled at the cryptocurrency protocol level (Monero XMR, Zano ZANO) — not by us. We cannot see who contributed, how much, or from where. This policy covers site browsing, form submissions, and account usage.`,
         },
         {
           title: '2. Data We Do Not Collect',
           body: `We do not:
-• Require account creation to browse or contribute
-• Collect names, email addresses, or identifiers from visitors
+• Require account creation to browse or contribute (accounts are optional — operators need them, contributors do not)
+• Collect names, email addresses, or identifiers from visitors who do not create accounts
 • Use cookies, tracking pixels, or analytics scripts
 • Use Google Analytics, Facebook Pixel, or any behavioral tracking
 • Sell or share visitor data with third parties for marketing
 
-There is no account system. There is no login. There is no newsletter.`,
+There is no newsletter. Anonymous browsing and contributing requires no account of any kind.`,
         },
         {
           title: '3. Infrastructure Data (Third-Party Processors)',
@@ -50,6 +50,9 @@ These contain information about surveillance systems — not about you. A sighti
 
 \u25b8 Expert Directory applications
 Role type, geographic location, and professional background. No name, email, or contact information is collected or required. Stored on our own server with IP logging disabled.
+
+\u25b8 Accounts (operators and community members)
+Citeback has an optional account system. If you create an account, we store: username, bcrypt-hashed password (never plaintext), optional recovery email (AES-256-GCM encrypted at rest, used only for password reset, never for marketing), reputation points, and a JWT session token. Operators are additionally required to provide identity verification, held privately and used only for OFAC screening and platform accountability.
 
 What we do not collect in any form: your name, your email address, cookies, device fingerprint, or IP address from any form submission on this site.`,
         },

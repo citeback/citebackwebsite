@@ -39,7 +39,7 @@ const tracks = [
       'Propose campaigns for community review',
       'Manage public-facing documentation',
       'Coordinate funded actions with legal partners',
-      'Keep donors informed via on-chain transparent updates',
+      'Keep contributors informed via on-chain transparent updates',
     ],
     cta: 'Become an Operator',
     accent: 'var(--muted)',

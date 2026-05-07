@@ -48,7 +48,7 @@ export default function StatsSection() {
     {
       value: '0',
       isLive: false,
-      label: 'humans with wallet key access',
+      label: 'platform fees deducted from campaigns',
     },
     {
       value: '10',

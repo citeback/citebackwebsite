@@ -26,7 +26,7 @@ const operatorSteps = [
   },
   {
     title: 'Get Funded',
-    desc: 'Donors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. At launch, the wallet system holds funds in escrow until milestones are verified. You manage the campaign, not the money.',
+    desc: 'Contributors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. Funds go directly to the operator\'s own wallet — Citeback never holds or touches them. The balance is publicly verifiable via a view key the operator publishes.',
   },
   {
     title: 'Execute and Document',

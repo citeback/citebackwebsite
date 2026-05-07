@@ -4,9 +4,9 @@ const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
 const stats = [
   { value: '7', label: 'Campaigns queued at launch' },
-  { value: '$14,050', label: 'Total campaign funding goals' },
+  { value: '$23,500', label: 'Total campaign funding goals' },
   { value: '$0', label: 'Raised to date — wallets not yet live' },
-  { value: '4/16', label: 'Launch prerequisites cleared' },
+  { value: '4/10', label: 'Launch prerequisites cleared' },
   { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
 ]
 
@@ -239,7 +239,7 @@ export default function Hero({ setTab }) {
               letterSpacing: '0.03em',
               opacity: 0.7,
             }}>
-              Pre-launch — no wallets are active yet. 4 of 16 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, wallet architecture is published and independently verifiable — no human can access keys by architectural design.
+              Pre-launch — no wallets are active yet. 4 of 10 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are operator-held — balance publicly verifiable via view keys.
             </p>
           </div>
 

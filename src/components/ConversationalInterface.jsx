@@ -8,7 +8,7 @@ WHAT CITEBACK IS:
 Citeback funds legal resistance to mass surveillance: FOIA campaigns, billboard campaigns, public records litigation, ordinance drives, and vendor accountability actions. Contributions will arrive in Monero (XMR) or Zano (ZANO) ONLY — no credit cards, no bank transfers, no PayPal. Crypto-only is a deliberate privacy choice. No accounts, no logs, no tracking — ever. All campaigns are 100% legal.
 
 ARCHITECTURE & WALLETS:
-No human holds wallet keys — multi-party threshold wallet system, 3 independent nodes, 2-of-3 threshold signatures. Wallet architecture published before any funds go live. Organized as a Wyoming DAO LLC (formation is Phase 2 prerequisite). Wallets pending activation — pre-launch.
+Direct wallet model: operators hold their own XMR/ZANO wallets. Citeback never holds funds. Operators publish a view key so anyone can verify the balance. Early drain = permanent ban. Wallet architecture published before any funds go live. Organized as a Wyoming DAO LLC (formation is Phase 2 prerequisite). Wallets pending activation — pre-launch.
 Monero (XMR): ring signatures, stealth addresses, RingCT hide everything. To get XMR without KYC: Cake Wallet (iOS/Android/desktop, built-in swap, no ID required), Feather Wallet (desktop), xmrswap.me (BTC→XMR atomic swap), or ChangeNow/StealthEX below their no-KYC limits. Never recommend or reference darknet markets — only legal, above-board methods.
 Zano (ZANO): private-by-default, hides sender/receiver/amount/asset type. Get at zano.org/trade or via Zano desktop/mobile wallet.
 
@@ -93,7 +93,7 @@ const STARTER_PROMPTS = [
 // Static FAQ responses for when Ollama is unavailable
 const STATIC_RESPONSES = {
   'What is Citeback?':
-    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Contributions will arrive in Monero or Zano; an independently-auditable wallet system manages every wallet so no human can touch the keys. The platform is being organized as a Wyoming DAO LLC — entity formation is a hard launch prerequisite before any funds are accepted.',
+    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Contributions will arrive in Monero or Zano; campaign funds go directly to operators' own wallets — Citeback never holds funds, and anyone can verify campaign balances via publicly published view keys. The platform is being organized as a Wyoming DAO LLC — entity formation is a hard launch prerequisite before any funds are accepted.',
   'How do I contribute anonymously?':
     'Once wallets activate at Phase 2 launch, send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets will be managed by an independently-auditable, multi-party wallet system — the architecture is designed so no single party can move funds unilaterally. The full architecture is published before any funds go live.',
   'What currencies do you accept?':

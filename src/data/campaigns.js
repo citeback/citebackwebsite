@@ -88,7 +88,7 @@ export const _campaignsSeedRef = [
     description: 'Las Cruces has deployed up to 37 cameras — including PTZ units that can remotely follow vehicles and zoom in on faces in real time. This isn\'t passive scanning. This is active tracking. A billboard on the main corridor warns everyone entering the city.',
     winCondition: 'Physical billboard on main Las Cruces corridor — permanent public notice of active PTZ tracking for every driver entering the city',
     location: 'Las Cruces, NM',
-    goal: 800,
+    goal: 6500,
     raised: 0,
     walletXMR: null,
     walletZANO: null,

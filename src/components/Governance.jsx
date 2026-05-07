@@ -8,7 +8,7 @@ const sections = [
   { id: 'voting', label: 'Voting Mechanics', icon: CheckCircle },
   { id: 'disbursement', label: 'Disbursement', icon: Lock },
   { id: 'human-operator', label: 'Human Operator Layer', icon: Users },
-  { id: 'tee', label: 'Wallet Architecture', icon: Lock },
+  { id: 'tee', label: 'Wallet Architecture (Direct)', icon: Lock },
   { id: 'bootstrapping', label: 'Bootstrapping', icon: Users },
   { id: 'immutables', label: 'Immutables', icon: AlertTriangle },
   { id: 'prerequisites', label: 'Launch Prerequisites', icon: CheckCircle },
@@ -113,8 +113,8 @@ export default function Governance({ setTab }) {
           <Tag color="#a78bfa">Updated 2026-05-04</Tag>
         </div>
         <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7 }}>
-          This document defines how Citeback is governed — how decisions are made, 
-          how funds are disbursed, what can never be changed, and what must be in place before 
+          This document defines how Citeback is governed - how decisions are made,
+          how funds are disbursed, what can never be changed, and what must be in place before
           a single dollar is accepted.
         </p>
         <a
@@ -151,7 +151,7 @@ export default function Governance({ setTab }) {
       <Section id="philosophy" title="Philosophy" icon={Shield} defaultOpen>
         <p>Citeback exists because surveillance is asymmetric. Institutions document individuals constantly, at scale, with impunity. Individuals have almost no reciprocal capacity to challenge them or fund accountability work.</p>
         <p style={{ marginTop: 12 }}>The platform ensures that financial access, legal pressure, and platform deplatforming <strong style={{ color: 'var(--fg)' }}>cannot silence lawful accountability work.</strong> It operates within applicable law and supports First Amendment-protected activity.</p>
-        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding coordination that established organizations are structurally unable to provide — donors who need privacy, coalitions that can’t share mailing lists, causes that require deniability for participants.</p>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding coordination that established organizations are structurally unable to provide - contributors who need privacy, coalitions that can't share mailing lists, causes that require deniability for participants.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)'
@@ -165,10 +165,10 @@ export default function Governance({ setTab }) {
       <Section id="participants" title="Participants" icon={Users}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {[
-            { label: 'Donors', color: 'var(--green)', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
-            { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
-            { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
-            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator — manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
+            { label: 'Contributors', color: 'var(--green)', desc: 'Anyone who sends Monero or Zano to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
+            { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors - not agents or employees.' },
+            { label: 'The Community', color: '#60a5fa', desc: 'Active contributors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
+            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator - manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
           ].map(p => (
             <div key={p.label} style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: `3px solid ${p.color}` }}>
               <strong style={{ color: p.color }}>{p.label}</strong>
@@ -179,25 +179,25 @@ export default function Governance({ setTab }) {
       </Section>
 
       <Section id="campaigns" title="Campaign Types" icon={Scale}>
-        <p style={{ marginBottom: 16 }}>Campaign types are <strong style={{ color: 'var(--fg)' }}>not a fixed list</strong> — the platform funds any lawful accountability activity. New types are ratified via community vote. Types are organized by demonstrated effectiveness:</p>
-        <p style={{ marginBottom: 8, fontWeight: 600, color: 'var(--accent)' }}>Tier 1 — Primary (Launch Priority)</p>
+        <p style={{ marginBottom: 16 }}>Campaign types are <strong style={{ color: 'var(--fg)' }}>not a fixed list</strong> - the platform funds any lawful accountability activity. New types are ratified via community vote. Types are organized by demonstrated effectiveness:</p>
+        <p style={{ marginBottom: 8, fontWeight: 600, color: 'var(--accent)' }}>Tier 1 - Primary (Launch Priority)</p>
         <Table
           headers={['Type', 'Why It Works']}
           rows={[
             ['Public Records Litigation', 'Injunctions can halt programs; discovery is irreplaceable'],
             ['Ordinance Campaigns', 'Proven 50+ city playbook; permanent wins; 6-18 month timelines'],
-            ['Counter-Database Projects', 'Force multiplier — feeds litigation, journalism, legislation'],
+            ['Counter-Database Projects', 'Force multiplier - feeds litigation, journalism, legislation'],
             ['FOIA Campaigns', 'Low cost, high volume, feeds every other campaign type'],
             ['Journalist Partnerships', 'Creates accountability litigation cannot; Intercept/Markup model'],
           ]}
         />
-        <p style={{ marginTop: 16, marginBottom: 8, fontWeight: 600, color: '#a78bfa' }}>Tier 2 — Supporting</p>
+        <p style={{ marginTop: 16, marginBottom: 8, fontWeight: 600, color: '#a78bfa' }}>Tier 2 - Supporting</p>
         <Table
           headers={['Type', 'Notes']}
           rows={[
             ['Vendor Accountability', 'Target Clearview, Flock Safety, Palantir by name; anonymous funding uniquely valuable'],
             ['Insurance/Liability Pressure', 'Most underexplored tool; makes surveillance tech uninsurable'],
-            ['Legal Defense', 'Civil and administrative only — no criminal defense'],
+            ['Legal Defense', 'Civil and administrative only - no criminal defense'],
             ['Legislative Advocacy', 'Requires attorney sign-off (LDA/FARA exposure)'],
             ['Procurement Intervention', 'Legal challenges to RFPs and sole-source contracts'],
           ]}
@@ -207,7 +207,7 @@ export default function Governance({ setTab }) {
       <Section id="voting" title="Voting Mechanics" icon={CheckCircle}>
         <p>Voting power is proportional to economic participation. A logarithmic curve rewards participation while limiting concentration.</p>
         <p style={{ marginTop: 12, fontWeight: 600, color: 'var(--fg)' }}>Weight Formula:</p>
-        <Code>weight = max(1, log₂(contribution / $5) + 1){'\n\n'}Floor: 1.0 — no contribution produces negative or zero weight{'\n'}$5 contribution  → weight 1.0{'\n'}$10 contribution → weight 2.0{'\n'}Cap: $1,280   → weight 9.0 (maximum)</Code>
+        <Code>weight = max(1, log2(contribution / $5) + 1){'\n\n'}Floor: 1.0 - no contribution produces negative or zero weight{'\n'}$5 contribution  → weight 1.0{'\n'}$10 contribution → weight 2.0{'\n'}Cap: $1,280   → weight 9.0 (maximum)</Code>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>72-hour rule:</strong> Contributions must be at least 72 hours old at proposal submission to qualify. No last-minute flooding.</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Quorum requirements:</strong></p>
         <Table
@@ -219,14 +219,14 @@ export default function Governance({ setTab }) {
           ]}
         />
         <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
-          <p style={{ margin: 0, fontWeight: 600, color: '#a78bfa', fontSize: 14 }}>Voting Diversity — High-Value Disbursements (§5.8)</p>
-          <p style={{ margin: '8px 0 0', fontSize: 13 }}>Disbursements above $10,000 require approving votes from voters with <strong style={{ color: 'var(--fg)' }}>less than 60% pairwise voting-history overlap</strong> in the prior 180 days (Jaccard similarity). An account must be at least 90 days old with at least 5 prior votes to satisfy this requirement — fresh accounts cannot trivially meet it with zero overlap.</p>
+          <p style={{ margin: 0, fontWeight: 600, color: '#a78bfa', fontSize: 14 }}>Voting Diversity - High-Value Disbursements (§5.8)</p>
+          <p style={{ margin: '8px 0 0', fontSize: 13 }}>Disbursements above $10,000 require approving votes from voters with <strong style={{ color: 'var(--fg)' }}>less than 60% pairwise voting-history overlap</strong> in the prior 180 days (Jaccard similarity). An account must be at least 90 days old with at least 5 prior votes to satisfy this requirement - fresh accounts cannot trivially meet it with zero overlap.</p>
           <p style={{ margin: '8px 0 0', fontSize: 13 }}><strong style={{ color: 'var(--accent)' }}>Small community fallback:</strong> If fewer than 10 eligible accounts exist, the diversity requirement is replaced with a 14-day extended escrow hold + mandatory Major-tier vote.</p>
         </div>
       </Section>
 
       <Section id="disbursement" title="Disbursement" icon={Lock}>
-        <p>Disbursement thresholds apply to <strong style={{ color: 'var(--fg)' }}>operator's 90-day rolling total volume</strong> — not per-campaign, preventing splitting exploits.</p>
+        <p>Disbursement thresholds apply to <strong style={{ color: 'var(--fg)' }}>operator's 90-day rolling total volume</strong> - not per-campaign, preventing splitting exploits.</p>
         <Table
           headers={['Rolling 90-Day Volume', 'Default', 'Override Required']}
           rows={[
@@ -234,11 +234,11 @@ export default function Governance({ setTab }) {
             ['$2,000 and above', 'Hold', '60% majority to approve'],
           ]}
         />
-        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign contributions. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 — see governance rationale below.</p>
+        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign contributions. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 - see governance rationale below.</p>
       </Section>
 
-      <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC — §9)" icon={Users}>
-        <p>Citeback is operated by the <strong style={{ color: 'var(--fg)' }}>Wyoming DAO LLC</strong> (the “platform entity”) — an active operator, not a passive relay. The platform entity handles all human-judgment functions; the wallet layer handles all financial execution.</p>
+      <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC - §9)" icon={Users}>
+        <p>Citeback is operated by the <strong style={{ color: 'var(--fg)' }}>Wyoming DAO LLC</strong> (the "platform entity") - an active operator, not a passive relay. The platform entity handles all human-judgment functions; the wallet layer handles all financial execution.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #6ee7b7' }}>
             <strong style={{ color: 'var(--green)' }}>What the platform entity does</strong>
@@ -246,38 +246,38 @@ export default function Governance({ setTab }) {
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', borderLeft: '3px solid #f87171' }}>
             <strong style={{ color: '#f87171' }}>What the platform entity cannot do</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Access wallet private keys or key shares (architecture-enforced, immutable). Approve or block disbursements outside community-voted rules. Override community governance votes. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Override community governance votes. Approve or block disbursements outside community-voted rules. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges. Access operator identity data for purposes other than OFAC screening and accountability.</p>
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', borderLeft: '3px solid #a78bfa' }}>
-            <strong style={{ color: '#a78bfa' }}>OFAC Screening — Two Layers (§9.3)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> Automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
+            <strong style={{ color: '#a78bfa' }}>OFAC Screening - Two Layers (§9.3)</strong>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding - identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> Automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #60a5fa' }}>
             <strong style={{ color: '#60a5fa' }}>Community accountability for the platform entity (§9.2)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Misconduct reports (§8); governance proposals constraining operator conduct; campaign rejection appeals (Major-tier community vote can overrule); fork right — if the community loses confidence in the platform entity, a fork is always available.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Misconduct reports (§8); governance proposals constraining operator conduct; campaign rejection appeals (Major-tier community vote can overrule); fork right - if the community loses confidence in the platform entity, a fork is always available.</p>
           </div>
         </div>
       </Section>
 
-      <Section id="tee" title="Wallet Architecture (Multi-Party, 2-of-3 Threshold)" icon={Lock}>
-        <p>Wallet keys are split across <strong style={{ color: 'var(--fg)' }}>minimum 3 independent nodes on different hardware providers.</strong> 2-of-3 threshold signatures are required — a single node compromise cannot release funds.</p>
+      <Section id="tee" title="Wallet Architecture (Direct Wallet Model)" icon={Lock}>
+        <p>Citeback uses a <strong style={{ color: 'var(--fg)' }}>direct wallet model</strong>: operators hold their own XMR and ZANO wallets. Contributions flow directly from contributors to the operator's wallet — Citeback never holds, pools, or touches campaign funds.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)'
         }}>
-          <strong style={{ color: 'var(--accent)' }}>The core guarantee:</strong>
-          <p style={{ margin: '8px 0 0', fontSize: 14 }}>No human — including the founder — has access to wallet private keys. Ever. There is no one to arrest, subpoena, or pressure into producing keys. This is enforced by architecture, not policy. If 2+ wallet nodes fail simultaneously, all disbursements pause automatically and a Major-tier community vote must be held within 7 days to define recovery.</p>
+          <strong style={{ color: 'var(--accent)' }}>How accountability works without custody:</strong>
+          <p style={{ margin: '8px 0 0', fontSize: 14 }}>Operators publish a view key (read-only) so anyone can verify the wallet balance in real time. Citeback monitors via the same view key. Early drain before campaign completion triggers an immediate permanent ban and public misconduct record. Operators are pre-screened (OFAC + identity verification) before any campaign goes live. The architecture specification is published on GitHub for community review before any funds are accepted.</p>
         </div>
       </Section>
 
       <Section id="bootstrapping" title="Bootstrapping & Founder Restrictions" icon={Users}>
         <div style={{ marginBottom: 20, padding: '14px 16px', borderRadius: 8, background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)' }}>
-          <p style={{ margin: '0 0 6px', fontWeight: 700, fontSize: 13, color: '#818cf8' }}>Bootstrap Ratification — 2026-05-06</p>
+          <p style={{ margin: '0 0 6px', fontWeight: 700, fontSize: 13, color: '#818cf8' }}>Bootstrap Ratification - 2026-05-06</p>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-            The graduated 3–5% platform fee model was eliminated by founding operator Scott Hughes during the pre-launch formation period. Rationale: mission alignment (no extractive relationship with campaigns), operational simplicity, and legal architecture (pure pass-through strengthens agent-of-the-payee argument). This change was not made to avoid regulatory classification — it was made because it is the right structure for this platform’s mission. The timing is documented here so the rationale is on record. Valid under §14 bootstrap governance pending formal community ratification upon LLC formation and launch.
+            The graduated 3-5% platform fee model was eliminated by founding operator Scott Hughes during the pre-launch formation period. Rationale: mission alignment (no extractive relationship with campaigns), operational simplicity, and legal architecture (pure pass-through strengthens agent-of-the-payee argument). This change was not made to avoid regulatory classification - it was made because it is the right structure for this platform's mission. The timing is documented here so the rationale is on record. Valid under §14 bootstrap governance pending formal community ratification upon LLC formation and launch.
           </p>
         </div>
-        <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> — enforced by the wallet-layer founder address registry and immutable (§15).</p>
+        <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> - enforced by the wallet-layer founder address registry and immutable (§15).</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Bootstrapping ends when all three are met:</strong></p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
           {[
@@ -291,10 +291,10 @@ export default function Governance({ setTab }) {
             </div>
           ))}
         </div>
-        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed — the founder retains the permanent 5% cap.</p>
+        <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed - the founder retains the permanent 5% cap.</p>
         <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
-            <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap — no further discounting. Founders cannot vote on their own ceiling removal.
+            <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap - no further discounting. Founders cannot vote on their own ceiling removal.
           </p>
         </div>
       </Section>
@@ -303,15 +303,15 @@ export default function Governance({ setTab }) {
         <p style={{ marginBottom: 16 }}>The following are enforced by the wallet execution layer. <strong style={{ color: 'var(--fg)' }}>A 100% community vote cannot override them.</strong> Changing them requires forking the platform.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
-            'No human key access — wallet keys cannot be extracted by any human',
-            'Criminal defense prohibition — no funding of criminal defense campaigns',
-            'Illegal activity prohibition — no funding of campaigns involving illegal activity',
-            'Camera tampering prohibition — no funding of campaigns to disable or interfere with surveillance equipment',
-            'No individual surplus distribution — operations surplus cannot flow to any individual',
-            'Founder ceiling permanence — 5% founder voting ceiling cannot be removed',
-            'Wallet node permanence — minimum 3 independent wallet nodes is a permanent architectural requirement',
-            'Minimum threshold floor — voting threshold cannot be set below $1 equivalent',
-            'Founder address registry permanence — encoded in the wallet layer and cannot be modified by any vote',
+            'No platform custody - Citeback never holds campaign wallet keys or funds',
+            'Criminal defense prohibition - no funding of criminal defense campaigns',
+            'Illegal activity prohibition - no funding of campaigns involving illegal activity',
+            'Camera tampering prohibition - no funding of campaigns to disable or interfere with surveillance equipment',
+            'No individual surplus distribution - operations surplus cannot flow to any individual',
+            'Founder ceiling permanence - 5% founder voting ceiling cannot be removed',
+            'Direct wallet permanence - the direct wallet model (no platform custody) is a permanent architectural requirement',
+            'Minimum threshold floor - voting threshold cannot be set below $1 equivalent',
+            'Founder governance ceiling permanence - 5% voting cap cannot be removed by any vote',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 3 }} />
@@ -325,21 +325,16 @@ export default function Governance({ setTab }) {
         <p style={{ marginBottom: 16 }}>The platform does not accept funds until <strong style={{ color: 'var(--fg)' }}>all of the following are complete and publicly verifiable:</strong></p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
+            'Governance framework published — complete ✅',
+            'Surveillance camera database live — complete ✅',
+            'Expert directory launched — complete ✅',
+            'Campaign proposals published publicly (GitHub repo public) — complete ✅',
             'Wyoming DAO LLC incorporated with registered agent',
-            'MSB/FinCEN written attorney opinion — "not an MSB because X" or registration path',
-            'Foreign qualification analysis in founder\'s home state',
-            'FARA analysis at platform level',
-            'Legislative advocacy compliance mechanism defined by attorney',
-            'Billboard liability review — specific federal statutes enumerated',
-            'Insurance coverage type specification (not just amount)',
-            'Minimum 3 independent wallet nodes across different hardware providers, live with 2-of-3 threshold signatures',
-            'Wallet security model written, published, and community-ratified',
-            'OFAC integration with continuous monitoring',
-            'Governance document ratified via bootstrapping governance process',
-            'Misconduct bond and staking systems operationally tested',
-            'Operator insurance framework operational',
-            'Founder address registry encoded in wallet layer and attested',
-            'Campaign quality advisory board — minimum 2 domain experts',
+            'FinCEN MSB compliance opinion obtained from attorney',
+            'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds',
+            'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns',
+            'OFAC contributor screening at contribution time live and tested',
+            'First campaign wallet activated',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <CheckCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 3 }} />

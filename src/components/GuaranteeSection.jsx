@@ -1,10 +1,10 @@
 const facts = [
-  'Citeback never holds funds — contributions go directly to the operator\'s wallet. Platform monitors via view key (read-only).',
-  'Multi-party threshold signatures — a single compromised server cannot unlock funds',
-  'Minimum 3 independent wallet nodes across separate hardware providers — a hard launch prerequisite',
+  'Citeback never holds funds — contributions go directly to the operator\'s own wallet. Platform monitors balance via view key (read-only).',
+  'View key verification — every campaign wallet publishes a read-only view key so anyone can independently verify the balance in real time',
+  'Early drain = permanent ban — operators who withdraw funds before campaign completion are permanently blacklisted with a public misconduct record',
   'Wyoming DAO LLC formation — a hard launch prerequisite before wallets activate',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
-  'Disbursement rules are code, not policy — published openly for community audit before launch',
+  'OFAC screening on all operators — required before any campaign goes live and again at each disbursement',
   'Architecture specification published — open for community review before any funds are accepted',
 ];
 
@@ -59,9 +59,9 @@ export default function GuaranteeSection({ setTab }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
-              'Every campaign wallet is controlled by an independent, hardware-secured system — not by the platform operator, not by the founder.',
-              'The platform has two layers: the operator manages campaigns and reviews proposals. A separate, auditable wallet layer manages money. What no one can do — not the founder, not the operator, not a court order — is unilaterally move funds outside the published disbursement rules.',
-              "This isn't a policy. It isn't a promise. The architecture is published and open for anyone to audit before launch.",
+              'Operators hold their own campaign wallets under the direct wallet model. Citeback never holds, pools, or touches campaign funds.',
+              'Every campaign wallet publishes a view key — a read-only key that lets anyone independently verify the balance. Citeback monitors via the same view key and permanently bans any operator who drains early.',
+              "This isn't a promise. The wallet architecture and accountability model are published and open for anyone to audit before launch.",
             ].map((para, i) => (
               <p
                 key={i}
