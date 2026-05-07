@@ -1480,14 +1480,22 @@ export default function CameraMap() {
               }}
             >
               <Popup>
-                <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 220, padding: 4 }}>
+                <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 230, padding: 4 }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 5, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#f59e0b', marginBottom: 8, letterSpacing: '0.05em' }}>
                     ⭐ CITEBACK EXCLUSIVE
                   </div>
+                  {s.photoFilename && (
+                    <img
+                      src={`https://ai.citeback.com/photos/${s.photoFilename}`}
+                      alt="C2PA verified sighting"
+                      style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 8, display: 'block' }}
+                    />
+                  )}
                   <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
                   <div style={{ fontSize: 11, color: '#888', marginBottom: 6 }}>📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
                   {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600 }}>★ Not in OpenStreetMap or any other database</div>
+                  <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600, marginBottom: 4 }}>★ Not in OpenStreetMap or any other database</div>
+                  <div style={{ fontSize: 10, color: '#10b981', fontWeight: 600 }}>🔒 C2PA cryptographically verified</div>
                 </div>
               </Popup>
             </CircleMarker>
