@@ -8,9 +8,9 @@ const milestonesBase = [
   { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
-  { done: false,   label: 'Secure wallet infrastructure live — 3 independent nodes, multi-party threshold signatures' },
-  { done: false,   label: 'Wallet architecture attestation published and independently verifiable' },
-  { done: false,   label: 'Automated wallet-level OFAC screening at disbursement live and tested' },
+  { done: false,   label: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
+  { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
+  { done: false,   label: 'OFAC contributor screening at contribution time live and tested' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 
