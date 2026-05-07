@@ -5,13 +5,13 @@ import FollowTheMoney from './FollowTheMoney'
 const disbursements = []
 
 const principles = [
-  { title: 'One Wallet Per Campaign', body: 'Every campaign will have dedicated Monero (XMR) and Zano (ZANO) wallets created inside a hardware-secured TEE enclave at launch. Funds cannot be commingled. No wallet addresses are published until all launch prerequisites are met.' },
+  { title: 'One Wallet Per Campaign', body: 'Every campaign will have dedicated Monero (XMR) and Zano (ZANO) wallets. Funds cannot be commingled. No wallet addresses are published until all launch prerequisites are met and the wallet architecture is publicly verified.' },
   { title: 'Receipt Before Release', body: 'Operators submit vendor receipts and photo proof before any disbursement is triggered. A 48-hour public challenge window follows — the community can contest any release.' },
-  { title: 'TEE-Secured — No Human Keyholders', body: 'The target architecture: no human holds wallet keys — not operators, not the council, not the founder. Wallets will live in a Trusted Execution Environment. The TEE code is public and open for review now. Wallets activate at Phase 2 launch.' },
-  { title: 'Full Public Record', body: 'Once live, every campaign receipt, disbursement, and governance action will be logged permanently and signed by the TEE attestation key. The governance rules governing this process are public now.' },
+  { title: 'No Human Keyholders', body: 'The target architecture: no human holds wallet keys — not operators, not the founder. The wallet system architecture is published openly before any funds go live. Wallets activate at Phase 2 launch after all prerequisites are publicly verified.' },
+  { title: 'Full Public Record', body: 'Once live, every campaign receipt, disbursement, and governance action will be logged permanently and publicly verifiable. The governance rules governing this process are published now.' },
   { title: 'Zero Platform Fee', body: 'Citeback takes nothing from campaigns. No percentage, no deduction, no operations cut. Every dollar contributed goes directly to the campaign operator\'s wallet. Operating costs are covered by the founding operator personally. This model was chosen deliberately — a platform that skims campaigns has an extractive relationship with the causes it exists to support.' },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. Pre-launch, the founder acts as the platform operator with defined responsibilities — but no ability to touch wallet keys. After Phase 2 launch and LLC formation, the founder has identical permissions to every other participant.' },
-  { title: 'Transparent Operator', body: 'The platform is being organized as a Wyoming DAO LLC — formation is a hard launch prerequisite. Operator identity, responsibilities, and limitations are published in the governance spec. The operator manages the platform and reviews campaign proposals — the operator cannot touch wallet keys. Those will be in the TEE.' },
+  { title: 'Transparent Operator', body: 'The platform is being organized as a Wyoming DAO LLC — formation is a hard launch prerequisite. Operator identity, responsibilities, and limitations are published in the governance spec. The operator manages the platform and reviews campaign proposals — the operator cannot access wallet keys. The wallet architecture enforces this by design.' },
 ]
 
 export default function Transparency({ setTab }) {
@@ -114,10 +114,10 @@ export default function Transparency({ setTab }) {
               What happens if Citeback doesn't launch?
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
-              Campaign wallets are controlled by the TEE — not by us. No wallet addresses will be published until launch prerequisites are fully met. No published address means there is nowhere to send — and nothing to return.
+              Campaign wallets are controlled by the published wallet architecture — not by us. No wallet addresses will be published until launch prerequisites are fully met. No published address means there is nowhere to send — and nothing to return.
             </p>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }}>
-              Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the TEE can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.
+              Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the wallet system can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.
             </p>
           </div>
         </div>

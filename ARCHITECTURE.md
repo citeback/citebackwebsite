@@ -19,8 +19,8 @@ This document describes the full technical architecture, from wallet management 
 1. **No trusted parties for financial operations** — Trust in financial execution is placed in open source code and cryptographic proofs, not people. The TEE enclave holds all private keys; no human — including the Wyoming DAO LLC operator — can access or extract wallet keys.
 2. **Identified human operator for governance and content** — The Wyoming DAO LLC handles site management, campaign review, operator onboarding, and OFAC pre-screening. Human judgment governs eligibility and editorial decisions; the TEE governs only financial execution.
 3. **Irreversibility by design** — Rules are slow to change on purpose. No single actor can rush changes through.
-4. **Privacy-preserving** — Donors are anonymous. Operators earn reputation without revealing identity.
-5. **Self-sustaining** — No platform fee on campaigns. 100% of donated funds go directly to operators. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC and voluntary user tips. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation). This eliminates any extractive relationship between the platform and the causes it supports.
+4. **Privacy-preserving** — Contributors are anonymous. Operators earn reputation without revealing identity.
+5. **Self-sustaining** — No platform fee on campaigns. 100% of contributed funds go directly to operators. Platform infrastructure is funded by founding operator capital contributions to the Wyoming DAO LLC and voluntary user tips. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation). This eliminates any extractive relationship between the platform and the causes it supports.
 6. **Community-governed** — The community owns the rules. Changes require public deliberation and time-locks.
 
 ---
@@ -29,7 +29,7 @@ This document describes the full technical architecture, from wallet management 
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    FOURTHRIGHT SYSTEM                    │
+│                    CITEBACK PLATFORM                    │
 │                                                         │
 │  ┌──────────────────────────────────────────────────┐   │
 │  │    OPERATIONAL LAYER  (Wyoming DAO LLC)           │   │
@@ -40,14 +40,14 @@ This document describes the full technical architecture, from wallet management 
 │  └──────────────────────┬───────────────────────────┘   │
 │                         │ (approved campaigns)           │
 │  ┌──────────────────────▼───────────────────────────┐   │
-│  │    TEE ENCLAVE (VPS)  [Financial Operations]     │   │
+│  │    WALLET LAYER  (Phase 2 — architecture published before launch)     │   │
 │  │                                                  │   │
 │  │  ┌─────────────────────────────────────────┐    │   │
 │  │  │  Wallet Agent                           │    │   │
 │  │  │                                         │    │   │
 │  │  │  XMR/ZANO RPC   · Wallet creation       │    │   │
 │  │  │  Fund custody   · Disbursements         │    │   │
-│  │  │  Fee collection · Attestation           │    │   │
+│  │  │  Disbursement rules · Attestation           │    │   │
 │  │  └───────────────────┬─────────────────────┘    │   │
 │  │                      │                          │   │
 │  │              ┌───────▼────────┐                 │   │
@@ -72,7 +72,7 @@ This document describes the full technical architecture, from wallet management 
 
 ### What It Is
 
-The Wyoming DAO LLC is the identified human operator of the Fourthright platform. It serves as the legal entity responsible for governance and compliance functions that require human editorial judgment and documented legal process. The LLC does **not** have access to wallet private keys at any point; financial execution is delegated entirely to the TEE.
+The Wyoming DAO LLC is the identified human operator of the Citeback platform. It serves as the legal entity responsible for governance and compliance functions that require human editorial judgment and documented legal process. The LLC does **not** have access to wallet private keys at any point; financial execution is delegated entirely to the TEE.
 
 ### Responsibilities
 
@@ -110,7 +110,7 @@ A TEE is a hardware-level secure enclave where code runs in an isolated, tamper-
 
 **Key property:** Anyone can verify that a specific, publicly auditable version of the code is running — and that nobody has tampered with it.
 
-### Why Fourthright Uses It
+### Why Citeback Uses It
 
 Without a TEE, whoever controls the VPS controls the wallets. A TEE removes this attack surface entirely. The Wyoming DAO LLC bootstraps the enclave, then has no more access to wallet keys than any other party. This is the security guarantee that separates financial custody from operational governance.
 
@@ -373,7 +373,7 @@ The entire platform is designed to outlive its founder.
 - No domain lock-in: DNS can be community-transferred
 - No single point of failure
 
-If Fourthright disappears, the code lives. Communities can rebuild.
+If Citeback disappears, the code lives. Communities can rebuild.
 
 ---
 

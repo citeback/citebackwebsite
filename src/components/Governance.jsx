@@ -8,7 +8,7 @@ const sections = [
   { id: 'voting', label: 'Voting Mechanics', icon: CheckCircle },
   { id: 'disbursement', label: 'Disbursement', icon: Lock },
   { id: 'human-operator', label: 'Human Operator Layer', icon: Users },
-  { id: 'tee', label: 'TEE Architecture', icon: Lock },
+  { id: 'tee', label: 'Wallet Architecture', icon: Lock },
   { id: 'bootstrapping', label: 'Bootstrapping', icon: Users },
   { id: 'immutables', label: 'Immutables', icon: AlertTriangle },
   { id: 'prerequisites', label: 'Launch Prerequisites', icon: CheckCircle },
@@ -168,7 +168,7 @@ export default function Governance({ setTab }) {
             { label: 'Donors', color: 'var(--green)', desc: 'Anyone who sends Monero to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
             { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors — not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active donors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
-            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator — manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (TEE-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
+            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator — manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
           ].map(p => (
             <div key={p.label} style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: `3px solid ${p.color}` }}>
               <strong style={{ color: p.color }}>{p.label}</strong>
@@ -238,7 +238,7 @@ export default function Governance({ setTab }) {
       </Section>
 
       <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC — §9)" icon={Users}>
-        <p>Citeback is operated by the <strong style={{ color: 'var(--fg)' }}>Wyoming DAO LLC</strong> (the “platform entity”) — an active operator, not a passive relay. The platform entity handles all human-judgment functions; the TEE handles all financial execution.</p>
+        <p>Citeback is operated by the <strong style={{ color: 'var(--fg)' }}>Wyoming DAO LLC</strong> (the “platform entity”) — an active operator, not a passive relay. The platform entity handles all human-judgment functions; the wallet layer handles all financial execution.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #6ee7b7' }}>
             <strong style={{ color: 'var(--green)' }}>What the platform entity does</strong>
@@ -246,11 +246,11 @@ export default function Governance({ setTab }) {
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', borderLeft: '3px solid #f87171' }}>
             <strong style={{ color: '#f87171' }}>What the platform entity cannot do</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Access wallet private keys or key shares (TEE-enforced, immutable). Approve or block disbursements outside community-voted rules. Override community governance votes. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Access wallet private keys or key shares (architecture-enforced, immutable). Approve or block disbursements outside community-voted rules. Override community governance votes. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges.</p>
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', borderLeft: '3px solid #a78bfa' }}>
             <strong style={{ color: '#a78bfa' }}>OFAC Screening — Two Layers (§9.3)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> TEE automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
+            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding — identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> Automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
           </div>
           <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #60a5fa' }}>
             <strong style={{ color: '#60a5fa' }}>Community accountability for the platform entity (§9.2)</strong>
@@ -259,14 +259,14 @@ export default function Governance({ setTab }) {
         </div>
       </Section>
 
-      <Section id="tee" title="TEE Architecture (Multi-TEE, 2-of-3 Threshold)" icon={Lock}>
-        <p>Wallet keys are split across <strong style={{ color: 'var(--fg)' }}>minimum 3 TEE instances on different hardware providers.</strong> 2-of-3 threshold signatures are required — a single TEE compromise cannot release funds.</p>
+      <Section id="tee" title="Wallet Architecture (Multi-Party, 2-of-3 Threshold)" icon={Lock}>
+        <p>Wallet keys are split across <strong style={{ color: 'var(--fg)' }}>minimum 3 independent nodes on different hardware providers.</strong> 2-of-3 threshold signatures are required — a single node compromise cannot release funds.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 0,
           background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)'
         }}>
           <strong style={{ color: 'var(--accent)' }}>The core guarantee:</strong>
-          <p style={{ margin: '8px 0 0', fontSize: 14 }}>No human — including the founder — has access to wallet private keys. Ever. There is no one to arrest, subpoena, or pressure into producing keys. This is enforced by architecture, not policy. If 2+ TEE instances fail simultaneously, all disbursements pause automatically and a Major-tier community vote must be held within 7 days to define recovery — no disbursements occur without a community-approved plan.</p>
+          <p style={{ margin: '8px 0 0', fontSize: 14 }}>No human — including the founder — has access to wallet private keys. Ever. There is no one to arrest, subpoena, or pressure into producing keys. This is enforced by architecture, not policy. If 2+ wallet nodes fail simultaneously, all disbursements pause automatically and a Major-tier community vote must be held within 7 days to define recovery.</p>
         </div>
       </Section>
 
@@ -277,7 +277,7 @@ export default function Governance({ setTab }) {
             The graduated 3–5% platform fee model was eliminated by founding operator Scott Hughes during the pre-launch formation period. Rationale: mission alignment (no extractive relationship with campaigns), operational simplicity, and legal architecture (pure pass-through strengthens agent-of-the-payee argument). This change was not made to avoid regulatory classification — it was made because it is the right structure for this platform’s mission. The timing is documented here so the rationale is on record. Valid under §14 bootstrap governance pending formal community ratification upon LLC formation and launch.
           </p>
         </div>
-        <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> — enforced by the TEE-encoded founder address registry and immutable (§15).</p>
+        <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> — enforced by the wallet-layer founder address registry and immutable (§15).</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Bootstrapping ends when all three are met:</strong></p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
           {[
@@ -300,7 +300,7 @@ export default function Governance({ setTab }) {
       </Section>
 
       <Section id="immutables" title="Immutables" icon={AlertTriangle}>
-        <p style={{ marginBottom: 16 }}>The following are encoded in the TEE and enforced by the execution layer. <strong style={{ color: 'var(--fg)' }}>A 100% community vote cannot override them.</strong> Changing them requires forking the platform.</p>
+        <p style={{ marginBottom: 16 }}>The following are enforced by the wallet execution layer. <strong style={{ color: 'var(--fg)' }}>A 100% community vote cannot override them.</strong> Changing them requires forking the platform.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
             'No human key access — wallet keys cannot be extracted by any human',
@@ -309,9 +309,9 @@ export default function Governance({ setTab }) {
             'Camera tampering prohibition — no funding of campaigns to disable or interfere with surveillance equipment',
             'No individual surplus distribution — operations surplus cannot flow to any individual',
             'Founder ceiling permanence — 5% founder voting ceiling cannot be removed',
-            'Multi-TEE permanence — minimum 3 TEE instances is a permanent architectural requirement',
+            'Wallet node permanence — minimum 3 independent wallet nodes is a permanent architectural requirement',
             'Minimum threshold floor — voting threshold cannot be set below $1 equivalent',
-            'Founder address registry permanence — TEE-encoded founder registry cannot be modified by any vote',
+            'Founder address registry permanence — encoded in the wallet layer and cannot be modified by any vote',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 3 }} />
@@ -332,13 +332,13 @@ export default function Governance({ setTab }) {
             'Legislative advocacy compliance mechanism defined by attorney',
             'Billboard liability review — specific federal statutes enumerated',
             'Insurance coverage type specification (not just amount)',
-            'Minimum 3 TEE instances across different hardware providers, live with 2-of-3 threshold signatures',
-            'TEE threat model written, published, and community-ratified',
+            'Minimum 3 independent wallet nodes across different hardware providers, live with 2-of-3 threshold signatures',
+            'Wallet security model written, published, and community-ratified',
             'OFAC integration with continuous monitoring',
             'Governance document ratified via bootstrapping governance process',
             'Misconduct bond and staking systems operationally tested',
             'Operator insurance framework operational',
-            'Founder address registry TEE-encoded and attested',
+            'Founder address registry encoded in wallet layer and attested',
             'Campaign quality advisory board — minimum 2 domain experts',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>

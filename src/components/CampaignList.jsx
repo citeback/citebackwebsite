@@ -44,7 +44,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
             {full ? 'All Campaigns' : 'Campaigns'}
           </h2>
           <p style={{ color: 'var(--muted)', marginTop: 4, fontSize: 14 }}>
-            At launch, each campaign will have its own Monero (XMR) and Zano (ZANO) wallets — created inside the TEE, keys never leave. Protocol-level privacy. Fully public audit trail.
+            At launch, each campaign will have its own Monero (XMR) and Zano (ZANO) wallets. No human holds the keys — the wallet architecture is published before any funds go live. Protocol-level privacy. Fully public audit trail.
           </p>
         </div>
         <button onClick={() => setProposing(true)} style={{

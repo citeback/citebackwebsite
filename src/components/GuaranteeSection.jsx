@@ -1,11 +1,11 @@
 const facts = [
-  'At launch: minimum 3 TEE instances across independent hardware providers (a hard launch prerequisite)',
-  'At launch: 2-of-3 threshold signatures required — one compromised node cannot unlock funds',
-  'No human will ever hold a wallet key — keys are generated inside the TEE enclave and never leave',
-  'Being structured as a Wyoming DAO LLC — formation is a hard launch prerequisite',
+  'No human holds the keys — wallet architecture is finalized and published before any funds go live',
+  'Multi-party threshold signatures — a single compromised server cannot unlock funds',
+  'Minimum 3 independent wallet nodes across separate hardware providers — a hard launch prerequisite',
+  'Wyoming DAO LLC formation — a hard launch prerequisite before wallets activate',
   'Accepts only XMR and ZANO — no credit cards, no identity, no bank',
-  'At launch: mission rules will be encoded in TEE code — not governance documents that can be quietly amended',
-  'Architecture specification published — open for community audit before launch',
+  'Disbursement rules are code, not policy — published openly for community audit before launch',
+  'Architecture specification published — open for community review before any funds are accepted',
 ];
 
 export default function GuaranteeSection({ setTab }) {
@@ -59,9 +59,9 @@ export default function GuaranteeSection({ setTab }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
-              'Every campaign wallet will live inside a Trusted Execution Environment — hardware-level isolation where keys are generated inside the enclave and never leave.',
-              'The platform has two layers: the operator manages campaigns; at launch, the TEE manages money. What no one can do after launch — not the founder, not the operator, not a court order — is produce keys that exist only inside the enclave.',
-              "This isn't a policy. It isn't a promise. It's the architecture — and the code is public for anyone to audit before launch.",
+              'Every campaign wallet is controlled by an independent, hardware-secured system — not by the platform operator, not by the founder.',
+              'The platform has two layers: the operator manages campaigns and reviews proposals. A separate, auditable wallet layer manages money. What no one can do — not the founder, not the operator, not a court order — is unilaterally move funds outside the published disbursement rules.',
+              "This isn't a policy. It isn't a promise. The architecture is published and open for anyone to audit before launch.",
             ].map((para, i) => (
               <p
                 key={i}

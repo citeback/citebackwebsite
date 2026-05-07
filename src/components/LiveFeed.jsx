@@ -43,7 +43,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'GOVERNANCE',
-    text: 'TEE architecture review completed — 3 independent provider comparison',
+    text: 'Wallet architecture spec published — 3-node multi-party threshold design',
   },
   {
     category: 'SURVEILLANCE',

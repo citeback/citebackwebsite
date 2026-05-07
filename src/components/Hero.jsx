@@ -239,7 +239,7 @@ export default function Hero({ setTab }) {
               letterSpacing: '0.03em',
               opacity: 0.7,
             }}>
-              Pre-launch — no wallets are active yet. 4 of 16 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, wallet keys will be sealed inside a TEE enclave — no human can access them by architectural design.
+              Pre-launch — no wallets are active yet. 4 of 16 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, wallet architecture is published and independently verifiable — no human can access keys by architectural design.
             </p>
           </div>
 

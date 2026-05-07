@@ -8,9 +8,9 @@ const milestonesBase = [
   { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
-  { done: false,   label: 'TEE wallets live — 3 nodes, 2-of-3 threshold signatures' },
-  { done: false,   label: 'TEE remote attestation published and verifiable' },
-  { done: false,   label: 'TEE automated wallet-level OFAC screening at disbursement (operator onboarding uses separate manual pre-screening with identity verification)' },
+  { done: false,   label: 'Secure wallet infrastructure live — 3 independent nodes, multi-party threshold signatures' },
+  { done: false,   label: 'Wallet architecture attestation published and independently verifiable' },
+  { done: false,   label: 'Automated wallet-level OFAC screening at disbursement live and tested' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 

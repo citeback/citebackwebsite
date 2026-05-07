@@ -82,7 +82,7 @@ No campaign wallets go live until written attorney guidance on this gap is recei
 You may not use this Site to:
 • Submit false, fraudulent, or malicious camera locations or campaign proposals
 • Attempt to identify contributors, operators, or other participants
-• Interfere with the TEE attestation system or governance mechanisms
+• Interfere with the wallet system or governance mechanisms
 • Use the platform to fund activities that are unlawful in the relevant jurisdiction
 • Violate OFAC sanctions or any applicable financial sanctions regime`,
         },

@@ -7,7 +7,7 @@ const donorSteps = [
   },
   {
     title: 'Send Monero or Zano',
-    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the campaign wallet. At launch, a Trusted Execution Environment (TEE) — a tamper-proof hardware enclave that no one can access or override — holds the funds. The operator manages the campaign. No human holds the keys.',
+    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the campaign wallet. At launch, an independently-auditable wallet system holds the funds. The operator manages the campaign. No human holds the keys.',
   },
   {
     title: 'Track It Publicly',
@@ -26,7 +26,7 @@ const operatorSteps = [
   },
   {
     title: 'Get Funded',
-    desc: 'Donors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. At launch, the TEE (Trusted Execution Environment — a tamper-proof hardware enclave that no one, including us, can access or override) holds funds in escrow until milestones are verified. You manage the campaign, not the money.',
+    desc: 'Donors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. At launch, the wallet system holds funds in escrow until milestones are verified. You manage the campaign, not the money.',
   },
   {
     title: 'Execute and Document',
