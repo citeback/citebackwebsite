@@ -1,5 +1,5 @@
 const facts = [
-  'Platform holds the collection wallet during every campaign — operators cannot access contributions before a campaign succeeds',
+  'Citeback never holds funds — contributions go directly to the operator\'s wallet. Platform monitors via view key (read-only).',
   'Multi-party threshold signatures — a single compromised server cannot unlock funds',
   'Minimum 3 independent wallet nodes across separate hardware providers — a hard launch prerequisite',
   'Wyoming DAO LLC formation — a hard launch prerequisite before wallets activate',
@@ -54,7 +54,7 @@ export default function GuaranteeSection({ setTab }) {
               marginBottom: '36px',
             }}
           >
-            Platform-controlled collection wallets. Operators can’t touch contributions until their campaign succeeds.
+            Citeback never holds funds. Contributions go directly to operators. Platform monitors via view key.
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

@@ -16,12 +16,12 @@
 
 ## Changelog: v0.7 → v0.8
 
-- **Split operational model adopted:** Platform now reflects a human operator layer + autonomous TEE financial layer
+- **Split operational model adopted:** Platform now reflects a human operator layer (Wyoming DAO LLC) + direct-to-operator wallet model (no platform custody)
 - **§9 AI Monitoring Ensemble removed:** Replaced with Human Operator Layer (§9) — AI is not in the monitoring, approval, or advisory path
-- **TEE scope narrowed:** TEE handles wallet creation, fund custody, disbursement execution per rules, attestation, and OFAC screening at disbursement — not content monitoring or editorial judgment
+- **No platform custody model:** Contributions go directly to operator wallets. Platform monitors via view key. No TEE required.
 - **Human operator responsibilities defined (§9):** Campaign proposal review (legal judgment), operator onboarding, OFAC pre-screening, site content, community communications
 - **Community accountability for platform entity added (§9.2):** Misconduct reports, governance proposals, campaign rejection appeals, and fork right apply to operator conduct
-- **§12 Emergency Pause:** AI ensemble trigger removed; triggers simplified to platform entity, TEE anomaly, and community member
+- **§12 Emergency Pause:** Triggers: platform entity, wallet anomaly detection, and community member
 - **§6.2:** AI ensemble oversight removed from Governance-tier canonical list
 - **Launch Prerequisites:** AI Ensemble requirement removed; Operator Accountability Protocol added
 - **Language:** "No one holds the keys" framing adopted throughout; platform is explicitly operated by Wyoming DAO LLC
@@ -39,9 +39,9 @@
 - Reputation floor: 0 after any penalty
 - Appeal anchor: on-chain publication date
 - AI emergency rollback: 60% supermajority (was 75%)
-- Multi-TEE failure recovery path defined
+- Multi-node failure recovery path defined
 - Stagnation escape state defined
-- Monero + AML and TEE evidentiary treatment added to Open Questions
+- Monero + AML evidentiary treatment added to Open Questions
 
 ## Changelog: v0.5 → v0.6
 
@@ -105,14 +105,12 @@
 5. **Legislative Advocacy Compliance Mechanism:** Attorney must define a compliant disclosure structure or issue a prohibition before this campaign type goes live.
 6. **Billboard Liability Review:** Attorney must enumerate specific federal statutes that could pierce §230 for this use case (Hobbs Act, 18 U.S.C. §875, etc.) and confirm liability waiver is enforceable in key jurisdictions.
 7. **Insurance Coverage Specification:** Attorney or insurance specialist must define minimum coverage *type* (not just amount) for the $1M operator insurance requirement — must cover civil rights claims, defamation, and intentional acts.
-8. **TEE Deployment:** Minimum 3 TEE instances across different hardware providers, live with 2-of-3 threshold signatures.
-9. **TEE Threat Model:** Written, published, and community-ratified.
-10. **OFAC Integration:** Third-party screening with continuous monitoring protocol. Real-name identity data required.
+8. **OFAC Integration:** Third-party screening with continuous monitoring protocol. Real-name identity data required.
 11. **Operator Accountability Protocol:** Documented process for community challenges to operator decisions (campaign approvals, operator onboarding denials), with SLA and escalation path. Published before launch.
 12. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
 13. **Misconduct Bond & Staking Systems:** Operationally tested.
 14. **Operator Insurance Framework:** Certificate collection and verification operational before first $100k+ campaign.
-15. **Founder Address Registry:** TEE-encoded, deployed, attestation published.
+15. **Founder Address Registry:** Published and verifiable on GitHub before launch.
 16. **Campaign Quality Advisory Board:** Minimum 2 domain experts (civil liberties attorney + surveillance accountability practitioner) available to review early campaigns before community votes. Addresses the domain expertise gap governance cannot solve.
 
 ---
@@ -134,7 +132,7 @@ This platform exists to correct that asymmetry. It enables anonymous, coordinati
 
 **On Legal Defensibility:** The platform operates within law, maintains required legal registrations, and funds only lawful activities. The goal is accountability, not impunity.
 
-**On Operational Structure:** Citeback is operated by the Wyoming DAO LLC. The platform entity manages site content, reviews campaign proposals, onboards operators, and communicates with the community. What the operator cannot do — ever — is access wallet keys. The wallet architecture exists solely within the TEE (§10); no operator, court order, or government directive can extract those keys. Community governance provides accountability for both operator decisions and the financial layer.
+**On Operational Structure:** Citeback is operated by the Wyoming DAO LLC. The platform entity manages site content, reviews campaign proposals, onboards operators, and communicates with the community. What the operator cannot do — ever — is access wallet keys. The platform never holds campaign funds (§7.0, §10); contributions go directly to operators. Community governance provides accountability for operator decisions. Community governance provides accountability for both operator decisions and the financial layer.
 
 **On Entity Protection:** Wyoming DAO LLC provides civil liability protection. It does not limit federal enforcement exposure. Federal civil or criminal actions against the platform or its participants remain possible regardless of entity form.
 
@@ -143,7 +141,7 @@ This platform exists to correct that asymmetry. It enables anonymous, coordinati
 ## 2. Participants
 
 ### 2.1 Donors
-Anyone who sends Monero to a campaign wallet is a donor. No registration required. No identity collected. TEE records contribution amounts and timing for voting weight only.
+Anyone who sends Monero to a campaign wallet is a donor. No registration required. No identity collected. Platform records contribution amounts and timing for voting weight only, verified via operator-provided view keys.
 
 ### 2.2 Operators
 Operators create and manage campaigns. They must:
@@ -162,7 +160,7 @@ Active donors who participate in governance votes. No membership list, no token.
 ### 2.4 Platform Entity (Wyoming DAO LLC)
 The Wyoming DAO LLC is the platform operator — an active participant, not a passive relay. The entity reviews campaign proposals before publication, onboards operators, maintains the platform, and communicates with the community. It is accountable to the community through the misconduct system (§8) and the fork right (§16).
 
-The platform entity has **no access to wallet keys** (TEE-enforced, §10, immutable §15) and **cannot direct disbursements** outside community-approved rules.
+The platform entity has **no custody of campaign funds** (direct-to-operator model, §7.0, immutable §15) and **cannot direct disbursements** outside community-approved rules.
 
 ### 2.5 Identity: Nostr Preferred
 Nostr public keys preferred — verifiable without exposing personal data, cross-platform portable.
@@ -311,7 +309,7 @@ Hard cap: 9.0. No additional weight beyond $1,280.
 Voting parameters are snapshotted at vote-open time. Changes take effect only on votes opened after the change clears its time-lock. No retroactive shifts on open votes.
 
 ### 5.5 Operator Conflict of Interest
-Operators excluded from disbursement votes on their own campaigns. TEE-enforced. Their own-campaign donations generate no disbursement voting weight.
+Operators excluded from disbursement votes on their own campaigns. Governance-enforced. Their own-campaign donations generate no disbursement voting weight.
 
 ### 5.6 Quorum Requirements
 | Tier | Quorum |
@@ -353,7 +351,7 @@ Disbursements above $10,000 require approving votes from voters with **less than
 | Governance | 14 days | 75% supermajority | 14 days |
 
 ### 6.2 Automatic Governance-Tier Classification (Canonical List)
-- Fund movement logic or TEE execution rules
+- Fund movement logic or disbursement execution rules
 - Voting weight calculation or quorum thresholds
 - Disbursement approval/block thresholds
 - Reputation cap thresholds
@@ -369,21 +367,21 @@ Classification decisions require active confirmation from **3 reputation-weighte
 
 ## 7. Disbursement
 
-### 7.0 Two-Wallet Model
+### 7.0 Direct Wallet Model
 
-Every campaign uses two distinct wallets:
+**Citeback never holds funds.** Operators post their own Monero (XMR) or Zano (ZANO) wallet address when creating a campaign. Contributions go directly from contributors to the operator’s wallet. The platform has no custody, no spending access, and no ability to move funds.
 
-**Collection wallet** — Created and controlled by the platform wallet system. This is the address published on the campaign page where contributors send funds. **No operator has access to this wallet at any time during an active campaign.** The platform wallet system holds these keys exclusively.
+**View key transparency:** Operators must provide a Monero full view key (read-only, cannot spend) to the platform at campaign creation. The platform uses this to publicly verify inflows and monitor for early withdrawal. The view key is published on the campaign page so any community member can independently verify balances.
 
-**Payout address** — The operator’s own wallet address, provided at campaign creation. This is where funds are sent *after* a campaign successfully completes, milestones are verified, and the challenge window closes without a block.
-
-**Early withdrawal protection:** An operator cannot access collection wallet funds during an active campaign — because they do not hold the keys. Any attempt to circumvent this (e.g., submitting false proof to trigger early disbursement, social engineering the platform, or exploiting a wallet system bug to extract funds before campaign completion) constitutes an Immutable violation and results in:
-- Immediate permanent ban from the platform
+**Early withdrawal rule:** If the platform’s view key monitoring detects an outflow from a campaign wallet before the campaign goal is reached, the operator is:
+- Immediately and permanently banned from the platform
 - All active campaign stakes forfeited
-- Permanent public misconduct record
-- Referral to applicable law enforcement if funds were extracted
+- Permanent public misconduct record published
+- No appeal available for early withdrawal violations
 
-This protection is architectural — operators cannot drain collection wallets because they never hold those keys.
+This is a governance rule, not a technical lock. Operators can physically withdraw early — but doing so ends their participation permanently and publicly. The reputation and stake system makes this economically irrational for any operator intending to run future campaigns.
+
+**No platform custody = no MSB exposure.** Citeback is a coordination and accountability platform, not a money transmitter. The platform never receives, holds, or transmits funds on behalf of another party.
 
 ### 7.1 Rolling Volume (Total Operator)
 The $2,000 threshold applies to **total operator rolling volume across all campaigns in the past 90 days**.
@@ -446,8 +444,8 @@ Citeback is operated by the Wyoming DAO LLC (the "platform entity"). The platfor
 - **Legal compliance:** Maintain entity registrations, file required disclosures, and engage DAO counsel on edge cases.
 
 **What the platform entity cannot do:**
-- Access wallet private keys or key shares — TEE-enforced, immutable (§15)
-- Approve or block disbursements outside community-voted rules — TEE-enforced
+- Hold, access, or direct campaign funds — direct-to-operator model, immutable (§15)
+- Override community-voted disbursement rules — governance-enforced
 - Override community governance votes
 - Suppress lawful campaigns that meet published guidelines
 - Use emergency pause (§12) to block governance votes or community challenges
@@ -466,13 +464,13 @@ Screening operates at two distinct points:
 | Layer | Who | When | Scope |
 |---|---|---|---|
 | Pre-screening | Platform entity | Operator onboarding | Identity-level, before any campaign is created |
-| Disbursement screening | TEE (automated) | Every disbursement | Wallet-level re-check against continuously updated SDN list |
+| Disbursement screening | Platform operator | At operator onboarding + periodic | OFAC SDN list screening against operator identity |
 
-The pre-screening by the platform entity is the primary OFAC compliance layer for operators. The TEE disbursement screening checks operator wallet addresses against the SDN list at the time of each disbursement.
+The pre-screening by the platform entity is the OFAC compliance layer for operators. Operator wallet addresses are screened against the SDN list at onboarding and periodically thereafter.
 
 > **⚠️ OFAC LIMITATION — ATTORNEY MUST ADDRESS BEFORE LAUNCH:**
 >
-> OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it **technically impossible** to link an incoming donation to an SDN-list identity — sender address, amount, and transaction history are all concealed at the protocol level. Wallet-level TEE screening applies to operator disbursement destinations (identifiable addresses) only — it **cannot screen anonymous incoming donor transactions**.
+> OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it **technically impossible** to link an incoming donation to an SDN-list identity — sender address, amount, and transaction history are all concealed at the protocol level. Wallet-level screening applies to operator disbursement destinations (identifiable addresses) only — it **cannot screen anonymous incoming donor transactions**.
 >
 > This is a structural gap in OFAC compliance on the donor side that cannot be closed without destroying Monero's privacy guarantees. It is documented as an Open Question requiring attorney analysis before any live wallet accepts funds (see §Open Questions #1 and #3).
 >
@@ -501,9 +499,9 @@ Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour do
 
 ---
 
-## 10. TEE Architecture
+## 10. Wallet Architecture (Direct Model)
 
-**TEE Scope:** The TEE layer is narrowly scoped to financial custody and execution functions. It does not monitor content, make editorial judgments, or advise on governance. Human operator judgment handles those functions (§9).
+**Platform Role:** Citeback is a coordination platform, not a custodian. The platform never holds, receives, or transmits campaign funds. Operators post their own wallet addresses; contributions go directly from contributors to operator wallets. The platform monitors balances via operator-provided Monero view keys (read-only).
 
 - Wallet keypair generation (XMR + ZANO) — inside the enclave only
 - Fund receipt and custody
@@ -512,7 +510,7 @@ Probabilistic deterrent only. Primary Sybil defenses: economic floor, 72-hour do
 - OFAC screening at disbursement time (§10.4)
 
 ### 10.1 Multi-TEE (3 Instances, 2-of-3)
-Minimum 3 TEE instances on different hardware providers. **2-of-3 threshold signatures.** Single compromise cannot release funds. Governance immutable (§15).
+No platform custody. Operators hold their own keys. Platform monitors via view key. Governance immutable (§15).
 
 ### 10.2 No Human Key Access
 Never. Governance immutable (§15).
@@ -521,7 +519,7 @@ Never. Governance immutable (§15).
 Balances exceeding 120% of active campaign obligations trigger community notification within 24 hours.
 
 ### 10.5 Multi-TEE Failure Recovery
-If 2+ TEE instances fail simultaneously (making 2-of-3 threshold impossible), all disbursements pause automatically. A Major-tier vote must be held within 7 days defining recovery: (a) emergency key rotation to new TEE instances, (b) supervised campaign wind-down, or (c) fork. No disbursements occur during recovery without a community-approved plan.
+If the platform monitoring system fails, all campaign activity pauses automatically. A Major-tier vote must be held within 7 days defining recovery: (a) emergency key rotation to new TEE instances, (b) supervised campaign wind-down, or (c) fork. No disbursements occur during recovery without a community-approved plan.
 
 ### 10.4 Threat Model
 Published and community-ratified before launch. Must address side-channel risks, provider dependencies, supply-chain trust.
@@ -543,7 +541,7 @@ Published and community-ratified before launch. Must address side-channel risks,
 ### 12.1 Triggers
 Emergency pause may be triggered by:
 - **(a)** Platform entity identifies active technical exploitation, legal emergency, or critical system failure requiring immediate halt
-- **(b)** TEE anomaly: 2+ TEE instances report threshold signature failures or attestation errors
+- **(b)** Wallet anomaly: monitoring detects unexpected outflows or view key irregularities
 - **(c)** Community member trigger (§12.2)
 
 The platform entity's pause authority under (a) is limited to 72 hours. Extension requires a Major-tier community vote. The platform entity cannot use emergency pause to suppress governance votes or community challenges.
@@ -558,7 +556,7 @@ Suspends new votes, disbursements, campaign creation. Max 72 hours. Extension re
 
 ## 13. Code Change Governance
 
-All changes via GitHub. Classification governed by §6.2 canonical list — this section references §6.2 only. Governance-tier TEE/fund changes require independent security audit before vote.
+All changes via GitHub. Classification governed by §6.2 canonical list — this section references §6.2 only. Governance-tier fund/wallet changes require independent security audit before vote.
 
 ---
 
@@ -568,7 +566,7 @@ All changes via GitHub. Classification governed by §6.2 canonical list — this
 No votes during bootstrapping. After: permanently capped at **5% of any vote total**. Founders cannot vote on their own ceiling removal (§15).
 
 ### 14.2 TEE-Enforced Founder Address Registry
-Encoded in TEE at launch. Cannot be modified by any vote. Founder taint tracking: 3-hop minimum, 50% decay per hop. Any account with >1% residual founder taint counts fully toward the 5% cap — no further discounting. Wallet transfers from founder addresses flagged for community review.
+Encoded in platform rules at launch. Cannot be modified by any vote. Founder taint tracking: 3-hop minimum, 50% decay per hop. Any account with >1% residual founder taint counts fully toward the 5% cap — no further discounting. Wallet transfers from founder addresses flagged for community review.
 
 ### 14.3 Bootstrapping End Conditions
 All three must be met:
@@ -579,7 +577,7 @@ All three must be met:
 **Stagnation escape:** If platform has been active for **36 months** without meeting conditions 1-2, bootstrapping ends automatically. Post-escape governance is identical to post-bootstrapping — founder retains permanent 5% cap, all standard tiers apply. No constraints are relaxed.
 
 ### 14.4 Formal Handoff Checklist
-- [ ] TEE enclave live with verified attestation
+- [ ] Wallet architecture published and independently verified
 - [ ] Wallet Agent running with first real campaign
 - [ ] Action Logger publishing to public GitHub
 - [ ] Community voting interface live
@@ -593,7 +591,7 @@ All three must be met:
 
 ## 15. Immutables
 
-Encoded in TEE. Cannot be overridden by any vote — requires a fork.
+Encoded in platform architecture. Cannot be overridden by any vote — requires a fork.
 
 1. No human key access
 2. Criminal defense prohibition
@@ -601,10 +599,11 @@ Encoded in TEE. Cannot be overridden by any vote — requires a fork.
 4. Camera tampering prohibition
 5. No individual surplus distribution
 6. Founder ceiling permanence (founders cannot vote on this rule)
-7. Multi-TEE permanence (minimum 3 instances)
+7. No custody permanence — platform may not hold campaign funds (see §11 above)
 8. Minimum threshold floor ($1 equivalent)
 9. Founder address registry permanence
 10. OFAC SDN match override prohibition — no community vote may override a denial or rejection based on an OFAC SDN list match. This is a regulatory compliance requirement; it cannot be loosened by governance vote. A fork is required to change it.
+11. No platform custody — the platform may not hold, receive, or transmit campaign funds on behalf of operators or contributors. Direct-to-operator wallet model is permanent. A fork is required to change this.
 
 ---
 
@@ -619,10 +618,10 @@ Fork option is always available. Community's ultimate check is exit.
 ## Open Questions (Unresolved Pre-Launch)
 
 1. **Monero + AML legal question** *(Attorney required)* — Monero's privacy features create higher AML risk than other crypto. Attorney must address compatibility with the OFAC/KYC framework before launch.
-2. **TEE attestation evidentiary treatment** — If subpoenaed, TEE logs may be primary evidence. Chain-of-custody, data retention obligations, and compromised-instance posture need attorney analysis before launch.
+2. **Platform log evidentiary treatment** — If subpoenaed, platform monitoring logs may be primary evidence. Chain-of-custody, data retention obligations, and compromised-instance posture need attorney analysis before launch.
 3. **Fiat disbursement pathway** *(Highest operational priority)* — Lawyers get paid in dollars. Billboard vendors require entity names. How do campaigns deploy funds without exposing participants? Requires legal + operational design: privacy-preserving foundation, licensed intermediary, or equivalent. This is not solved by governance — it requires Phase 2 design work.
 4. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible donor pool size significantly.
-5. **TEE provider selection** — Phala vs Marlin vs other; requires technical evaluation
+5. **Wallet monitoring implementation** — view key monitoring infrastructure, anomaly detection design
 6. **GitHub repo governance during bootstrap** — Founder controls; community fork right guaranteed from day 1
 7. **Legislative advocacy compliance mechanism** — Attorney must resolve before type goes live
 8. **XMR price oracle** — 30-day rolling average; specific oracle source to be selected

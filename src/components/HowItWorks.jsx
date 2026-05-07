@@ -7,7 +7,7 @@ const donorSteps = [
   },
   {
     title: 'Send Monero or Zano',
-    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the campaign collection wallet — a platform-controlled address where no operator has access. The operator manages the campaign and submits milestones, but cannot touch the funds until the campaign succeeds and the community verifies proof.',
+    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the operator\'s own wallet — Citeback never holds your funds. The platform monitors the balance via a read-only view key. If an operator withdraws before the campaign goal is met, they are permanently banned.',
   },
   {
     title: 'Track It Publicly',
