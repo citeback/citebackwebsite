@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'reac
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield, MapPin } from 'lucide-react'
 import * as Exifr from 'exifr'
 import { C2PAExplainer, ThreatDisclosure } from './VerificationTiers'
@@ -424,7 +424,7 @@ function distanceM(lat1, lon1, lat2, lon2) {
 
 // ─── OSM Canvas Layer ─────────────────────────────────────────────────────────
 // ─── Popup HTML builders ────────────────────────────────────────────────────
-function buildAlprPopupHTML(camera, map) {
+function buildAlprPopupHTML(camera, map, isDual) {
   const osmUrl = `https://www.openstreetmap.org/node/${camera.id}`
   const googleUrl = `https://www.google.com/maps?q=${camera.lat},${camera.lon}`
   const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${camera.lat},${camera.lon}`
@@ -436,8 +436,12 @@ function buildAlprPopupHTML(camera, map) {
     : pending.length > 0
       ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
+  const verifiedBadge = isDual
+    ? `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#f59e0b;margin-bottom:8px;letter-spacing:0.05em">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
+    : `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(107,114,128,0.1);border:1px solid rgba(107,114,128,0.25);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#9ca3af;margin-bottom:8px;letter-spacing:0.05em">📡 OPENSTREETMAP</div>`
   return `<div style="font-family:Inter,sans-serif;padding:4px">
-    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:#e63946">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
+    ${verifiedBadge}
+    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:${isDual ? '#f59e0b' : '#9ca3af'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
     ${camera.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${camera.op}</div>` : ''}
     <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
     <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${camera.id} →</a></div>
@@ -484,7 +488,7 @@ function buildAgencyPopupHTML(agency, layer) {
 
 function openItemPopup(map, entry, latlng) {
   const html = entry.type === 'alpr'
-    ? buildAlprPopupHTML(entry.item)
+    ? buildAlprPopupHTML(entry.item, map, entry.isDual)
     : buildAgencyPopupHTML(entry.item, entry.layer)
   const lat = entry.type === 'alpr' ? entry.item.lat : entry.item.lat
   const lng = entry.type === 'alpr' ? entry.item.lon : entry.item.lng
@@ -519,7 +523,7 @@ function openItemPopup(map, entry, latlng) {
 }
 
 // ─── Unified tap handler + ALPR canvas renderer ──────────────────────────────
-function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
+function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds }) {
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng
@@ -538,7 +542,8 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
           if (d < minDist) { minDist = d; nearest = c }
         }
         if (nearest && minDist <= clickRadiusM) {
-          nearby.push({ type: 'alpr', item: nearest, dist: minDist, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: '📷', color: '#e63946' })
+          const isDual = dualVerifiedIds && dualVerifiedIds.has(nearest.id)
+          nearby.push({ type: 'alpr', item: nearest, dist: minDist, isDual, label: nearest.st ? nearest.st.toUpperCase() : 'ALPR Camera', icon: isDual ? '🟡' : '📡', color: isDual ? '#f59e0b' : '#6b7280' })
         }
       }
 
@@ -606,20 +611,27 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers }) {
     if (!map || cameras.length === 0) return
     if (layerRef.current) { map.removeLayer(layerRef.current); layerRef.current = null }
     const renderer = L.canvas({ padding: 0.5 })
+    const touch = window.matchMedia('(pointer: coarse)').matches
     const geojson = {
       type: 'FeatureCollection',
       features: cameras.map(c => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
-        properties: {},
+        properties: { id: c.id },
       }))
     }
     const layer = L.geoJSON(geojson, {
-      pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-        renderer, radius: window.matchMedia('(pointer: coarse)').matches ? 8 : 5,
-        fillColor: '#e63946', fillOpacity: 0.65,
-        color: 'rgba(230,57,70,0.35)', weight: window.matchMedia('(pointer: coarse)').matches ? 2 : 1,
-      }),
+      pointToLayer: (feature, latlng) => {
+        const dual = dualVerifiedIds && dualVerifiedIds.has(feature.properties.id)
+        return L.circleMarker(latlng, {
+          renderer,
+          radius: touch ? 8 : 5,
+          fillColor: dual ? '#f59e0b' : '#6b7280',
+          fillOpacity: dual ? 0.85 : 0.5,
+          color: dual ? 'rgba(245,158,11,0.5)' : 'rgba(107,114,128,0.3)',
+          weight: touch ? 2 : 1,
+        })
+      },
     })
     layer.addTo(map)
     layerRef.current = layer
@@ -853,24 +865,38 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         onClick={() => toggle('community')}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          background: activeLayers.has('community') ? 'rgba(249,115,22,0.1)' : 'transparent',
-          border: `1px solid ${activeLayers.has('community') ? 'rgba(249,115,22,0.4)' : 'var(--border)'}`,
+          background: activeLayers.has('community') ? 'rgba(230,57,70,0.07)' : 'transparent',
+          border: `1px solid ${activeLayers.has('community') ? 'rgba(230,57,70,0.35)' : 'var(--border)'}`,
           borderRadius: 8, padding: '8px 10px',
           cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
         }}
       >
         <span style={{ fontSize: 14 }}>📍</span>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: activeLayers.has('community') ? '#f97316' : 'var(--muted)', lineHeight: 1.2 }}>Community Reports</div>
-          <div style={{ fontSize: 10, color: '#f97316', marginTop: 2, opacity: 0.8 }}>
-            {communitySightings.length > 0
-              ? `${communitySightings.length} verified sighting${communitySightings.length !== 1 ? 's' : ''} on the map`
-              : 'Be first — submit a sighting'
-            }
-          </div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: activeLayers.has('community') ? 'var(--text)' : 'var(--muted)', lineHeight: 1.2 }}>Citeback Verified</div>
+          {communitySightings.length > 0 ? (
+            <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ color: '#f59e0b' }}>{communitySightings.filter(s => !s.newCamera).length} confirmed with OSM</span>
+              </div>
+              <div style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ color: '#e63946' }}>{communitySightings.filter(s => s.newCamera).length} Citeback-exclusive</span>
+              </div>
+            </div>
+          ) : (
+            <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>Be first — submit a C2PA sighting</div>
+          )}
         </div>
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: activeLayers.has('community') ? '#f97316' : 'var(--border)', flexShrink: 0, transition: 'background 0.15s' }} />
       </button>
+      {/* Map legend */}
+      <div style={{ marginTop: 8, padding: '8px 10px', background: 'var(--bg3)', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.06em', marginBottom: 2 }}>MAP LEGEND</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#6b7280', display: 'inline-block', flexShrink: 0 }} /> OSM only</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} /> OSM + Citeback verified</div>
+        <div style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: '50%', background: '#e63946', display: 'inline-block', flexShrink: 0 }} /> Citeback exclusive</div>
+      </div>
 
       {/* Victories divider */}
       <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
@@ -974,6 +1000,19 @@ export default function CameraMap() {
       .then(d => { if (Array.isArray(d.sightings)) setCommunitySightings(d.sightings) })
       .catch(() => {})
   }, [])
+
+  // Compute which OSM cameras have a Citeback-verified sighting within 50m
+  const dualVerifiedIds = useMemo(() => {
+    const ids = new Set()
+    for (const s of communitySightings) {
+      if (!s.lat || !s.lng) continue
+      const slat = parseFloat(s.lat), slng = parseFloat(s.lng)
+      for (const c of osmCameras) {
+        if (distanceM(slat, slng, c.lat, c.lon) <= 50) { ids.add(c.id); break }
+      }
+    }
+    return ids
+  }, [communitySightings, osmCameras])
 
   // Load base dataset
   useEffect(() => {
@@ -1400,29 +1439,33 @@ export default function CameraMap() {
             </CircleMarker>
           ))}
 
-          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} />
+          <OSMCanvasLayer cameras={filteredCameras} effLayers={EFF_LAYERS} activeLayers={activeLayers} dualVerifiedIds={dualVerifiedIds} />
 
-          {/* Community-reported sightings layer */}
-          {activeLayers.has('community') && communitySightings.map((s, i) => (
+          {/* Community sightings: only show Citeback-EXCLUSIVE cameras (red)
+              Dual-verified ones are shown on the OSM layer as gold — no double markers */}
+          {activeLayers.has('community') && communitySightings
+            .filter(s => s.newCamera === true && s.lat && s.lng)
+            .map((s, i) => (
             <CircleMarker
               key={`community-${i}`}
               center={[parseFloat(s.lat), parseFloat(s.lng)]}
               radius={9}
               pathOptions={{
-                fillColor: '#f97316',
+                fillColor: '#e63946',
                 fillOpacity: 0.9,
-                color: 'rgba(249,115,22,0.5)',
+                color: 'rgba(230,57,70,0.5)',
                 weight: 2,
               }}
             >
               <Popup>
                 <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 220, padding: 4 }}>
-                  <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#f97316' }}>📍 Community Report</div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.3)', borderRadius: 5, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#e63946', marginBottom: 8, letterSpacing: '0.05em' }}>
+                    🔴 CITEBACK EXCLUSIVE
+                  </div>
                   <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
-                  {s.address && <div style={{ fontSize: 12, color: '#555', marginBottom: 1 }}>{s.address}</div>}
-                  {(s.city || s.state) && <div style={{ fontSize: 12, color: '#555', marginBottom: 6 }}>{[s.city, s.state].filter(Boolean).join(', ')}</div>}
+                  <div style={{ fontSize: 11, color: '#888', marginBottom: 6 }}>📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
                   {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✅ Community-verified</div>
+                  <div style={{ fontSize: 11, color: '#e63946', fontWeight: 600 }}>★ Not in OpenStreetMap or any other database</div>
                 </div>
               </Popup>
             </CircleMarker>
