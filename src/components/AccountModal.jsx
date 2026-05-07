@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
@@ -56,7 +57,7 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
     color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em',
   }
 
-  return (
+  const content = (
     <div style={overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={modal}>
         {/* Close */}
@@ -183,4 +184,6 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
       </div>
     </div>
   )
+
+  return createPortal(content, document.body)
 }
