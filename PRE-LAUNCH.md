@@ -77,11 +77,13 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Launch FOIA campaigns (1, 5, 6) and billboard campaigns (2, 3) first
 - Hold Campaign #4 and Campaign #7 (verify bounty — novel legal questions) until attorney clearance
 
-### 12. Operator Accountability Protocol — Not Yet Published
-- GOVERNANCE.md lists this as a hard launch prerequisite (§ "Launch Prerequisites" item 11)
-- Documented process for community challenges to operator decisions needed before operator onboarding
-- Must include SLA and escalation path
-- Draft this before first operator is onboarded
+### 12. Operator Accountability Protocol — 🟡 DRAFT READY (needs ratification)
+- Draft complete: `OPERATOR-ACCOUNTABILITY.md` — 2026-05-07
+- Covers: campaign rejection appeals, onboarding denial appeals, misconduct reports vs. platform entity
+- SLAs defined: 72hr reason, 48hr response, Major-tier vote override path
+- Anti-retaliation clause included
+- **Scott must ratify as bootstrap governance act before first operator onboarding**
+- Link from governance docs and citeback.com/operator-accountability before launch
 
 ### 13. Governance v1.0 Ratification — Not Yet Done
 - GOVERNANCE.md §14 requires governance ratification as a launch prerequisite

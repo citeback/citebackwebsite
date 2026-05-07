@@ -98,7 +98,7 @@ Fraudulent proof submissions result in permanent misconduct flags and forfeiture
           title: '9. Limitation of Liability',
           body: `TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, CITEBACK AND ITS OPERATORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF YOUR USE OF THE SITE OR DONATION TO ANY CAMPAIGN.
 
-Citeback's total liability for any claim arising out of these Terms shall not exceed the amount of any platform fee you paid in connection with the transaction giving rise to the claim.`,
+Citeback charges no platform fee on campaign donations. Citeback's total liability for any claim arising out of these Terms shall not exceed the greater of (a) US $10.00 or (b) the amount of any voluntary tip or payment you made directly to the Citeback platform (excluding campaign donations, which flow entirely to operators) in the twelve months preceding the claim.`,
         },
         {
           title: '10. Modifications',
