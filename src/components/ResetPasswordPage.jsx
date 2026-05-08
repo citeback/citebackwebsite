@@ -7,6 +7,7 @@ export default function ResetPasswordPage({ setTab }) {
   const [token, setToken] = useState(null)
   const [tokenId, setTokenId] = useState(null)
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -33,7 +34,8 @@ export default function ResetPasswordPage({ setTab }) {
     return { score: 4, label: 'Strong', color: '#6ee7b7' }
   }
   const strength = pwStrength(password)
-  const canSubmit = !loading && strength.score >= 3
+  const passwordsMatch = password === confirmPassword
+  const canSubmit = !loading && strength.score >= 3 && confirmPassword && passwordsMatch
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -133,6 +135,25 @@ export default function ResetPasswordPage({ setTab }) {
             <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 44 }}>{strength.label}</span>
           </div>
         )}
+
+        <div>
+          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>Confirm New Password</label>
+          <div style={{ position: 'relative' }}>
+            <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+            <input
+              type={showPw ? 'text' : 'password'}
+              style={{ ...inputStyle, paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+              placeholder="Re-enter new password"
+              value={confirmPassword}
+              onChange={e => { setConfirmPassword(e.target.value); setError(null) }}
+              autoComplete="new-password"
+              required
+            />
+          </div>
+          {confirmPassword && !passwordsMatch && (
+            <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don\'t match</p>
+          )}
+        </div>
 
         {error && (
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#e63946' }}>
