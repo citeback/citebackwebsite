@@ -1,5 +1,5 @@
 import { Menu, X, ChevronDown, Shield, LogOut } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 
@@ -228,6 +228,7 @@ export default function Nav({ tab, setTab }) {
               )}
             </div>
           ) : (
+            <React.Fragment>
             <button
               onClick={() => { setAuthTab('login'); setShowAuth(true) }}
               style={{
@@ -256,6 +257,7 @@ export default function Nav({ tab, setTab }) {
             >
               Join
             </button>
+            </React.Fragment>
           )}
           <button
             onClick={() => setTab('campaigns')}
