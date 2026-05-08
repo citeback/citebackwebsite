@@ -26,6 +26,7 @@ export default function Nav({ tab, setTab }) {
   const [moreOpen, setMoreOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
+  const [authTab, setAuthTab] = useState('create')
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const moreRef = useRef(null)
   const userRef = useRef(null)
@@ -228,7 +229,21 @@ export default function Nav({ tab, setTab }) {
             </div>
           ) : (
             <button
-              onClick={() => setShowAuth(true)}
+              onClick={() => { setAuthTab('login'); setShowAuth(true) }}
+              style={{
+                background: 'none', border: '1px solid var(--border)',
+                color: 'var(--gray)', borderRadius: 6, padding: '7px 14px',
+                fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
+                fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
+                marginRight: 4,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--fg)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+            >
+              Log In
+            </button>
+            <button
+              onClick={() => { setAuthTab('create'); setShowAuth(true) }}
               style={{
                 background: 'none', border: '1px solid var(--border)',
                 color: 'var(--gray)', borderRadius: 6, padding: '7px 14px',
@@ -344,7 +359,7 @@ export default function Nav({ tab, setTab }) {
           .nav-mobile-btn { display: flex !important; }
         }
       `}</style>
-      {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab="create" />}
+      {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab={authTab} />}
     </nav>
   )
 }
