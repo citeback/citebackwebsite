@@ -93,7 +93,7 @@ const STARTER_PROMPTS = [
 // Static FAQ responses for when Ollama is unavailable
 const STATIC_RESPONSES = {
   'What is Citeback?':
-    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Contributions will arrive in Monero or Zano; campaign funds go directly to operators' own wallets — Citeback never holds funds, and anyone can verify campaign balances via publicly published view keys. The platform is being organized as a Wyoming DAO LLC — entity formation is a hard launch prerequisite before any funds are accepted.',
+    'Citeback is a platform that anonymously funds surveillance resistance campaigns — public records litigation, ordinance drives, vendor accountability actions, and counter-database projects. Contributions will arrive in Monero or Zano; campaign funds go directly to operators\' own wallets — Citeback never holds funds, and anyone can verify campaign balances via publicly published view keys. The platform is being organized as a Wyoming DAO LLC — entity formation is a hard launch prerequisite before any funds are accepted.',
   'How do I contribute anonymously?':
     'Once wallets activate at Phase 2 launch, send Monero (XMR) or Zano (ZANO) to the campaign wallet address shown on each campaign page. Both currencies hide sender, receiver, and amount at the protocol level. The wallets will be managed by an independently-auditable, multi-party wallet system — the architecture is designed so no single party can move funds unilaterally. The full architecture is published before any funds go live.',
   'What currencies do you accept?':
