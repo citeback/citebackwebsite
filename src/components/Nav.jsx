@@ -228,36 +228,35 @@ export default function Nav({ tab, setTab }) {
               )}
             </div>
           ) : (
-            <React.Fragment>
-            <button
-              onClick={() => { setAuthTab('login'); setShowAuth(true) }}
-              style={{
-                background: 'none', border: '1px solid var(--border)',
-                color: 'var(--gray)', borderRadius: 6, padding: '7px 14px',
-                fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
-                fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
-                marginRight: 4,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--fg)' }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
-            >
-              Log In
-            </button>
-            <button
-              onClick={() => { setAuthTab('create'); setShowAuth(true) }}
-              style={{
-                background: 'none', border: '1px solid var(--border)',
-                color: 'var(--gray)', borderRadius: 6, padding: '7px 14px',
-                fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
-                fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
-                marginRight: 8,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--fg)' }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
-            >
-              Join
-            </button>
-            </React.Fragment>
+            <div style={{ display: 'flex', gap: 0, marginRight: 8 }}>
+              <button
+                onClick={() => { setAuthTab('login'); setShowAuth(true) }}
+                style={{
+                  background: 'none', border: '1px solid var(--border)',
+                  color: 'var(--gray)', borderRadius: '6px 0 0 6px', padding: '7px 14px',
+                  fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
+                  fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
+                  borderRight: 'none',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => { setAuthTab('create'); setShowAuth(true) }}
+                style={{
+                  background: 'none', border: '1px solid var(--border)',
+                  color: 'var(--gray)', borderRadius: '0 6px 6px 0', padding: '7px 14px',
+                  fontSize: 12, letterSpacing: '0.04em', cursor: 'pointer',
+                  fontFamily: 'var(--font)', fontWeight: 500, transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--fg)'; e.currentTarget.style.borderColor = 'var(--fg)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--gray)'; e.currentTarget.style.borderColor = 'var(--border)' }}
+              >
+                Join
+              </button>
+            </div>
           )}
           <button
             onClick={() => setTab('campaigns')}
