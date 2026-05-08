@@ -360,7 +360,7 @@ export default function Nav({ tab, setTab }) {
           .nav-mobile-btn { display: flex !important; }
         }
       `}</style>
-      {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab={authTab} />}
+      {showAuth && <AccountModal onClose={() => setShowAuth(false)} initialTab={authTab} singleMode />}
     </nav>
   )
 }

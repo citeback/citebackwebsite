@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-export default function AccountModal({ onClose, initialTab = 'login' }) {
+export default function AccountModal({ onClose, initialTab = 'login', singleMode = false }) {
   const { login, createAccount } = useAuth()
   const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover'
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', email: '' })
@@ -118,8 +118,8 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
           )}
         </div>
 
-        {/* Tabs */}
-        {tab !== 'recover' && (
+        {/* Tabs — only shown when not in single mode */}
+        {tab !== 'recover' && !singleMode && (
           <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--bg3)', borderRadius: 8, padding: 4 }}>
             {['login', 'create'].map(t => (
               <button
@@ -312,6 +312,25 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
                 style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, textAlign: 'left', padding: 0, textDecoration: 'underline' }}>
                 Forgot your password?
               </button>
+            )}
+            {singleMode && (
+              <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', marginTop: 4 }}>
+                {tab === 'login' ? (
+                  <>Don\'t have an account?{' '}
+                    <button type="button" onClick={() => { setTab('create'); setError(null) }}
+                      style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, padding: 0, textDecoration: 'underline', fontFamily: 'inherit' }}>
+                      Join
+                    </button>
+                  </>
+                ) : (
+                  <>Already have an account?{' '}
+                    <button type="button" onClick={() => { setTab('login'); setError(null) }}
+                      style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, padding: 0, textDecoration: 'underline', fontFamily: 'inherit' }}>
+                      Log in
+                    </button>
+                  </>
+                )}
+              </p>
             )}
             {tab === 'create' && (
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
