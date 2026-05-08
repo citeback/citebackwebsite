@@ -2,6 +2,7 @@ import { CheckCircle, ExternalLink, FileText, Coins, Shield } from 'lucide-react
 import { ThreatDisclosure } from './VerificationTiers'
 import FollowTheMoney from './FollowTheMoney'
 
+// TODO Phase 2: Fetch real disbursement data from API (GET /api/disbursements)
 const disbursements = []
 
 const principles = [

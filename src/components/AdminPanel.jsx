@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { CheckCircle, XCircle, Clock, MapPin, Eye, RefreshCw, Lock, AlertCircle, CheckSquare } from 'lucide-react'
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 
 const CAMERA_TYPE_LABELS = {
   alpr: 'ALPR / Plate Reader',

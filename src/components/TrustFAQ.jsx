@@ -67,7 +67,7 @@ const sections = [
     questions: [
       {
         q: 'Who executes the campaigns?',
-        a: `Operators are community members who run campaigns — renting billboards, filing FOIAs, funding legal work. Operators must verify their real identity privately with the platform's legal entity — names are never published. Publicly, operators are represented by a Monero address or Nostr key.\n\nOperators build a reputation score through completed campaigns. Campaign caps scale with completed volume, not identity:\n\n| Completed Volume | Max Campaign Goal |\n|---|---|\n| Starting | $1,000 |\n| $2,000 completed | $5,000 |\n| $10,000 completed | $25,000 |\n| $50,000 completed | $100,000 |\n| $100,000 completed | Unlimited (community vote) |`,
+        a: `Operators are community members who run campaigns — renting billboards, filing FOIAs, funding legal work. Operators must verify their real identity privately with the platform's legal entity — names are never published. Publicly, operators are represented by a Monero address or Nostr key.\n\nOperators build a reputation score through completed campaigns. Campaign caps scale with track record, not identity:\n\n| Track Record | Max Campaign Goal |\n|---|---|\n| New operator (10+ sightings) | $1,000 |\n| 10 successfully completed campaigns | $7,500 (no legal entity required) |\n| Registered legal entity on file | $30,000 |\n| Entity + DAO counsel review + $1M insurance | $125,000 |\n| $125k+ completed volume + community vote | Unlimited |`,
       },
       {
         q: 'How do I know an operator actually completed the task?',

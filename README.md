@@ -17,7 +17,7 @@ Citeback is an open-source platform that funds community-driven legal action aga
 Citeback is designed so no individual — including its founder — can unilaterally control funds or censor campaigns.
 
 - **Direct operator wallets** (Phase 2) — Operators post their own XMR/ZANO wallet addresses; contributions go directly to operator-controlled wallets; Citeback never holds funds
-- **Community governance** — votes trigger AI execution; no human key holders
+- **Community governance** — votes govern disbursement rules; a human operator layer (Wyoming DAO LLC) handles campaign review and OFAC screening; operators hold their own wallet keys
 - **Open source rules** — all disbursement logic, fee models, and governance thresholds are in this repo
 - **Append-only action log** — every wallet action is signed and logged permanently
 
@@ -26,7 +26,7 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) and [GOVERNANCE.md](./GOVERNANCE.md) fo
 ## Stack
 
 - Vite + React
-- Monero (XMR) + Zano (ZANO) — privacy-by-default donations
+- Monero (XMR) + Zano (ZANO) — privacy-by-default, anonymous contributions
 - Leaflet — camera map
 - Ollama — local AI chatbot (optional)
 

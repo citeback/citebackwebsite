@@ -1,4 +1,5 @@
 import { X, Copy, CheckCircle, MapPin, Clock, ExternalLink, Rocket, Camera, Lock, GitMerge, Zap, Award, ThumbsUp, Share2, Users, Wallet } from 'lucide-react'
+import { API_BASE } from '../config.js'
 import { QRCodeSVG } from 'qrcode.react'
 import { typeColors } from '../data/campaigns'
 import { useState, useEffect, useRef } from 'react'
@@ -25,7 +26,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
   const [saveError, setSaveError] = useState('')
   const [saveSuccess, setSaveSuccess] = useState(false)
   const modalRef = useRef(null)
-  const AI_URL = 'https://ai.citeback.com'
+  const AI_URL = API_BASE
   const { isLoggedIn, user, token } = useAuth()
   const headingId = 'campaign-modal-heading'
 

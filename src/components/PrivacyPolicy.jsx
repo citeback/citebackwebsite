@@ -37,6 +37,8 @@ There is no newsletter. Anonymous browsing and financial contributions to campai
 • Netlify (hosting): Netlify logs server access including IP addresses. See netlify.com/privacy.
 • Bunny CDN (fonts.bunny.net): Loads the Inter typeface. Bunny CDN logs CDN access requests including IP addresses. See bunny.net/privacy.
 • CARTO (map tiles): The surveillance camera map loads tiles from *.basemaps.cartocdn.com. CARTO receives tile request data including IP addresses. See carto.com/privacy.
+• OpenStreetMap Overpass API (overpass-api.de): The surveillance camera map queries the Overpass API for live camera data. Your IP address is exposed to this service when the map loads.
+• Nominatim (nominatim.openstreetmap.org): The camera map uses Nominatim for geocoding. Your IP address is exposed to this service during address lookups.
 • CourtListener, USASpending.gov, api.congress.gov, Senate LDA: Some features make client-side API requests to these public services, which may log your IP address.
 
 For maximum privacy while browsing: use Tor Browser, a trusted VPN, or a privacy proxy. Your contribution privacy is at the cryptocurrency protocol layer and is not affected by browsing method.`,

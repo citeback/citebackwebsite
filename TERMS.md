@@ -74,17 +74,17 @@ You may not use the Platform to:
 
 ---
 
-### 5. OFAC Compliance Disclosure - Anonymous Donor Limitation
+### 5. OFAC Compliance Disclosure - Anonymous Contributor Limitation
 
 **This section describes a structural limitation of the Platform's privacy architecture that you must understand before making any contribution.**
 
-The Platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively. These cryptocurrencies use cryptographic privacy protocols that make it technically impossible to link incoming donations to a sender's identity. Specifically:
+The Platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively. These cryptocurrencies use cryptographic privacy protocols that make it technically impossible to link incoming contributions to a sender's identity. Specifically:
 
-- **The Platform cannot screen donors for OFAC SDN list status.** Monero's RingCT and stealth address protocols conceal sender identity, transaction amounts, and transaction history at the protocol level. No technology currently exists that can screen anonymous Monero donors against the OFAC SDN list without destroying the privacy guarantee that makes the Platform possible.
+- **The Platform cannot screen contributors for OFAC SDN list status.** Monero's RingCT and stealth address protocols conceal sender identity, transaction amounts, and transaction history at the protocol level. No technology currently exists that can screen anonymous Monero contributors against the OFAC SDN list without destroying the privacy guarantee that makes the Platform possible.
 - **OFAC compliance at the operator level:** The Platform does perform OFAC pre-screening of campaign operators (the organizations and individuals who receive disbursements) before any campaign wallet is created. Operators are screened against the SDN list by the Platform Operator at the time of onboarding. This is the Platform's primary OFAC compliance mechanism.
-- **Donor-level OFAC compliance relies on your representation:** By contributing to any campaign wallet, you represent that you are not an OFAC-sanctioned individual or entity and that your contribution does not violate applicable OFAC sanctions.
+- **Contributor-level OFAC compliance relies on your representation:** By contributing to any campaign wallet, you represent that you are not an OFAC-sanctioned individual or entity and that your contribution does not violate applicable OFAC sanctions.
 
-**The Platform makes no representation that anonymous donor contributions are screened for OFAC compliance.** If you are subject to OFAC sanctions, you are prohibited from contributing to the Platform and doing so may constitute a violation of federal law for which you - not the Platform - bear responsibility.
+**The Platform makes no representation that anonymous contributor contributions are screened for OFAC compliance.** If you are subject to OFAC sanctions, you are prohibited from contributing to the Platform and doing so may constitute a violation of federal law for which you - not the Platform - bear responsibility.
 
 [ATTORNEY REVIEW REQUIRED - attorney must confirm this disclosure adequately documents the good-faith compliance posture and whether additional language is needed.]
 
@@ -94,7 +94,7 @@ The Platform accepts Monero (XMR) and Zano (ZANO) cryptocurrency exclusively. Th
 
 **All contributions to Citeback campaigns are final and non-refundable.** This policy exists by design and is inherent to the Platform's privacy architecture.
 
-Monero's privacy protocol does not expose sender addresses. The Platform has no technical mechanism to identify donors for the purpose of processing refunds. Requiring donors to provide a return address at donation time would require partial deanonymization and is inconsistent with the Platform's core privacy guarantees.
+Monero's privacy protocol does not expose sender addresses. The Platform has no technical mechanism to identify contributors for the purpose of processing refunds. Requiring contributors to provide a return address at contribution time would require partial deanonymization and is inconsistent with the Platform's core privacy guarantees.
 
 **What happens if a campaign does not reach its goal?**
 
@@ -112,7 +112,7 @@ By contributing to any campaign wallet, you acknowledge and accept this no-refun
 
 **No platform fee.** The Platform charges no fee on campaign funds. 100% of donated funds are disbursed directly to the campaign operator. No percentage is deducted at disbursement.
 
-**Platform funding:** Infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC and by voluntary tips from users who support the platform. Tips are entirely separate from campaign donations, are not required, and have no effect on campaign funds or governance weight.
+**Platform funding:** Infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC and by voluntary tips from users who support the platform. Tips are entirely separate from campaign contributions, are not required, and have no effect on campaign funds or governance weight.
 
 **Campaign goals include a transaction buffer:** Published campaign goals include a 2% buffer for Monero network transaction fee variance. This buffer is disclosed transparently on each campaign card. Any unused buffer amount is disbursed to the operator at campaign close alongside campaign funds.
 
@@ -198,7 +198,7 @@ These Terms are governed by the laws of the State of Wyoming, without regard to 
 
 The Platform is designed to protect your privacy. Specifically:
 
-(a) **No donor identification:** The Platform does not collect, store, or publish donor identity information. Monero and Zano transactions do not expose sender identity to the Platform.
+(a) **No contributor identification:** The Platform does not collect, store, or publish contributor identity information. Monero and Zano transactions do not expose sender identity to the Platform.
 
 (b) **Operator identity:** Operator identities are collected and verified by the Platform Operator for OFAC pre-screening purposes. Operator identities are stored privately and are not published publicly. Operator identity records may be subject to compelled disclosure in response to lawful legal process (subpoenas, court orders, National Security Letters, FISA orders). See the Platform's published governance documentation for more information on this risk.
 
@@ -243,7 +243,7 @@ If a campaign reaches its deadline without achieving its funding goal, all contr
 
 - Is logged publicly in the Platform's append-only action log
 - Is governed by the unfundedRedirect rules defined in the Platform's published governance code
-- Does not require donor consent, because by contributing to any campaign you accept this redirect policy under these Terms
+- Does not require contributor consent, because by contributing to any campaign you accept this redirect policy under these Terms
 
 There are no refunds in any circumstance. See §6.
 
@@ -297,7 +297,7 @@ These Terms, together with the Platform's published Governance Framework (GOVERN
 
 The following items require specific attorney attention before this ToS is published:
 
-1. **§4 and §5 - OFAC donor-side disclosure:** Confirm the self-representation approach is a legally cognizable good-faith compliance mechanism and revise language if needed.
+1. **§4 and §5 - OFAC contributor-side disclosure:** Confirm the self-representation approach is a legally cognizable good-faith compliance mechanism and revise language if needed.
 
 2. **§8 - Operator tax obligations:** Add IRS Notice 2014-21 reference and appropriate crypto income reporting disclaimer.
 

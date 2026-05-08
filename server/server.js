@@ -209,7 +209,7 @@ const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_NAMES = ['Scout', 'Operator', 'Verifier', 'Guardian']
 const TIER_PERKS = [
   'Submit sightings, build reputation',
-  'Campaign access up to $500',
+  'Campaign access up to $1,000',
   'Unlock verification bounties',
   'Full operator access + governance voting',
 ]

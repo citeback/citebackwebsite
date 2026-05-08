@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
 import { AuthProvider } from './context/AuthContext'
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from './config.js'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
 import Nav from './components/Nav'
 // ActivityTicker removed per Scott 2026-05-07

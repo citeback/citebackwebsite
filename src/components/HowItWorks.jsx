@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-const donorSteps = [
+const contributorSteps = [
   {
     title: 'Browse Campaigns',
     desc: 'Find a fight worth funding — FOIA lawsuits, ordinance campaigns, vendor accountability, or surveillance mapping bounties.',
@@ -44,9 +44,9 @@ export default function HowItWorks({ setTab }) {
   const lineRef = useRef(null)
   const stepRefs = useRef([])
   const [activeSteps, setActiveSteps] = useState([])
-  const [track, setTrack] = useState('donor')
+  const [track, setTrack] = useState('contributor')
 
-  const steps = track === 'donor' ? donorSteps : operatorSteps
+  const steps = track === 'contributor' ? contributorSteps : operatorSteps
 
   useEffect(() => {
     const section = sectionRef.current
@@ -102,7 +102,7 @@ export default function HowItWorks({ setTab }) {
       {/* Track toggle */}
       <div style={{ maxWidth: 1100, margin: '0 auto 48px', display: 'flex', gap: 8 }}>
         <button
-          onClick={() => { setTrack('donor'); setActiveSteps([]) }}
+          onClick={() => { setTrack('contributor'); setActiveSteps([]) }}
           style={{
             padding: '9px 20px',
             borderRadius: 999,
@@ -111,9 +111,9 @@ export default function HowItWorks({ setTab }) {
             fontSize: 13,
             fontWeight: 600,
             fontFamily: 'var(--font)',
-            background: track === 'donor' ? 'var(--fg)' : 'transparent',
-            color: track === 'donor' ? 'var(--bg)' : 'var(--gray)',
-            borderColor: track === 'donor' ? 'var(--fg)' : 'var(--border)',
+            background: track === 'contributor' ? 'var(--fg)' : 'transparent',
+            color: track === 'contributor' ? 'var(--bg)' : 'var(--gray)',
+            borderColor: track === 'contributor' ? 'var(--fg)' : 'var(--border)',
             transition: 'all 0.15s',
           }}
         >
@@ -278,10 +278,10 @@ export default function HowItWorks({ setTab }) {
               cursor: 'pointer', fontFamily: 'var(--font)',
             }}
           >
-            {track === 'donor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
+            {track === 'contributor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
           </button>
           <button
-            onClick={() => setTab(track === 'donor' ? 'trust' : 'operators')}
+            onClick={() => setTab(track === 'contributor' ? 'trust' : 'operators')}
             style={{
               background: 'transparent', color: 'var(--fg)',
               border: '1px solid var(--border)', padding: '12px 28px',
@@ -290,7 +290,7 @@ export default function HowItWorks({ setTab }) {
               fontFamily: 'var(--font)',
             }}
           >
-            {track === 'donor' ? 'Full Trust FAQ →' : 'Operator Requirements →'}
+            {track === 'contributor' ? 'Full Trust FAQ →' : 'Operator Requirements →'}
           </button>
         </div>
       )}

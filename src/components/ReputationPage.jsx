@@ -3,7 +3,7 @@ import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRigh
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 
 function EmailManager({ token, onEmailSaved }) {
   const [emailInfo, setEmailInfo] = useState(null) // { hasEmail, maskedEmail }

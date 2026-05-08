@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 import * as Exifr from 'exifr'
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 
 const CAMERA_TYPES = [
   { id: 'alpr', label: 'ALPR / License Plate Reader', desc: 'Flock Safety, Motorola, Genetec, or similar' },

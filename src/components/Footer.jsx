@@ -125,6 +125,19 @@ export default function Footer({ setTab }) {
         <span style={{ fontStyle: 'italic' }}>Not accepting tips until Wyoming DAO LLC is formed.</span>
       </div>
 
+      {/* Copyright */}
+      <div style={{
+        borderTop: '1px solid var(--border)',
+        paddingTop: 14,
+        marginTop: 14,
+        fontSize: 11,
+        color: 'var(--gray)',
+        opacity: 0.6,
+      }}>
+        © 2026 Citeback (Wyoming DAO LLC, in formation). Code: MIT license.{' '}
+        <a href="https://github.com/citeback/citebackwebsite" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>GitHub</a>
+      </div>
+
       {/* Data attribution */}
       <div style={{
         borderTop: '1px solid var(--border)',

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, Loader } from 'lucide-react'
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 
 export default function ResetPasswordPage({ setTab }) {
   const [token, setToken] = useState(null)

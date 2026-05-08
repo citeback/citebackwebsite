@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Shield, Lock, Users, Scale, Cpu, AlertTriangle, ExternalLink, ChevronDown, ChevronRight, CheckCircle } from 'lucide-react'
+import { Shield, Lock, Users, Scale, Cpu, AlertTriangle, ExternalLink, ChevronDown, ChevronRight, CheckCircle, Circle } from 'lucide-react'
 
 const sections = [
   { id: 'philosophy', label: 'Philosophy', icon: Shield },
@@ -325,20 +325,22 @@ export default function Governance({ setTab }) {
         <p style={{ marginBottom: 16 }}>The platform does not accept funds until <strong style={{ color: 'var(--fg)' }}>all of the following are complete and publicly verifiable:</strong></p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            'Governance framework published — complete ✅',
-            'Surveillance camera database live — complete ✅',
-            'Expert directory launched — complete ✅',
-            'Campaign proposals published publicly (GitHub repo public) — complete ✅',
-            'Wyoming DAO LLC incorporated with registered agent',
-            'FinCEN MSB compliance opinion obtained from attorney',
-            'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds',
-            'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns',
-            'OFAC contributor screening at contribution time live and tested',
-            'First campaign wallet activated',
+            { done: true,  text: 'Governance framework published — complete ✅' },
+            { done: true,  text: 'Surveillance camera database live — complete ✅' },
+            { done: true,  text: 'Expert directory launched — complete ✅' },
+            { done: true,  text: 'Campaign proposals published publicly (GitHub repo public) — complete ✅' },
+            { done: false, text: 'Wyoming DAO LLC incorporated with registered agent' },
+            { done: false, text: 'FinCEN MSB compliance opinion obtained from attorney' },
+            { done: false, text: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
+            { done: false, text: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
+            { done: false, text: 'OFAC contributor screening at contribution time live and tested' },
+            { done: false, text: 'First campaign wallet activated' },
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <CheckCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 3 }} />
-              <span style={{ fontSize: 14 }}>{item}</span>
+              {item.done
+                ? <CheckCircle size={14} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 3 }} />
+                : <Circle size={14} style={{ color: 'var(--border)', flexShrink: 0, marginTop: 3 }} />}
+              <span style={{ fontSize: 14, color: item.done ? 'var(--fg)' : 'var(--muted)' }}>{item.text}</span>
             </div>
           ))}
         </div>

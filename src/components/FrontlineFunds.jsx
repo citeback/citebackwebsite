@@ -97,7 +97,7 @@ export default function FrontlineFunds() {
         </h1>
         <p style={{ fontSize: 15, color: 'var(--gray)', lineHeight: 1.7, maxWidth: 560 }}>
           These are established organizations running active legal battles against Flock Safety and mass ALPR surveillance.
-          They have their own donation infrastructure — your money goes directly to them, no middleman.
+          They have their own contribution/donation infrastructure — your money goes directly to them, no middleman.
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export default function FrontlineFunds() {
       </div>
 
       <p style={{ marginTop: 48, fontSize: 12, color: 'var(--gray)', lineHeight: 1.7, borderTop: '1px solid var(--border)', paddingTop: 24 }}>
-        Citeback does not collect or handle funds for these organizations. All donation links go directly to the org's own pages.
+        Citeback does not collect or handle funds for these organizations. All contribution/support links go directly to the org's own pages.
         If you want to fund a local ALPR fight — FOIA requests, billboards, legal advocacy — those are on the <button
           onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'campaigns' }))}
           style={{ background: 'none', border: 'none', padding: 0, color: 'var(--fg)', cursor: 'pointer', fontSize: 12, textDecoration: 'underline', fontFamily: 'var(--font)' }}

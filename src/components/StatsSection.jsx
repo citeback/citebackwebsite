@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Camera count derived from the static ALPR dataset in /dist/alpr-us.json.
+// Camera count derived from the static ALPR dataset in public/alpr-us.json.
 // This is a point-in-time count from the source dataset — NOT a live feed.
 // Do NOT re-introduce a live/ticking counter; it would misrepresent static data
 // as real-time surveillance tracking, creating FTC deceptive-practices exposure.
+//
+// ⚠️  UPDATE MANUALLY when the GitHub Actions refresh-alpr.yml workflow runs (weekly)
+// or when you rebuild alpr-us.json. Run: node -e "const d=require('./public/alpr-us.json'); console.log(d.elements.length)"
 const CAMERA_COUNT = 92008;
 
 function easeOutCubic(t) {

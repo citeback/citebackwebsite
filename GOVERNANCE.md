@@ -106,12 +106,12 @@
 6. **Billboard Liability Review:** Attorney must enumerate specific federal statutes that could pierce §230 for this use case (Hobbs Act, 18 U.S.C. §875, etc.) and confirm liability waiver is enforceable in key jurisdictions.
 7. **Insurance Coverage Specification:** Attorney or insurance specialist must define minimum coverage *type* (not just amount) for the $1M operator insurance requirement — must cover civil rights claims, defamation, and intentional acts.
 8. **OFAC Integration:** Third-party screening with continuous monitoring protocol. Real-name identity data required.
-11. **Operator Accountability Protocol:** Documented process for community challenges to operator decisions (campaign approvals, operator onboarding denials), with SLA and escalation path. Published before launch.
-12. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
-13. **Misconduct Bond & Staking Systems:** Operationally tested.
-14. **Operator Insurance Framework:** Certificate collection and verification operational before first $100k+ campaign.
-15. **Founder Address Registry:** Published and verifiable on GitHub before launch.
-16. **Campaign Quality Advisory Board:** Minimum 2 domain experts (civil liberties attorney + surveillance accountability practitioner) available to review early campaigns before community votes. Addresses the domain expertise gap governance cannot solve.
+9. **Operator Accountability Protocol:** Documented process for community challenges to operator decisions (campaign approvals, operator onboarding denials), with SLA and escalation path. Published before launch.
+10. **Governance Ratified:** This document (or v1.0) ratified via bootstrapping governance process.
+11. **Misconduct Bond & Staking Systems:** Operationally tested.
+12. **Operator Insurance Framework:** Certificate collection and verification operational before first $100k+ campaign.
+13. **Founder Address Registry:** Published and verifiable on GitHub before launch.
+14. **Campaign Quality Advisory Board:** Minimum 2 domain experts (civil liberties attorney + surveillance accountability practitioner) available to review early campaigns before community votes. Addresses the domain expertise gap governance cannot solve.
 
 ---
 
@@ -155,7 +155,7 @@ Operators are **not** required to have a legal entity to apply. Entity requireme
 **Operators are independent contractors, not agents or employees.** Platform approval of a campaign does not constitute endorsement, partnership, or joint liability. The platform's primary liability insulation is §230 intermediary status where applicable (§3.5); independent contractor status is a secondary layer.
 
 ### 2.3 The Community
-Active donors who participate in governance votes. No membership list, no token. Governance power flows from economic participation.
+Active contributors who participate in governance votes. No membership list, no token. Governance power flows from economic participation.
 
 ### 2.4 Platform Entity (Wyoming DAO LLC)
 The Wyoming DAO LLC is the platform operator — an active participant, not a passive relay. The entity reviews campaign proposals before publication, onboards operators, maintains the platform, and communicates with the community. It is accountable to the community through the misconduct system (§8) and the fork right (§16).
@@ -209,7 +209,7 @@ Campaign types are not a fixed list. The platform funds any lawful accountabilit
 Platform intermediary protections under 47 U.S.C. §230(c)(1) apply where the platform hosts or facilitates activity without creating or selecting content. The attestation model (§3.5) is designed to preserve this status. Attorney review of §230 applicability is required for journalist partnerships before that type goes live. §230 does not protect against federal criminal statutes or ECPA.
 
 ### 3.4 The Fiat Disbursement Problem *(Operational Priority)*
-The platform's anonymous donation architecture is strong. The deployment side — paying lawyers, filing fees, billboard vendors — inevitably touches the traditional financial system. This is the highest-priority operational gap. Phase 2 must define a legally-structured disbursement pathway (privacy-preserving foundation, licensed intermediary, or equivalent) that operators can use to deploy funds without exposing campaign participants. This is not a governance problem — it requires legal and operational design. See Open Questions.
+The platform's anonymous contribution architecture is strong. The deployment side — paying lawyers, filing fees, billboard vendors — inevitably touches the traditional financial system. This is the highest-priority operational gap. Phase 2 must define a legally-structured disbursement pathway (privacy-preserving foundation, licensed intermediary, or equivalent) that operators can use to deploy funds without exposing campaign participants. This is not a governance problem — it requires legal and operational design. See Open Questions.
 
 ### 3.5 Operator Attestation (Billboard Campaigns)
 Platform verifies only that the operator submitted a factual attestation — source URLs or documents for each claim. Platform does not verify accuracy. Responsibility rests entirely with the operator. Liability waiver signed at registration and reaffirmed at each billboard campaign creation.
@@ -284,8 +284,8 @@ Campaigns above $100k cap: minimum $1M per-occurrence, coverage type specified b
 ### 5.1 Principle
 Voting power proportional to economic participation. Logarithmic curve rewards participation while limiting concentration.
 
-### 5.2 Donation Age Requirement
-Donations must be **72+ hours old at proposal submission** to qualify for voting weight.
+### 5.2 Contribution Age Requirement
+Contributions must be **72+ hours old at proposal submission** to qualify for voting weight.
 
 ### 5.3 Voting Weight Formula
 ```
@@ -294,7 +294,7 @@ weight = max(1, log₂(contribution_amount / minimum_threshold) + 1)
 Floor of 1.0 ensures no contribution produces negative or zero weight.
 `minimum_threshold` = $5 initial (Governance-tier parameter, §5.7).
 
-| Donation | Weight |
+| Contribution | Weight |
 |---|---|
 | $5 | 1.0 |
 | $10 | 2.0 |
@@ -309,7 +309,7 @@ Hard cap: 9.0. No additional weight beyond $1,280.
 Voting parameters are snapshotted at vote-open time. Changes take effect only on votes opened after the change clears its time-lock. No retroactive shifts on open votes.
 
 ### 5.5 Operator Conflict of Interest
-Operators excluded from disbursement votes on their own campaigns. Governance-enforced. Their own-campaign donations generate no disbursement voting weight.
+Operators excluded from disbursement votes on their own campaigns. Governance-enforced. Their own-campaign contributions generate no disbursement voting weight.
 
 ### 5.6 Quorum Requirements
 | Tier | Quorum |
@@ -395,9 +395,9 @@ The $2,000 threshold applies to **total operator rolling volume across all campa
 **Lookback grace:** If disbursement would cause rolling total to cross $2,000 at submission, hold-default applies immediately.
 
 ### 7.3 Fee Schedule
-**The platform charges no fee on campaign funds.** 100% of donated funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
+**The platform charges no fee on campaign funds.** 100% of contributed funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
 
-**Platform funding model:** Platform infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC, supplemented by voluntary tips from users who want to support platform operations. Tips are separate from campaign donations — they are contributions to the LLC and do not affect campaign funds or governance weight. Long-term, the platform will pursue grant funding from aligned foundations (e.g., Open Technology Fund, Knight Foundation).
+**Platform funding model:** Platform infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC, supplemented by voluntary tips from users who want to support platform operations. Tips are separate from campaign contributions — they are contributions to the LLC and do not affect campaign funds or governance weight. Long-term, the platform will pursue grant funding from aligned foundations (e.g., Open Technology Fund, Knight Foundation).
 
 This model was chosen deliberately: a surveillance resistance platform that skims campaign funds has an extractive relationship with the causes it exists to support. Zero platform fees eliminate that tension entirely.
 
@@ -470,14 +470,14 @@ The pre-screening by the platform entity is the OFAC compliance layer for operat
 
 > **⚠️ OFAC LIMITATION — ATTORNEY MUST ADDRESS BEFORE LAUNCH:**
 >
-> OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it **technically impossible** to link an incoming donation to an SDN-list identity — sender address, amount, and transaction history are all concealed at the protocol level. Wallet-level screening applies to operator disbursement destinations (identifiable addresses) only — it **cannot screen anonymous incoming donor transactions**.
+> OFAC's SDN list does not currently include XMR or ZANO wallet addresses. Monero's privacy protocol makes it **technically impossible** to link an incoming contribution to an SDN-list identity — sender address, amount, and transaction history are all concealed at the protocol level. Wallet-level screening applies to operator disbursement destinations (identifiable addresses) only — it **cannot screen anonymous incoming contributor transactions**.
 >
-> This is a structural gap in OFAC compliance on the donor side that cannot be closed without destroying Monero's privacy guarantees. It is documented as an Open Question requiring attorney analysis before any live wallet accepts funds (see §Open Questions #1 and #3).
+> This is a structural gap in OFAC compliance on the contributor side that cannot be closed without destroying Monero's privacy guarantees. It is documented as an Open Question requiring attorney analysis before any live wallet accepts funds (see §Open Questions #1 and #3).
 >
 > **Current mitigation posture (not a substitute for attorney guidance):**
-> - ToS explicitly prohibits donations from OFAC-sanctioned individuals and entities
+> - ToS explicitly prohibits contributions from OFAC-sanctioned individuals and entities
 > - Human OFAC pre-screening of operators (operator side) before any campaign wallet is created
-> - No donor-side screening is possible — this limitation must be disclosed to and assessed by DAO counsel before launch
+> - No contributor-side screening is possible — this limitation must be disclosed to and assessed by DAO counsel before launch
 
 ### 9.4 Campaign Proposal Review Process
 
@@ -620,7 +620,7 @@ Fork option is always available. Community's ultimate check is exit.
 1. **Monero + AML legal question** *(Attorney required)* — Monero's privacy features create higher AML risk than other crypto. Attorney must address compatibility with the OFAC/KYC framework before launch.
 2. **Platform log evidentiary treatment** — If subpoenaed, platform monitoring logs may be primary evidence. Chain-of-custody, data retention obligations, and compromised-instance posture need attorney analysis before launch.
 3. **Fiat disbursement pathway** *(Highest operational priority)* — Lawyers get paid in dollars. Billboard vendors require entity names. How do campaigns deploy funds without exposing participants? Requires legal + operational design: privacy-preserving foundation, licensed intermediary, or equivalent. This is not solved by governance — it requires Phase 2 design work.
-4. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible donor pool size significantly.
+4. **Monero accessibility** — XMR on-ramps are restricted on many exchanges. Phase 2 priority: atomic swap front-end or multi-asset routing to XMR. Affects accessible contributor pool size significantly.
 5. **Wallet monitoring implementation** — view key monitoring infrastructure, anomaly detection design
 6. **GitHub repo governance during bootstrap** — Founder controls; community fork right guaranteed from day 1
 7. **Legislative advocacy compliance mechanism** — Attorney must resolve before type goes live

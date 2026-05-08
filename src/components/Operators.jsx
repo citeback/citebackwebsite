@@ -136,10 +136,10 @@ export default function Operators() {
         <p>Campaign access scales with your track record on the platform — not with your application. Start small, deliver, build reputation, earn access to larger campaigns.</p>
         <div style={{ marginTop: 8, fontSize: 13 }}>
           {[
-            { tier: 'Tier 1', unlock: '10 verified camera sightings', cap: 'Up to $500 per campaign' },
-            { tier: 'Tier 2', unlock: '3 completed Tier 1 campaigns, 90%+ completion rate', cap: '$501–$5,000' },
-            { tier: 'Tier 3', unlock: '3 Tier 2 campaigns + community vouching', cap: '$5,001–$25,000 (milestone plan required)' },
-            { tier: 'Tier 4', unlock: 'Institutional credentials (bar number, org registration)', cap: '$25,001–$100,000 (milestone plan required)' },
+            { tier: 'New Operator', unlock: '10 verified camera sightings (Tier 1 reputation)', cap: 'Up to $1,000 per campaign' },
+            { tier: '10 Campaigns', unlock: '10 successfully completed campaigns', cap: 'Up to $7,500 — no legal entity required' },
+            { tier: 'Legal Entity', unlock: 'Registered LLC, nonprofit, or equivalent on file', cap: 'Up to $30,000' },
+            { tier: 'Reviewed', unlock: 'Legal entity + DAO counsel review + $1M liability insurance', cap: 'Up to $125,000' },
           ].map((row, i, arr) => (
             <div key={row.tier} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 8, padding: '8px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none', alignItems: 'start' }}>
               <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{row.tier}</span>

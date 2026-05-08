@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 const TOKEN_KEY = 'citeback_token'
 const USER_KEY = 'citeback_user'
 

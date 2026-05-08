@@ -16,7 +16,7 @@ function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
 }
 
-const AI_URL = 'https://ai.citeback.com'
+import { API_BASE as AI_URL } from '../config.js'
 
 export default function CampaignList({ full, setSelectedCampaign, setTab }) {
   const [filter, setFilter] = useState('All')

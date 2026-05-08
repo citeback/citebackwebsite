@@ -176,12 +176,12 @@ Operator completion logged: campaign ID, proof hash, timestamp
 
 ### Fee Model
 
-**The platform charges no fee on campaign funds.** 100% of donated funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
+**The platform charges no fee on campaign funds.** 100% of contributed funds are disbursed directly to campaign operators. No percentage is deducted at disbursement.
 
 **Platform operations funding:**
 Infrastructure costs (VPS, Monero node, domains) are covered by:
 1. Founding operator capital contributions to the Wyoming DAO LLC
-2. Voluntary user tips to the Wyoming DAO LLC (optional contributions from users who want to support platform operations — separate from campaign donations, no effect on campaign funds or governance weight)
+2. Voluntary user tips to the Wyoming DAO LLC (optional contributions from users who want to support platform operations — separate from campaign contributions, no effect on campaign funds or governance weight)
 3. Long-term: grant funding from aligned foundations (Open Technology Fund, Knight Foundation, etc.)
 
 All tip inflows and operational outflows are publicly documented in the quarterly transparency report.

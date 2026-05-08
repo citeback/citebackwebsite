@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { API_BASE } from '../config.js'
 
 const SYSTEM_PROMPT = `You are Citeback — a platform that anonymously funds surveillance resistance campaigns. You speak in first person as the platform itself. You are direct, factual, and passionate about civil liberties. Never make up statistics or facts — if you don't have specific data, say so and point to citeback.com/map.
 
@@ -149,7 +150,7 @@ function getStaticResponse(userText) {
 }
 
 const PRIMARY_MODEL = 'qwen2.5:7b'
-const AI_URL = 'https://ai.citeback.com/api/chat'
+const AI_URL = `${API_BASE}/api/chat`
 
 export default function ConversationalInterface({ onClose }) {
   const [messages, setMessages] = useState([])
@@ -312,7 +313,7 @@ export default function ConversationalInterface({ onClose }) {
 
   const sendFeedback = (idx, vote) => {
     setFeedback(prev => ({ ...prev, [idx]: 'sent' }))
-    fetch('https://ai.citeback.com/feedback', {
+    fetch(`${API_BASE}/feedback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ vote }),

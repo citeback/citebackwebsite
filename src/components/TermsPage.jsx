@@ -50,7 +50,7 @@ Citeback is not a charitable organization. Contributions are not tax-deductible.
         },
         {
           title: '3. No Wallets Are Live',
-          body: `As of the date of this draft, no campaign wallets have been activated and no funds are being accepted. This site is in a pre-launch state. Wallet addresses will only be published after all 16 public launch prerequisites are verified and disclosed (see GOVERNANCE.md Launch Prerequisites for the full list). Do not send funds to any address claiming to represent Citeback until official wallet addresses are published through the verified GitHub repository.`,
+          body: `As of the date of this draft, no campaign wallets have been activated and no funds are being accepted. This site is in a pre-launch state. Wallet addresses will only be published after all 10 public launch prerequisites are verified and disclosed (see GOVERNANCE.md Launch Prerequisites for the full list). Do not send funds to any address claiming to represent Citeback until official wallet addresses are published through the verified GitHub repository.`,
         },
         {
           title: '4. Contribution Terms',
@@ -77,7 +77,7 @@ No campaign wallets go live until written attorney guidance on this gap is recei
 • Submit camera locations for the community map (accurate, good-faith submissions only)
 • Propose campaigns through the official proposal form
 • Apply to the expert registry
-• Donate to campaign wallets (once activated)
+• Contribute to campaign wallets (once activated)
 
 You may not use this Site to:
 • Submit false, fraudulent, or malicious camera locations or campaign proposals
@@ -103,7 +103,7 @@ Fraudulent proof submissions result in permanent misconduct flags and forfeiture
         },
         {
           title: '9. Limitation of Liability',
-          body: `TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, CITEBACK AND ITS OPERATORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF YOUR USE OF THE SITE OR DONATION TO ANY CAMPAIGN.
+          body: `TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, CITEBACK AND ITS OPERATORS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF YOUR USE OF THE SITE OR CONTRIBUTION TO ANY CAMPAIGN.
 
 Citeback charges no platform fee on campaign contributions. Citeback's total liability for any claim arising out of these Terms shall not exceed US $10.00.`,
         },
