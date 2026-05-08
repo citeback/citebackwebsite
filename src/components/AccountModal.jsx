@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext'
 export default function AccountModal({ onClose, initialTab = 'login' }) {
   const { login, createAccount } = useAuth()
   const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover'
-  const [form, setForm] = useState({ username: '', password: '', email: '' })
+  const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', email: '' })
   const [recoverUsername, setRecoverUsername] = useState('')
   const [recoverSent, setRecoverSent] = useState(false)
   const [showPw, setShowPw] = useState(false)
@@ -47,10 +47,12 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
     return { score: 4, label: 'Strong', color: '#6ee7b7' }
   }
   const strength = tab === 'create' ? pwStrength(form.password) : null
+  const passwordsMatch = form.password === form.confirmPassword
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.username || !form.password) return
+    if (tab === 'create' && !passwordsMatch) return
     setLoading(true)
     setError(null)
     try {
@@ -218,6 +220,27 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
               </div>
             </div>
 
+            {tab === 'create' && (
+              <div>
+                <label style={labelStyle}>Confirm Password</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+                  <input
+                    type={showPw ? 'text' : 'password'}
+                    style={{ ...inputStyle, paddingLeft: 34, borderColor: form.confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+                    placeholder="Re-enter password"
+                    value={form.confirmPassword}
+                    onChange={e => set('confirmPassword', e.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+                {form.confirmPassword && !passwordsMatch && (
+                  <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don\'t match</p>
+                )}
+              </div>
+            )}
+
             {error && (
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
                 <AlertCircle size={14} style={{ flexShrink: 0 }} />
@@ -236,13 +259,13 @@ export default function AccountModal({ onClose, initialTab = 'login' }) {
 
             <button
               type="submit"
-              disabled={loading || !form.username || !form.password || (tab === 'create' && (!strength || strength.score < 3))}
+              disabled={loading || !form.username || !form.password || (tab === 'create' && (!strength || strength.score < 3 || !passwordsMatch || !form.confirmPassword))}
               style={{
-                background: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? 'var(--accent)' : 'var(--bg3)',
+                background: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3 && passwordsMatch && form.confirmPassword))) ? 'var(--accent)' : 'var(--bg3)',
                 border: 'none',
-                color: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? '#fff' : 'var(--muted)',
+                color: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3 && passwordsMatch && form.confirmPassword))) ? '#fff' : 'var(--muted)',
                 padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
-                cursor: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3))) ? 'pointer' : 'not-allowed',
+                cursor: (!loading && form.username && form.password && (tab !== 'create' || (strength && strength.score >= 3 && passwordsMatch && form.confirmPassword))) ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 transition: 'all 0.15s',
               }}
