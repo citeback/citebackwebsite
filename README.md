@@ -34,7 +34,7 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) and [GOVERNANCE.md](./GOVERNANCE.md) fo
 
 ```bash
 npm install
-npm run dev -- --port 3002
+npm run dev
 ```
 
 ## Current Status
