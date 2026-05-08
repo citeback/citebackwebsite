@@ -24,7 +24,7 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Do not accept operator signups until counsel signs off
 
 ### 4. ToS Page
-- Draft now exists at `TOS_DRAFT.md` — needs attorney review before publication
+- Draft now exists at `TERMS.md` — needs attorney review before publication
 - Needs to be linked from Footer before launch
 - Red-team flagged its absence as a credibility gap
 - Contains OFAC donor-side limitation disclosure (required)
@@ -38,7 +38,7 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - All fee references updated to reflect current model: **no platform fee**
 - 100% of campaign funds go to operators; platform funded by founding operator capital contributions + voluntary tips
 - All TEE references updated to reflect direct wallet model (TEE scrapped)
-- Files updated: `ARCHITECTURE.md`, `GOVERNANCE.md` §7.3 & §11, `TOS_DRAFT.md` §7, `ATTORNEY-BRIEF.md`, `LAUNCH_PLAN.md`, `LAUNCH_TIMELINE.md`
+- Files updated: `ARCHITECTURE.md`, `GOVERNANCE.md` §7.3 & §11, `TERMS.md` §7, `ATTORNEY-BRIEF.md`, `LAUNCH_PLAN.md`, `LAUNCH_TIMELINE.md`
 
 ---
 
@@ -135,7 +135,7 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - robots.txt published ✅
 - sitemap.xml published ✅
 - FrontlineFunds component exists ✅
-- TOS_DRAFT.md created (awaiting attorney review) ✅
+- TERMS.md created (awaiting attorney review) ✅
 - LAUNCH_PLAN.md created ✅
 - LAUNCH_TIMELINE.md created ✅
 - Photo upload for sightings — fully built (C2PA gate, EXIF GPS, Proofmode ZIP support, +1/+2 pts reputation) ✅

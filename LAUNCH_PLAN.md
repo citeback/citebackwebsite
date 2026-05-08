@@ -108,7 +108,7 @@ These are binary gates. The platform does not accept any funds until every one i
 
 ### HB-4. Terms of Service — Published and Linked
 
-**What it is:** A live ToS page at citeback.com/tos (or equivalent) linked from the site footer. Draft exists at TOS_DRAFT.md in this repository but requires attorney review before publication.
+**What it is:** A live ToS page at citeback.com/tos (or equivalent) linked from the site footer. Draft exists at TERMS.md in this repository but requires attorney review before publication.
 
 **Why it's needed:** 
 - Referenced in governance docs but missing from the site (credibility gap, flagged in red-team audit)
@@ -119,11 +119,11 @@ These are binary gates. The platform does not accept any funds until every one i
 
 **Cost:** $500–2,000 attorney review of the draft. Less if bundled with the main engagement.
 
-**Time:** Draft is done (TOS_DRAFT.md). Attorney review: 1–2 weeks. Implementation: 1 day.
+**Time:** Draft is done (TERMS.md). Attorney review: 1–2 weeks. Implementation: 1 day.
 
 **Who does it:** Scott implements the page; attorney reviews the draft.
 
-**Dependencies:** HB-2 (attorney). Can use TOS_DRAFT.md as a starting point.
+**Dependencies:** HB-2 (attorney). Can use TERMS.md as a starting point.
 
 ---
 

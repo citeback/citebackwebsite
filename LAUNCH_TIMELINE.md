@@ -96,7 +96,7 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 - [ ] If MSB registration required: begin FinCEN registration process (add 4–8 weeks to timeline).
 - [ ] If state MTL licenses required: assess impact. This could be a significant timeline blocker — worst case, multi-state licensing delays launch 12+ months or requires restructuring.
 - [ ] Implement OFAC documentation process per attorney guidance.
-- [ ] Attorney reviews TOS_DRAFT.md and approves for publication.
+- [ ] Attorney reviews TERMS.md and approves for publication.
 - [ ] Publish ToS page — link from footer.
 - [ ] Ratify GOVERNANCE.md v1.0.
 - [ ] Publish Operator Accountability Protocol.
@@ -216,7 +216,7 @@ Attorney engagement and operator onboarding are the critical path. The direct wa
 | Community advisory board recruitment | Parallel — can start outreach any time. |
 | Expert directory population | Parallel — ongoing. |
 | Site content fixes (broken links) | Immediate parallel — quick wins. |
-| ToS draft (TOS_DRAFT.md) | Done. Attorney review after engagement begins. |
+| ToS draft (TERMS.md) | Done. Attorney review after engagement begins. |
 | FOIA filing capability confirmation | Parallel, quick. |
 | Billboard procurement research | Parallel, quick. |
 | Community voting UI | Start Week 2 of direct wallet dev, can be done concurrently. |

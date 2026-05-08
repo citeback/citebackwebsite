@@ -14,8 +14,8 @@ export default function TermsPage() {
       <p style={{ color: 'var(--muted)', fontSize: 12, marginBottom: 24, lineHeight: 1.6 }}>
         This page is a summary of key terms. The full draft Terms of Use (including OFAC disclosures, operator obligations,
         §230 notice, immutable platform rules, and fund redirection mechanics) is available at{' '}
-        <a href="https://github.com/citeback/citebackwebsite/blob/main/TOS_DRAFT.md" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--accent)' }}>TOS_DRAFT.md on GitHub</a>.
+        <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--accent)' }}>TERMS.md on GitHub</a>.
         These terms will be expanded and consolidated following attorney review prior to launch.
       </p>
 

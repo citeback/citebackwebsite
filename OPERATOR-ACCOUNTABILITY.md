@@ -163,5 +163,5 @@ This document must be published at a public URL (citeback.com/operator-accountab
 ## Related Documents
 
 - `GOVERNANCE.md` - Full governance specification (§8 Misconduct, §9 Platform Entity)
-- `TOS_DRAFT.md` - Terms of Use (pending attorney review)
+- `TERMS.md` - Terms of Use (pending attorney review)
 - `PRE-LAUNCH.md` - Launch prerequisites checklist
