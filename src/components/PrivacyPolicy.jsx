@@ -28,7 +28,7 @@ Contribution privacy is handled at the cryptocurrency protocol level (Monero XMR
 • Use Google Analytics, Facebook Pixel, or any behavioral tracking
 • Sell or share visitor data with third parties for marketing
 
-There is no newsletter. Anonymous browsing and contributing requires no account of any kind.`,
+There is no newsletter. Anonymous browsing and financial contributions to campaigns require no account of any kind. Campaign operators require an account.`,
         },
         {
           title: '3. Infrastructure Data (Third-Party Processors)',
