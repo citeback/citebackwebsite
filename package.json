@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "c2pa-js": "^0.0.1-security",
     "exifr": "^7.1.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.11.0",
