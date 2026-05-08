@@ -102,7 +102,7 @@ export default function Hero({ setTab }) {
             color: 'var(--gray)',
             textTransform: 'uppercase',
           }}>
-            Est. 2026 · New Mexico · United States
+            Est. 2026 · Nationwide
           </div>
         </div>
 
