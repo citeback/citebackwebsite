@@ -43,7 +43,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'GOVERNANCE',
-    text: 'Wallet architecture spec published — 3-node multi-party threshold design',
+    text: 'Wallet architecture spec published — direct operator custody model, view key monitoring, no platform key holding',
   },
   {
     category: 'SURVEILLANCE',

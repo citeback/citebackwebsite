@@ -98,7 +98,7 @@ const sections = [
       },
       {
         q: 'How do site changes get made?',
-        a: `All site changes go through GitHub pull requests. The process:\n\n1. Anyone opens a PR with the proposed change\n2. Community discusses it publicly in the PR comments\n3. Community votes (threshold depends on change type)\n4. Vote passes → time-lock expires → deploy goes out via Netlify auto-deploy from GitHub\n5. Every deployment is logged with commit hash, vote count, and timestamp\n\nThe founder cannot push changes outside this process. Neither can anyone else.`,
+        a: `Post-launch, all site changes go through GitHub pull requests. The process:\n\n1. Anyone opens a PR with the proposed change\n2. Community discusses it publicly in the PR comments\n3. Community votes (threshold depends on change type)\n4. Vote passes → time-lock expires → deploy goes out via Netlify auto-deploy from GitHub\n5. Every deployment is logged with commit hash, vote count, and timestamp\n\nPre-launch, the founder operates the platform under the defined responsibilities in the governance spec. After Phase 2 launch and LLC formation, the founder has identical permissions to every other participant — no unilateral changes.`,
       },
     ],
   },
