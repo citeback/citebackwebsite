@@ -10,7 +10,7 @@ const milestonesBase = [
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
   { done: false,   label: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
   { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
-  { done: false,   label: 'OFAC contributor screening at contribution time live and tested' },
+  { done: false,   label: 'OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 

@@ -333,7 +333,7 @@ export default function Governance({ setTab }) {
             { done: false, text: 'FinCEN MSB compliance opinion obtained from attorney' },
             { done: false, text: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
             { done: false, text: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
-            { done: false, text: 'OFAC contributor screening at contribution time live and tested' },
+            { done: false, text: 'OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates' },
             { done: false, text: 'First campaign wallet activated' },
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>

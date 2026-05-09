@@ -6,7 +6,7 @@
 **Date:** April 30, 2026  
 **Status:** Pre-launch — No live wallets or active campaigns  
 **Repository:** github.com/citeback/citebackwebsite  
-**Confidentiality:** Confidential — Prepared in Anticipation of Attorney Engagement; Privilege and Work Product Protection Claimed Upon Retention
+**Confidentiality:** Public document — published on GitHub for transparency. No attorney-client privilege claimed. This document contains open legal questions for attorney review and is intentionally public as part of Citeback's commitment to governance transparency.
 
 ---
 

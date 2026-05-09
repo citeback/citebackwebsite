@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { API_BASE } from '../config.js';
 
-// Camera count derived from the static ALPR dataset in public/alpr-us.json.
-// This is a point-in-time count from the source dataset — NOT a live feed.
-// Do NOT re-introduce a live/ticking counter; it would misrepresent static data
-// as real-time surveillance tracking, creating FTC deceptive-practices exposure.
-//
-// ⚠️  UPDATE MANUALLY when the GitHub Actions refresh-alpr.yml workflow runs (weekly)
-// or when you rebuild alpr-us.json. Run: node -e "const d=require('./public/alpr-us.json'); console.log(d.elements.length)"
-// Last updated: 2026-05-09 (95,045 from OSM cron refresh)
-const CAMERA_COUNT = 95045;
+// Camera count is fetched once on mount from the API (/stats endpoint).
+// The API reflects the latest OSM dataset loaded by the nightly Hetzner cron.
+// This is a point-in-time dataset count — NOT a live feed or real-time tracker.
+// Do NOT add a pulsing 'live' indicator or a ticking counter — that would
+// misrepresent static dataset data as real-time surveillance tracking (FTC risk).
+// Fallback if the API is unreachable: CAMERA_COUNT_FALLBACK.
+const CAMERA_COUNT_FALLBACK = 95045;
 
 function easeOutCubic(t) {
   return 1 - Math.pow(1 - t, 3);
@@ -16,23 +15,34 @@ function easeOutCubic(t) {
 
 export default function StatsSection() {
   const [cameraCount, setCameraCount] = useState(0);
+  const [targetCount, setTargetCount] = useState(CAMERA_COUNT_FALLBACK);
   const animFrameRef = useRef(null);
   const startTimeRef = useRef(null);
   const DURATION = 2800;
 
+  // Fetch live count from API once on mount (reflects latest OSM dataset)
   useEffect(() => {
+    fetch(`${API_BASE}/stats`)
+      .then(r => r.json())
+      .then(d => { if (d.cameraCount) setTargetCount(d.cameraCount); })
+      .catch(() => { /* fallback stays */ });
+  }, []);
+
+  useEffect(() => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    startTimeRef.current = null;
     const animate = (timestamp) => {
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       const elapsed = timestamp - startTimeRef.current;
       const progress = Math.min(elapsed / DURATION, 1);
       const eased = easeOutCubic(progress);
-      const count = Math.floor(eased * CAMERA_COUNT);
+      const count = Math.floor(eased * targetCount);
       setCameraCount(count);
 
       if (progress < 1) {
         animFrameRef.current = requestAnimationFrame(animate);
       } else {
-        setCameraCount(CAMERA_COUNT);
+        setCameraCount(targetCount);
       }
     };
 
@@ -41,12 +51,13 @@ export default function StatsSection() {
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, []);
+  }, [targetCount]);
 
   const stats = [
     {
-      value: CAMERA_COUNT.toLocaleString(),
+      value: targetCount.toLocaleString(),
       isLive: false,
+      isAnimated: true,
       label: 'ALPR surveillance cameras in public dataset',
     },
     {
@@ -100,7 +111,7 @@ export default function StatsSection() {
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                {stat.isLive ? cameraCount.toLocaleString() : stat.value}
+                {stat.isAnimated ? cameraCount.toLocaleString() : stat.value}
               </span>
               {stat.isLive && (
                 <span

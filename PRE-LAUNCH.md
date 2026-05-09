@@ -137,20 +137,43 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 
 ## 🟠 NEW — Discovered in Overnight Audit (2026-05-09)
 
-### 18. Node.js Running as Root on Hetzner
-- `citeback-ai.service` has no `User=` directive → Node process runs as root
-- Risk: if Node is compromised, attacker has full root access
-- Fix: create `citeback` service user, `chown -R citeback /opt/citeback-ai/`, add `User=citeback` to service file
-- Estimated effort: 30 minutes
+### 18. Node.js Running as Root on Hetzner — ✅ FIXED 2026-05-09
+- Created `citeback` service user (uid=995, no shell)
+- `chown -R citeback:citeback /opt/citeback-ai/`
+- Added `User=citeback` + `Group=citeback` to `citeback-ai.service`
+- Verified: `ps aux` shows `citeback` as process owner
 
-### 19. LaunchTracker Item 9 Reword Needed
-- Current label: "OFAC contributor screening at contribution time live and tested"
-- This is architecturally impossible with Monero. Reword to reflect what the platform actually does: attorney guidance obtained + operator OFAC screening operational
-- Minor cosmetic/accuracy fix
+### 19. LaunchTracker Item 9 Reword — ✅ FIXED 2026-05-09
+- Rewrote to: "OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates"
+- Updated in both `LaunchTracker.jsx` and `Governance.jsx`
 
-### 20. ATTORNEY-BRIEF.md Privilege Claim vs. Public Repo
-- Document header claims privilege protection but the file is public on GitHub
-- These are incompatible. Remove the privilege claim header, or move the doc to a private repo if genuine privilege is needed.
+### 20. ATTORNEY-BRIEF.md Privilege Claim — ✅ FIXED 2026-05-09
+- Replaced privilege/work-product claim with accurate public transparency statement
+- Now reads: "Public document — published on GitHub for transparency. No attorney-client privilege claimed."
+
+---
+
+## ✅ Done in 2026-05-09 Deep Audit Session
+
+- Node.js running as root → `citeback` service user (✅ fixed)
+- SameSite=None → Lax on JWT cookie (✅ fixed)
+- Hardcoded API URL in CameraMap.jsx (✅ fixed)
+- 13 backup .bak files deleted from Hetzner (✅ fixed)
+- Dead `API_KEY` env var removed from systemd (✅ fixed)
+- Photo file permissions 666 → 644 (✅ fixed)
+- SQLite DB + WAL + data files 644 → 640 (✅ fixed)
+- `sightings.jsonl.bak` deleted (✅ fixed)
+- 8 debug `console.log` statements removed (zip/C2PA/GPS/vision internals) (✅ fixed)
+- `X-Real-IP` header added to Caddy; Node prefers it over `x-forwarded-for` (✅ fixed)
+- JWT revocation via `password_version` — password reset now invalidates all existing tokens (✅ fixed)
+- Server-side reauth enforcement via `reauthSessions` map — no longer UI-only gate (✅ fixed)
+- `/account/email` rate limited + requires server-side reauth (✅ fixed)
+- Camera count auto-fetches from `/stats` API — no more manual hardcode updates (✅ fixed)
+- WAL checkpoint forced — DB consolidated (0 byte WAL) (✅ fixed)
+- LaunchTracker item 9 OFAC reword (✅ fixed)
+- ATTORNEY-BRIEF.md privilege claim removed (✅ fixed)
+- Git `refs/original/` history refs scrubbed (✅ fixed)
+- Camera count updated: 92,008 → 95,045 (OSM cron refresh) (✅ fixed)
 
 ---
 
