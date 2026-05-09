@@ -549,7 +549,7 @@ export default function AdminPanel() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
               {currentSightings.map(s => (
-                <SightingCard key={s.id} sighting={s} onModerate={activeTab === 'pending' ? handleModerate : null} loading={moderating} />
+                <SightingCard key={s.id} sighting={s} onModerate={handleModerate} loading={moderating} />
               ))}
             </div>
           )}

@@ -28,7 +28,7 @@ const US_STATES = [
 ]
 
 function ApplyModal({ onClose, defaultRole = '' }) {
-  const [form, setForm] = useState({ role: defaultRole, location: '', background: '', full_name: '', bar_state: '', bar_number: '' })
+  const [form, setForm] = useState({ role: defaultRole, location: '', background: '', full_name: '', bar_state: '', bar_number: '', email: '' })
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [sending, setSending] = useState(false)
@@ -120,10 +120,11 @@ function ApplyModal({ onClose, defaultRole = '' }) {
           bar_number: form.bar_number || undefined,
           location: form.location,
           background: form.background,
+          email: form.email || undefined,
         }
       } else {
         endpoint = `${API_BASE}/registry`
-        payload = { role: form.role, location: form.location, background: form.background }
+        payload = { role: form.role, location: form.location, background: form.background, email: form.email || undefined }
       }
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -307,6 +308,12 @@ function ApplyModal({ onClose, defaultRole = '' }) {
               <label htmlFor="apply-location" style={labelStyle}>Location / Region</label>
               <input id="apply-location" style={inputStyle} placeholder="e.g. New Mexico, Southwest US, Remote"
                 value={form.location} onChange={e => set('location', e.target.value)} />
+            </div>
+
+            <div>
+              <label htmlFor="apply-email" style={labelStyle}>Contact Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — for status updates only, never published)</span></label>
+              <input id="apply-email" type="email" style={inputStyle} placeholder="e.g. you@proton.me"
+                value={form.email} onChange={e => set('email', e.target.value)} maxLength={200} />
             </div>
 
             <div>
