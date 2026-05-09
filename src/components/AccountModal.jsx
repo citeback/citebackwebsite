@@ -316,7 +316,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             {singleMode && (
               <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', marginTop: 4 }}>
                 {tab === 'login' ? (
-                  <>Don\'t have an account?{' '}
+                  <>Don't have an account?{' '}
                     <button type="button" onClick={() => { setTab('create'); setError(null) }}
                       style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, padding: 0, textDecoration: 'underline', fontFamily: 'inherit' }}>
                       Join
