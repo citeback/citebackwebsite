@@ -19,12 +19,12 @@ const tracks = [
     label: 'Technical',
     tag: 'Pseudonymous · XMR / ZANO Identity',
     description:
-      'No name, no account — your XMR or ZANO address is your identity. Contribute to platform infrastructure, surveillance mapping, FOIA parsing tools, or privacy tooling. PRs speak for themselves.',
+      'No name, no account — your XMR or ZANO address is your identity. Funded campaigns hire technical contributors to build the tools that make actions possible. Your work product speaks for itself.',
     details: [
-      'Open-source contributions welcome (GitHub, self-hosted)',
-      'Camera database enrichment and mapping',
-      'Crypto payment rail & escrow development',
-      'FOIA scraping, OCR, and document pipelines',
+      'Build FOIA scraping, OCR, and document automation tools for campaigns',
+      'Camera database enrichment and surveillance mapping',
+      'Technical infrastructure for funded campaign operators',
+      'Privacy tooling — paid in XMR or ZANO directly to your wallet',
     ],
     cta: 'Contribute Pseudonymously',
     accent: 'var(--muted)',
