@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 //
 // ⚠️  UPDATE MANUALLY when the GitHub Actions refresh-alpr.yml workflow runs (weekly)
 // or when you rebuild alpr-us.json. Run: node -e "const d=require('./public/alpr-us.json'); console.log(d.elements.length)"
-const CAMERA_COUNT = 92008;
+// Last updated: 2026-05-09 (95,045 from OSM cron refresh)
+const CAMERA_COUNT = 95045;
 
 function easeOutCubic(t) {
   return 1 - Math.pow(1 - t, 3);

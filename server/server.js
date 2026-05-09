@@ -497,7 +497,6 @@ async function checkPhotoContent(photoPath) {
       req.end()
     })
     const answer = (result?.candidates?.[0]?.content?.parts?.[0]?.text || '').toLowerCase().trim()
-    console.log(`Vision check result: "${answer}"`)
     return answer.startsWith('yes')
   } catch (e) {
     console.error('Vision check error (fail-open):', e.message)
@@ -562,7 +561,7 @@ const server = http.createServer(async (req, res) => {
   // ── Stats ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/stats') {
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify({ ...stats, queueDepth: queue.length, processing, uptime: Math.floor((Date.now() - new Date(stats.since).getTime()) / 1000) + 's' }))
+    return res.end(JSON.stringify({ ...stats, queueDepth: queue.length, processing, uptime: Math.floor((Date.now() - new Date(stats.since).getTime()) / 1000) + 's', cameraCount: osmCameras.length }))
   }
 
   // ── Campaign interest counter ──────────────────────────────────────────────
@@ -606,7 +605,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: create ────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/create') {
-    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
     if (!checkAuthRateLimit(clientIp)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes and try again' }))
@@ -671,7 +670,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: login ─────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/login') {
-    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
     if (!checkAuthRateLimit(clientIp)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes and try again' }))
@@ -827,7 +826,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: request password recovery ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/recover') {
-    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
     if (!checkAuthRateLimit(clientIp)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, message: 'If that account has a recovery email, a reset link has been sent.' })) // same response — don’t reveal rate limiting
@@ -911,7 +910,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: step-up reauth (verify password for high-stakes actions) ─────
   if (req.method === 'POST' && req.url === '/account/reauth') {
-    const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
     if (!checkAuthRateLimit(clientIp)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Too many requests — wait 15 minutes' }))
@@ -951,7 +950,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Sighting submission — C2PA required, no exceptions ──────────────────────
   if (req.method === 'POST' && req.url === '/sighting') {
-    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
+    const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
     const contentType = req.headers['content-type'] || ''
     const isMultipart = contentType.includes('multipart/form-data')
     let fields = {}, photoFilename = null, detectedC2PA = false, photoWritePromise = Promise.resolve()
@@ -995,7 +994,6 @@ const server = http.createServer(async (req, res) => {
             const zipPath = path.join(PHOTOS_DIR, photoFilename)
             const zip = new AdmZip(zipPath)
             const entries = zip.getEntries()
-            console.log('zip entries:', entries.map(e => e.entryName))
             // Find the JPEG photo entry
             const jpegEntry = entries.find(e => /\.(jpg|jpeg)$/i.test(e.entryName) && !e.isDirectory)
             // Find proof.json for GPS
@@ -1017,8 +1015,6 @@ const server = http.createServer(async (req, res) => {
             if (proofEntry) {
               try {
                 const proof = JSON.parse(proofEntry.getData().toString('utf8'))
-                console.log('proof.json keys:', Object.keys(proof).slice(0, 20))
-                console.log('proof.json sample:', JSON.stringify(proof).slice(0, 400))
                 // Proofmode uses flat dot-notation keys: 'LOCATION.LATITUDE'
                 // Proofmode schema v1: 'Location.Latitude' / 'Location.Longitude'
                 const lat = proof['Location.Latitude'] ?? proof['LOCATION.LATITUDE'] ?? proof['location.latitude'] ?? null
@@ -1026,7 +1022,6 @@ const server = http.createServer(async (req, res) => {
                 if (lat && lng) {
                   fields._proofLat = String(lat)
                   fields._proofLng = String(lng)
-                  console.log('proof.json GPS:', lat, lng)
                 }
               } catch (pe) { console.error('proof.json parse error:', pe.message) }
             }
@@ -1039,7 +1034,6 @@ const server = http.createServer(async (req, res) => {
         // Not string matching. A forged 'c2pa' string in EXIF will NOT pass this.
         if (photoFilename) {
           detectedC2PA = await verifyC2PA(path.join(PHOTOS_DIR, photoFilename))
-          console.log(`C2PA verification for ${photoFilename}: ${detectedC2PA}`)
         }
       } else {
         fields = await parseBody(req)
@@ -1089,7 +1083,6 @@ const server = http.createServer(async (req, res) => {
         if (fields._proofLat && fields._proofLng) {
           finalLat = fields._proofLat
           finalLng = fields._proofLng
-          console.log('Using proof.json GPS:', finalLat, finalLng)
         }
       }
 
@@ -1100,7 +1093,6 @@ const server = http.createServer(async (req, res) => {
           if (gps?.latitude && gps?.longitude) {
             finalLat = String(gps.latitude)
             finalLng = String(gps.longitude)
-            console.log(`EXIF GPS extracted: ${finalLat}, ${finalLng}`)
           }
         } catch {}
       }
@@ -1407,7 +1399,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(404); return res.end('Not found')
   }
 
-  const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
+  const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
   stats.total++
 
   let rawBody = ''
