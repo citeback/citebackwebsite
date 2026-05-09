@@ -12,6 +12,7 @@ import CampaignSelector from './components/CampaignSelector'
 import CampaignList from './components/CampaignList'
 import HowItWorks from './components/HowItWorks'
 import BuildWithUs from './components/BuildWithUs'
+import CryptoPrimer from './components/CryptoPrimer'
 // HumanRegistry — lazy loaded below
 import ALPRExplainer from './components/ALPRExplainer'
 import SurveillanceExplainer from './components/SurveillanceExplainer'
@@ -126,6 +127,7 @@ export default function App() {
               <StatsSection />
               <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
               <HowItWorks setTab={setTab} />
+              <CryptoPrimer />
               <GuaranteeSection setTab={setTab} />
               <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
                 <LaunchTracker />
@@ -159,6 +161,7 @@ export default function App() {
               <StatsSection />
               <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
               <HowItWorks setTab={setTab} />
+              <CryptoPrimer />
               <GuaranteeSection setTab={setTab} />
               <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
                 <LaunchTracker />

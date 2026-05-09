@@ -58,7 +58,7 @@ export default function StatsSection() {
       value: targetCount.toLocaleString(),
       isLive: false,
       isAnimated: true,
-      label: 'ALPR surveillance cameras in public dataset',
+      label: 'ALPR (Automated License Plate Reader) surveillance cameras mapped in public dataset',
     },
     {
       value: '0',
