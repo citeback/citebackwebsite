@@ -243,13 +243,13 @@ export default function HumanRegistry() {
         <div style={{ background: 'rgba(93,173,226,0.07)', border: '1px solid rgba(93,173,226,0.3)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
           <div style={{ fontWeight: 700, fontSize: 15, color: '#5dade2', marginBottom: 8 }}>⚖️ Licensed Attorneys</div>
           <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 12px' }}>
-            Citeback is building a verified counsel directory for licensed attorneys. Bar credential verification — state bar number lookup against public bar databases — opens at platform launch.
+            Citeback is interested in connecting funded campaigns with licensed legal counsel. An attorney verification process is on the roadmap — nothing is built yet.
           </p>
           <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
-            <strong style={{ color: 'var(--text)' }}>How attorneys help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
+            <strong style={{ color: 'var(--text)' }}>How attorneys could help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
           </p>
           <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px', fontStyle: 'italic' }}>
-            In the meantime, you can apply below using the Legal Researcher role and note your bar state and license number in the background field. Your application will be upgraded to the verified attorney tier when onboarding launches.
+            For now, express your interest below. We&apos;ll reach out when attorney onboarding is ready.
           </p>
           <button onClick={() => setShowApply(true)} style={{ background: '#5dade2', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
             Express Attorney Interest
