@@ -236,7 +236,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   />
                 </div>
                 {form.confirmPassword && !passwordsMatch && (
-                  <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don\'t match</p>
+                  <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don't match</p>
                 )}
               </div>
             )}

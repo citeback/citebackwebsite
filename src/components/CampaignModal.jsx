@@ -368,7 +368,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
                   This is a suggested campaign — fully researched and ready to run. An Operator claims it, adds their own
-                  XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the operator\'s wallet.
+                  XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the operator's wallet.
                   Citeback never holds funds.
                 </p>
                 {campaign.operatorName && (
@@ -414,7 +414,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ background: 'rgba(155,89,182,0.07)', border: '1px solid rgba(155,89,182,0.25)', borderRadius: 12, padding: 18 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
-                  <Wallet size={16} style={{ color: '#9b59b6' }} /> You\'re the Operator — Add Your Wallets
+                  <Wallet size={16} style={{ color: '#9b59b6' }} /> You're the Operator — Add Your Wallets
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
                   Add your XMR and ZANO wallet addresses to activate this campaign. Contributors will send funds directly to your wallets — Citeback never holds funds.
