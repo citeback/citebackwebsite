@@ -1049,7 +1049,7 @@ export default function CameraMap() {
 
   // Load base dataset
   useEffect(() => {
-    fetch('/alpr-us.json')
+    fetch('https://ai.citeback.com/alpr-us.json')
       .then(r => r.json())
       .then(data => {
         setOsmCameras(data)
@@ -1059,7 +1059,7 @@ export default function CameraMap() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-    fetch('/alpr-by-state.json')
+    fetch('https://ai.citeback.com/alpr-by-state.json')
       .then(r => r.json())
       .then(setStateCounts)
       .catch(() => {})
@@ -1123,7 +1123,6 @@ export default function CameraMap() {
     setSubmitError(null)
     setSubmitting(true)
     try {
-      const token = localStorage.getItem('citeback_token')
       const fd = new FormData()
       fd.append('cameraType', 'unknown')
       if (form.lat !== 'zip') fd.append('lat', form.lat)
@@ -1131,8 +1130,7 @@ export default function CameraMap() {
       fd.append('notes', form.notes || '')
       fd.append('photo', form.photoFile)
       console.log('[submitCamera] sending FormData to ai.citeback.com/sighting')
-      const headers = token ? { Authorization: `Bearer ${token}` } : {}
-      const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', headers, body: fd })
+      const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', credentials: 'include', body: fd })
       const data = await res.json().catch(() => ({}))
       console.log('[submitCamera] response:', res.status, data)
       if (!res.ok) {

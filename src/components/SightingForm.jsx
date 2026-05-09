@@ -16,7 +16,7 @@ const CAMERA_TYPES = [
 ]
 
 export default function SightingForm({ setTab }) {
-  const { user, isLoggedIn, token } = useAuth()
+  const { user, isLoggedIn } = useAuth()
   const [repEarned, setRepEarned] = useState(null)
   const [showClaimModal, setShowClaimModal] = useState(false)
   const [cameraType, setCameraType] = useState('')
@@ -114,8 +114,7 @@ export default function SightingForm({ setTab }) {
       if (photoGPS.lng !== 'zip') fd.append('lng', photoGPS.lng)
       fd.append('photo', photoFile)
 
-      const headers = token ? { Authorization: `Bearer ${token}` } : {}
-      const res = await fetch(`${AI_URL}/sighting`, { method: 'POST', headers, body: fd })
+      const res = await fetch(`${AI_URL}/sighting`, { method: 'POST', credentials: 'include', body: fd })
       const data = await res.json().catch(() => ({}))
 
       if (res.ok) {

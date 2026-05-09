@@ -27,7 +27,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
   const [saveSuccess, setSaveSuccess] = useState(false)
   const modalRef = useRef(null)
   const AI_URL = API_BASE
-  const { isLoggedIn, user, token } = useAuth()
+  const { isLoggedIn, user } = useAuth()
   const headingId = 'campaign-modal-heading'
 
   useEffect(() => {
@@ -113,7 +113,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
     try {
       const r = await fetch(`${AI_URL}/api/campaigns/${campaign.id}/claim`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
       })
       const d = await r.json()
       if (!r.ok) { setClaimError(d.error || 'Claim failed'); setClaiming(false); return }
@@ -131,7 +131,8 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
     try {
       const r = await fetch(`${AI_URL}/api/campaigns/${campaign.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(operatorForm),
       })
       const d = await r.json()

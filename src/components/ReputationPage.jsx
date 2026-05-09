@@ -5,7 +5,7 @@ import AccountModal from './AccountModal'
 
 import { API_BASE as AI_URL } from '../config.js'
 
-function EmailManager({ token, onEmailSaved }) {
+function EmailManager({ onEmailSaved }) {
   const [emailInfo, setEmailInfo] = useState(null) // { hasEmail, maskedEmail }
   const [editing, setEditing] = useState(false)
   const [newEmail, setNewEmail] = useState('')
@@ -14,9 +14,9 @@ function EmailManager({ token, onEmailSaved }) {
   const [err, setErr] = useState(null)
 
   useEffect(() => {
-    fetch(`${AI_URL}/account/email`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`${AI_URL}/account/email`, { credentials: 'include' })
       .then(r => r.json()).then(d => setEmailInfo(d)).catch(() => {})
-  }, [token])
+  }, [])
 
   const handleSave = async (e) => {
     e.preventDefault()
@@ -24,7 +24,8 @@ function EmailManager({ token, onEmailSaved }) {
     try {
       const res = await fetch(`${AI_URL}/account/email`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: newEmail }),
       })
       const d = await res.json()
@@ -212,7 +213,7 @@ function SightingRow({ sighting }) {
 }
 
 export default function ReputationPage({ setTab }) {
-  const { user, token, isLoggedIn, refreshUser } = useAuth()
+  const { user, isLoggedIn, refreshUser } = useAuth()
   const [sightings, setSightings] = useState(null)
   const [sightingsLoading, setSightingsLoading] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -222,15 +223,13 @@ export default function ReputationPage({ setTab }) {
   }, [isLoggedIn])
 
   useEffect(() => {
-    if (!isLoggedIn || !token) return
+    if (!isLoggedIn) return
     setSightingsLoading(true)
-    fetch(`${AI_URL}/account/sightings`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(`${AI_URL}/account/sightings`, { credentials: 'include' })
       .then(r => r.json())
       .then(d => { setSightings(d.sightings || []); setSightingsLoading(false) })
       .catch(() => setSightingsLoading(false))
-  }, [isLoggedIn, token])
+  }, [isLoggedIn])
 
   // Not logged in
   if (!isLoggedIn) {
@@ -392,7 +391,7 @@ export default function ReputationPage({ setTab }) {
       </div>
 
       {/* Email recovery management */}
-      <EmailManager token={token} onEmailSaved={refreshUser} />
+      <EmailManager onEmailSaved={refreshUser} />
 
       {/* CTA */}
       <button
