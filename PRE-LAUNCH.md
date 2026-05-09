@@ -116,6 +116,25 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 
 ---
 
+## 🟠 NEW — Discovered in Overnight Audit (2026-05-09)
+
+### 18. Node.js Running as Root on Hetzner
+- `citeback-ai.service` has no `User=` directive → Node process runs as root
+- Risk: if Node is compromised, attacker has full root access
+- Fix: create `citeback` service user, `chown -R citeback /opt/citeback-ai/`, add `User=citeback` to service file
+- Estimated effort: 30 minutes
+
+### 19. LaunchTracker Item 9 Reword Needed
+- Current label: "OFAC contributor screening at contribution time live and tested"
+- This is architecturally impossible with Monero. Reword to reflect what the platform actually does: attorney guidance obtained + operator OFAC screening operational
+- Minor cosmetic/accuracy fix
+
+### 20. ATTORNEY-BRIEF.md Privilege Claim vs. Public Repo
+- Document header claims privilege protection but the file is public on GitHub
+- These are incompatible. Remove the privilege claim header, or move the doc to a private repo if genuine privilege is needed.
+
+---
+
 ## ✅ Already Done / No Action Needed
 
 - Google Fonts → Bunny Fonts (no IP logging) ✅
@@ -131,6 +150,11 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - WCAG AA contrast compliance ✅
 - Focus traps on all modals ✅
 - Mobile responsive on iPhone (390px) ✅
+- `account/reauth` rate limit bug fixed (was inverted — brute-force was possible) ✅ 2026-05-09
+- `alpr-us.json` / `alpr-by-state.json` removed from Netlify deploy (now served from Hetzner) ✅ 2026-05-09
+- Debug console.log statements removed from production code ✅ 2026-05-09
+- JWT → httpOnly cookie auth migration complete ✅ 2026-05-09
+- server/server.js in GitHub repo synced with Hetzner live version ✅ 2026-05-09
 - No outdated branding references ✅
 - robots.txt published ✅
 - sitemap.xml published ✅
