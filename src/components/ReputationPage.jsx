@@ -6,17 +6,30 @@ import AccountModal from './AccountModal'
 import { API_BASE as AI_URL } from '../config.js'
 
 function EmailManager({ onEmailSaved }) {
+  const { isReauthed, reauth } = useAuth()
   const [emailInfo, setEmailInfo] = useState(null) // { hasEmail, maskedEmail }
   const [editing, setEditing] = useState(false)
   const [newEmail, setNewEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState(null)
+  const [reauthPw, setReauthPw] = useState('')
+  const [reauthing, setReathing] = useState(false)
 
   useEffect(() => {
     fetch(`${AI_URL}/account/email`, { credentials: 'include' })
       .then(r => r.json()).then(d => setEmailInfo(d)).catch(() => {})
   }, [])
+
+  const handleReauth = async (e) => {
+    e.preventDefault()
+    setReathing(true); setErr(null)
+    try {
+      await reauth(reauthPw)
+      setReauthPw('')
+    } catch (e) { setErr(e.message) }
+    finally { setReathing(false) }
+  }
 
   const handleSave = async (e) => {
     e.preventDefault()
@@ -87,7 +100,28 @@ function EmailManager({ onEmailSaved }) {
           </div>
         )
       )}
-      {editing && (
+      {editing && !isReauthed() && (
+        <form onSubmit={handleReauth} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+            Confirm your password to change your recovery email.
+          </p>
+          <input type="password" placeholder="Your password" value={reauthPw} onChange={e => setReauthPw(e.target.value)}
+            style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '9px 12px', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box', width: '100%' }}
+            autoFocus />
+          {err && <p style={{ fontSize: 12, color: '#e63946' }}>{err}</p>}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="submit" disabled={reauthing}
+              style={{ flex: 1, background: 'var(--accent)', border: 'none', color: '#fff', padding: '9px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+              {reauthing ? 'Verifying…' : 'Verify'}
+            </button>
+            <button type="button" onClick={() => { setEditing(false); setErr(null); setReauthPw('') }}
+              style={{ flex: 1, background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--muted)', padding: '9px', borderRadius: 7, fontSize: 13, cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+      {editing && isReauthed() && (
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <input type="email" placeholder="your@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)}
             style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '9px 12px', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box', width: '100%' }}

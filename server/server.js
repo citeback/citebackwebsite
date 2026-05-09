@@ -137,7 +137,8 @@ db.exec(`
     created_at TEXT NOT NULL,
     reputation INTEGER DEFAULT 0,
     tier INTEGER DEFAULT 0,
-    email_enc TEXT DEFAULT NULL
+    email_enc TEXT DEFAULT NULL,
+    password_version INTEGER DEFAULT 0
   );
   CREATE TABLE IF NOT EXISTS recovery_tokens (
     id TEXT PRIMARY KEY,
@@ -243,22 +244,33 @@ const JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days in seconds
 const COOKIE_OPTS = `HttpOnly; Secure; SameSite=Lax; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
 const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/`
 
+// Migrate: add password_version column for existing DBs (safe no-op if already exists)
+try { db.prepare('ALTER TABLE users ADD COLUMN password_version INTEGER DEFAULT 0').run() } catch {}
+
+// ── Server-side reauth sessions ───────────────────────────────────────────────
+// userId -> reauthUntil timestamp (in-memory; resets on restart — acceptable)
+const reauthSessions = new Map()
+function recordReauth(userId) {
+  reauthSessions.set(userId, Date.now() + 5 * 60 * 1000)
+}
+function isReauthedServer(userId) {
+  const until = reauthSessions.get(userId)
+  return !!(until && until > Date.now())
+}
+
+// ── Token verification with password_version check ────────────────────────────
 function verifyToken(req) {
   try {
     const cookies = parseCookies(req)
     const token = cookies.token
     if (!token) return null
-    return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] })
+    const claims = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] })
+    // Invalidate tokens issued before a password reset
+    const row = db.prepare('SELECT password_version FROM users WHERE id = ?').get(claims.userId)
+    if (!row) return null
+    if ((row.password_version || 0) !== (claims.pv || 0)) return null
+    return claims
   } catch { return null }
-}
-
-// ── CORS ──────────────────────────────────────────────────────────────────────
-const CORS_ORIGIN = 'https://citeback.com'
-function setCorsHeaders(res) {
-  res.setHeader('Access-Control-Allow-Origin', CORS_ORIGIN)
-  res.setHeader('Access-Control-Allow-Credentials', 'true')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Secret')
 }
 
 function awardReputation(userId, sightingId, eventType, points) {
@@ -651,7 +663,7 @@ const server = http.createServer(async (req, res) => {
       const now = new Date().toISOString()
       db.prepare('INSERT INTO users (id, username, password_hash, created_at, email_enc) VALUES (?, ?, ?, ?, ?)').run(id, username, password_hash, now, emailEnc)
 
-      const token = jwt.sign({ userId: id, username }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      const token = jwt.sign({ userId: id, username, pv: 0 }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
       res.setHeader('Set-Cookie', `token=${token}; ${COOKIE_OPTS}`)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({
@@ -697,7 +709,7 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'Invalid username or password' }))
       }
 
-      const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      const token = jwt.sign({ userId: user.id, username: user.username, pv: user.password_version || 0 }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
       res.setHeader('Set-Cookie', `token=${token}; ${COOKIE_OPTS}`)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({
@@ -782,10 +794,20 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: update email ────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/email') {
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+    if (!checkAuthRateLimit(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes and try again' }))
+    }
     const claims = verifyToken(req)
     if (!claims) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Authentication required' }))
+    }
+    // Email change requires recent step-up auth
+    if (!isReauthedServer(claims.userId)) {
+      res.writeHead(403, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Step-up authentication required — please re-enter your password' }))
     }
     try {
       const body = await parseBody(req)
@@ -897,8 +919,11 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'Reset link is invalid or has expired' }))
       }
       const newHash = await bcrypt.hash(password, 12)
-      db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(newHash, row.user_id)
+      // Increment password_version — invalidates all existing JWTs for this user
+      db.prepare('UPDATE users SET password_hash = ?, password_version = COALESCE(password_version, 0) + 1 WHERE id = ?').run(newHash, row.user_id)
       db.prepare('UPDATE recovery_tokens SET used = 1 WHERE id = ?').run(tokenId)
+      // Clear any server-side reauth session for this user
+      reauthSessions.delete(row.user_id)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true }))
     } catch (e) {
@@ -937,8 +962,9 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(401, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Incorrect password' }))
       }
-      // 5-minute reauth window returned to client
+      // 5-minute reauth window — enforced both server-side and returned to client
       const reauthUntil = Date.now() + 5 * 60 * 1000
+      recordReauth(claims.userId)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, reauthUntil }))
     } catch (e) {
