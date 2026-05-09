@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { CheckCircle, XCircle, Clock, MapPin, Eye, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
@@ -201,10 +201,40 @@ function AttorneyCard({ app, onReview, loading }) {
 }
 
 export default function AdminPanel() {
-  const [secret, setSecret] = useState(() => localStorage.getItem('cx_admin_secret') || '')
-  const [remember, setRemember] = useState(() => !!localStorage.getItem('cx_admin_secret'))
+  const [secret, setSecret] = useState('')
+  const [remember, setRemember] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [authError, setAuthError] = useState(false)
+  const [authLocked, setAuthLocked] = useState(false)
+  const inactivityTimer = useRef(null)
+  const INACTIVITY_MS = 30 * 60 * 1000 // 30 min
+
+  // Reset inactivity timer on any interaction
+  const resetInactivity = useCallback(() => {
+    clearTimeout(inactivityTimer.current)
+    inactivityTimer.current = setTimeout(() => {
+      setAuthed(false)
+      fetch(`${AI_URL}/admin/logout`, { method: 'POST', credentials: 'include' }).catch(() => {})
+    }, INACTIVITY_MS)
+  }, [])
+
+  useEffect(() => {
+    if (!authed) return
+    resetInactivity()
+    const events = ['mousemove', 'keydown', 'click', 'scroll']
+    events.forEach(e => window.addEventListener(e, resetInactivity, { passive: true }))
+    return () => {
+      events.forEach(e => window.removeEventListener(e, resetInactivity))
+      clearTimeout(inactivityTimer.current)
+    }
+  }, [authed, resetInactivity])
+
+  // On mount, check if we already have a valid session cookie
+  useEffect(() => {
+    fetch(`${AI_URL}/admin/verify-session`, { credentials: 'include' })
+      .then(r => { if (r.ok) setAuthed(true) })
+      .catch(() => {})
+  }, [])
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [moderating, setModerating] = useState(false)
@@ -223,33 +253,25 @@ export default function AdminPanel() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  const fetchData = useCallback(async (sec = secret) => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${AI_URL}/admin/sightings`, {
-        headers: { 'x-admin-secret': sec || secret },
-      })
-      if (res.status === 401) { setAuthError(true); return }
+      const res = await fetch(`${AI_URL}/admin/sightings`, { credentials: 'include' })
+      if (res.status === 401) { setAuthed(false); return }
       const json = await res.json()
       setData(json)
-      setAuthed(true)
-      setAuthError(false)
-      if (remember) localStorage.setItem('cx_admin_secret', sec || secret)
-      else localStorage.removeItem('cx_admin_secret')
     } catch {
       showToast('Failed to load sightings', false)
     } finally {
       setLoading(false)
     }
-  }, [secret])
+  }, [])
 
-  const fetchAttorneyData = useCallback(async (sec = secret) => {
+  const fetchAttorneyData = useCallback(async () => {
     setAttorneyLoading(true)
     try {
-      const res = await fetch(`${AI_URL}/admin/attorney-applications`, {
-        headers: { 'x-admin-secret': sec || secret },
-      })
-      if (res.status === 401) { setAuthError(true); return }
+      const res = await fetch(`${AI_URL}/admin/attorney-applications`, { credentials: 'include' })
+      if (res.status === 401) { setAuthed(false); return }
       const json = await res.json()
       setAttorneyData(json)
     } catch {
@@ -257,14 +279,36 @@ export default function AdminPanel() {
     } finally {
       setAttorneyLoading(false)
     }
-  }, [secret])
+  }, [])
 
   const handleAuth = async (e) => {
     e.preventDefault()
     const trimmed = secret.trim()
-    setSecret(trimmed)
-    await fetchData(trimmed)
-    await fetchAttorneyData(trimmed)
+    setAuthError(false)
+    setAuthLocked(false)
+    try {
+      const res = await fetch(`${AI_URL}/admin/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: trimmed }),
+      })
+      if (res.status === 429) { setAuthLocked(true); return }
+      if (!res.ok) { setAuthError(true); return }
+      setAuthed(true)
+      setSecret('')
+      await fetchData()
+      await fetchAttorneyData()
+    } catch {
+      setAuthError(true)
+    }
+  }
+
+  const handleLogout = async () => {
+    await fetch(`${AI_URL}/admin/logout`, { method: 'POST', credentials: 'include' }).catch(() => {})
+    setAuthed(false)
+    setData(null)
+    setAttorneyData(null)
   }
 
   const handleModerate = async (id, action) => {
@@ -272,7 +316,8 @@ export default function AdminPanel() {
     try {
       const res = await fetch(`${AI_URL}/admin/sightings/moderate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action }),
       })
       const json = await res.json()
@@ -294,7 +339,8 @@ export default function AdminPanel() {
     try {
       const res = await fetch(`${AI_URL}/admin/attorney-applications/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action, notes }),
       })
       const json = await res.json()
@@ -317,7 +363,8 @@ export default function AdminPanel() {
     try {
       const res = await fetch(`${AI_URL}/admin/sightings/approve-all`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       })
       const json = await res.json()
@@ -366,17 +413,21 @@ export default function AdminPanel() {
                 <AlertCircle size={14} /> Invalid secret
               </div>
             )}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--muted)', cursor: 'pointer', userSelect: 'none' }}>
-              <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)}
-                style={{ width: 15, height: 15, accentColor: 'var(--accent)', cursor: 'pointer' }} />
-              Remember on this device
-            </label>
-            <button type="submit" style={{
-              background: 'var(--accent)', border: 'none', color: '#fff',
-              padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer',
+            {authLocked && (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: '#f59e0b', fontSize: 13 }}>
+                <AlertCircle size={14} /> Too many attempts — locked out for 15 minutes
+              </div>
+            )}
+            <button type="submit" disabled={authLocked} style={{
+              background: authLocked ? 'var(--border)' : 'var(--accent)', border: 'none', color: '#fff',
+              padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
+              cursor: authLocked ? 'not-allowed' : 'pointer',
             }}>
               Unlock
             </button>
+            <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
+              Session lasts 4 hours · Auto-locks after 30 min inactivity
+            </p>
           </form>
         </div>
       </div>
@@ -400,6 +451,16 @@ export default function AdminPanel() {
           {toast.msg}
         </div>
       )}
+
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div style={{ fontSize: 12, color: 'var(--muted)' }}>Session active · auto-locks after 30 min inactivity</div>
+        <button onClick={handleLogout} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--muted)', padding: '6px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
+          onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+          Lock Panel
+        </button>
+      </div>
 
       {/* Section switcher */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'var(--bg2)', borderRadius: 12, padding: 4, width: 'fit-content' }}>
