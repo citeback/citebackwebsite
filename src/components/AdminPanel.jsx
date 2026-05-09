@@ -201,7 +201,8 @@ function AttorneyCard({ app, onReview, loading }) {
 }
 
 export default function AdminPanel() {
-  const [secret, setSecret] = useState('')
+  const [secret, setSecret] = useState(() => localStorage.getItem('cx_admin_secret') || '')
+  const [remember, setRemember] = useState(() => !!localStorage.getItem('cx_admin_secret'))
   const [authed, setAuthed] = useState(false)
   const [authError, setAuthError] = useState(false)
   const [data, setData] = useState(null)
@@ -233,6 +234,8 @@ export default function AdminPanel() {
       setData(json)
       setAuthed(true)
       setAuthError(false)
+      if (remember) localStorage.setItem('cx_admin_secret', sec || secret)
+      else localStorage.removeItem('cx_admin_secret')
     } catch {
       showToast('Failed to load sightings', false)
     } finally {
@@ -361,6 +364,11 @@ export default function AdminPanel() {
                 <AlertCircle size={14} /> Invalid secret
               </div>
             )}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--muted)', cursor: 'pointer', userSelect: 'none' }}>
+              <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)}
+                style={{ width: 15, height: 15, accentColor: 'var(--accent)', cursor: 'pointer' }} />
+              Remember on this device
+            </label>
             <button type="submit" style={{
               background: 'var(--accent)', border: 'none', color: '#fff',
               padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer',
