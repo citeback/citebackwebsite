@@ -144,6 +144,16 @@ function AttorneyCard({ app, onReview, loading }) {
             display: 'inline-block', marginTop: 4, padding: '2px 8px', borderRadius: 6,
             fontWeight: 700, fontSize: 10, textTransform: 'uppercase', color: statusColor,
           }}>{app.status}</span>
+          {app.status === 'approved' && (
+            <span style={{
+              display: 'inline-block', marginTop: 4, marginLeft: 6,
+              padding: '2px 8px', borderRadius: 6, fontWeight: 700, fontSize: 10,
+              textTransform: 'uppercase',
+              color: app.account_created ? '#10b981' : '#f59e0b',
+            }}>
+              {app.account_created ? '✓ acct created' : 'no acct'}
+            </span>
+          )}
         </div>
       </div>
 

@@ -1,9 +1,126 @@
 import { useState, useEffect } from 'react'
-import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail } from 'lucide-react'
+import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus } from 'lucide-react'
+import { startRegistration } from '@simplewebauthn/browser'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 
 import { API_BASE as AI_URL } from '../config.js'
+
+function PasskeyManager() {
+  const [passkeys, setPasskeys] = useState(null)
+  const [adding, setAdding] = useState(false)
+  const [deviceName, setDeviceName] = useState('')
+  const [err, setErr] = useState(null)
+  const [ok, setOk] = useState(null)
+  const [deleting, setDeleting] = useState(null)
+
+  const load = () => {
+    fetch(`${AI_URL}/passkey/list`, { credentials: 'include' })
+      .then(r => r.json()).then(d => setPasskeys(d.passkeys || [])).catch(() => setPasskeys([]))
+  }
+  useEffect(() => { load() }, [])
+
+  const handleAdd = async () => {
+    setAdding(true); setErr(null); setOk(null)
+    try {
+      const optRes = await fetch(`${AI_URL}/passkey/register-options`, { credentials: 'include' })
+      const { options, tempId } = await optRes.json()
+      if (!optRes.ok) throw new Error(options?.error || 'Failed to get options')
+      const credential = await startRegistration({ optionsJSON: options })
+      const verRes = await fetch(`${AI_URL}/passkey/register-verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ response: credential, tempId, deviceName: deviceName.trim() || null }),
+      })
+      const verData = await verRes.json()
+      if (!verRes.ok) throw new Error(verData.error || 'Registration failed')
+      setOk('Passkey added successfully!')
+      setDeviceName('')
+      load()
+    } catch (e) {
+      if (e?.name === 'NotAllowedError') setErr('Passkey setup cancelled.')
+      else setErr(e.message || 'Failed to add passkey')
+    } finally { setAdding(false) }
+  }
+
+  const handleDelete = async (credentialId) => {
+    if (!window.confirm('Remove this passkey?')) return
+    setDeleting(credentialId)
+    try {
+      const res = await fetch(`${AI_URL}/passkey/${encodeURIComponent(credentialId)}`, { method: 'DELETE', credentials: 'include' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Delete failed')
+      load()
+    } catch (e) { setErr(e.message) }
+    finally { setDeleting(null) }
+  }
+
+  return (
+    <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Fingerprint size={14} style={{ color: 'var(--muted)' }} />
+          <span style={{ fontSize: 13, fontWeight: 600 }}>Passkeys</span>
+          {ok && <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✓ {ok}</span>}
+        </div>
+        <button
+          onClick={handleAdd}
+          disabled={adding}
+          style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: adding ? 'not-allowed' : 'pointer', opacity: adding ? 0.6 : 1 }}
+        >
+          {adding ? <Loader size={11} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={11} />}
+          Add passkey
+        </button>
+      </div>
+
+      {adding && (
+        <div style={{ marginBottom: 10 }}>
+          <input
+            placeholder="Device name (optional, e.g. MacBook Touch ID)"
+            value={deviceName}
+            onChange={e => setDeviceName(e.target.value)}
+            style={{ width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '8px 12px', borderRadius: 7, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box', marginBottom: 8 }}
+            autoFocus
+          />
+          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>Your browser will prompt you to use Touch ID, Face ID, or a security key. Follow the browser prompt, then the passkey will be saved.</p>
+        </div>
+      )}
+
+      {err && (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 7, padding: '8px 12px', fontSize: 12, color: '#e63946', marginBottom: 10 }}>
+          <AlertCircle size={12} /> {err}
+        </div>
+      )}
+
+      {passkeys === null ? (
+        <div style={{ color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}><Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Loading…</div>
+      ) : passkeys.length === 0 ? (
+        <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>No passkeys yet. Add one to sign in without a password using Touch ID, Face ID, or a hardware key.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {passkeys.map(pk => (
+            <div key={pk.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg3)', borderRadius: 8, padding: '8px 12px' }}>
+              <Fingerprint size={13} style={{ color: 'var(--muted)', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{pk.device_name || 'Passkey'}</div>
+                <div style={{ fontSize: 11, color: 'var(--muted)' }}>Added {new Date(pk.created_at).toLocaleDateString()}</div>
+              </div>
+              <button
+                onClick={() => handleDelete(pk.credential_id)}
+                disabled={deleting === pk.credential_id}
+                style={{ background: 'none', border: 'none', color: '#e63946', cursor: deleting === pk.credential_id ? 'not-allowed' : 'pointer', padding: 4, opacity: deleting === pk.credential_id ? 0.5 : 1 }}
+                title="Remove passkey"
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function EmailManager({ onEmailSaved }) {
   const { isReauthed, reauth } = useAuth()
@@ -363,7 +480,18 @@ export default function ReputationPage({ setTab }) {
                 {user.username?.[0]?.toUpperCase() || '?'}
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 18 }}>{user.username}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <div style={{ fontWeight: 800, fontSize: 18 }}>{user.username}</div>
+                  {user.attorney_verified ? (
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)',
+                      borderRadius: 100, padding: '2px 8px', fontSize: 11, fontWeight: 700, color: '#6366f1',
+                    }}>
+                      <Scale size={10} /> Attorney
+                    </span>
+                  ) : null}
+                </div>
                 <TierBadge tier={user.tier || 0} />
               </div>
             </div>
@@ -426,6 +554,9 @@ export default function ReputationPage({ setTab }) {
 
       {/* Email recovery management */}
       <EmailManager onEmailSaved={refreshUser} />
+
+      {/* Passkey management */}
+      <PasskeyManager />
 
       {/* CTA */}
       <button

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader } from 'lucide-react'
+import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader, Fingerprint } from 'lucide-react'
+import { startAuthentication } from '@simplewebauthn/browser'
 import { useAuth } from '../context/AuthContext'
+import { API_BASE as AI_URL } from '../config.js'
 
 export default function AccountModal({ onClose, initialTab = 'login', singleMode = false }) {
   const { login, createAccount } = useAuth()
@@ -13,15 +15,52 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+  const [passkeyLoading, setPasskeyLoading] = useState(false)
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(null) }
+
+  const handlePasskeyLogin = async () => {
+    setPasskeyLoading(true)
+    setError(null)
+    try {
+      // Get auth options (no username for discoverable credentials)
+      const optRes = await fetch(`${AI_URL}/passkey/auth-options`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: form.username || undefined }),
+      })
+      const { options, tempId } = await optRes.json()
+      if (!optRes.ok) throw new Error(options?.error || 'Failed to start passkey auth')
+      // Invoke browser WebAuthn
+      const credential = await startAuthentication({ optionsJSON: options })
+      // Verify with server
+      const verRes = await fetch(`${AI_URL}/passkey/auth-verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ response: credential, tempId }),
+      })
+      const verData = await verRes.json()
+      if (!verRes.ok) throw new Error(verData.error || 'Passkey verification failed')
+      setSuccess('Logged in!')
+      setTimeout(onClose, 800)
+    } catch (err) {
+      if (err?.name === 'NotAllowedError') {
+        setError('Passkey cancelled or not available on this device.')
+      } else {
+        setError(err.message || 'Passkey authentication failed')
+      }
+    } finally {
+      setPasskeyLoading(false)
+    }
+  }
 
   const handleRecover = async (e) => {
     e.preventDefault()
     if (!recoverUsername) return
     setLoading(true)
     try {
-      await fetch('https://ai.citeback.com/account/recover', {
+      await fetch(`${AI_URL}/account/recover`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: recoverUsername }),
@@ -174,6 +213,32 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             <span style={{ fontWeight: 600, fontSize: 14 }}>{success}</span>
           </div>
         ) : tab !== 'recover' ? (
+          <>
+          {tab === 'login' && (
+            <div style={{ marginBottom: 4 }}>
+              <button
+                type="button"
+                onClick={handlePasskeyLogin}
+                disabled={passkeyLoading}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
+                  padding: '11px', borderRadius: 8, fontWeight: 600, fontSize: 14,
+                  cursor: passkeyLoading ? 'not-allowed' : 'pointer', marginBottom: 12,
+                  opacity: passkeyLoading ? 0.6 : 1,
+                }}
+              >
+                {passkeyLoading
+                  ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Waiting for passkey…</>
+                  : <><Fingerprint size={15} /> Use a passkey</>}
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+                <span style={{ fontSize: 11, color: 'var(--muted)', fontWeight: 500 }}>or sign in with password</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+              </div>
+            </div>
+          )}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
               <label style={labelStyle}>Username</label>
@@ -338,6 +403,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               </p>
             )}
           </form>
+          </>
         ) : null}
       </div>
     </div>
