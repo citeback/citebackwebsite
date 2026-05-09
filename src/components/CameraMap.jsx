@@ -1562,7 +1562,7 @@ export default function CameraMap() {
               backdropFilter: 'blur(12px)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
               maxHeight: 460, overflowY: 'auto',
-              scrollbarWidth: 'thin', scrollbarColor: 'var(--muted) transparent',
+              scrollbarWidth: 'thin', scrollbarColor: 'var(--accent) transparent',
             }} className="layers-scroll">
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
                 <Shield size={13} style={{ color: '#a855f7' }} />
