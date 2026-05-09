@@ -261,8 +261,10 @@ export default function AdminPanel() {
 
   const handleAuth = async (e) => {
     e.preventDefault()
-    await fetchData(secret)
-    await fetchAttorneyData(secret)
+    const trimmed = secret.trim()
+    setSecret(trimmed)
+    await fetchData(trimmed)
+    await fetchAttorneyData(trimmed)
   }
 
   const handleModerate = async (id, action) => {
@@ -355,7 +357,7 @@ export default function AdminPanel() {
               style={s.input}
               placeholder="Admin secret"
               value={secret}
-              onChange={e => { setSecret(e.target.value); setAuthError(false) }}
+              onChange={e => { setSecret(e.target.value.trim()); setAuthError(false) }}
               autoFocus
               required
             />
