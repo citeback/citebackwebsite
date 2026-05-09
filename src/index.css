@@ -45,8 +45,10 @@ button { cursor: pointer; font-family: inherit; }
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #444444; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+/* Firefox global scrollbar color */
+* { scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
 
 .leaflet-container { background: #0d0d10 !important; }
 
@@ -99,5 +101,5 @@ button, a { transition: background-color 0.15s, color 0.15s, border-color 0.15s,
 /* Visible scrollbars for layers panel */
 .layers-scroll::-webkit-scrollbar { width: 6px; }
 .layers-scroll::-webkit-scrollbar-track { background: transparent; }
-.layers-scroll::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
-.layers-scroll::-webkit-scrollbar-thumb:hover { background: #444444; }
+.layers-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+.layers-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
