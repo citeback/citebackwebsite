@@ -133,7 +133,7 @@ function AttorneyCard({ app, onReview, loading }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{app.full_name}</div>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{app.full_name}</div>
           <div style={{ fontSize: 12, color: 'var(--muted)' }}>
             {app.bar_state}{app.bar_number ? ` • Bar #${app.bar_number}` : ''} • {app.location}
           </div>
