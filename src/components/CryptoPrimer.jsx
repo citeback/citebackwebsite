@@ -23,18 +23,27 @@ const COINS = [
     what: 'Monero is an open-source cryptocurrency with privacy built in at the protocol level. Every transaction automatically hides the sender, recipient, and amount using ring signatures, stealth addresses, and RingCT. It\'s been live since 2014 and is battle-tested.',
     getSteps: [
       {
-        label: 'Buy on an exchange',
-        detail: 'Kraken and Cake Wallet\'s built-in swap are the easiest starting points. Kraken lets you buy XMR directly with a bank transfer or card.',
+        label: 'Buy on an exchange (US-accessible)',
+        detail: 'Kraken is the most reputable US-based exchange that still lists XMR. Requires KYC but straightforward for first-time buyers.',
         links: [
           { text: 'Kraken', url: 'https://kraken.com' },
-          { text: 'Cake Wallet (iOS/Android)', url: 'https://cakewallet.com' },
         ],
       },
       {
-        label: 'Or swap / trade without an account',
-        detail: 'Trocador is a no-KYC swap aggregator that compares rates across multiple providers and filters out ones that demand ID. Haveno-Reto is a fully decentralized P2P exchange — maximally private but slower.',
+        label: 'Swap without an account (no KYC)',
+        detail: 'These services let you swap BTC, ETH, or other coins into XMR with no account or ID. All accessible to US users. Trocador aggregates multiple providers and filters by KYC policy.',
         links: [
           { text: 'Trocador', url: 'https://trocador.app' },
+          { text: 'Cake Wallet (built-in swap)', url: 'https://cakewallet.com' },
+          { text: 'ChangeNow', url: 'https://changenow.io' },
+          { text: 'StealthEX', url: 'https://stealthex.io' },
+          { text: 'SimpleSwap', url: 'https://simpleswap.io' },
+        ],
+      },
+      {
+        label: 'Or trade peer-to-peer (maximum privacy)',
+        detail: 'Haveno-Reto is a decentralized P2P exchange running over Tor — no account, no KYC, no central server. Slower but the most private option.',
+        links: [
           { text: 'Haveno-Reto', url: 'https://github.com/retoaccess1/haveno-reto/releases' },
         ],
       },
@@ -56,19 +65,20 @@ const COINS = [
     what: 'Zano is a privacy-focused cryptocurrency with confidential transactions, hidden amounts, and stealth addresses. It supports confidential assets and uses a hybrid Proof-of-Work / Proof-of-Stake consensus. Less mainstream than Monero but strong privacy guarantees.',
     getSteps: [
       {
-        label: 'Buy on an exchange',
-        detail: 'BitMart has the highest ZANO trading volume and is beginner-friendly. TradeOgre is no-KYC and well-regarded in the privacy coin community.',
+        label: 'Buy on an exchange (US-accessible)',
+        detail: 'TradeOgre is the go-to no-KYC exchange for ZANO — available to US users with no account restrictions.',
         links: [
-          { text: 'BitMart', url: 'https://www.bitmart.com' },
           { text: 'TradeOgre', url: 'https://tradeogre.com' },
         ],
       },
       {
-        label: 'Swap without an account',
-        detail: 'Trocador and ChangeNow both let you swap BTC, ETH, or other coins into ZANO with no account required.',
+        label: 'Swap without an account (no KYC)',
+        detail: 'Swap BTC, ETH, or other coins into ZANO — no account or ID required. All accessible to US users.',
         links: [
           { text: 'Trocador', url: 'https://trocador.app' },
           { text: 'ChangeNow', url: 'https://changenow.io' },
+          { text: 'StealthEX', url: 'https://stealthex.io' },
+          { text: 'SimpleSwap', url: 'https://simpleswap.io' },
         ],
       },
       {
