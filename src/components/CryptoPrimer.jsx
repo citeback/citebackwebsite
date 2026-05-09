@@ -31,10 +31,11 @@ const COINS = [
         ],
       },
       {
-        label: 'Or trade peer-to-peer',
-        detail: 'Haveno is a decentralized exchange — no account, no KYC. Slower but maximally private.',
+        label: 'Or swap / trade without an account',
+        detail: 'Trocador is a no-KYC swap aggregator that compares rates across multiple providers and filters out ones that demand ID. Haveno-Reto is a fully decentralized P2P exchange — maximally private but slower.',
         links: [
-          { text: 'Haveno', url: 'https://haveno.exchange' },
+          { text: 'Trocador', url: 'https://trocador.app' },
+          { text: 'Haveno-Reto', url: 'https://github.com/retoaccess1/haveno-reto/releases' },
         ],
       },
       {
@@ -55,16 +56,18 @@ const COINS = [
     what: 'Zano is a privacy-focused cryptocurrency with confidential transactions, hidden amounts, and stealth addresses. It supports confidential assets and uses a hybrid Proof-of-Work / Proof-of-Stake consensus. Less mainstream than Monero but strong privacy guarantees.',
     getSteps: [
       {
-        label: 'Buy on TradeOgre',
-        detail: 'TradeOgre is the most liquid market for ZANO. No KYC required for basic trading.',
+        label: 'Buy on an exchange',
+        detail: 'BitMart has the highest ZANO trading volume and is beginner-friendly. TradeOgre is no-KYC and well-regarded in the privacy coin community.',
         links: [
+          { text: 'BitMart', url: 'https://www.bitmart.com' },
           { text: 'TradeOgre', url: 'https://tradeogre.com' },
         ],
       },
       {
-        label: 'Swap via ExchangeNow or ChangeNow',
-        detail: 'You can swap BTC, ETH, or other coins into ZANO without an account.',
+        label: 'Swap without an account',
+        detail: 'Trocador and ChangeNow both let you swap BTC, ETH, or other coins into ZANO with no account required.',
         links: [
+          { text: 'Trocador', url: 'https://trocador.app' },
           { text: 'ChangeNow', url: 'https://changenow.io' },
         ],
       },
