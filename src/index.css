@@ -103,3 +103,6 @@ button, a { transition: background-color 0.15s, color 0.15s, border-color 0.15s,
 .layers-scroll::-webkit-scrollbar-track { background: transparent; }
 .layers-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 .layers-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+/* Global spin animation (used by Loader/RefreshCw etc.) */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

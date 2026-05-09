@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { CheckCircle, XCircle, Clock, MapPin, Eye, RefreshCw, Lock, AlertCircle, CheckSquare } from 'lucide-react'
+import { CheckCircle, XCircle, Clock, MapPin, Eye, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
 
@@ -118,6 +118,88 @@ function SightingCard({ sighting, onModerate, loading }) {
   )
 }
 
+// ── Attorney application card ─────────────────────────────────────────────
+function AttorneyCard({ app, onReview, loading }) {
+  const [notes, setNotes] = useState('')
+  let barResult = null
+  try { barResult = app.bar_result ? JSON.parse(app.bar_result) : null } catch {}
+  const isReviewable = app.status === 'pending'
+  const statusColor = { pending: '#f59e0b', approved: '#10b981', rejected: '#e63946' }[app.status] || 'var(--muted)'
+
+  return (
+    <div style={{
+      background: 'var(--bg2)', border: '1px solid var(--border)',
+      borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{app.full_name}</div>
+          <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+            {app.bar_state}{app.bar_number ? ` • Bar #${app.bar_number}` : ''} • {app.location}
+          </div>
+        </div>
+        <div style={{ textAlign: 'right', fontSize: 11, color: 'var(--muted)' }}>
+          {new Date(app.submitted_at).toLocaleString()}<br />
+          <span style={{
+            display: 'inline-block', marginTop: 4, padding: '2px 8px', borderRadius: 6,
+            fontWeight: 700, fontSize: 10, textTransform: 'uppercase', color: statusColor,
+          }}>{app.status}</span>
+        </div>
+      </div>
+
+      {barResult && (
+        <div style={{
+          padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
+          ...(barResult.status === 'found'
+            ? { background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', color: '#10b981' }
+            : { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b' }),
+        }}>
+          {barResult.status === 'found'
+            ? <><ShieldCheck size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /><strong>Bar verified:</strong> {barResult.name}{barResult.active !== undefined && ` — ${barResult.active ? 'Active' : 'Inactive'}`}</>
+            : barResult.status === 'not_found'
+              ? <><XCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bar # not found in CA State Bar</>            
+              : <><Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.bar_state} — manual verification required</>}
+        </div>
+      )}
+
+      <div style={{
+        background: 'var(--bg3)', borderRadius: 8, padding: '10px 12px',
+        fontSize: 13, color: 'var(--muted)', lineHeight: 1.6,
+      }}>{app.background}</div>
+
+      {app.notes && (
+        <div style={{ fontSize: 12, color: 'var(--muted)', fontStyle: 'italic' }}>
+          <MessageSquare size={11} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.notes}
+        </div>
+      )}
+
+      {isReviewable && (
+        <>
+          <input
+            placeholder="Optional admin note…"
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            style={{
+              background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
+              padding: '8px 12px', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none',
+            }}
+          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => onReview(app.id, 'approve', notes)} disabled={loading}
+              style={{ flex: 1, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <CheckCircle size={14} /> Approve
+            </button>
+            <button onClick={() => onReview(app.id, 'reject', notes)} disabled={loading}
+              style={{ flex: 1, background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', color: '#e63946', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <XCircle size={14} /> Reject
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 export default function AdminPanel() {
   const [secret, setSecret] = useState('')
   const [authed, setAuthed] = useState(false)
@@ -128,6 +210,12 @@ export default function AdminPanel() {
   const [toast, setToast] = useState(null)
   const [activeTab, setActiveTab] = useState('pending') // pending | approved | rejected
   const [bulkLoading, setBulkLoading] = useState(false)
+  // Section toggle: sightings | attorneys
+  const [adminSection, setAdminSection] = useState('sightings')
+  const [attorneyData, setAttorneyData] = useState(null)
+  const [attorneyTab, setAttorneyTab] = useState('pending')
+  const [attorneyLoading, setAttorneyLoading] = useState(false)
+  const [reviewingAttorney, setReviewingAttorney] = useState(false)
 
   const showToast = (msg, ok = true) => {
     setToast({ msg, ok })
@@ -137,7 +225,9 @@ export default function AdminPanel() {
   const fetchData = useCallback(async (sec = secret) => {
     setLoading(true)
     try {
-      const res = await fetch(`${AI_URL}/admin/sightings?secret=${encodeURIComponent(sec)}`)
+      const res = await fetch(`${AI_URL}/admin/sightings`, {
+        headers: { 'x-admin-secret': sec || secret },
+      })
       if (res.status === 401) { setAuthError(true); return }
       const json = await res.json()
       setData(json)
@@ -150,9 +240,26 @@ export default function AdminPanel() {
     }
   }, [secret])
 
+  const fetchAttorneyData = useCallback(async (sec = secret) => {
+    setAttorneyLoading(true)
+    try {
+      const res = await fetch(`${AI_URL}/admin/attorney-applications`, {
+        headers: { 'x-admin-secret': sec || secret },
+      })
+      if (res.status === 401) { setAuthError(true); return }
+      const json = await res.json()
+      setAttorneyData(json)
+    } catch {
+      showToast('Failed to load attorney applications', false)
+    } finally {
+      setAttorneyLoading(false)
+    }
+  }, [secret])
+
   const handleAuth = async (e) => {
     e.preventDefault()
     await fetchData(secret)
+    await fetchAttorneyData(secret)
   }
 
   const handleModerate = async (id, action) => {
@@ -160,8 +267,8 @@ export default function AdminPanel() {
     try {
       const res = await fetch(`${AI_URL}/admin/sightings/moderate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminSecret: secret, id, action }),
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        body: JSON.stringify({ id, action }),
       })
       const json = await res.json()
       if (json.ok) {
@@ -177,14 +284,36 @@ export default function AdminPanel() {
     }
   }
 
+  const handleAttorneyReview = async (id, action, notes) => {
+    setReviewingAttorney(true)
+    try {
+      const res = await fetch(`${AI_URL}/admin/attorney-applications/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        body: JSON.stringify({ id, action, notes }),
+      })
+      const json = await res.json()
+      if (json.ok) {
+        showToast(`Application ${action}d`, true)
+        await fetchAttorneyData()
+      } else {
+        showToast('Review failed', false)
+      }
+    } catch {
+      showToast('Network error', false)
+    } finally {
+      setReviewingAttorney(false)
+    }
+  }
+
   const handleApproveAll = async () => {
     if (!window.confirm(`Approve all ${data?.pending?.length || 0} pending sightings with coordinates?`)) return
     setBulkLoading(true)
     try {
       const res = await fetch(`${AI_URL}/admin/sightings/approve-all`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminSecret: secret }),
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        body: JSON.stringify({}),
       })
       const json = await res.json()
       showToast(`Approved ${json.approved} sightings`, true)
@@ -246,6 +375,7 @@ export default function AdminPanel() {
 
   const currentSightings = data?.[activeTab] || []
   const pendingWithCoords = (data?.pending || []).filter(s => s.lat && s.lng)
+  const currentAttorneys = attorneyData?.[attorneyTab] || []
 
   return (
     <div style={s.page}>
@@ -261,85 +391,149 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-        <div>
-          <h1 style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.03em', marginBottom: 4 }}>Sighting Moderation</h1>
-          <div style={{ fontSize: 13, color: 'var(--muted)' }}>
-            {data?.total ?? '–'} total ·{' '}
-            <span style={{ color: STATUS_COLORS.pending }}>{data?.pending?.length ?? 0} pending</span> ·{' '}
-            <span style={{ color: STATUS_COLORS.approved }}>{data?.approved?.length ?? 0} approved</span> ·{' '}
-            <span style={{ color: STATUS_COLORS.rejected }}>{data?.rejected?.length ?? 0} rejected</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {pendingWithCoords.length > 0 && (
-            <button
-              onClick={handleApproveAll}
-              disabled={bulkLoading}
-              style={{
-                background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)',
-                color: '#10b981', borderRadius: 8, padding: '9px 14px',
-                fontWeight: 700, fontSize: 13, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}
-            >
-              <CheckSquare size={14} />
-              Approve All ({pendingWithCoords.length} with coords)
-            </button>
+      {/* Section switcher */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'var(--bg2)', borderRadius: 12, padding: 4, width: 'fit-content' }}>
+        <button onClick={() => setAdminSection('sightings')} style={{
+          padding: '9px 18px', borderRadius: 9, border: 'none',
+          background: adminSection === 'sightings' ? 'var(--bg3)' : 'transparent',
+          color: adminSection === 'sightings' ? 'var(--text)' : 'var(--muted)',
+          fontWeight: adminSection === 'sightings' ? 700 : 500, fontSize: 13, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          📸 Sightings
+          {(data?.pending?.length ?? 0) > 0 && (
+            <span style={{ background: '#f59e0b', color: '#000', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 800 }}>
+              {data.pending.length}
+            </span>
           )}
-          <button
-            onClick={() => fetchData()}
-            disabled={loading}
-            style={{
+        </button>
+        <button onClick={() => { setAdminSection('attorneys'); fetchAttorneyData() }} style={{
+          padding: '9px 18px', borderRadius: 9, border: 'none',
+          background: adminSection === 'attorneys' ? 'var(--bg3)' : 'transparent',
+          color: adminSection === 'attorneys' ? 'var(--text)' : 'var(--muted)',
+          fontWeight: adminSection === 'attorneys' ? 700 : 500, fontSize: 13, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          <Scale size={13} /> Attorney Queue
+          {(attorneyData?.pending?.length ?? 0) > 0 && (
+            <span style={{ background: '#5dade2', color: '#000', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 800 }}>
+              {attorneyData.pending.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* ─── SIGHTINGS SECTION ─── */}
+      {adminSection === 'sightings' && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+            <div>
+              <h1 style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.03em', marginBottom: 4 }}>Sighting Moderation</h1>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+                {data?.total ?? '–'} total ·{' '}
+                <span style={{ color: STATUS_COLORS.pending }}>{data?.pending?.length ?? 0} pending</span> ·{' '}
+                <span style={{ color: STATUS_COLORS.approved }}>{data?.approved?.length ?? 0} approved</span> ·{' '}
+                <span style={{ color: STATUS_COLORS.rejected }}>{data?.rejected?.length ?? 0} rejected</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {pendingWithCoords.length > 0 && (
+                <button onClick={handleApproveAll} disabled={bulkLoading} style={{
+                  background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)',
+                  color: '#10b981', borderRadius: 8, padding: '9px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}>
+                  <CheckSquare size={14} /> Approve All ({pendingWithCoords.length} with coords)
+                </button>
+              )}
+              <button onClick={() => fetchData()} disabled={loading} style={{
+                background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
+                borderRadius: 8, padding: '9px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}>
+                <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg2)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
+            {['pending', 'approved', 'rejected'].map(t => (
+              <button key={t} onClick={() => setActiveTab(t)} style={{
+                padding: '8px 16px', borderRadius: 7, border: 'none',
+                background: activeTab === t ? 'var(--bg3)' : 'transparent',
+                color: activeTab === t ? STATUS_COLORS[t] : 'var(--muted)',
+                fontWeight: activeTab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
+                transition: 'all 0.15s', textTransform: 'capitalize',
+              }}>
+                {t} <span style={{ opacity: 0.6, fontSize: 11 }}>({data?.[t]?.length ?? 0})</span>
+              </button>
+            ))}
+          </div>
+
+          {loading ? (
+            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24 }}>Loading…</div>
+          ) : currentSightings.length === 0 ? (
+            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24, textAlign: 'center' }}>No {activeTab} sightings.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
+              {currentSightings.map(s => (
+                <SightingCard key={s.id} sighting={s} onModerate={activeTab === 'pending' ? handleModerate : null} loading={moderating} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── ATTORNEY SECTION ─── */}
+      {adminSection === 'attorneys' && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+            <div>
+              <h1 style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.03em', marginBottom: 4 }}>Attorney Applications</h1>
+              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+                {attorneyData?.total ?? '–'} total ·{' '}
+                <span style={{ color: '#f59e0b' }}>{attorneyData?.pending?.length ?? 0} pending</span> ·{' '}
+                <span style={{ color: '#10b981' }}>{attorneyData?.approved?.length ?? 0} approved</span> ·{' '}
+                <span style={{ color: '#e63946' }}>{attorneyData?.rejected?.length ?? 0} rejected</span>
+              </div>
+            </div>
+            <button onClick={() => fetchAttorneyData()} disabled={attorneyLoading} style={{
               background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
-              borderRadius: 8, padding: '9px 14px', fontWeight: 600, fontSize: 13,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-            }}
-          >
-            <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-            Refresh
-          </button>
-        </div>
-      </div>
+              borderRadius: 8, padding: '9px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <RefreshCw size={13} style={{ animation: attorneyLoading ? 'spin 1s linear infinite' : 'none' }} />
+              Refresh
+            </button>
+          </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg2)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
-        {['pending', 'approved', 'rejected'].map(t => (
-          <button
-            key={t}
-            onClick={() => setActiveTab(t)}
-            style={{
-              padding: '8px 16px', borderRadius: 7, border: 'none',
-              background: activeTab === t ? 'var(--bg3)' : 'transparent',
-              color: activeTab === t ? STATUS_COLORS[t] : 'var(--muted)',
-              fontWeight: activeTab === t ? 700 : 500, fontSize: 13,
-              cursor: 'pointer', transition: 'all 0.15s', textTransform: 'capitalize',
-            }}
-          >
-            {t} <span style={{ opacity: 0.6, fontSize: 11 }}>({data?.[t]?.length ?? 0})</span>
-          </button>
-        ))}
-      </div>
+          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg2)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
+            {['pending', 'approved', 'rejected'].map(t => (
+              <button key={t} onClick={() => setAttorneyTab(t)} style={{
+                padding: '8px 16px', borderRadius: 7, border: 'none',
+                background: attorneyTab === t ? 'var(--bg3)' : 'transparent',
+                color: attorneyTab === t ? ({ pending: '#f59e0b', approved: '#10b981', rejected: '#e63946' }[t]) : 'var(--muted)',
+                fontWeight: attorneyTab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
+                textTransform: 'capitalize',
+              }}>
+                {t} <span style={{ opacity: 0.6, fontSize: 11 }}>({attorneyData?.[t]?.length ?? 0})</span>
+              </button>
+            ))}
+          </div>
 
-      {/* Sightings list */}
-      {loading ? (
-        <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24 }}>Loading…</div>
-      ) : currentSightings.length === 0 ? (
-        <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24, textAlign: 'center' }}>
-          No {activeTab} sightings.
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
-          {currentSightings.map(s => (
-            <SightingCard
-              key={s.id}
-              sighting={s}
-              onModerate={activeTab === 'pending' ? handleModerate : null}
-              loading={moderating}
-            />
-          ))}
-        </div>
+          {attorneyLoading ? (
+            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24 }}>Loading…</div>
+          ) : currentAttorneys.length === 0 ? (
+            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24, textAlign: 'center' }}>No {attorneyTab} attorney applications.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
+              {currentAttorneys.map(a => (
+                <AttorneyCard key={a.id} app={a} onReview={handleAttorneyReview} loading={reviewingAttorney} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

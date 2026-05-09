@@ -1,6 +1,7 @@
-import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu, AlertCircle } from 'lucide-react'
+import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu, AlertCircle, Search, Loader2 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { API_BASE } from '../config.js'
 
 const typeConfig = {
   attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Legal Researcher' },
@@ -11,7 +12,7 @@ const typeConfig = {
 }
 
 const roles = [
-  { id: 'attorney', label: '⚖️ Legal Researcher', desc: 'Legal research, paralegal work, Fourth Amendment analysis, FOIA escalation — not licensed legal representation' },
+  { id: 'attorney', label: '⚖️ Attorney / Legal Researcher', desc: 'Licensed attorneys or paralegal researchers — Fourth Amendment analysis, FOIA escalation, legal research' },
   { id: 'billboard', label: '📋 Media Coordinator', desc: 'Verified vendor relationships with billboard and print media operators — identity confirmed privately, vendor access verified before campaigns go live' },
   { id: 'foia', label: '🗂 FOIA Specialist', desc: 'Public records requests, tracking, escalation' },
   { id: 'verifier', label: '📸 Camera Verifier', desc: 'Physical verification of ALPR cameras with GPS-tagged photos' },
@@ -19,11 +20,21 @@ const roles = [
   { id: 'other', label: '🛠 Other', desc: 'Any other skill useful to funded campaigns' },
 ]
 
+const US_STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
+  'KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT',
+  'VA','WA','WV','WI','WY','DC',
+]
+
 function ApplyModal({ onClose, defaultRole = '' }) {
-  const [form, setForm] = useState({ role: defaultRole, location: '', background: '' })
+  const [form, setForm] = useState({ role: defaultRole, location: '', background: '', full_name: '', bar_state: '', bar_number: '' })
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [sending, setSending] = useState(false)
+  // Bar verification state
+  const [barLookup, setBarLookup] = useState(null)  // null | { status, name?, barNumber?, active?, reason? }
+  const [barLooking, setBarLooking] = useState(false)
   const modalRef = useRef(null)
   const headingId = 'apply-modal-heading'
 
@@ -53,7 +64,10 @@ function ApplyModal({ onClose, defaultRole = '' }) {
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const set = (k, v) => {
+    if (k === 'bar_state' || k === 'bar_number') setBarLookup(null) // reset on change
+    setForm(f => ({ ...f, [k]: v }))
+  }
 
   const inputStyle = {
     width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
@@ -62,15 +76,59 @@ function ApplyModal({ onClose, defaultRole = '' }) {
   }
   const labelStyle = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }
 
+  const isAttorney = form.role === 'attorney'
+
+  const handleBarLookup = async () => {
+    if (!form.bar_state || !form.bar_number) return
+    setBarLooking(true)
+    setBarLookup(null)
+    try {
+      const res = await fetch(`${API_BASE}/verify-bar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state: form.bar_state, barNumber: form.bar_number }),
+      })
+      if (res.status === 429) {
+        setBarLookup({ status: 'rate_limited', reason: 'Too many lookups — wait a minute and try again' })
+      } else {
+        const json = await res.json()
+        setBarLookup(json)
+      }
+    } catch {
+      setBarLookup({ status: 'error', reason: 'Network error during lookup' })
+    }
+    setBarLooking(false)
+  }
+
+  // Attorney: can submit if bar_state is non-CA (manual review path) OR lookup result is known
+  const attorneySubmittable = isAttorney && form.full_name && form.bar_state && form.location && form.background &&
+    (form.bar_state !== 'CA' ? true : barLookup !== null)
+  const regularSubmittable = !isAttorney && form.role && form.location && form.background
+  const canSubmit = (isAttorney ? attorneySubmittable : regularSubmittable) && !sending
+
   const handleSubmit = async () => {
-    if (!form.role || !form.location || !form.background) return
+    if (!canSubmit) return
     setSending(true)
     setSubmitError(false)
     try {
-      const res = await fetch('https://ai.citeback.com/registry', {
+      let endpoint, payload
+      if (isAttorney) {
+        endpoint = `${API_BASE}/attorney/apply`
+        payload = {
+          full_name: form.full_name,
+          bar_state: form.bar_state,
+          bar_number: form.bar_number || undefined,
+          location: form.location,
+          background: form.background,
+        }
+      } else {
+        endpoint = `${API_BASE}/registry`
+        payload = { role: form.role, location: form.location, background: form.background }
+      }
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: form.role, location: form.location, background: form.background }),
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         setSubmitted(true)
@@ -154,6 +212,97 @@ function ApplyModal({ onClose, defaultRole = '' }) {
               </div>
             </div>
 
+            {/* Attorney-specific fields */}
+            {isAttorney && (
+              <>
+                <div style={{
+                  background: 'rgba(93,173,226,0.06)', border: '1px solid rgba(93,173,226,0.2)',
+                  borderRadius: 10, padding: '12px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
+                }}>
+                  <strong style={{ color: 'var(--text)' }}>Attorney verification</strong> — California attorneys can
+                  auto-verify via the State Bar lookup. All other states go to manual review. No ID uploaded.
+                </div>
+
+                <div>
+                  <label htmlFor="apply-fullname" style={labelStyle}>Full Legal Name <span style={{ color: 'var(--accent)' }}>*</span></label>
+                  <input id="apply-fullname" style={inputStyle} placeholder="e.g. Jane Smith"
+                    value={form.full_name} onChange={e => set('full_name', e.target.value)} maxLength={200} />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <div style={{ flex: '0 0 120px' }}>
+                    <label htmlFor="apply-barstate" style={labelStyle}>Bar State <span style={{ color: 'var(--accent)' }}>*</span></label>
+                    <select
+                      id="apply-barstate"
+                      value={form.bar_state}
+                      onChange={e => set('bar_state', e.target.value)}
+                      style={{ ...inputStyle, height: 44, cursor: 'pointer' }}
+                    >
+                      <option value="">State…</option>
+                      {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label htmlFor="apply-barnum" style={labelStyle}>Bar Number {form.bar_state === 'CA' && <span style={{ color: 'var(--accent)' }}>*</span>}</label>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <input
+                        id="apply-barnum"
+                        style={{ ...inputStyle, flex: 1 }}
+                        placeholder={form.bar_state === 'CA' ? 'e.g. 123456' : 'optional'}
+                        value={form.bar_number}
+                        onChange={e => set('bar_number', e.target.value)}
+                        maxLength={20}
+                      />
+                      {form.bar_state === 'CA' && (
+                        <button
+                          onClick={handleBarLookup}
+                          disabled={!form.bar_number || barLooking}
+                          title="Verify with CA State Bar"
+                          style={{
+                            flexShrink: 0, background: 'rgba(93,173,226,0.12)',
+                            border: '1px solid rgba(93,173,226,0.3)', borderRadius: 8,
+                            color: '#5dade2', padding: '0 14px', cursor: (!form.bar_number || barLooking) ? 'not-allowed' : 'pointer',
+                            display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600,
+                          }}
+                        >
+                          {barLooking
+                            ? <><Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> Checking…</>
+                            : <><Search size={13} /> Verify</>}
+                        </button>
+                      )}
+                    </div>
+                    {/* Bar lookup result badge */}
+                    {barLookup && (
+                      <div style={{
+                        marginTop: 8, padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
+                        ...(barLookup.status === 'found'
+                          ? { background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981' }
+                          : barLookup.status === 'not_found'
+                            ? { background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.25)', color: '#e63946' }
+                            : { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b' }),
+                      }}>
+                        {barLookup.status === 'found' && (
+                          <><CheckCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          <strong>Verified:</strong> {barLookup.name}{barLookup.active !== undefined && ` — ${barLookup.active ? 'Active' : 'Inactive'}`}</>
+                        )}
+                        {barLookup.status === 'not_found' && (
+                          <><X size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          Bar number not found in CA State Bar records. Double-check the number.</>
+                        )}
+                        {barLookup.status === 'manual_review' && (
+                          <>⏳ <strong>Manual review</strong> — will be verified by the team before approval</>
+                        )}
+                        {(barLookup.status === 'error' || barLookup.status === 'rate_limited') && (
+                          <><AlertCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          {barLookup.reason || 'Lookup failed — you can still submit for manual review'}</>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
             <div>
               <label htmlFor="apply-location" style={labelStyle}>Location / Region</label>
               <input id="apply-location" style={inputStyle} placeholder="e.g. New Mexico, Southwest US, Remote"
@@ -184,15 +333,25 @@ function ApplyModal({ onClose, defaultRole = '' }) {
               All work executed under your own LLC or as an independent contractor.
             </div>
 
+            {isAttorney && form.bar_state === 'CA' && !barLookup && (
+              <div style={{
+                background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)',
+                borderRadius: 8, padding: '9px 13px', fontSize: 12, color: '#f59e0b', lineHeight: 1.6,
+              }}>
+                ⚠️ Enter your CA bar number above and click <strong>Verify</strong> before submitting.
+                You can still submit without verifying — it will go to manual review.
+              </div>
+            )}
+
             <button
               onClick={handleSubmit}
-              disabled={!form.role || !form.location || !form.background || sending}
+              disabled={!canSubmit}
               style={{
-                background: (form.role && form.location && form.background && !sending) ? 'var(--accent)' : 'var(--bg3)',
+                background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
                 border: 'none',
-                color: (form.role && form.location && form.background && !sending) ? '#fff' : 'var(--muted)',
+                color: canSubmit ? '#fff' : 'var(--muted)',
                 padding: '13px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-                cursor: (form.role && form.location && form.background && !sending) ? 'pointer' : 'not-allowed',
+                cursor: canSubmit ? 'pointer' : 'not-allowed',
               }}>
               {sending ? 'Submitting...' : 'Submit Application'}
             </button>
