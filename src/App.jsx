@@ -96,7 +96,7 @@ export default function App() {
   const [proposePrefill, setProposePrefill] = useState(null)
 
   const tab = pathToTab(location.pathname)
-  const setTab = (t) => navigate(tabToPath(t))
+  const setTab = (t, query = '') => navigate(tabToPath(t) + query)
 
   useEffect(() => {
     const handler = (e) => setTab(e.detail)

@@ -161,39 +161,50 @@ export default function BuildWithUs({ setTab }) {
               </ul>
 
               {/* CTA */}
-              <button
-                onClick={() => {
-                  if (!setTab) return
-                  if (track.id === 'operator') setTab('operators')
-                  else if (track.id === 'legal' || track.id === 'technical') setTab('registry')
-                }}
-                style={{
-                  marginTop: 8,
-                  background: track.id === 'legal' ? track.accent : 'transparent',
-                  color: track.id === 'legal' ? 'var(--bg)' : 'var(--fg)',
-                  border: track.id === 'legal' ? 'none' : '1px solid var(--border)',
-                  padding: '11px 20px',
-                  fontSize: 11,
-                  letterSpacing: '0.07em',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font)',
-                  transition: 'opacity 0.15s, border-color 0.15s',
-                  textAlign: 'center',
-                  minHeight: 44,
-                }}
-                onMouseEnter={e => {
-                  if (track.id === 'legal') e.currentTarget.style.opacity = '0.8'
-                  else e.currentTarget.style.borderColor = 'var(--fg)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.opacity = '1'
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                }}
-              >
-                {track.cta}
-              </button>
+              {track.id === 'legal' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+                  <button
+                    onClick={() => setTab && setTab('registry', '?role=researcher')}
+                    style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '11px 20px', fontSize: 11, letterSpacing: '0.07em', fontWeight: 600, textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font)', transition: 'opacity 0.15s', minHeight: 44 }}
+                    onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+                    onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                  >Join as Legal Researcher</button>
+                  <button
+                    onClick={() => setTab && setTab('registry', '?role=attorney')}
+                    style={{ background: 'transparent', color: 'var(--fg)', border: '1px solid var(--border)', padding: '11px 20px', fontSize: 11, letterSpacing: '0.07em', fontWeight: 600, textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font)', transition: 'border-color 0.15s', minHeight: 44 }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  >I&apos;m a Licensed Attorney</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (!setTab) return
+                    if (track.id === 'operator') setTab('operators')
+                    else if (track.id === 'technical') setTab('registry')
+                  }}
+                  style={{
+                    marginTop: 8,
+                    background: 'transparent',
+                    color: 'var(--fg)',
+                    border: '1px solid var(--border)',
+                    padding: '11px 20px',
+                    fontSize: 11,
+                    letterSpacing: '0.07em',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font)',
+                    transition: 'opacity 0.15s, border-color 0.15s',
+                    textAlign: 'center',
+                    minHeight: 44,
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                >
+                  {track.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>

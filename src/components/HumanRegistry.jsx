@@ -1,5 +1,6 @@
 import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu, AlertCircle } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const typeConfig = {
   attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Legal Researcher' },
@@ -18,8 +19,8 @@ const roles = [
   { id: 'other', label: '🛠 Other', desc: 'Any other skill useful to funded campaigns' },
 ]
 
-function ApplyModal({ onClose }) {
-  const [form, setForm] = useState({ role: '', location: '', background: '' })
+function ApplyModal({ onClose, defaultRole = '' }) {
+  const [form, setForm] = useState({ role: defaultRole, location: '', background: '' })
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [sending, setSending] = useState(false)
@@ -211,11 +212,13 @@ function ApplyModal({ onClose }) {
 }
 
 export default function HumanRegistry() {
+  const [searchParams] = useSearchParams()
+  const roleParam = searchParams.get('role') // 'attorney' | 'researcher' | null
   const [showApply, setShowApply] = useState(false)
 
   return (
     <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
-      {showApply && <ApplyModal onClose={() => setShowApply(false)} />}
+      {showApply && <ApplyModal onClose={() => setShowApply(false)} defaultRole={roleParam === 'attorney' || roleParam === 'researcher' ? 'attorney' : ''} />}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
         <div>
@@ -234,6 +237,36 @@ export default function HumanRegistry() {
           <Plus size={16} /> Apply to Registry
         </button>
       </div>
+
+      {/* Context banners based on referral path */}
+      {roleParam === 'attorney' && (
+        <div style={{ background: 'rgba(93,173,226,0.07)', border: '1px solid rgba(93,173,226,0.3)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: '#5dade2', marginBottom: 8 }}>⚖️ Licensed Attorneys</div>
+          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 12px' }}>
+            Citeback is building a verified counsel directory for licensed attorneys. Bar credential verification — state bar number lookup against public bar databases — opens at platform launch.
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
+            <strong style={{ color: 'var(--text)' }}>How attorneys help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
+          </p>
+          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px', fontStyle: 'italic' }}>
+            In the meantime, you can apply below using the Legal Researcher role and note your bar state and license number in the background field. Your application will be upgraded to the verified attorney tier when onboarding launches.
+          </p>
+          <button onClick={() => setShowApply(true)} style={{ background: '#5dade2', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
+            Express Attorney Interest
+          </button>
+        </div>
+      )}
+      {roleParam === 'researcher' && (
+        <div style={{ background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--accent)', marginBottom: 8 }}>⚖️ Legal Researchers</div>
+          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
+            Legal researchers help campaigns move from funded to filed — reviewing proposed actions for viability, drafting FOIA requests and demand letters, advising on Fourth Amendment strategy. No bar license required. Verification is by peer vouching from people who have worked with you.
+          </p>
+          <button onClick={() => setShowApply(true)} style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
+            Apply as Legal Researcher
+          </button>
+        </div>
+      )}
 
       {/* How verification works */}
       <div style={{
