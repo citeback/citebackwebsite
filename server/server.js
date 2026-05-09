@@ -240,8 +240,8 @@ function parseCookies(req) {
 }
 
 const JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days in seconds
-const COOKIE_OPTS = `HttpOnly; Secure; SameSite=None; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
-const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/`
+const COOKIE_OPTS = `HttpOnly; Secure; SameSite=Lax; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
+const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/`
 
 function verifyToken(req) {
   try {

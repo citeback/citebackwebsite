@@ -15,6 +15,7 @@ import {
 } from '../data/surveillanceLayers'
 import { getVendorProfile } from '../data/vendorProfiles'
 import { useCameraCount } from '../context/CameraCount'
+import { API_BASE as AI_URL } from '../config.js'
 
 // Hardcoded verified NM cameras (our own sourced data)
 const verifiedCameras = [
@@ -1128,7 +1129,7 @@ export default function CameraMap() {
       if (form.lng !== 'zip') fd.append('lng', form.lng)
       fd.append('notes', form.notes || '')
       fd.append('photo', form.photoFile)
-      const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', credentials: 'include', body: fd })
+      const res = await fetch(`${AI_URL}/sighting`, { method: 'POST', credentials: 'include', body: fd })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         setSubmitError(data.error || `Server error ${res.status}`)
