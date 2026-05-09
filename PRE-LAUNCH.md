@@ -116,6 +116,25 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 
 ---
 
+## 🟠 NEW — Discovered in Morning Audit (2026-05-09 Round 2)
+
+### 21. SameSite=None → Lax — ✅ FIXED 2026-05-09
+- JWT cookie was set with `SameSite=None` after migration — unnecessary since `citeback.com` and `ai.citeback.com` are same-site (same eTLD+1)
+- Changed to `SameSite=Lax` — CSRF protection restored, no functionality impact
+- Applied to both local `server/server.js` and live Hetzner server (service restarted)
+- Commit: `aaed35f`
+
+### 22. Hardcoded API URL in CameraMap.jsx — ✅ FIXED 2026-05-09
+- Line 1131 had `'https://ai.citeback.com/sighting'` hardcoded instead of `${AI_URL}` from config
+- Fixed to use centralized config import. Commit: `aaed35f`
+
+### 23. Server cleanup — ✅ FIXED 2026-05-09
+- 13 `.bak` and old `server-*.js` files deleted from `/opt/citeback-ai/`
+- Dead `API_KEY` env var removed from systemd service file
+- Photo permissions corrected from 666 → 644
+
+---
+
 ## 🟠 NEW — Discovered in Overnight Audit (2026-05-09)
 
 ### 18. Node.js Running as Root on Hetzner
