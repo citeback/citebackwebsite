@@ -93,8 +93,8 @@ const sections = [
         a: `Yes. Every line of code running on Citeback is public on GitHub.\n\nThis includes:\n• The site (all frontend components, routing, UI)\n• The server (account system, sightings, campaign API, OFAC screening)\n• The governance rules (vote thresholds, time-locks)\n• The campaign rules (caps, redirect logic)\n\nYou don't have to trust us. You can read the code, audit it, propose changes, or fork it entirely.`,
       },
       {
-        q: 'How do I verify the wallet system is running the published code?',
-        a: `Every active campaign publishes a view key — a read-only cryptographic key that lets anyone verify the wallet's full transaction history without spending access. Both Monero (XMR) and Zano (ZANO) wallets support view keys.\n\nWith the view key you can:\n• Verify the current balance matches what the campaign shows\n• Verify every incoming contribution\n• Verify every outgoing disbursement\n• Cross-reference disbursements against the public action log on GitHub\n\nView keys are published at campaign activation — before any contribution is made. Wallet guide published before first campaign launches.`,
+        q: 'How do I independently verify the code running on Citeback\'s servers?',
+        a: `The server publishes its own SHA-256 hash at https://ai.citeback.com/version. To verify:\n\n1. Go to https://ai.citeback.com/version and copy the sha256 value\n2. Download server.js from https://github.com/citeback/citebackwebsite\n3. Run: sha256sum server.js\n4. If the hashes match, the live server is running the exact published code\n\nFrontend: every Netlify deploy lists the exact GitHub commit it was built from — verifiable at https://app.netlify.com/sites/heroic-yeot-51eaeb/deploys\n\nNote: this approach relies on the server being honest about its own hash. Full signed-build attestation (tamper-evident, server can\'t forge) is on the Phase 2 roadmap.\n\n---\n\nFor wallet verification: every active campaign publishes a view key — a read-only cryptographic key that lets anyone verify the wallet\'s full transaction history. View keys are published at campaign activation — before any contribution is made. Wallet guide published before first campaign launches.`,
       },
       {
         q: 'How do site changes get made?',
@@ -222,7 +222,7 @@ export default function TrustFAQ({ setTab }) {
         {[
           { icon: '🔐', title: 'No Custody — Direct to Operator', desc: 'Contributions go straight to the operator wallet. Platform never holds funds. Balance verified via operator-provided view key.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
           { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'View on GitHub' },
-          { icon: '🔍', title: 'Verifiable Proofs', desc: 'Cryptographic attestation proves what\'s running.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Attestation spec', prelaunch: 'Live attestation published at mainnet' },
+          { icon: '🔍', title: 'Independently Verifiable', desc: 'The SHA-256 of the running server code is published live — compare it against the public GitHub repo yourself.', link: 'https://ai.citeback.com/version', linkLabel: 'View /version endpoint' },
           { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility. Documented in GOVERNANCE.md — voting and time-lock enforcement activate post-launch.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'Governance doc', prelaunch: 'Voting + enforcement activate post-launch' },
           { icon: '👁️', title: 'View Keys Published', desc: 'Anyone can verify every wallet transaction.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'How view keys work', prelaunch: 'View keys published when wallets activate' },
           { icon: '🌿', title: 'Forkable Forever', desc: 'The code outlives any individual or organization.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'Fork on GitHub' },
@@ -292,10 +292,10 @@ export default function TrustFAQ({ setTab }) {
         <div>
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Don't take our word for it.</div>
           <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
-            When Phase 2 launches, we'll publish the wallet verification endpoint and a step-by-step verification guide.
-            You'll be able to cryptographically confirm that the code running on our infrastructure matches the
-            public GitHub repo — down to the exact commit hash. Until then, the architecture and governance specs
-            are available in our GitHub repository for community review.
+            The SHA-256 hash of the running server code is published live at{' '}
+            <a href="https://ai.citeback.com/version" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>ai.citeback.com/version</a>.
+            Download server.js from the public GitHub repo, run <code style={{ background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: 4 }}>sha256sum server.js</code>, and compare — if the hashes match, the code running here is exactly what’s published.
+            Frontend deploys are verifiable via Netlify’s public deploy log. Full signed-build attestation is on the Phase 2 roadmap.
           </div>
         </div>
       </div>
