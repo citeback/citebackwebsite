@@ -209,7 +209,7 @@ const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_NAMES = ['Scout', 'Operator', 'Verifier', 'Guardian']
 const TIER_PERKS = [
   'Submit sightings, build reputation',
-  'Campaign access up to $1,000',
+  'Campaign access up to $500',
   'Unlock verification bounties',
   'Full operator access + governance voting',
 ]
@@ -227,13 +227,38 @@ function getPointsToNextTier(rep, tier) {
   return TIER_THRESHOLDS[tier + 1] - rep
 }
 
+// ── Cookie helpers ───────────────────────────────────────────────────────────
+function parseCookies(req) {
+  const header = req.headers.cookie || ''
+  const cookies = {}
+  for (const part of header.split(';')) {
+    const idx = part.indexOf('=')
+    if (idx < 1) continue
+    cookies[part.slice(0, idx).trim()] = decodeURIComponent(part.slice(idx + 1).trim())
+  }
+  return cookies
+}
+
+const JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days in seconds
+const COOKIE_OPTS = `HttpOnly; Secure; SameSite=None; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
+const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/`
+
 function verifyToken(req) {
   try {
-    const auth = req.headers['authorization'] || ''
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    const cookies = parseCookies(req)
+    const token = cookies.token
     if (!token) return null
     return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] })
   } catch { return null }
+}
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+const CORS_ORIGIN = 'https://citeback.com'
+function setCorsHeaders(res) {
+  res.setHeader('Access-Control-Allow-Origin', CORS_ORIGIN)
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Secret')
 }
 
 function awardReputation(userId, sightingId, eventType, points) {
@@ -628,9 +653,10 @@ const server = http.createServer(async (req, res) => {
       db.prepare('INSERT INTO users (id, username, password_hash, created_at, email_enc) VALUES (?, ?, ?, ?, ?)').run(id, username, password_hash, now, emailEnc)
 
       const token = jwt.sign({ userId: id, username }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      res.setHeader('Set-Cookie', `token=${token}; ${COOKIE_OPTS}`)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({
-        ok: true, token, username, userId: id,
+        ok: true, username, userId: id,
         reputation: 0, tier: 0,
         tierName: TIER_NAMES[0], pointsToNext: TIER_THRESHOLDS[1],
         tierThreshold: TIER_THRESHOLDS[1],
@@ -673,9 +699,10 @@ const server = http.createServer(async (req, res) => {
       }
 
       const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      res.setHeader('Set-Cookie', `token=${token}; ${COOKIE_OPTS}`)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({
-        ok: true, token, username: user.username, userId: user.id,
+        ok: true, username: user.username, userId: user.id,
         reputation: user.reputation, tier: user.tier,
         tierName: TIER_NAMES[user.tier],
         pointsToNext: getPointsToNextTier(user.reputation, user.tier),
@@ -687,6 +714,13 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(500, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Server error' }))
     }
+  }
+
+  // ── Account: logout ────────────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/account/logout') {
+    res.setHeader('Set-Cookie', COOKIE_CLEAR)
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: true }))
   }
 
   // ── Account: profile ───────────────────────────────────────────────────────
@@ -878,7 +912,7 @@ const server = http.createServer(async (req, res) => {
   // ── Account: step-up reauth (verify password for high-stakes actions) ─────
   if (req.method === 'POST' && req.url === '/account/reauth') {
     const clientIp = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
-    if (checkAuthRateLimit(clientIp)) {
+    if (!checkAuthRateLimit(clientIp)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Too many requests — wait 15 minutes' }))
     }
@@ -1305,11 +1339,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Campaigns API ────────────────────────────────────────────────────────────
-  // OPTIONS preflight
-  if (req.method === 'OPTIONS' && req.url.startsWith('/api/')) {
-    res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type,Authorization' })
-    return res.end()
-  }
+  // OPTIONS preflight for /api/ is handled by the global OPTIONS handler above
 
   // GET /api/campaigns
   if (req.method === 'GET' && req.url === '/api/campaigns') {

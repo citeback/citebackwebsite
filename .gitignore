@@ -6,3 +6,7 @@ dist/
 *.log
 # Local Netlify folder
 .netlify
+
+# Large JSON data files — served from Hetzner (ai.citeback.com)
+public/alpr-us.json
+public/alpr-by-state.json

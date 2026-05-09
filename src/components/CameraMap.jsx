@@ -1118,8 +1118,7 @@ export default function CameraMap() {
   }
 
   const submitCamera = async () => {
-    console.log('[submitCamera] called, photoFile:', form.photoFile?.name, 'lat:', form.lat, 'mapGpsStatus:', mapGpsStatus)
-    if (!form.photoFile) { console.log('[submitCamera] bailing: no photoFile'); return }
+    if (!form.photoFile) { return }
     setSubmitError(null)
     setSubmitting(true)
     try {
@@ -1129,10 +1128,8 @@ export default function CameraMap() {
       if (form.lng !== 'zip') fd.append('lng', form.lng)
       fd.append('notes', form.notes || '')
       fd.append('photo', form.photoFile)
-      console.log('[submitCamera] sending FormData to ai.citeback.com/sighting')
       const res = await fetch('https://ai.citeback.com/sighting', { method: 'POST', credentials: 'include', body: fd })
       const data = await res.json().catch(() => ({}))
-      console.log('[submitCamera] response:', res.status, data)
       if (!res.ok) {
         setSubmitError(data.error || `Server error ${res.status}`)
         setSubmitting(false)
@@ -1141,7 +1138,7 @@ export default function CameraMap() {
       setSubmitted(true)
       setSightingVersion(v => v + 1) // refresh map layer
     } catch (err) {
-      console.error('[submitCamera] fetch error:', err)
+      // submission error — silent fail, user sees form error state
       setSubmitError(`Network error: ${err.message}`)
     }
     setSubmitting(false)

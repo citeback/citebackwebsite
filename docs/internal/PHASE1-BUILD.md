@@ -76,7 +76,7 @@ Why SQLite: simple, zero config, already used in HexOps (/workspace/hexops), no 
 ssh -i ~/.ssh/id_ed25519 root@77.42.124.157
 Server code: /opt/citeback-ai/server.js
 Data: /opt/citeback-ai/data/
-Admin secret: 45f54c8f4718a97c9afe65c4c935bc64d20a0df5b88a0659
+Admin secret: [REDACTED — rotated before launch; set via ADMIN_SECRET env var on server]
 
 ## Admin Secret Note
 The admin secret above is for the current moderation endpoints only.
