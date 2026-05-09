@@ -45,10 +45,12 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
       setSuccess('Logged in!')
       setTimeout(onClose, 800)
     } catch (err) {
-      if (err?.name === 'NotAllowedError') {
-        setError('Passkey cancelled or not available on this device.')
+      if (err?.name === 'NotAllowedError' || err?.name === 'AbortError') {
+        setError('No passkey found on this device. Log in with your password first, then add a passkey from your account dashboard.')
+      } else if (err?.message?.includes('No credentials')) {
+        setError('No passkey registered yet. Log in with your password first, then add a passkey from your account dashboard.')
       } else {
-        setError(err.message || 'Passkey authentication failed')
+        setError('Passkey failed — try logging in with your password instead.')
       }
     } finally {
       setPasskeyLoading(false)
@@ -232,6 +234,9 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Waiting for passkey…</>
                   : <><Fingerprint size={15} /> Use a passkey</>}
               </button>
+              <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: '-8px 0 12px', lineHeight: 1.5 }}>
+                First time? Log in with password below, then add a passkey from your account dashboard.
+              </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
                 <span style={{ fontSize: 11, color: 'var(--muted)', fontWeight: 500 }}>or sign in with password</span>
