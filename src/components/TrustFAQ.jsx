@@ -48,7 +48,7 @@ const sections = [
       },
       {
         q: 'What are time-locks and why do they exist?',
-        a: `After a vote passes, major changes don't take effect immediately. They wait:\n\n• Minor changes: 24 hours\n• Rule changes: 7 days\n• Governance changes: 14 days\n\nThis window gives the community time to react. If a bad change slips through a vote, the time-lock allows a counter-proposal before the change takes effect.\n\nTime-locks make coordinated attacks expensive. You can't rush a hostile takeover through a 14-day window without the community noticing.`,
+        a: `Note: this describes the post-launch governance model — it is not currently enforced. Pre-launch, the founder operates as interim operator under the responsibilities in GOVERNANCE.md.\n\nAfter launch, once the Wyoming DAO LLC is formed and community voting is active, major changes don't take effect immediately after a vote passes. They wait:\n\n• Minor changes: 24 hours\n• Rule changes: 7 days\n• Governance changes: 14 days\n\nThis window gives the community time to react. If a bad change slips through a vote, the time-lock allows a counter-proposal before it takes effect.\n\nTime-locks make coordinated attacks expensive. You can't rush a hostile takeover through a 14-day window without the community noticing.`,
       },
       {
         q: 'Can the founder change the rules or take back control?',
@@ -223,7 +223,7 @@ export default function TrustFAQ({ setTab }) {
           { icon: '🔐', title: 'No Custody — Direct to Operator', desc: 'Contributions go straight to the operator wallet. Platform never holds funds. Balance verified via operator-provided view key.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
           { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'View on GitHub' },
           { icon: '🔍', title: 'Verifiable Proofs', desc: 'Cryptographic attestation proves what\'s running.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Attestation spec', prelaunch: 'Live attestation published at mainnet' },
-          { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'Governance doc' },
+          { icon: '⏱️', title: 'Time-Locked Changes', desc: 'Rules change slowly, with full community visibility. Documented in GOVERNANCE.md — voting and time-lock enforcement activate post-launch.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'Governance doc', prelaunch: 'Voting + enforcement activate post-launch' },
           { icon: '👁️', title: 'View Keys Published', desc: 'Anyone can verify every wallet transaction.', link: 'https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md', linkLabel: 'How view keys work', prelaunch: 'View keys published when wallets activate' },
           { icon: '🌿', title: 'Forkable Forever', desc: 'The code outlives any individual or organization.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'Fork on GitHub' },
         ].map((p, i) => (
