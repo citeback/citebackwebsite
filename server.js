@@ -1848,6 +1848,45 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── Admin: list all campaigns (admin view) ────────────────────────────────
+  if (req.method === 'GET' && req.url === '/admin/campaigns') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify(rows.map(c => ({
+      id: c.id, type: c.type, title: c.title, status: c.status,
+      goal: c.goal, raised: c.raised, deadline: c.deadline,
+      operatorId: c.operator_id, operatorUsername: c.operator_username,
+      walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
+      claimedAt: c.claimed_at, activatedAt: c.activated_at, walletChangedAt: c.wallet_changed_at,
+    }))))
+  }
+
+  // ── Admin: update campaign (status, deadline, goal) ────────────────────────
+  if (req.method === 'PATCH' && /^\/admin\/campaigns\/\d+$/.test(req.url)) {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    const id = parseInt(req.url.split('/')[3])
+    try {
+      const body = await parseBody(req)
+      const campaign = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
+      if (!campaign) { res.writeHead(404); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+      const ALLOWED_STATUSES = ['unclaimed', 'claimed', 'active', 'funded', 'cancelled']
+      const updates = {}
+      if (body.status && ALLOWED_STATUSES.includes(body.status)) {
+        updates.status = body.status
+        if (body.status === 'active' && !campaign.activated_at) updates.activated_at = new Date().toISOString()
+      }
+      if (body.deadline && /^\d{4}-\d{2}-\d{2}$/.test(String(body.deadline))) updates.deadline = body.deadline
+      if (body.goal && Number.isFinite(Number(body.goal)) && Number(body.goal) > 0) updates.goal = Math.round(Number(body.goal))
+      if (!Object.keys(updates).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields to update' })) }
+      const setClauses = Object.keys(updates).map(k => k + ' = ?').join(', ')
+      db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(updates), id)
+      auditLog('admin_campaign_update', String(id), JSON.stringify(updates), ip)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, id, updates }))
+    } catch { res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' })) }
+  }
+
   // ── Admin: list attorney applications ────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/attorney-applications')) {
     if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
