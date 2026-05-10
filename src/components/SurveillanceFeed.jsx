@@ -112,18 +112,10 @@ function StatusBadge({ status }) {
     /introduced/i.test(status) ? 'var(--muted)' :
     'var(--muted)'
   return (
-    <span style={{
-      fontSize: 9,
-      fontWeight: 700,
-      letterSpacing: '0.12em',
-      textTransform: 'uppercase',
-      color,
-      border: `1px solid ${color}`,
-      padding: '2px 6px',
-      whiteSpace: 'nowrap',
-      flexShrink: 0,
-      opacity: 0.9,
-    }}>
+    <span
+      className="sf2-status-badge"
+      style={{ color, borderColor: color }}
+    >
       {status}
     </span>
   )
@@ -319,91 +311,33 @@ export default function SurveillanceFeed({ setTab }) {
   }, [])
 
   return (
-    <section style={{
-      minHeight: '60vh',
-      padding: 'clamp(48px, 8vw, 80px) 24px 60px',
-      background: 'var(--bg)',
-    }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <section className="sf2-page">
+      <div className="sf2-inner">
 
         {/* Header */}
-        <div style={{ marginBottom: 48 }}>
-          <div style={{
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'var(--red)',
-            marginBottom: 12,
-          }}>
-            Intelligence Feed
-          </div>
-          <h2 style={{
-            fontSize: 'clamp(26px, 4vw, 42px)',
-            fontWeight: 800,
-            letterSpacing: '-0.03em',
-            margin: 0,
-            marginBottom: 12,
-            color: 'var(--fg)',
-          }}>
-            Surveillance Litigation & Legislation
-          </h2>
-          <p style={{
-            color: 'var(--muted)',
-            fontSize: 14,
-            lineHeight: 1.6,
-            maxWidth: 560,
-            margin: 0,
-          }}>
+        <div className="sf2-header">
+          <div className="sf2-section-label">Intelligence Feed</div>
+          <h2 className="sf2-page-title">Surveillance Litigation & Legislation</h2>
+          <p className="sf2-page-desc">
             Live court cases and legislative activity tracking ALPR, Flock Safety, Clearview AI, and mass surveillance accountability efforts.
           </p>
         </div>
 
         {/* Two-column grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(380px, 100%), 1fr))',
-          gap: 32,
-          alignItems: 'start',
-        }}>
+        <div className="sf2-grid">
 
           {/* ── Active Cases ─────────────────────────────── */}
           <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingBottom: 12,
-              borderBottom: '2px solid var(--fg)',
-              marginBottom: 0,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: 'var(--accent)',
-                  display: 'inline-block',
-                  animation: 'sfdot 1.8s ease-in-out infinite',
-                }} />
-                <span style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  color: 'var(--fg)',
-                }}>
-                  Active Cases
-                </span>
+            <div className="sf2-col-header">
+              <div className="sf2-col-title-group">
+                <span className="sf2-live-dot" />
+                <span className="sf2-col-title">Active Cases</span>
               </div>
               <a
                 href="https://www.courtlistener.com/?q=%22license+plate+reader%22+OR+%22ALPR%22+OR+%22Clearview+AI%22+OR+%22ShotSpotter%22&type=o&order_by=dateFiled+desc"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  fontSize: 11,
-                  color: 'var(--muted)',
-                  textDecoration: 'none',
-                  letterSpacing: '0.04em',
-                }}
+                className="sf2-link"
               >
                 View all →
               </a>
@@ -412,12 +346,12 @@ export default function SurveillanceFeed({ setTab }) {
             {casesLoading ? (
               <CasesSkeleton />
             ) : casesRetrying ? (
-              <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="sf2-loading">
                 <span className="sf-loading-dot" />
                 Retrying CourtListener…
               </div>
             ) : casesError && cases.length === 0 ? (
-              <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13 }}>
+              <div className="sf2-empty">
                 CourtListener unavailable — check back shortly.
               </div>
             ) : (
@@ -428,62 +362,24 @@ export default function SurveillanceFeed({ setTab }) {
                     href={`https://www.courtlistener.com${c.absolute_url}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      display: 'block',
-                      textDecoration: 'none',
-                      padding: '16px 0',
-                      borderBottom: i < cases.length - 1 ? '1px solid var(--border)' : 'none',
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg2)'; e.currentTarget.style.marginLeft = '-12px'; e.currentTarget.style.paddingLeft = '12px'; e.currentTarget.style.marginRight = '-12px'; e.currentTarget.style.paddingRight = '12px' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.marginLeft = '0'; e.currentTarget.style.paddingLeft = '0'; e.currentTarget.style.marginRight = '0'; e.currentTarget.style.paddingRight = '0' }}
+                    className="sf2-card"
+                    style={{ borderBottom: i < cases.length - 1 ? '1px solid var(--border)' : 'none' }}
                   >
-                    <div style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: 'var(--fg)',
-                      marginBottom: 4,
-                      lineHeight: 1.4,
-                    }}>
-                      {c.caseName || 'Unnamed Case'}
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      flexWrap: 'wrap',
-                    }}>
-                      <span style={{
-                        fontSize: 11,
-                        color: 'var(--muted)',
-                        fontFamily: 'var(--mono)',
-                      }}>
+                    <div className="sf2-title">{c.caseName || 'Unnamed Case'}</div>
+                    <div className="sf2-meta">
+                      <span className="sf2-meta-text">
                         {c.court_citation_string || c.court}
                       </span>
                       {c.dateFiled && (
                         <>
-                          <span style={{ color: 'var(--border)', fontSize: 11 }}>·</span>
-                          <span style={{
-                            fontSize: 11,
-                            color: 'var(--muted)',
-                            fontFamily: 'var(--mono)',
-                          }}>
-                            {c.dateFiled}
-                          </span>
+                          <span className="sf2-meta-dot">·</span>
+                          <span className="sf2-meta-text">{c.dateFiled}</span>
                         </>
                       )}
                       {c.status && (
                         <>
-                          <span style={{ color: 'var(--border)', fontSize: 11 }}>·</span>
-                          <span style={{
-                            fontSize: 9,
-                            fontWeight: 700,
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                            color: 'var(--accent)',
-                          }}>
-                            {c.status}
-                          </span>
+                          <span className="sf2-meta-dot">·</span>
+                          <span className="sf2-meta-status">{c.status}</span>
                         </>
                       )}
                     </div>
@@ -492,67 +388,32 @@ export default function SurveillanceFeed({ setTab }) {
               </div>
             )}
 
-            <div style={{
-              marginTop: 16,
-              fontSize: 10,
-              color: 'var(--muted)',
-              letterSpacing: '0.04em',
-            }}>
+            <div className="sf2-source">
               Source: CourtListener (Free Law Project) · Real-time
             </div>
           </div>
 
           {/* ── Legislative Watch ─────────────────────────────── */}
           <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingBottom: 12,
-              borderBottom: '2px solid var(--fg)',
-              marginBottom: 0,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  color: 'var(--fg)',
-                }}>
-                  Legislative Watch
-                </span>
+            <div className="sf2-col-header">
+              <div className="sf2-col-title-group">
+                <span className="sf2-col-title">Legislative Watch</span>
                 {bills.some(b => b.isMock) && (
-                  <span style={{
-                    fontSize: 9,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: 'var(--muted)',
-                    border: '1px solid var(--border)',
-                    padding: '2px 5px',
-                  }}>
-                    Preview
-                  </span>
+                  <span className="sf2-badge">Preview</span>
                 )}
               </div>
               <a
                 href="https://openstates.org/find_your_legislator/"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  fontSize: 11,
-                  color: 'var(--muted)',
-                  textDecoration: 'none',
-                  letterSpacing: '0.04em',
-                }}
+                className="sf2-link"
               >
                 View all →
               </a>
             </div>
 
             {billsLoading && billsRetrying ? (
-              <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="sf2-loading">
                 <span className="sf-loading-dot" />
                 Retrying OpenStates…
               </div>
@@ -566,59 +427,17 @@ export default function SurveillanceFeed({ setTab }) {
                     href={b.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      display: 'block',
-                      textDecoration: 'none',
-                      padding: '16px 0',
-                      borderBottom: i < bills.length - 1 ? '1px solid var(--border)' : 'none',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg2)'; e.currentTarget.style.marginLeft = '-12px'; e.currentTarget.style.paddingLeft = '12px'; e.currentTarget.style.marginRight = '-12px'; e.currentTarget.style.paddingRight = '12px' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.marginLeft = '0'; e.currentTarget.style.paddingLeft = '0'; e.currentTarget.style.marginRight = '0'; e.currentTarget.style.paddingRight = '0' }}
+                    className="sf2-card"
+                    style={{ borderBottom: i < bills.length - 1 ? '1px solid var(--border)' : 'none' }}
                   >
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 8,
-                      marginBottom: 6,
-                    }}>
-                      <span style={{
-                        flexShrink: 0,
-                        fontSize: 9,
-                        fontWeight: 700,
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: 'var(--fg)',
-                        border: '1px solid var(--border)',
-                        padding: '3px 6px',
-                        marginTop: 1,
-                      }}>
-                        {b.state}
-                      </span>
-                      <div style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: 'var(--fg)',
-                        lineHeight: 1.4,
-                      }}>
-                        {b.title}
-                      </div>
+                    <div className="sf2-card-header">
+                      <span className="sf2-state-tag">{b.state}</span>
+                      <div className="sf2-bill-title">{b.title}</div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      flexWrap: 'wrap',
-                      paddingLeft: 36,
-                    }}>
+                    <div className="sf2-bill-meta">
                       <StatusBadge status={b.status} />
                       {b.lastAction && (
-                        <span style={{
-                          fontSize: 11,
-                          color: 'var(--muted)',
-                          lineHeight: 1.4,
-                        }}>
-                          {b.lastAction}
-                        </span>
+                        <span className="sf2-meta-muted">{b.lastAction}</span>
                       )}
                     </div>
                   </a>
@@ -627,185 +446,77 @@ export default function SurveillanceFeed({ setTab }) {
             )}
 
             {billsError && (
-              <div style={{ marginTop: 8, fontSize: 11, color: 'var(--muted)' }}>
-                {billsError}
-              </div>
+              <div className="sf2-error-note">{billsError}</div>
             )}
 
             {bills.some(b => b.isMock) && (
-              <div style={{
-                marginTop: 16,
-                padding: '12px 14px',
-                background: 'var(--bg2)',
-                border: '1px solid var(--border)',
-                fontSize: 11,
-                color: 'var(--muted)',
-                lineHeight: 1.5,
-              }}>
+              <div className="sf2-mock-notice">
                 📡 Sample data shown. Live 50-state legislative tracking activates at launch.{' '}
                 <a
                   href="https://openstates.org/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--accent)', textDecoration: 'none' }}
                 >
                   OpenStates covers all 50 states →
                 </a>
               </div>
             )}
 
-            <div style={{
-              marginTop: 16,
-              fontSize: 10,
-              color: 'var(--muted)',
-              letterSpacing: '0.04em',
-            }}>
+            <div className="sf2-source">
               Source: OpenStates (Open States Project) · 50-state coverage
             </div>
           </div>
         </div>
 
         {/* ── Federal Bills ─────────────────────────────── */}
-        <div style={{ marginTop: 40 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingBottom: 12,
-            borderBottom: '2px solid var(--fg)',
-            marginBottom: 0,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--fg)',
-              }}>
-                Federal Bills
-              </span>
-              <span style={{
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: 'var(--accent)',
-                border: '1px solid var(--accent)',
-                padding: '2px 6px',
-                opacity: 0.85,
-              }}>
-                Federal
-              </span>
+        <div className="sf2-federal-section">
+          <div className="sf2-col-header">
+            <div className="sf2-col-title-group">
+              <span className="sf2-col-title">Federal Bills</span>
+              <span className="sf2-badge sf2-badge--federal">Federal</span>
               {federalBills.some(b => b.isFallback) && (
-                <span style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: 'var(--muted)',
-                  border: '1px solid var(--border)',
-                  padding: '2px 5px',
-                }}>
-                  Known Bills
-                </span>
+                <span className="sf2-badge">Known Bills</span>
               )}
             </div>
             <a
               href="https://www.congress.gov/search?q=%7B%22source%22%3A%22legislation%22%2C%22search%22%3A%22surveillance%22%7D"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                fontSize: 11,
-                color: 'var(--muted)',
-                textDecoration: 'none',
-                letterSpacing: '0.04em',
-              }}
+              className="sf2-link"
             >
               View all →
             </a>
           </div>
 
           {federalLoading && federalRetrying ? (
-            <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="sf2-loading">
               <span className="sf-loading-dot" />
               Retrying Congress.gov…
             </div>
           ) : federalLoading ? (
             <FederalBillsSkeleton />
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))',
-              gap: 0,
-            }}>
+            <div className="sf2-federal-grid">
               {federalBills.slice(0, 4).map((b, i) => (
                 <a
                   key={b.id}
                   href={b.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    display: 'block',
-                    textDecoration: 'none',
-                    padding: '16px 0',
-                    borderBottom: '1px solid var(--border)',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg2)'; e.currentTarget.style.marginLeft = '-12px'; e.currentTarget.style.paddingLeft = '12px'; e.currentTarget.style.marginRight = '-12px'; e.currentTarget.style.paddingRight = '12px' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.marginLeft = '0'; e.currentTarget.style.paddingLeft = '0'; e.currentTarget.style.marginRight = '0'; e.currentTarget.style.paddingRight = '0' }}
+                  className="sf2-card"
+                  style={{ borderBottom: '1px solid var(--border)' }}
                 >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 8,
-                    marginBottom: 6,
-                  }}>
-                    <span style={{
-                      flexShrink: 0,
-                      fontSize: 9,
-                      fontWeight: 700,
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: 'var(--accent)',
-                      border: '1px solid var(--accent)',
-                      padding: '3px 6px',
-                      marginTop: 1,
-                      opacity: 0.8,
-                    }}>
-                      {b.congress}th
-                    </span>
-                    <div style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: 'var(--fg)',
-                      lineHeight: 1.4,
-                    }}>
-                      {b.title}
-                    </div>
+                  <div className="sf2-card-header">
+                    <span className="sf2-federal-tag">{b.congress}th</span>
+                    <div className="sf2-bill-title">{b.title}</div>
                   </div>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    flexWrap: 'wrap',
-                    paddingLeft: 40,
-                  }}>
+                  <div className="sf2-federal-meta">
                     <StatusBadge status={b.status} />
                     {b.date && (
-                      <span style={{
-                        fontSize: 11,
-                        color: 'var(--muted)',
-                        fontFamily: 'var(--mono)',
-                      }}>
-                        {b.date}
-                      </span>
+                      <span className="sf2-meta-mono">{b.date}</span>
                     )}
                     {b.lastAction && b.lastAction !== b.status && (
-                      <span style={{
-                        fontSize: 11,
-                        color: 'var(--muted)',
-                        lineHeight: 1.4,
-                      }}>
+                      <span className="sf2-meta-muted">
                         {b.lastAction.length > 80 ? b.lastAction.slice(0, 80) + '…' : b.lastAction}
                       </span>
                     )}
@@ -816,44 +527,26 @@ export default function SurveillanceFeed({ setTab }) {
           )}
 
           {federalError && (
-            <div style={{ marginTop: 8, fontSize: 11, color: 'var(--muted)' }}>
-              {federalError}
-            </div>
+            <div className="sf2-error-note">{federalError}</div>
           )}
 
-          <div style={{
-            marginTop: 16,
-            fontSize: 10,
-            color: 'var(--muted)',
-            letterSpacing: '0.04em',
-          }}>
+          <div className="sf2-source">
             Source: Congress.gov API · 119th Congress
           </div>
         </div>
 
         {/* CTA */}
         {setTab && (
-          <div style={{
-            marginTop: 48, paddingTop: 32, borderTop: '2px solid var(--fg)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            flexWrap: 'wrap', gap: 20,
-          }}>
+          <div className="sf2-cta">
             <div>
-              <p style={{ fontSize: 15, fontWeight: 600, margin: '0 0 4px', color: 'var(--fg)' }}>
-                These cases need funding.
-              </p>
-              <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>
+              <p className="sf2-cta-title">These cases need funding.</p>
+              <p className="sf2-cta-desc">
                 Every lawsuit above represents a gap only anonymous crowdfunding can fill.
               </p>
             </div>
             <button
               onClick={() => setTab('campaigns')}
-              style={{
-                background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-                padding: '13px 28px', fontSize: 13, fontWeight: 600,
-                letterSpacing: '0.05em', textTransform: 'uppercase',
-                cursor: 'pointer', fontFamily: 'var(--font)', flexShrink: 0,
-              }}
+              className="sf2-cta-btn"
             >
               Browse Campaigns →
             </button>

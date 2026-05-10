@@ -69,13 +69,6 @@ function ApplyModal({ onClose, defaultRole = '' }) {
     setForm(f => ({ ...f, [k]: v }))
   }
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-  }
-  const labelStyle = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }
-
   const isAttorney = form.role === 'attorney'
 
   const handleBarLookup = async () => {
@@ -149,11 +142,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
     <div
       onClick={onClose}
       role="presentation"
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
-      }}
+      className="hre-modal-overlay"
     >
       <div
         ref={modalRef}
@@ -161,37 +150,29 @@ function ApplyModal({ onClose, defaultRole = '' }) {
         aria-modal="true"
         aria-labelledby={headingId}
         onClick={e => e.stopPropagation()}
-        style={{
-          background: 'var(--bg2)', border: '1px solid var(--border)',
-          borderRadius: 18, padding: 32, maxWidth: 520, width: '100%',
-          maxHeight: '90vh', overflowY: 'auto',
-        }}
+        className="hre-modal"
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="hre-modal-header">
           <div>
-            <h2 id={headingId} style={{ fontWeight: 800, fontSize: 20 }}>Apply to the Registry</h2>
-            <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>No identity required — contact optional</div>
+            <h2 id={headingId} className="hre-modal-heading">Apply to the Registry</h2>
+            <div className="hre-modal-subtext">No identity required — contact optional</div>
           </div>
-          <button onClick={onClose} aria-label="Close application form" style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={onClose} aria-label="Close application form" className="hre-close-btn">
             <X size={20} />
           </button>
         </div>
 
         {submitted ? (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+          <div className="hre-success">
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
-            <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Application Received</h3>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 360, margin: '0 auto 16px' }}>
+            <h3 className="hre-success-title">Application Received</h3>
+            <p className="hre-success-text">
               You're in the queue. Applications submitted now are first in line when onboarding opens.
             </p>
-            <div style={{
-              maxWidth: 380, margin: '0 auto 24px',
-              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
-              borderRadius: 10, padding: '14px 16px', textAlign: 'left',
-            }}>
-              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-                <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>What happens next:</div>
-                <ol style={{ paddingLeft: 18, margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="hre-success-next-box">
+              <div className="hre-success-next-content">
+                <div className="hre-success-next-title">What happens next:</div>
+                <ol className="hre-success-next-list">
                   <li>Your application is saved to the review queue.</li>
                   <li>At launch, the team verifies your credentials (bar lookup for attorneys, peer vouches for others).</li>
                   <li>Once verified, you receive a badge visible to campaign operators seeking legal help.</li>
@@ -202,24 +183,20 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                 </p>
               </div>
             </div>
-            <button onClick={onClose} style={{
-              background: 'var(--accent)', border: 'none', color: '#fff',
-              padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: 'pointer',
-            }}>Done</button>
+            <button onClick={onClose} className="hre-success-done-btn">Done</button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="hre-form-body">
             <div>
-              <label style={labelStyle}>Your Role</label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label className="hre-label">Your Role</label>
+              <div className="hre-role-list">
                 {roles.map(r => (
-                  <button key={r.id} onClick={() => set('role', r.id)} style={{
+                  <button key={r.id} onClick={() => set('role', r.id)} className="hre-role-btn" style={{
                     background: form.role === r.id ? 'rgba(230,57,70,0.1)' : 'var(--bg3)',
                     border: `1px solid ${form.role === r.id ? 'rgba(230,57,70,0.5)' : 'var(--border)'}`,
-                    borderRadius: 10, padding: '12px 16px', textAlign: 'left', cursor: 'pointer',
                   }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)', marginBottom: 2 }}>{r.label}</div>
-                    <div style={{ fontSize: 12, color: 'var(--muted)' }}>{r.desc}</div>
+                    <div className="hre-role-btn-label">{r.label}</div>
+                    <div className="hre-role-btn-desc">{r.desc}</div>
                   </button>
                 ))}
               </div>
@@ -228,39 +205,38 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             {/* Attorney-specific fields */}
             {isAttorney && (
               <>
-                <div style={{
-                  background: 'rgba(93,173,226,0.06)', border: '1px solid rgba(93,173,226,0.2)',
-                  borderRadius: 10, padding: '12px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
-                }}>
+                <div className="hre-attorney-info-banner">
                   <strong style={{ color: 'var(--text)' }}>Attorney verification</strong> — California attorneys can
                   auto-verify via the State Bar lookup. All other states go to manual review. No ID uploaded.
                 </div>
 
                 <div>
-                  <label htmlFor="apply-fullname" style={labelStyle}>Full Legal Name <span style={{ color: 'var(--accent)' }}>*</span></label>
-                  <input id="apply-fullname" style={inputStyle} placeholder="e.g. Jane Smith"
+                  <label htmlFor="apply-fullname" className="hre-label">Full Legal Name <span style={{ color: 'var(--accent)' }}>*</span></label>
+                  <input id="apply-fullname" className="hre-input" placeholder="e.g. Jane Smith"
                     value={form.full_name} onChange={e => set('full_name', e.target.value)} maxLength={200} />
                 </div>
 
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <div style={{ flex: '0 0 120px' }}>
-                    <label htmlFor="apply-barstate" style={labelStyle}>Bar State <span style={{ color: 'var(--accent)' }}>*</span></label>
+                <div className="hre-bar-row">
+                  <div className="hre-bar-state-wrap">
+                    <label htmlFor="apply-barstate" className="hre-label">Bar State <span style={{ color: 'var(--accent)' }}>*</span></label>
                     <select
                       id="apply-barstate"
                       value={form.bar_state}
                       onChange={e => set('bar_state', e.target.value)}
-                      style={{ ...inputStyle, height: 44, cursor: 'pointer' }}
+                      className="hre-input"
+                      style={{ height: 44, cursor: 'pointer' }}
                     >
                       <option value="">State…</option>
                       {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <label htmlFor="apply-barnum" style={labelStyle}>Bar Number {form.bar_state === 'CA' && <span style={{ color: 'var(--accent)' }}>*</span>}</label>
-                    <div style={{ display: 'flex', gap: 6 }}>
+                  <div className="hre-bar-number-wrap">
+                    <label htmlFor="apply-barnum" className="hre-label">Bar Number {form.bar_state === 'CA' && <span style={{ color: 'var(--accent)' }}>*</span>}</label>
+                    <div className="hre-bar-number-row">
                       <input
                         id="apply-barnum"
-                        style={{ ...inputStyle, flex: 1 }}
+                        className="hre-input"
+                        style={{ flex: 1 }}
                         placeholder={form.bar_state === 'CA' ? 'e.g. 123456' : 'optional'}
                         value={form.bar_number}
                         onChange={e => set('bar_number', e.target.value)}
@@ -271,12 +247,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                           onClick={handleBarLookup}
                           disabled={!form.bar_number || barLooking}
                           title="Verify with CA State Bar"
-                          style={{
-                            flexShrink: 0, background: 'rgba(93,173,226,0.12)',
-                            border: '1px solid rgba(93,173,226,0.3)', borderRadius: 8,
-                            color: '#5dade2', padding: '0 14px', cursor: (!form.bar_number || barLooking) ? 'not-allowed' : 'pointer',
-                            display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600,
-                          }}
+                          className="hre-bar-verify-btn"
                         >
                           {barLooking
                             ? <><Loader2 size={13} className="spinning" /> Checking…</>
@@ -284,7 +255,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                         </button>
                       )}
                     </div>
-                    {/* Bar lookup result badge */}
+                    {/* Bar lookup result badge — dynamic styles kept inline */}
                     {barLookup && (
                       <div style={{
                         marginTop: 8, padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
@@ -317,46 +288,36 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             )}
 
             <div>
-              <label htmlFor="apply-location" style={labelStyle}>Location / Region</label>
-              <input id="apply-location" style={inputStyle} placeholder="e.g. New Mexico, Southwest US, Remote"
+              <label htmlFor="apply-location" className="hre-label">Location / Region</label>
+              <input id="apply-location" className="hre-input" placeholder="e.g. New Mexico, Southwest US, Remote"
                 value={form.location} onChange={e => set('location', e.target.value)} />
             </div>
 
             <div>
-              <label htmlFor="apply-email" style={labelStyle}>Contact Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — for status updates only, never published)</span></label>
-              <input id="apply-email" type="email" style={inputStyle} placeholder="e.g. you@proton.me"
+              <label htmlFor="apply-email" className="hre-label">Contact Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — for status updates only, never published)</span></label>
+              <input id="apply-email" type="email" className="hre-input" placeholder="e.g. you@proton.me"
                 value={form.email} onChange={e => set('email', e.target.value)} maxLength={200} />
             </div>
 
             <div>
-              <label htmlFor="apply-background" style={labelStyle}>Background & Experience</label>
-              <textarea id="apply-background" style={{ ...inputStyle, height: 110, resize: 'vertical' }}
+              <label htmlFor="apply-background" className="hre-label">Background & Experience</label>
+              <textarea id="apply-background" className="hre-input" style={{ height: 110, resize: 'vertical' }}
                 placeholder="Describe your relevant experience. No identifying info required — focus on what you've done and what you can execute."
                 value={form.background} onChange={e => set('background', e.target.value)} />
             </div>
 
-            <div style={{
-              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
-              borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
-            }}>
+            <div className="hre-privacy-note">
               To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
-            <div style={{
-              display: 'flex', gap: 8, alignItems: 'flex-start',
-              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
-              borderRadius: 8, padding: '10px 12px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
-            }}>
+            <div className="hre-shield-note">
               <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
               Verification = 3 community vouches from people who've worked with you. No ID documents.
               All work executed under your own LLC or as an independent contractor.
             </div>
 
             {isAttorney && form.bar_state === 'CA' && !barLookup && (
-              <div style={{
-                background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)',
-                borderRadius: 8, padding: '9px 13px', fontSize: 12, color: '#f59e0b', lineHeight: 1.6,
-              }}>
+              <div className="hre-ca-warning">
                 ⚠️ Enter your CA bar number above and click <strong>Verify</strong> before submitting.
                 You can still submit without verifying — it will go to manual review.
               </div>
@@ -375,9 +336,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
               {sending ? 'Submitting...' : 'Submit Application'}
             </button>
             {submitError && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12,
-                background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
-                borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
+              <div className="hre-submit-error">
                 <AlertCircle size={14} />
                 {submitError === 'login_required'
                   ? 'You must be logged in to submit an attorney application. Create a free account first.'
@@ -397,31 +356,27 @@ export default function HumanRegistry() {
   const [showApply, setShowApply] = useState(false)
 
   return (
-    <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+    <section className="hre-page">
       {showApply && <ApplyModal onClose={() => setShowApply(false)} defaultRole={roleParam === 'attorney' || roleParam === 'researcher' ? 'attorney' : ''} />}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
+      <div className="hre-header">
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Expert Directory</h2>
-          <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, maxWidth: 480, lineHeight: 1.6 }}>
+          <h2 className="hre-title">Expert Directory</h2>
+          <p className="hre-subtitle">
             Vetted operators who execute funded campaigns — legal researchers, media coordinators, FOIA specialists,
             and technical contributors. Real-world executors verify identity and vendor access privately with the platform — never published.
             Technical contributors register pseudonymously by XMR or ZANO address only. No public identity required for anyone.
           </p>
         </div>
-        <button onClick={() => setShowApply(true)} style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: 'var(--accent)', border: 'none', color: '#fff',
-          padding: '12px 20px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer',
-        }}>
+        <button onClick={() => setShowApply(true)} className="hre-apply-btn">
           <Plus size={16} /> Apply to Registry
         </button>
       </div>
 
       {/* Context banners based on referral path */}
       {roleParam === 'attorney' && (
-        <div style={{ background: 'rgba(93,173,226,0.07)', border: '1px solid rgba(93,173,226,0.3)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, color: '#5dade2', marginBottom: 8 }}>⚖️ Licensed Attorneys</div>
+        <div className="hre-banner-attorney">
+          <div className="hre-banner-attorney-title">⚖️ Licensed Attorneys</div>
           <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 12px' }}>
             Citeback connects funded campaigns with licensed legal counsel. Attorney verification is live — California attorneys auto-verify via State Bar lookup; all other states go to manual review. No ID uploaded.
           </p>
@@ -431,50 +386,44 @@ export default function HumanRegistry() {
           <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px', fontStyle: 'italic' }}>
             Apply below to join the registry. Verified attorneys receive a badge visible to campaign operators looking for legal help.
           </p>
-          <button onClick={() => setShowApply(true)} style={{ background: '#5dade2', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
+          <button onClick={() => setShowApply(true)} className="hre-banner-attorney-btn">
             Apply for Attorney Verification
           </button>
         </div>
       )}
       {roleParam === 'researcher' && (
-        <div style={{ background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--accent)', marginBottom: 8 }}>⚖️ Legal Researchers</div>
+        <div className="hre-banner-researcher">
+          <div className="hre-banner-researcher-title">⚖️ Legal Researchers</div>
           <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
             Legal researchers help campaigns move from funded to filed — reviewing proposed actions for viability, drafting FOIA requests and demand letters, advising on Fourth Amendment strategy. No bar license required. Verification is by peer vouching from people who have worked with you.
           </p>
-          <button onClick={() => setShowApply(true)} style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer' }}>
+          <button onClick={() => setShowApply(true)} className="hre-banner-researcher-btn">
             Apply as Legal Researcher
           </button>
         </div>
       )}
 
       {/* How verification works */}
-      <div style={{
-        background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
-        borderRadius: 12, padding: 18, marginBottom: 28,
-        display: 'flex', gap: 12, alignItems: 'flex-start',
-      }}>
+      <div className="hre-verify-box">
         <Shield size={16} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
-        <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
-          <strong style={{ color: 'var(--text)' }}>Registry listing requires peer vouching only — no public identity.</strong>{' '}
-          Verified badge = 3 or more community vouches from people who’ve worked with them. No ID documents required to list.
-          Funds are released only after campaign completion and receipt submission.
-          Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
-        </p>
-        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8, lineHeight: 1.6 }}>
-          <p style={{ margin: '0 0 4px', fontStyle: 'italic' }}>Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
-          <p style={{ margin: 0, fontStyle: 'italic' }}>Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
+        <div>
+          <p className="hre-verify-text">
+            <strong style={{ color: 'var(--text)' }}>Registry listing requires peer vouching only — no public identity.</strong>{' '}
+            Verified badge = 3 or more community vouches from people who've worked with them. No ID documents required to list.
+            Funds are released only after campaign completion and receipt submission.
+            Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
+          </p>
+          <div className="hre-verify-note">
+            <p style={{ margin: '0 0 4px', fontStyle: 'italic' }}>Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
+            <p style={{ margin: 0, fontStyle: 'italic' }}>Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
+          </div>
         </div>
       </div>
 
       {/* Role slots */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20, marginBottom: 32 }}>
+      <div className="hre-cards-grid">
         {Object.entries(typeConfig).map(([key, cfg]) => (
-          <div key={key} style={{
-            background: 'var(--bg2)', border: '1px dashed var(--border)',
-            borderRadius: 14, padding: 28, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', textAlign: 'center', gap: 14,
-          }}>
+          <div key={key} className="hre-card">
             <div style={{
               width: 52, height: 52, borderRadius: 12,
               background: `rgba(${cfg.colorRaw},0.08)`,
@@ -483,38 +432,28 @@ export default function HumanRegistry() {
               color: cfg.color,
             }}>{cfg.icon}</div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{cfg.label}</div>
+              <div className="hre-card-role-label">{cfg.label}</div>
               {key === 'technical' ? (
-                <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
+                <div className="hre-card-desc">
                   backend engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
                   <span style={{ display: 'block', marginTop: 6, color: `rgba(${cfg.colorRaw},0.9)`, fontWeight: 600 }}>
                     🔒 Pseudonymous — XMR or ZANO address as identity. No real name required.
                   </span>
                 </div>
               ) : (
-                <div style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.5 }}>
+                <div className="hre-card-desc">
                   No verified operators yet. Be the first.
                 </div>
               )}
             </div>
-            <button onClick={() => setShowApply(true)} style={{
-              background: 'var(--bg3)', border: '1px solid var(--border)',
-              color: 'var(--text)', padding: '9px 18px', borderRadius: 8,
-              fontWeight: 600, fontSize: 13, cursor: 'pointer', width: '100%',
-            }}>Apply as {cfg.label}</button>
+            <button onClick={() => setShowApply(true)} className="hre-card-apply-btn">Apply as {cfg.label}</button>
           </div>
         ))}
       </div>
 
-      <div style={{
-        textAlign: 'center', padding: '24px', color: 'var(--muted)', fontSize: 13,
-        border: '1px dashed var(--border)', borderRadius: 12, lineHeight: 1.7,
-      }}>
+      <div className="hre-footer">
         Registry opens with the first verified applicants.{' '}
-        <button onClick={() => setShowApply(true)} style={{
-          background: 'none', border: 'none', color: 'var(--accent)',
-          fontWeight: 600, fontSize: 13, cursor: 'pointer', padding: 0,
-        }}>Apply now →</button>
+        <button onClick={() => setShowApply(true)} className="hre-footer-link">Apply now →</button>
       </div>
     </section>
   )
