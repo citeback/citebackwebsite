@@ -38,6 +38,9 @@ export default function Nav({ tab, setTab }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Close mobile menu when tab changes externally (e.g. from page CTA buttons)
+  useEffect(() => { setOpen(false); setMoreOpen(false) }, [tab])
+
   useEffect(() => {
     if (!moreOpen) return
     const handleClickOutside = (e) => {
