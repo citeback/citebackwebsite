@@ -12,4 +12,5 @@
   <url><loc>https://citeback.com/intelligence-feed</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://citeback.com/frontline-funds</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://citeback.com/run-a-campaign</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://citeback.com/transparency</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>
