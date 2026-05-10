@@ -17,7 +17,7 @@ const TYPES = [
         '"Hot list" errors have led to guns-drawn traffic stops of innocent drivers.',
       ],
       resistance: [
-        'Cambridge, MA terminated its Flock Safety contract in December 2025 after Flock Safety installed two unauthorized ALPR cameras without the city’s knowledge — the city called it a material breach of trust. (Source: City of Cambridge official statement, Dec 10 2025)',
+        'Cambridge, MA terminated its Flock Safety contract in December 2025 after Flock Safety installed two unauthorized ALPR cameras without the city\'s knowledge — the city called it a material breach of trust. (Source: City of Cambridge official statement, Dec 10 2025)',
         'NM Sen. Wirth introduced legislation requiring a warrant before ALPR data can be shared with federal agencies.',
       ],
       cta: 'FOIA your local agency\'s Flock contract. Find out how long they retain data and who they share it with.',
@@ -152,15 +152,15 @@ const TYPES = [
     id: 'ring',
     icon: '🔔',
     name: 'Ring / Smart Doorbell Networks',
-    tagline: '2,500+ law enforcement partnerships. Your neighbor’s doorbell is a police camera.',
+    tagline: '2,500+ law enforcement partnerships. Your neighbor\'s doorbell is a police camera.',
     color: '#f97316',
     sections: {
-      what: 'Amazon’s Ring sells doorbell cameras to homeowners, then operates a platform called “Neighbors” that lets police departments request footage from any camera in any area — without a warrant, without the homeowner’s active consent, and without the subject’s knowledge.',
+      what: 'Amazon\'s Ring sells doorbell cameras to homeowners, then operates a platform called “Neighbors” that lets police departments request footage from any camera in any area — without a warrant, without the homeowner\'s active consent, and without the subject\'s knowledge.',
       affects: 'Your movements on public streets, sidewalks, and in front of private homes are recorded by a private camera network that feeds directly to police. Ring has shared footage with law enforcement in response to emergency requests that bypassed homeowner consent entirely. You have no way to know how many Ring cameras cover your route to work.',
       problems: [
         'Amazon provided footage to police 11 times in 2022 without homeowner consent or a warrant, using an “emergency” exception.',
         'Over 2,500 US law enforcement agencies have formal partnerships with Ring as of 2024 — giving them expedited access to camera location data and footage requests.',
-        'Police can request footage from Ring’s Neighbors app without a warrant, subpoena, or court order. Homeowners receive a request but are not legally required to comply — however, Amazon can comply without the homeowner if it chooses.',
+        'Police can request footage from Ring\'s Neighbors app without a warrant, subpoena, or court order. Homeowners receive a request but are not legally required to comply — however, Amazon can comply without the homeowner if it chooses.',
         'Ring cameras are disproportionately deployed in gentrifying neighborhoods, extending surveillance networks into communities of color without any public vote or police body camera accountability equivalent.',
       ],
       resistance: [
@@ -184,7 +184,7 @@ const TYPES = [
       what: 'A geofence warrant compels Google (and other tech companies) to identify every device present in a geographic area during a specific time window — with no prior suspect, no probable cause for any individual, and often with a secrecy order preventing the affected person from ever knowing. Keyword warrants do the same for search terms.',
       affects: 'If you were near a protest, a crime scene, a medical clinic, or any place that attracted police attention, your device could be handed over to law enforcement. Google received 20,000+ geofence warrants in 2020 alone. People have been wrongfully investigated because their running route took them past a crime scene.',
       problems: [
-        'A man in Arizona was wrongfully investigated for a murder because his cycling route passed the victim’s house repeatedly. He was identified solely through geofence data.',
+        'A man in Arizona was wrongfully investigated for a murder because his cycling route passed the victim\'s house repeatedly. He was identified solely through geofence data.',
         'Geofence warrants covering Black Lives Matter protests were issued in multiple cities in 2020 — effectively giving police the identity of everyone who attended a constitutionally protected protest.',
         'Keyword warrants have been issued for searches like “abortion pill” and “how to find an abortion.” Google has complied.',
         'The secrecy orders attached to many geofence warrants mean you may never know your data was searched.',
@@ -204,7 +204,7 @@ const TYPES = [
     id: 'fusion',
     icon: '🕸️',
     name: 'Fusion Centers',
-    tagline: 'The hidden backbone connecting every surveillance system you’ve read about.',
+    tagline: 'The hidden backbone connecting every surveillance system you\'ve read about.',
     color: '#64748b',
     sections: {
       what: 'Fusion centers are federally-funded state and regional intelligence hubs that aggregate data from dozens of surveillance systems — ALPR, facial recognition, social media monitoring, Stingray intercepts, ShotSpotter, and more — and share it across local, state, and federal agencies including ICE, FBI, and DHS. There are 79 of them in the United States.',

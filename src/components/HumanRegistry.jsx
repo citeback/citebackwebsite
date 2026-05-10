@@ -164,7 +164,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
 
         {submitted ? (
           <div className="hre-success">
-            <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
+            <CheckCircle size={48} color="var(--green)" className="hr-success-icon" />
             <h3 className="hre-success-title">Application Received</h3>
             <p className="hre-success-text">
               You're in the queue. Applications submitted now are first in line when onboarding opens.
@@ -178,8 +178,8 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                   <li>Once verified, you receive a badge visible to campaign operators seeking legal help.</li>
                   <li>You'll be matched with funded campaigns in your jurisdiction and practice area.</li>
                 </ol>
-                <p style={{ margin: '10px 0 0', fontStyle: 'italic' }}>
-                  To follow up before launch, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong>.
+                <p className="hr-followup-note">
+                  To follow up before launch, email <strong className="hr-strong-text">citeback@proton.me</strong>.
                 </p>
               </div>
             </div>
@@ -206,37 +206,35 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             {isAttorney && (
               <>
                 <div className="hre-attorney-info-banner">
-                  <strong style={{ color: 'var(--text)' }}>Attorney verification</strong> — California attorneys can
+                  <strong className="hr-strong-text">Attorney verification</strong> — California attorneys can
                   auto-verify via the State Bar lookup. All other states go to manual review. No ID uploaded.
                 </div>
 
                 <div>
-                  <label htmlFor="apply-fullname" className="hre-label">Full Legal Name <span style={{ color: 'var(--accent)' }}>*</span></label>
+                  <label htmlFor="apply-fullname" className="hre-label">Full Legal Name <span className="hr-required">*</span></label>
                   <input id="apply-fullname" className="hre-input" placeholder="e.g. Jane Smith"
                     value={form.full_name} onChange={e => set('full_name', e.target.value)} maxLength={200} />
                 </div>
 
                 <div className="hre-bar-row">
                   <div className="hre-bar-state-wrap">
-                    <label htmlFor="apply-barstate" className="hre-label">Bar State <span style={{ color: 'var(--accent)' }}>*</span></label>
+                    <label htmlFor="apply-barstate" className="hre-label">Bar State <span className="hr-required">*</span></label>
                     <select
                       id="apply-barstate"
                       value={form.bar_state}
                       onChange={e => set('bar_state', e.target.value)}
-                      className="hre-input"
-                      style={{ height: 44, cursor: 'pointer' }}
+                      className="hre-input hr-select-field"
                     >
                       <option value="">State…</option>
                       {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="hre-bar-number-wrap">
-                    <label htmlFor="apply-barnum" className="hre-label">Bar Number {form.bar_state === 'CA' && <span style={{ color: 'var(--accent)' }}>*</span>}</label>
+                    <label htmlFor="apply-barnum" className="hre-label">Bar Number {form.bar_state === 'CA' && <span className="hr-required">*</span>}</label>
                     <div className="hre-bar-number-row">
                       <input
                         id="apply-barnum"
-                        className="hre-input"
-                        style={{ flex: 1 }}
+                        className="hre-input hr-flex-input"
                         placeholder={form.bar_state === 'CA' ? 'e.g. 123456' : 'optional'}
                         value={form.bar_number}
                         onChange={e => set('bar_number', e.target.value)}
@@ -255,7 +253,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                         </button>
                       )}
                     </div>
-                    {/* Bar lookup result badge — dynamic styles kept inline */}
+                    {/* Bar lookup result badge — dynamic styles kept inline (depend on barLookup.status) */}
                     {barLookup && (
                       <div style={{
                         marginTop: 8, padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
@@ -266,18 +264,18 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                             : { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b' }),
                       }}>
                         {barLookup.status === 'found' && (
-                          <><CheckCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          <><CheckCircle size={12} className="hr-icon-inline" />
                           <strong>Verified:</strong> {barLookup.name}{barLookup.active !== undefined && ` — ${barLookup.active ? 'Active' : 'Inactive'}`}</>
                         )}
                         {barLookup.status === 'not_found' && (
-                          <><X size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          <><X size={12} className="hr-icon-inline" />
                           Bar number not found in CA State Bar records. Double-check the number.</>
                         )}
                         {barLookup.status === 'manual_review' && (
                           <>⏳ <strong>Manual review</strong> — will be verified by the team before approval</>
                         )}
                         {(barLookup.status === 'error' || barLookup.status === 'rate_limited') && (
-                          <><AlertCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                          <><AlertCircle size={12} className="hr-icon-inline" />
                           {barLookup.reason || 'Lookup failed — you can still submit for manual review'}</>
                         )}
                       </div>
@@ -301,17 +299,17 @@ function ApplyModal({ onClose, defaultRole = '' }) {
 
             <div>
               <label htmlFor="apply-background" className="hre-label">Background & Experience</label>
-              <textarea id="apply-background" className="hre-input" style={{ height: 110, resize: 'vertical' }}
+              <textarea id="apply-background" className="hre-input hr-textarea-bg"
                 placeholder="Describe your relevant experience. No identifying info required — focus on what you've done and what you can execute."
                 value={form.background} onChange={e => set('background', e.target.value)} />
             </div>
 
             <div className="hre-privacy-note">
-              To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
+              To follow up on your submission, email <strong className="hr-strong-text">citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
             <div className="hre-shield-note">
-              <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+              <Shield size={13} className="hr-shield-icon" />
               Verification = 3 community vouches from people who've worked with you. No ID documents.
               All work executed under your own LLC or as an independent contractor.
             </div>
@@ -377,13 +375,13 @@ export default function HumanRegistry() {
       {roleParam === 'attorney' && (
         <div className="hre-banner-attorney">
           <div className="hre-banner-attorney-title">⚖️ Licensed Attorneys</div>
-          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 12px' }}>
+          <p className="hr-banner-p">
             Citeback connects funded campaigns with licensed legal counsel. Attorney verification is live — California attorneys auto-verify via State Bar lookup; all other states go to manual review. No ID uploaded.
           </p>
-          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
-            <strong style={{ color: 'var(--text)' }}>How attorneys could help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
+          <p className="hr-banner-p-lg">
+            <strong className="hr-strong-text">How attorneys could help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
           </p>
-          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px', fontStyle: 'italic' }}>
+          <p className="hr-banner-p-italic">
             Apply below to join the registry. Verified attorneys receive a badge visible to campaign operators looking for legal help.
           </p>
           <button onClick={() => setShowApply(true)} className="hre-banner-attorney-btn">
@@ -394,7 +392,7 @@ export default function HumanRegistry() {
       {roleParam === 'researcher' && (
         <div className="hre-banner-researcher">
           <div className="hre-banner-researcher-title">⚖️ Legal Researchers</div>
-          <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, margin: '0 0 14px' }}>
+          <p className="hr-banner-p-lg">
             Legal researchers help campaigns move from funded to filed — reviewing proposed actions for viability, drafting FOIA requests and demand letters, advising on Fourth Amendment strategy. No bar license required. Verification is by peer vouching from people who have worked with you.
           </p>
           <button onClick={() => setShowApply(true)} className="hre-banner-researcher-btn">
@@ -405,10 +403,10 @@ export default function HumanRegistry() {
 
       {/* How verification works */}
       <div className="hre-verify-box">
-        <Shield size={16} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
+        <Shield size={16} className="hr-verify-shield" />
         <div>
           <p className="hre-verify-text">
-            <strong style={{ color: 'var(--text)' }}>Registry listing requires peer vouching only — no public identity.</strong>{' '}
+            <strong className="hr-strong-text">Registry listing requires peer vouching only — no public identity.</strong>{' '}
             Verified badge = 3 or more community vouches from people who've worked with them. No ID documents required to list.
             Funds are released only after campaign completion and receipt submission.
             Operators work under their own LLC or as independent contractors — Citeback never employs anyone.

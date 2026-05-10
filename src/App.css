@@ -7719,3 +7719,8 @@ img {
   color: var(--accent);
   text-decoration: underline;
 }
+
+/* Skeleton bar fixed widths */
+.sf2-skel-bar-sm--35 { width: 35%; }
+.sf2-skel-bar-sm--45 { width: 45%; }
+.sf2-skel-bar-sm--55 { width: 55%; }

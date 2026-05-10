@@ -563,7 +563,7 @@ function CasesSkeleton() {
       {[...Array(5)].map((_, i) => (
         <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
           <div className="sf2-skel-bar-lg" style={{ width: `${60 + (i % 3) * 15}%` }} />
-          <div className="sf2-skel-bar-sm" style={{ width: '35%' }} />
+          <div className="sf2-skel-bar-sm sf2-skel-bar-sm--35" />
         </div>
       ))}
     </div>
@@ -576,7 +576,7 @@ function BillsSkeleton() {
       {[...Array(5)].map((_, i) => (
         <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
           <div className="sf2-skel-bar-lg" style={{ width: `${55 + (i % 3) * 15}%` }} />
-          <div className="sf2-skel-bar-sm" style={{ width: '45%' }} />
+          <div className="sf2-skel-bar-sm sf2-skel-bar-sm--45" />
         </div>
       ))}
     </div>
@@ -589,7 +589,7 @@ function FederalBillsSkeleton() {
       {[...Array(4)].map((_, i) => (
         <div key={i} className="sf2-fed-skel-item">
           <div className="sf2-skel-bar-lg" style={{ width: `${50 + (i % 3) * 18}%` }} />
-          <div className="sf2-skel-bar-sm" style={{ width: '55%' }} />
+          <div className="sf2-skel-bar-sm sf2-skel-bar-sm--55" />
         </div>
       ))}
     </div>

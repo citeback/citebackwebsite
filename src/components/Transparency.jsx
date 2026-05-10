@@ -1,184 +1,120 @@
-import { CheckCircle, ExternalLink, FileText, Coins, Shield } from 'lucide-react'
+import { ExternalLink, Shield } from 'lucide-react'
 import { ThreatDisclosure } from './VerificationTiers'
 import FollowTheMoney from './FollowTheMoney'
 import { useCameraCount } from '../context/CameraCount'
-
-// TODO Phase 2: Fetch real disbursement data from API (GET /api/disbursements)
-const disbursements = []
+import { Helmet } from 'react-helmet-async'
 
 const principles = [
   { title: 'One Wallet Per Campaign', body: 'Every campaign will have dedicated Monero (XMR) and Zano (ZANO) wallets. Funds cannot be commingled. No wallet addresses are published until all launch prerequisites are met and the wallet architecture is publicly verified.' },
   { title: 'Receipt Before Release', body: 'Operators submit vendor receipts and photo proof before any disbursement is triggered. A 48-hour public challenge window follows — the community can contest any release.' },
-  { title: 'Citeback Never Holds Funds', body: 'Contributions go directly from contributors to the operator\'s own wallet — the platform has zero custody and zero spending access. The operator provides a Monero view key (read-only) so the platform and community can independently verify balances. Early withdrawal before a campaign goal is met results in immediate permanent ban.' },
+  { title: 'Citeback Never Holds Funds', body: "Contributions go directly from contributors to the operator's own wallet — the platform has zero custody and zero spending access. The operator provides a Monero view key (read-only) so the platform and community can independently verify balances. Early withdrawal before a campaign goal is met results in immediate permanent ban." },
   { title: 'Full Public Record', body: 'Once live, every campaign receipt, disbursement, and governance action will be logged permanently and publicly verifiable. The governance rules governing this process are published now.' },
-  { title: 'Zero Platform Fee', body: 'Citeback takes nothing from campaigns. No percentage, no deduction, no operations cut. Every dollar contributed goes directly to the campaign operator\'s wallet. Operating costs are covered by the founding operator personally. This model was chosen deliberately — a platform that skims campaigns has an extractive relationship with the causes it exists to support.' },
+  { title: 'Zero Platform Fee', body: "Citeback takes nothing from campaigns. No percentage, no deduction, no operations cut. Every dollar contributed goes directly to the campaign operator's wallet. Operating costs are covered by the founding operator personally. This model was chosen deliberately — a platform that skims campaigns has an extractive relationship with the causes it exists to support." },
   { title: 'Community Governed', body: 'Rules change only through public GitHub PRs, community votes, and time-locks. Pre-launch, the founder acts as the platform operator with defined responsibilities — but no ability to touch wallet keys. After Phase 2 launch and LLC formation, the founder has identical permissions to every other participant.' },
-  { title: 'Transparent Operator', body: 'The platform is being organized as a Wyoming DAO LLC — formation is a hard launch prerequisite. Operator identity, responsibilities, and limitations are published in the governance spec. The platform reviews campaign proposals and monitors wallets via view keys — but Citeback never holds wallet keys or campaign funds. Operators self-custody their own wallets. The direct wallet architecture enforces this by design.' },
+  { title: 'Transparent Operator', body: "The platform is being organized as a Wyoming DAO LLC — formation is a hard launch prerequisite. Operator identity, responsibilities, and limitations are published in the governance spec. The platform reviews campaign proposals and monitors wallets via view keys — but Citeback never holds wallet keys or campaign funds. Operators self-custody their own wallets. The direct wallet architecture enforces this by design." },
+]
+
+const buildSources = (cameraCount) => [
+  { name: 'OpenStreetMap Contributors', url: 'https://www.openstreetmap.org', what: `${cameraCount} ALPR camera locations mapped by volunteers worldwide.`, note: 'Public dataset — © OpenStreetMap contributors, ODbL' },
+  { name: 'EFF Atlas of Surveillance', url: 'https://atlasofsurveillance.org', what: 'Surveillance technology deployed by law enforcement agencies across the US.', note: 'Public API and dataset' },
+  { name: 'CourtListener / RECAP', url: 'https://www.courtlistener.com', what: 'Active surveillance litigation — federal and state court filings.', note: 'Public API and dataset' },
+  { name: 'USASpending.gov', url: 'https://www.usaspending.gov', what: 'Federal contracts with surveillance vendors — amounts, agencies, award dates.', note: 'Public federal dataset' },
+  { name: 'Senate LDA (Lobbying Disclosure)', url: 'https://lda.senate.gov', what: 'Federal lobbying filings for surveillance vendors — Senate Office of Public Records, Lobbying Disclosure Act.', note: 'Live API — no auth required' },
+  { name: 'OpenStates', url: 'https://openstates.org', what: 'State surveillance legislation — bills, status, sponsors, and votes.', note: 'Public API and dataset' },
+  { name: 'Footnote4a', url: 'https://footnote4a.org', what: 'ALPR journalism and investigative reporting sourced in the Activity Ticker.', note: 'Journalism attribution' },
 ]
 
 export default function Transparency({ setTab }) {
   const cameraCount = useCameraCount()
+  const sources = buildSources(cameraCount)
+
   return (
-    <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
-      <div style={{ marginBottom: 40 }}>
-        <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Transparency</h2>
-        <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, maxWidth: 560, lineHeight: 1.6 }}>
+    <section className="tran-page">
+      <Helmet>
+        <title>Transparency | Citeback — Public Record of Every Campaign Action</title>
+        <meta name="description" content="Every dollar funded, every receipt submitted, every disbursement — public record forever. Citeback never holds funds. View data sources and governance." />
+      </Helmet>
+
+      <div className="tran-header">
+        <h2 className="tran-title">Transparency</h2>
+        <p className="tran-subtitle">
           Every dollar funded, every receipt submitted, every action taken — public record. Forever.
         </p>
       </div>
 
-      {/* Principles */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 48 }}>
+      {/* Principles grid */}
+      <div className="tran-grid tran-section">
         {principles.map((p, i) => (
-          <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 0, padding: 20 }}>
-            <div style={{ width: 2, height: 16, background: 'var(--red)', marginBottom: 12 }} />
-            <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{p.title}</h3>
-            <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.65 }}>{p.body}</p>
+          <div key={i} className="tran-card">
+            <div className="tran-card-bar" />
+            <h3 className="tran-card-title">{p.title}</h3>
+            <p className="tran-card-body">{p.body}</p>
           </div>
         ))}
       </div>
 
       {/* Data Sources */}
-      <div style={{ marginBottom: 40 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
-          Data Sources
-        </div>
-        <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.6, marginBottom: 20, maxWidth: 560 }}>
-          Citeback is built on public data. Here's exactly where it comes from.
+      <div className="tran-section">
+        <div className="tran-section-label">Data Sources</div>
+        <p className="tran-section-desc">
+          Citeback is built on public data. Here&apos;s exactly where it comes from.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 48 }}>
-          {[
-            {
-              name: 'OpenStreetMap Contributors',
-              url: 'https://www.openstreetmap.org',
-              what: `${cameraCount} ALPR camera locations mapped by volunteers worldwide.`,
-              note: 'Public dataset — © OpenStreetMap contributors, ODbL',
-            },
-            {
-              name: 'EFF Atlas of Surveillance',
-              url: 'https://atlasofsurveillance.org',
-              what: 'Surveillance technology deployed by law enforcement agencies across the US.',
-              note: 'Public API and dataset',
-            },
-            {
-              name: 'CourtListener / RECAP',
-              url: 'https://www.courtlistener.com',
-              what: 'Active surveillance litigation — federal and state court filings.',
-              note: 'Public API and dataset',
-            },
-            {
-              name: 'USASpending.gov',
-              url: 'https://www.usaspending.gov',
-              what: 'Federal contracts with surveillance vendors — amounts, agencies, award dates.',
-              note: 'Public federal dataset',
-            },
-            {
-              name: 'Senate LDA (Lobbying Disclosure)',
-              url: 'https://lda.senate.gov',
-              what: 'Federal lobbying filings for surveillance vendors — Senate Office of Public Records, Lobbying Disclosure Act.',
-              note: 'Live API — no auth required',
-            },
-            {
-              name: 'OpenStates',
-              url: 'https://openstates.org',
-              what: 'State surveillance legislation — bills, status, sponsors, and votes.',
-              note: 'Public API and dataset',
-            },
-            {
-              name: 'Footnote4a',
-              url: 'https://footnote4a.org',
-              what: 'ALPR journalism and investigative reporting sourced in the Activity Ticker.',
-              note: 'Journalism attribution',
-            },
-          ].map((src, i) => (
-            <div key={i} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 0, padding: 20 }}>
-              <div style={{ width: 2, height: 16, background: 'var(--border)', marginBottom: 12 }} />
-              <h3 style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
-                <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fg)', textDecoration: 'none', borderBottom: '1px solid var(--border)' }}>
-                  {src.name} <ExternalLink size={11} style={{ verticalAlign: 'middle', opacity: 0.5 }} />
+        <div className="tran-grid">
+          {sources.map((src, i) => (
+            <div key={i} className="tran-card">
+              <div className="tran-card-bar tran-card-bar--muted" />
+              <h3 className="tran-card-title tran-card-title--sm">
+                <a href={src.url} target="_blank" rel="noopener noreferrer" className="tran-source-link">
+                  {src.name} <ExternalLink size={11} className="tran-ext-icon" />
                 </a>
               </h3>
-              <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.6, marginBottom: 8 }}>{src.what}</p>
-              <p style={{ color: 'var(--muted)', fontSize: 11, opacity: 0.6, fontFamily: 'var(--mono)' }}>{src.note}</p>
+              <p className="tran-card-body">{src.what}</p>
+              <p className="tran-source-note">{src.note}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* What if we don't launch */}
-      <div style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 0, borderLeft: '3px solid var(--green)', padding: '20px 24px', marginBottom: 32,
-      }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-          <Shield size={20} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
-          <div>
-            <p style={{ fontWeight: 700, color: '#6ee7b7', marginBottom: 8, fontSize: 15 }}>
-              What happens if Citeback doesn't launch?
-            </p>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, marginBottom: 8 }}>
-              Campaign wallets are controlled by the published wallet architecture — not by us. No wallet addresses will be published until launch prerequisites are fully met. No published address means there is nowhere to send — and nothing to return.
-            </p>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }}>
-              Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the wallet system can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.
-            </p>
-          </div>
+      {/* Non-launch guarantee */}
+      <div className="tran-guarantee tran-section">
+        <Shield size={20} className="tran-guarantee-icon" />
+        <div>
+          <p className="tran-guarantee-title">What happens if Citeback doesn&apos;t launch?</p>
+          <p className="tran-card-body">
+            Campaign wallets are controlled by the published wallet architecture — not by us. No wallet addresses will be published until launch prerequisites are fully met. No published address means there is nowhere to send — and nothing to return.
+          </p>
+          <p className="tran-card-body">
+            Once wallets are live: if a campaign is abandoned, its wallet balance is governed by the community — the wallet system can only disburse per the coded rules. No funds can be redirected to us. The governance doc specifies exactly what happens to stranded campaign funds.
+          </p>
         </div>
       </div>
 
       <ThreatDisclosure />
 
-      {/* Follow the Money — federal surveillance vendor contracts */}
+      {/* Follow the Money */}
       <FollowTheMoney />
 
       {/* Disbursement log */}
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>
-          Completed Disbursements
-        </div>
-
-        <div style={{
-          textAlign: 'center', padding: '40px 32px', color: 'var(--muted)', fontSize: 14,
-          border: '1px dashed var(--border)', borderRadius: 0, lineHeight: 1.8,
-        }}>
+      <div className="tran-section">
+        <div className="tran-section-label">Completed Disbursements</div>
+        <div className="tran-empty-state">
           No disbursements yet — wallets are pending activation.<br />
-          <span style={{ fontSize: 12, opacity: 0.65 }}>Every completed campaign will be logged here with receipt and XMR transaction ID. Forever.</span>
+          <span className="tran-empty-note">Every completed campaign will be logged here with receipt and XMR transaction ID. Forever.</span>
         </div>
       </div>
 
       {/* CTA */}
       {setTab && (
-        <div style={{
-          marginTop: 32, padding: '24px', borderRadius: 0,
-          background: 'var(--bg2)', border: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 20,
-        }}>
+        <div className="tran-cta">
           <div>
-            <p style={{ fontWeight: 700, fontSize: 14, margin: '0 0 4px' }}>Transparency only means something if campaigns exist.</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>Browse the campaigns that will create this public record.</p>
+            <p className="tran-cta-title">Transparency only means something if campaigns exist.</p>
+            <p className="tran-cta-body">Browse the campaigns that will create this public record.</p>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setTab('campaigns')}
-              style={{
-                background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-                padding: '10px 22px', fontSize: 13, fontWeight: 600,
-                letterSpacing: '0.03em', cursor: 'pointer',
-                fontFamily: 'var(--font)', flexShrink: 0,
-              }}
-            >
+          <div className="tran-cta-btns">
+            <button onClick={() => setTab('campaigns')} className="tran-cta-btn tran-cta-btn--primary">
               Browse Campaigns →
             </button>
-            <button
-              onClick={() => setTab('governance')}
-              style={{
-                background: 'transparent', color: 'var(--fg)',
-                border: '1px solid var(--border)', padding: '10px 22px',
-                fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                fontFamily: 'var(--font)', flexShrink: 0,
-              }}
-            >
+            <button onClick={() => setTab('governance')} className="tran-cta-btn tran-cta-btn--secondary">
               How Disbursement Works →
             </button>
           </div>
