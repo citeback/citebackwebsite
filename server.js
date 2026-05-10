@@ -304,6 +304,8 @@ try { db.prepare('ALTER TABLE users ADD COLUMN password_version INTEGER DEFAULT 
 
 // ── Attorney account fields migration ────────────────────────────────────────
 try { db.prepare('ALTER TABLE users ADD COLUMN attorney_verified INTEGER DEFAULT 0').run() } catch {}
+// Wallet audit trail — tracks when operators change wallet addresses post-activation
+try { db.prepare('ALTER TABLE campaigns ADD COLUMN wallet_changed_at TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE users ADD COLUMN role TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_created INTEGER DEFAULT 0').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
@@ -1598,7 +1600,7 @@ const server = http.createServer(async (req, res) => {
       const reputationPoints = userId ? (newCamera ? 2 : 1) : 0
 
       // C2PA verified = straight to approved, live on map immediately
-      const id = `s_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
+      const id = `s_${randomUUID()}`
       appendRecord('sightings.jsonl', {
         id, cameraType, address, city, state,
         lat: finalLat, lng: finalLng, notes,
@@ -1633,7 +1635,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Expert directory application ─────────────────────────────────────────
-    // ── Expert directory application ─────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/registry') {
     try {
       const body = await parseBody(req)
@@ -2073,6 +2074,7 @@ const server = http.createServer(async (req, res) => {
       operatorName: c.operator_name, operatorBio: c.operator_bio,
       walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
       claimedAt: c.claimed_at, activatedAt: c.activated_at,
+      walletChangedAt: c.wallet_changed_at || null,
     }))
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify(result))
@@ -2121,6 +2123,12 @@ const server = http.createServer(async (req, res) => {
     const updXmr = fields.wallet_xmr !== undefined ? fields.wallet_xmr : campaign.wallet_xmr
     const updZano = fields.wallet_zano !== undefined ? fields.wallet_zano : campaign.wallet_zano
     if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
+    // Audit trail: log wallet changes on active campaigns (important for donor trust)
+    const walletChanged = (fields.wallet_xmr !== undefined || fields.wallet_zano !== undefined)
+    if (walletChanged && campaign.status === 'active') {
+      fields.wallet_changed_at = new Date().toISOString()
+      console.log(`[AUDIT] Campaign ${id} wallet changed by operator ${claims.userId} at ${fields.wallet_changed_at}`)
+    }
     const setClauses = Object.keys(fields).map(k => k + ' = ?').join(', ')
     db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(fields), id)
     const updated = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
