@@ -1,11 +1,11 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 04:50 MDT (overnight blitz — 60+ commits)*
+*Last updated: 2026-05-10 05:30 MDT (overnight blitz round 2 — ongoing)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
 
 ## Current State
-**Phase: Pre-launch. Platform hardened, CSS migration 80% complete, functionally solid.**
+**Phase: Pre-launch. Platform hardened, CSS migration 85%+ complete, functionally solid.**
 - Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
 - Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
 - 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).
@@ -21,7 +21,8 @@ cd /workspace/deflect && git pull && git log --oneline -5
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
 2. **ICANN domain verification** — May 14 deadline
 3. **ToS attorney review** — needs entity first
-4. **First real operator E2E test** — claim → wallet → activate
+4. **CameraMap CSS migration** — 137 inline styles blocking `unsafe-inline` CSP removal (dedicated session needed)
+5. **First real operator E2E test** — claim → wallet → activate
 
 ## What's Done (don't re-audit)
 
@@ -31,6 +32,14 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - CSP img-src tightened, interest counts → SQLite
 - Magic bytes validation on file uploads
 - EXIF stripping from served photos
+- Admin sessions IP-bound, brute force lockout
+- JWT: expiry enforced, alg:none blocked
+- Passkey sign counts checked (replay protection)
+- Timing-safe login (DUMMY_HASH for unknown usernames)
+- AES-256-GCM encrypted recovery emails at rest
+- DEFLECT → OFF_TOPIC brand rename in server.js
+- Content-Type added to all 429 responses
+- Caddy `via` header removed (info disclosure)
 
 ### Server Features
 - GET/PATCH /admin/campaigns — status/deadline/goal management
@@ -42,10 +51,16 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Tier-up emails (Tier 0→1, 1→2, 2→3)
 - Reverse geocode on sighting GPS submissions
 - OSM camera update cron (weekly Sunday 3AM)
+- Admin audit log (all admin actions recorded to SQLite)
 
 ### Frontend
-- CSS migration: 1585 → 317 inline styles (80% reduction)
-- 15/41 components now have 0 inline styles
+- CSS migration: 1585 → ~230 inline styles (excl CameraMap's 137)
+  - typeColors/tagColors chips → CSS classes (.tc-*, .ff-tag--)
+  - Strength meters → CSS classes (.strength-level-*, .strength-label-*)
+  - AdminPanel status colors → CSS classes (.ap-status-*)
+  - Governance participants → CSS classes (.gov-p-*, .gov-p-label-*)
+  - Batch migration of 15+ other components
+- A11y: htmlFor/id on ClaimAccountPage + ResetPasswordPage + ProposeModal inputs
 - React ErrorBoundary on CameraMap + AI chat
 - AI chat campaign goals fixed (were wrong)
 - LiveFeed camera count fixed (92,848 → 95,045)

@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-09*
+*Last updated: 2026-05-10*
 
 ---
 
@@ -218,10 +218,10 @@ ssh root@77.42.124.157 'curl -s http://localhost:11435/stats'
 ### 🔴 BLOCKERS (must happen before launch)
 1. **Wyoming DAO LLC** — Scott files at wyomingbusiness.gov ($100). Blocks ToS legitimacy.
 2. **Attorney review of ToS** — needs entity first, then attorney signs off
-3. **Remove `unsafe-inline` from style-src CSP** — requires all inline styles → CSS
+3. **Remove `unsafe-inline` from style-src CSP** — CameraMap is the blocker (137 inline styles, needs dedicated migration session)
 
 ### 🟠 HIGH PRIORITY
-4. Forgot-username flow (server endpoint + UI in AccountModal)
+4. **CameraMap CSS migration** — photo panel, layer control, legend panels all need inline styles → CSS (create CameraMap.css)
 5. Attorney pipeline E2E test (apply → admin approve → claim token → badge)
 6. CARTO map tile privacy (document in privacy policy or proxy)
 7. First real campaign onboarding (operators need a known-good flow)
@@ -265,7 +265,7 @@ Track bugs found but not yet fixed here:
 
 | Date | Issue | Status |
 |------|-------|--------|
-| 2026-05-09 | `unsafe-inline` in style-src CSP | In progress — 398→230 inline styles remain (excl 168 Leaflet noise) |
+| 2026-05-09 | `unsafe-inline` in style-src CSP | In progress — CameraMap 137 styles is the blocker (needs dedicated session) |
 | 2026-05-09 | "forgot username" flow | ✅ DONE (server endpoint + UI in AccountModal) |
 | 2026-05-09 | CARTO tiles expose user IP to third party | Documented in privacy policy only |
 | 2026-05-09 | Attorney pipeline needs E2E test | In progress |
@@ -273,8 +273,18 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | EXIF not stripped from uploaded photos | ✅ FIXED (stripJpegExif() added, strips GPS/camera info, preserves APP11/C2PA) |
 | 2026-05-10 | Magic bytes not validated on upload | ✅ FIXED (validateMagicBytes() added) |
 | 2026-05-10 | /claim-account returned 500 on empty body | ✅ FIXED (returns 400) |
-| 2026-05-10 | CameraMap.jsx 168 inline Leaflet styles | ⚠️ PERMANENTLY SKIP — Leaflet injects these internally, cannot be CSS classes |
+| 2026-05-10 | CameraMap.jsx 137 non-Leaflet inline styles | ⚠️ NEEDS DEDICATED SESSION — photo panel, layer control, legend all have convertible styles |
 | 2026-05-10 | ReputationPage inputs missing labels | ✅ FIXED (added aria-accessible labels) |
+| 2026-05-10 | DEFLECT old brand name in server.js variable | ✅ FIXED (renamed to OFF_TOPIC) |
+| 2026-05-10 | 429 responses missing Content-Type header | ✅ FIXED (4 endpoints updated) |
+| 2026-05-10 | Caddy `via` header reveals proxy software | ✅ FIXED (-Via in Caddyfile) |
+| 2026-05-10 | typeColors/tagColors as inline styles | ✅ FIXED (CSS classes .tc-*, .ff-tag--*) |
+| 2026-05-10 | Strength meter inline styles (3 components) | ✅ FIXED (CSS classes .strength-level-*, .strength-label-*) |
+| 2026-05-10 | AdminPanel attorney status inline colors | ✅ FIXED (CSS classes .ap-status-*) |
+| 2026-05-10 | Governance participant inline borderLeft/color | ✅ FIXED (CSS classes .gov-p-*, .gov-p-label-*) |
+| 2026-05-10 | ClaimAccountPage labels not linked to inputs | ✅ FIXED (htmlFor/id added) |
+| 2026-05-10 | ResetPasswordPage labels not linked to inputs | ✅ FIXED (htmlFor/id added) |
+| 2026-05-10 | Attorney application email stored plaintext | ⚠️ LOW RISK — attorney emails are professional contact info (already public for barred attorneys) |
 
 ---
 
