@@ -398,11 +398,10 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               <div className="am-strength-row">
                 <div className="am-strength-bar-track">
                   <div
-                    className="am-strength-bar-fill"
-                    style={{ width: `${(strength.score/4)*100}%`, background: strength.color }}
+                    className={`am-strength-bar-fill strength-level-${strength.score}`}
                   />
                 </div>
-                <span className="am-strength-label" style={{ color: strength.color }}>{strength.label}</span>
+                <span className={`am-strength-label strength-label-${strength.score}`}>{strength.label}</span>
               </div>
             )}
 

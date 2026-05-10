@@ -34,10 +34,7 @@ export default function CampaignCard({ campaign, onClick }) {
     >
       {/* Top row */}
       <div className="card-top">
-        <span
-          className="card-type-badge"
-          style={{ background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text }}
-        >
+        <span className={`card-type-badge tc-${campaign.type}`}>
           {tc.label}
         </span>
 

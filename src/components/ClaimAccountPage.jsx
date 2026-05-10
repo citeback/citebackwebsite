@@ -115,10 +115,11 @@ export default function ClaimAccountPage({ setTab }) {
 
       <form onSubmit={handleSubmit} className="cla-form">
         <div>
-          <label className="cla-label">Username</label>
+          <label htmlFor="cla-username" className="cla-label">Username</label>
           <div className="cla-input-wrapper">
             <User size={14} className="cla-input-icon" />
             <input
+              id="cla-username"
               type="text"
               className={`cla-input cla-input--icon-left${username && !usernameValid ? ' cla-input--error' : ''}`}
               placeholder="3–20 chars, letters/numbers/_"
@@ -136,10 +137,11 @@ export default function ClaimAccountPage({ setTab }) {
         </div>
 
         <div>
-          <label className="cla-label">Password</label>
+          <label htmlFor="cla-password" className="cla-label">Password</label>
           <div className="cla-input-wrapper">
             <Lock size={14} className="cla-input-icon" />
             <input
+              id="cla-password"
               type={showPw ? 'text' : 'password'}
               className="cla-input cla-input--icon-both"
               placeholder="At least 8 characters"
@@ -159,17 +161,18 @@ export default function ClaimAccountPage({ setTab }) {
         {password.length > 0 && (
           <div className="cla-strength-row">
             <div className="cla-strength-track">
-              <div className="cla-strength-fill" style={{ width: `${(strength.score/4)*100}%`, background: strength.color }} />
+              <div className={`cla-strength-fill strength-level-${strength.score}`} />
             </div>
-            <span className="cla-strength-label" style={{ color: strength.color }}>{strength.label}</span>
+            <span className={`cla-strength-label strength-label-${strength.score}`}>{strength.label}</span>
           </div>
         )}
 
         <div>
-          <label className="cla-label">Confirm Password</label>
+          <label htmlFor="cla-confirm-pw" className="cla-label">Confirm Password</label>
           <div className="cla-input-wrapper">
             <Lock size={14} className="cla-input-icon" />
             <input
+              id="cla-confirm-pw"
               type={showPw ? 'text' : 'password'}
               className={`cla-input cla-input--icon-left${confirmPassword && !passwordsMatch ? ' cla-input--error' : ''}`}
               placeholder="Re-enter password"

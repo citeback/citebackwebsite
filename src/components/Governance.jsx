@@ -140,13 +140,13 @@ export default function Governance({ setTab }) {
       <Section id="participants" title="Participants" icon={Users}>
         <div className="gov-participant-list">
           {[
-            { label: 'Contributors', color: 'var(--green)', desc: 'Anyone who sends Monero or Zano to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
-            { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors - not agents or employees.' },
-            { label: 'The Community', color: '#60a5fa', desc: 'Active contributors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
-            { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator - manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
+            { label: 'Contributors', cls: 'contributors', desc: 'Anyone who sends Monero or Zano to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
+            { label: 'Operators', cls: 'operators', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors - not agents or employees.' },
+            { label: 'The Community', cls: 'community', desc: 'Active contributors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
+            { label: 'Platform Entity (Wyoming DAO LLC)', cls: 'platform', desc: 'The human operator - manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
           ].map(p => (
-            <div key={p.label} className="gov-participant-card" style={{ borderLeft: `3px solid ${p.color}` }}>
-              <strong style={{ color: p.color }}>{p.label}</strong>
+            <div key={p.label} className={`gov-participant-card gov-p--${p.cls}`}>
+              <strong className={`gov-p-label--${p.cls}`}>{p.label}</strong>
               <p className="gov-participant-desc">{p.desc}</p>
             </div>
           ))}

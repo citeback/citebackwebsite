@@ -8984,3 +8984,39 @@ img {
 
 /* ── Governance ──────────────────────────────────────────── */
 .gov-participant-border-left { border-left: 3px solid; }
+/* Participant card border + label color (hardcoded set) */
+.gov-p--contributors { border-left: 3px solid var(--green); }
+.gov-p--operators    { border-left: 3px solid #a78bfa; }
+.gov-p--community    { border-left: 3px solid #60a5fa; }
+.gov-p--platform     { border-left: 3px solid #f59e0b; }
+.gov-p-label--contributors { color: var(--green); }
+.gov-p-label--operators    { color: #a78bfa; }
+.gov-p-label--community    { color: #60a5fa; }
+.gov-p-label--platform     { color: #f59e0b; }
+
+/* ── Type badge classes (campaign.type → CSS class) ─────── */
+.tc-billboard { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #ff6b6b; }
+.tc-legal     { background: rgba(52,152,219,0.1); border: 1px solid rgba(52,152,219,0.3); color: #5dade2; }
+.tc-foia      { background: rgba(155,89,182,0.1); border: 1px solid rgba(155,89,182,0.3); color: #bb8fce; }
+.tc-verify    { background: rgba(243,156,18,0.1); border: 1px solid rgba(243,156,18,0.3); color: #f39c12; }
+
+/* ── FrontlineFunds tag badge classes ──────────────────────── */
+.ff-tag--class-action { background: rgba(230,126,34,0.1); border: 1px solid rgba(230,126,34,0.3); color: #e67e22; }
+.ff-tag--lawsuit      { background: rgba(52,152,219,0.1); border: 1px solid rgba(52,152,219,0.3); color: #5dade2; }
+.ff-tag--appellate    { background: rgba(155,89,182,0.1); border: 1px solid rgba(155,89,182,0.3); color: #bb8fce; }
+.ff-tag--advocacy     { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); color: #2ecc71; }
+
+/* ── Password strength meter levels (score 1–4) ─────────── */
+.strength-level-1 { width: 25%;  background: #e63946; }
+.strength-level-2 { width: 50%;  background: #f4a261; }
+.strength-level-3 { width: 75%;  background: #2a9d8f; }
+.strength-level-4 { width: 100%; background: #6ee7b7; }
+.strength-label-1 { color: #e63946; }
+.strength-label-2 { color: #f4a261; }
+.strength-label-3 { color: #2a9d8f; }
+.strength-label-4 { color: #6ee7b7; }
+
+/* ── AdminPanel attorney status colors ─────────────────────── */
+.ap-status-pending  { color: #f59e0b; }
+.ap-status-approved { color: #10b981; }
+.ap-status-rejected { color: #e63946; }

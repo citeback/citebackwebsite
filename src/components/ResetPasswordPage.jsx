@@ -101,10 +101,11 @@ export default function ResetPasswordPage({ setTab }) {
 
       <form onSubmit={handleSubmit} className="rp2-form">
         <div>
-          <label className="rp2-label">New Password</label>
+          <label htmlFor="rp2-new-pw" className="rp2-label">New Password</label>
           <div className="rp2-input-wrapper">
             <Lock size={14} className="rp2-input-icon" />
             <input
+              id="rp2-new-pw"
               type={showPw ? 'text' : 'password'}
               className="rp2-input rsp-input--icon-both"
               placeholder="At least 8 characters"
@@ -125,17 +126,18 @@ export default function ResetPasswordPage({ setTab }) {
         {password.length > 0 && (
           <div className="rp2-strength-row">
             <div className="rp2-strength-track">
-              <div className="rsp-strength-fill" style={{ width: `${(strength.score/4)*100}%`, background: strength.color }} />
+              <div className={`rsp-strength-fill strength-level-${strength.score}`} />
             </div>
-            <span className="rsp-strength-label" style={{ color: strength.color }}>{strength.label}</span>
+            <span className={`rsp-strength-label strength-label-${strength.score}`}>{strength.label}</span>
           </div>
         )}
 
         <div>
-          <label className="rp2-label">Confirm New Password</label>
+          <label htmlFor="rp2-confirm-pw" className="rp2-label">Confirm New Password</label>
           <div className="rp2-input-wrapper">
             <Lock size={14} className="rp2-input-icon" />
             <input
+              id="rp2-confirm-pw"
               type={showPw ? 'text' : 'password'}
               className={`rp2-input rsp-input--icon-left${confirmPassword && !passwordsMatch ? ' rsp-input--error' : ''}`}
               placeholder="Re-enter new password"

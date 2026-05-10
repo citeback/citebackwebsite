@@ -178,8 +178,6 @@ function AttorneyCard({ app, onReview, loading }) {
   let barResult = null
   try { barResult = app.bar_result ? JSON.parse(app.bar_result) : null } catch {}
   const isReviewable = app.status === 'pending'
-  const statusColor = { pending: '#f59e0b', approved: '#10b981', rejected: '#e63946' }[app.status] || 'var(--muted)'
-
   return (
     <div className="ap-card">
       <div className="ap-card-header">
@@ -191,7 +189,7 @@ function AttorneyCard({ app, onReview, loading }) {
         </div>
         <div className="ap-attorney-meta">
           {new Date(app.submitted_at).toLocaleString()}<br />
-          <span className="ap-attorney-status" style={{ color: statusColor }}>{app.status}</span>
+          <span className={`ap-attorney-status ap-status-${app.status}`}>{app.status}</span>
           {app.status === 'approved' && (
             <span className={`ap-attorney-acct ${app.account_created ? 'ap-attorney-acct--created' : 'ap-attorney-acct--missing'}`}>
               {app.account_created ? '✓ acct created' : 'no acct'}

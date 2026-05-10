@@ -78,11 +78,12 @@ const funds = [
   },
 ]
 
-const tagColors = {
-  'Class Action': { bg: 'rgba(230,126,34,0.1)', border: 'rgba(230,126,34,0.3)', text: '#e67e22' },
-  'Lawsuit': { bg: 'rgba(52,152,219,0.1)', border: 'rgba(52,152,219,0.3)', text: '#5dade2' },
-  'Appellate Case': { bg: 'rgba(155,89,182,0.1)', border: 'rgba(155,89,182,0.3)', text: '#bb8fce' },
-  'Advocacy Campaign': { bg: 'rgba(46,204,113,0.1)', border: 'rgba(46,204,113,0.3)', text: '#2ecc71' },
+// Tag slug maps to CSS class .ff-tag--{slug} (defined in App.css)
+const tagSlug = {
+  'Class Action': 'class-action',
+  'Lawsuit': 'lawsuit',
+  'Appellate Case': 'appellate',
+  'Advocacy Campaign': 'advocacy',
 }
 
 export default function FrontlineFunds() {
@@ -99,17 +100,14 @@ export default function FrontlineFunds() {
 
       <div className="ff-list">
         {funds.map(f => {
-          const tc = tagColors[f.tag] || tagColors['Lawsuit']
+          const slug = tagSlug[f.tag] || 'lawsuit'
           return (
             <div key={f.id} className="ff-card">
               {/* Header */}
               <div className="ff-card-header">
                 <div className="ff-card-header-left">
                   <div className="ff-tag-row">
-                    <span
-                      className="ff-tag"
-                      style={{ background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text }}
-                    >
+                    <span className={`ff-tag ff-tag--${slug}`}>
                       {f.tag}
                     </span>
                     <span className="ff-status">{f.status}</span>

@@ -165,10 +165,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
         {/* Header */}
         <div className="cm-header">
           <div className="cm-header-top">
-            <span
-              className="cm-type-badge"
-              style={{ background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text }}
-            >{tc.label}</span>
+            <span className={`cm-type-badge tc-${campaign.type}`}>{tc.label}</span>
             <button onClick={onClose} aria-label="Close campaign details" className="cm-close-btn">
               <X size={20} />
             </button>
