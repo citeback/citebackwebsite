@@ -106,16 +106,12 @@ const FEDERAL_BILLS_FALLBACK = [
 ]
 
 function StatusBadge({ status }) {
-  const color =
-    /signed|enacted|law/i.test(status) ? 'var(--accent)' :
-    /passed/i.test(status) ? '#2980b9' :
-    /introduced/i.test(status) ? 'var(--muted)' :
-    'var(--muted)'
+  const cls =
+    /signed|enacted|law/i.test(status) ? 'sf2-status-badge--signed' :
+    /passed/i.test(status) ? 'sf2-status-badge--passed' :
+    'sf2-status-badge--introduced'
   return (
-    <span
-      className="sf2-status-badge"
-      style={{ color, borderColor: color }}
-    >
+    <span className={`sf2-status-badge ${cls}`}>
       {status}
     </span>
   )
@@ -560,7 +556,7 @@ function CasesSkeleton() {
     <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
         <div key={i} className="sf2-skel-item">
-          <div className="sf2-skel-bar-lg" style={{ width: `${60 + (i % 3) * 15}%` }} />
+          <div className={`sf2-skel-bar-lg sf2-skel-w-${(i % 3) + 1}a`} />
           <div className="sf2-skel-bar-sm sf2-skel-bar-sm--35" />
         </div>
       ))}
@@ -573,7 +569,7 @@ function BillsSkeleton() {
     <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
         <div key={i} className="sf2-skel-item">
-          <div className="sf2-skel-bar-lg" style={{ width: `${55 + (i % 3) * 15}%` }} />
+          <div className={`sf2-skel-bar-lg sf2-skel-w-${(i % 3) + 1}b`} />
           <div className="sf2-skel-bar-sm sf2-skel-bar-sm--45" />
         </div>
       ))}
@@ -586,7 +582,7 @@ function FederalBillsSkeleton() {
     <div className="sf2-fed-skel-wrap">
       {[...Array(4)].map((_, i) => (
         <div key={i} className="sf2-fed-skel-item">
-          <div className="sf2-skel-bar-lg" style={{ width: `${50 + (i % 3) * 18}%` }} />
+          <div className={`sf2-skel-bar-lg sf2-skel-w-${(i % 3) + 1}c`} />
           <div className="sf2-skel-bar-sm sf2-skel-bar-sm--55" />
         </div>
       ))}

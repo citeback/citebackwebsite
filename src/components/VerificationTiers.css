@@ -18,6 +18,11 @@
   padding: 5px 12px;
   font-size: 13px;
 }
+/* Per-tier badge colors */
+.vt-badge--osm       { background: rgba(230,57,70,0.12); border: 1px solid rgba(230,57,70,0.3); color: #e63946; }
+.vt-badge--submitted { background: rgba(243,156,18,0.12); border: 1px solid rgba(243,156,18,0.3); color: #f39c12; }
+.vt-badge--consensus { background: rgba(46,204,113,0.12); border: 1px solid rgba(46,204,113,0.3); color: #2ecc71; }
+.vt-badge--c2pa      { background: rgba(241,196,15,0.12); border: 1px solid rgba(241,196,15,0.3); color: #f1c40f; }
 
 /* ThreatDisclosure */
 .vt-threat {

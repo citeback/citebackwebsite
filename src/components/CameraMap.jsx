@@ -1192,24 +1192,11 @@ export default function CameraMap() {
 
       {/* State count panel */}
       {showStatPanel && Object.keys(stateCounts).length > 0 && (
-        <div style={{
-          background: 'var(--bg2)', border: '1px solid var(--border)',
-          borderRadius: 12, padding: 16, marginBottom: 12,
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 6,
-          maxHeight: 240, overflowY: 'auto',
-        }}>
+        <div className="cmap-state-panel">
           {Object.entries(stateCounts).sort((a,b) => b[1]-a[1]).map(([st, cnt]) => (
-            <button key={st} onClick={() => setSelectedState(st)} style={{
-              background: 'var(--bg3)', border: '1px solid var(--border)',
-              borderRadius: 7, padding: '7px 10px', cursor: 'pointer',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              transition: 'border-color 0.15s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
-            >
-              <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{st}</span>
-              <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600 }}>{cnt.toLocaleString()}</span>
+            <button key={st} onClick={() => setSelectedState(st)} className="cmap-state-btn">
+              <span className="cmap-state-btn-name">{st}</span>
+              <span className="cmap-state-btn-count">{cnt.toLocaleString()}</span>
             </button>
           ))}
         </div>
@@ -1217,26 +1204,26 @@ export default function CameraMap() {
 
       {/* Layer toggle hint */}
       <div className="cmap-layer-hint">
-        <span style={{ fontSize: 14 }}>🔍</span>
+        <span className="cmap-hint-icon">🔍</span>
         <span>
-          <strong style={{ color: 'var(--text)' }}>6 surveillance layers available</strong> — click the{' '}
-          <strong style={{ color: 'var(--text)' }}>Layers</strong> button in the top-right of the map to toggle
+          <strong className="cmap-text-normal">6 surveillance layers available</strong> — click the{' '}
+          <strong className="cmap-text-normal">Layers</strong> button in the top-right of the map to toggle
           Facial Recognition, Cell-Site Simulators, ShotSpotter, Police Drones, Predictive Policing, and Community Victories.
         </span>
       </div>
 
       {/* Source notice */}
       <div className="cmap-source-notice">
-        <CheckCircle size={14} style={{ color: '#5dade2', flexShrink: 0, marginTop: 1 }} />
+        <CheckCircle size={14} className="cmap-icon-blue-shrink" />
         <span>
-          Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — {cameraCount} ALPR cameras mapped nationally.
+          Live camera data pulled from <strong className="cmap-text-normal">OpenStreetMap</strong> via Overpass API — {cameraCount} ALPR cameras mapped nationally.
           Zoom in to load cameras in any area.
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-          <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+        <div className="cmap-source-notice-links">
+          <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener noreferrer" className="cmap-source-link-accent">
             Add a camera <ExternalLink size={11} />
           </a>
-          <a href="https://donate.openstreetmap.org/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+          <a href="https://donate.openstreetmap.org/" target="_blank" rel="noopener noreferrer" className="cmap-source-link-muted">
             Support OSM <ExternalLink size={11} />
           </a>
         </div>
@@ -1244,7 +1231,7 @@ export default function CameraMap() {
 
       {/* Loading bar */}
       {loading && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 12, color: 'var(--accent)' }}>
+        <div className="cmap-loading-bar">
           <Loader size={13} className="spinning" />
           Loading cameras in viewport from OpenStreetMap…
 
@@ -1252,16 +1239,16 @@ export default function CameraMap() {
       )}
 
       {osmCameras.length === 0 && !loading && (
-        <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Radio size={12} style={{ color: '#5dade2' }} />
+        <div className="cmap-no-cameras">
+          <Radio size={12} className="cmap-text-blue" />
           Zoom in to any US city to load live ALPR cameras from OpenStreetMap
         </div>
       )}
 
       {osmCameras.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 12, color: 'var(--muted)' }}>
-          <Radio size={12} style={{ color: '#5dade2' }} />
-          <span><strong style={{ color: 'var(--text)' }}>{osmCameras.length.toLocaleString()}</strong> cameras loaded in current view from OpenStreetMap</span>
+        <div className="cmap-cameras-loaded">
+          <Radio size={12} className="cmap-text-blue" />
+          <span><strong className="cmap-text-normal">{osmCameras.length.toLocaleString()}</strong> cameras loaded in current view from OpenStreetMap</span>
         </div>
       )}
 
@@ -1269,57 +1256,46 @@ export default function CameraMap() {
       {showForm && (
         <div className="cmap-form-container">
           {submitted ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--green)', fontWeight: 600 }}>
+            <div className="cmap-form-submitted">
               <CheckCircle size={18} /> Verified and live on the map.
             </div>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--accent)', fontSize: 13, marginBottom: 12 }}>
+              <div className="cmap-form-alert">
                 <AlertCircle size={13} /> C2PA photo required — location is read from the photo automatically.
               </div>
-              <div style={{ marginTop: 12 }}>
+              <div className="cmap-form-inner">
                 <C2PAExplainer />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label style={{
-                    display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                    background: form.photoFile ? 'rgba(241,196,15,0.1)' : 'var(--bg3)',
-                    border: `1px solid ${form.photoFile ? 'rgba(241,196,15,0.4)' : 'var(--border)'}`,
-                    padding: '9px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                    color: form.photoFile ? '#f1c40f' : 'var(--muted)',
-                  }}>
+                <div className="cmap-form-fields">
+                  <label className={`cmap-photo-label${form.photoFile ? ' cmap-photo-label--file' : ' cmap-photo-label--empty'}`}>
                     <Upload size={14} />
                     {mapGpsStatus === 'reading' ? 'Reading GPS…'
                       : mapGpsStatus === 'found' ? (form.lat === 'zip' ? '📍 Proofmode bundle — GPS from proof.json' : `📍 GPS confirmed · ${parseFloat(form.lat).toFixed(5)}, ${parseFloat(form.lng).toFixed(5)}`)
                       : mapGpsStatus === 'none' ? '⚠️ No GPS in photo — try Proofmode'
                       : form.photoFile ? `🏆 ${form.photoFile.name}`
                       : 'Attach C2PA Photo or Proofmode ZIP'}
-                    <input type="file" accept="image/*,application/zip,application/x-zip-compressed,.zip" style={{ display: 'none' }}
+                    <input type="file" accept="image/*,application/zip,application/x-zip-compressed,.zip" className="cmap-file-hidden"
                       onChange={handleMapPhoto}
                     />
                   </label>
                   {mapGpsStatus === 'none' && (
-                    <div style={{ fontSize: 11, color: '#f59e0b', padding: '6px 10px', background: 'rgba(245,158,11,0.08)', borderRadius: 6, lineHeight: 1.5 }}>
+                    <div className="cmap-gps-warn">
                       No GPS found. Enable location in Proofmode before shooting, or use a Samsung Galaxy S24+ / Pixel 10.
                     </div>
                   )}
                   {mapGpsStatus === 'found' && (
-                    <input className="cmap-main-input" style={{ fontSize: 12 }} placeholder="Notes (optional) — vendor, mounting, direction"
+                    <input className="cmap-main-input cmap-main-input--sm" placeholder="Notes (optional) — vendor, mounting, direction"
                       value={form.notes || ''} onChange={e => set('notes', e.target.value)} />
                   )}
                   {submitError && (
-                    <div style={{ fontSize: 12, color: 'var(--accent)', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 6, padding: '8px 12px' }}>
+                    <div className="cmap-submit-error">
                       ⚠️ {submitError}
                     </div>
                   )}
                   <button onClick={submitCamera}
                     disabled={!form.photoFile || mapGpsStatus !== 'found' || submitting}
-                    style={{
-                      background: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? 'var(--accent)' : 'var(--bg3)',
-                      border: 'none',
-                      color: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? '#fff' : 'var(--muted)',
-                      padding: '9px 18px', borderRadius: 7, fontWeight: 700, fontSize: 13,
-                      cursor: (form.photoFile && mapGpsStatus === 'found' && !submitting) ? 'pointer' : 'not-allowed',
-                    }}>
+                    className={`cmap-submit-sighting-btn${(form.photoFile && mapGpsStatus === 'found' && !submitting) ? ' cmap-submit-sighting-btn--ready' : ' cmap-submit-sighting-btn--disabled'}`}
+                  >
                     {submitting ? 'Uploading…' : 'Submit Verified Sighting'}
                   </button>
                 </div>
@@ -1349,15 +1325,15 @@ export default function CameraMap() {
               }}
             >
               <Popup>
-                <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 230, padding: 4 }}>
-                  <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>{c.location}</div>
-                  <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>Type: {c.type}</div>
-                  {c.notes && <div style={{ fontSize: 12, color: '#555', marginBottom: 8, lineHeight: 1.5 }}>{c.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>Reported: {c.reported}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: c.confirmed ? '#2ecc71' : '#f39c12', marginBottom: 6 }}>
+                <div className="cmap-popup-wrap">
+                  <div className="cmap-popup-title">{c.location}</div>
+                  <div className="cmap-popup-type">Type: {c.type}</div>
+                  {c.notes && <div className="cmap-popup-notes">{c.notes}</div>}
+                  <div className="cmap-popup-reported">Reported: {c.reported}</div>
+                  <div className={c.confirmed ? 'cmap-popup-confirmed-yes' : 'cmap-popup-confirmed-no'}>
                     {c.confirmed ? '✓ Confirmed — public records' : '⚠ Unverified — under review'}
                   </div>
-                  {c.source && <div style={{ fontSize: 10, color: '#777', lineHeight: 1.4 }}>Source: {c.source}</div>}
+                  {c.source && <div className="cmap-popup-source">Source: {c.source}</div>}
                 </div>
               </Popup>
             </CircleMarker>
@@ -1382,22 +1358,20 @@ export default function CameraMap() {
               }}
             >
               <Popup>
-                <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 230, padding: 4 }}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 5, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#f59e0b', marginBottom: 8, letterSpacing: '0.05em' }}>
-                    ⭐ CITEBACK EXCLUSIVE
-                  </div>
+                <div className="cmap-popup-cb-wrap">
+                  <div className="cmap-badge-cb-exclusive">⭐ CITEBACK EXCLUSIVE</div>
                   {s.photoFilename && (
                     <img
                       src={`${AI_URL}/photos/${s.photoFilename}`}
                       alt="C2PA verified sighting"
-                      style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 8, display: 'block' }}
+                      className="cmap-popup-sighting-img"
                     />
                   )}
-                  <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
-                  <div style={{ fontSize: 11, color: '#888', marginBottom: 6 }}>📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
-                  {s.notes && <div style={{ fontSize: 12, color: '#666', marginBottom: 6, lineHeight: 1.5 }}>{s.notes}</div>}
-                  <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 600, marginBottom: 4 }}>★ Not in OpenStreetMap or any other database</div>
-                  <div style={{ fontSize: 10, color: '#10b981', fontWeight: 600 }}>🔒 C2PA cryptographically verified</div>
+                  <div className="cmap-popup-camera-type">{CAMERA_TYPE_LABELS[s.cameraType] || s.cameraType}</div>
+                  <div className="cmap-popup-coords">📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
+                  {s.notes && <div className="cmap-popup-sighting-notes">{s.notes}</div>}
+                  <div className="cmap-popup-exclusive-note">★ Not in OpenStreetMap or any other database</div>
+                  <div className="cmap-popup-c2pa-note">🔒 C2PA cryptographically verified</div>
                 </div>
               </Popup>
             </CircleMarker>
@@ -1427,30 +1401,18 @@ export default function CameraMap() {
           <button
             onClick={() => setOverlayPanelOpen(o => !o)}
             title="Surveillance layer toggles"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              background: overlayPanelOpen ? 'rgba(168,85,247,0.12)' : 'var(--card-bg)',
-              border: `1px solid ${overlayPanelOpen ? 'rgba(168,85,247,0.5)' : 'var(--border)'}`,
-              color: overlayPanelOpen ? '#a855f7' : 'var(--fg)',
-              padding: '7px 12px', borderRadius: 8,
-              fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              backdropFilter: 'blur(8px)',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
-            }}
+            className={`cmap-overlay-btn${overlayPanelOpen ? ' cmap-overlay-btn--open' : ' cmap-overlay-btn--closed'}`}
           >
             <Layers size={13} />
             Layers
-            <span style={{
-              background: 'rgba(168,85,247,0.25)', color: '#a855f7',
-              borderRadius: 4, padding: '1px 6px', fontSize: 10, fontWeight: 700,
-            }}>{activeLayers.size}</span>
+            <span className="cmap-overlay-badge">{activeLayers.size}</span>
           </button>
 
           {overlayPanelOpen && (
             <div className="cmap-overlay-panel layers-scroll">
               <div className="cmap-overlay-panel-header">
-                <Shield size={13} style={{ color: '#a855f7' }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg)', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
+                <Shield size={13} className="cmap-text-purple" />
+                <span className="cmap-overlay-panel-title-text">SURVEILLANCE LAYERS</span>
               </div>
 
               <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} communitySightings={communitySightings} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} />
@@ -1458,19 +1420,19 @@ export default function CameraMap() {
               <div className="cmap-overlay-panel-sources">
                 Sources:{' '}
                 <a href="https://atlasofsurveillance.org/search" target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                  className="cmap-overlay-source-link"
                 >EFF Atlas</a>
                 {' · '}
                 <a href="https://www.law.georgetown.edu/privacy-technology-center/publications/the-perpetual-line-up/" target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                  className="cmap-overlay-source-link"
                 >Georgetown Law</a>
                 {' · '}
                 <a href="https://sls.eff.org/technologies/cell-site-simulators-imsi-catchers" target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                  className="cmap-overlay-source-link"
                 >EFF/ACLU CSS</a>
                 {' · '}
                 <a href="https://dronecenter.bard.edu/projects/public-safety-drones-project/" target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#6b7280', textDecoration: 'underline' }}
+                  className="cmap-overlay-source-link"
                 >Bard Drone Ctr</a>
               </div>
             </div>
@@ -1487,14 +1449,14 @@ export default function CameraMap() {
                 pathOptions={{ fillColor: '#2ecc71', fillOpacity: 0.92, color: '#27ae60', weight: 2, opacity: 1 }}
               >
                 <Popup>
-                  <div style={{ fontFamily: 'Inter, sans-serif', minWidth: 240, maxWidth: 300, padding: 4 }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: '#2ecc71', background: 'rgba(46,204,113,0.12)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: 4, padding: '2px 7px', marginBottom: 8, display: 'inline-block', letterSpacing: '0.08em' }}>✊ COMMUNITY VICTORY</div>
-                    <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{agency.name}</div>
-                    <div style={{ fontSize: 12, color: '#666', marginBottom: 6 }}>📍 {agency.city}, {agency.state}</div>
-                    <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}><strong>Was:</strong> {layer.label}</div>
-                    {agency.vendor && <div style={{ fontSize: 11, color: '#555', marginBottom: 6 }}><strong>Vendor:</strong> {agency.vendor}</div>}
-                    {agency.notes && <div style={{ fontSize: 11, color: '#444', background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 4, padding: '6px 8px', marginBottom: 8, lineHeight: 1.5 }}>{agency.notes}</div>}
-                    {agency.url && <a href={agency.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#2ecc71', fontWeight: 600, textDecoration: 'none' }}>View source →</a>}
+                  <div className="cmap-popup-victory-wrap">
+                    <div className="cmap-badge-victory">✊ COMMUNITY VICTORY</div>
+                    <div className="cmap-popup-agency-name">{agency.name}</div>
+                    <div className="cmap-popup-agency-city">📍 {agency.city}, {agency.state}</div>
+                    <div className="cmap-popup-agency-was"><strong>Was:</strong> {layer.label}</div>
+                    {agency.vendor && <div className="cmap-popup-agency-vendor"><strong>Vendor:</strong> {agency.vendor}</div>}
+                    {agency.notes && <div className="cmap-popup-victory-notes">{agency.notes}</div>}
+                    {agency.url && <a href={agency.url} target="_blank" rel="noopener noreferrer" className="cmap-popup-victory-link">View source →</a>}
                   </div>
                 </Popup>
               </CircleMarker>
@@ -1505,25 +1467,25 @@ export default function CameraMap() {
         <div className="cmap-attribution">
           <span>Camera data:</span>
           <a href="https://openstreetmap.org" target="_blank" rel="noopener noreferrer"
-            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+            className="cmap-attribution-link"
           >OpenStreetMap contributors</a>
-          <span style={{ opacity: 0.4 }}>·</span>
+          <span className="cmap-attribution-dot">·</span>
           <span>Surveillance tech:</span>
           <a href="https://atlasofsurveillance.org" target="_blank" rel="noopener noreferrer"
-            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+            className="cmap-attribution-link"
           >EFF Atlas of Surveillance</a>
-          <span style={{ opacity: 0.4 }}>·</span>
+          <span className="cmap-attribution-dot">·</span>
           <span>Density:</span>
           <a href="https://deflock.me" target="_blank" rel="noopener noreferrer"
-            style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
+            className="cmap-attribution-link"
           >DeFlock</a>
         </div>
       </div>
 
-      <div style={{ marginTop: 12, fontSize: 12, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+      <div className="cmap-bottom-stats">
         <span>
-          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{verifiedCameras.length + communitySightings.filter(s => s.newCamera === true).length}</span> Citeback-verified ·{' '}
-          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{osmCameras.length.toLocaleString()}</span> loaded · Zoom into any city for full detail
+          <span className="cmap-stat-highlight">{verifiedCameras.length + communitySightings.filter(s => s.newCamera === true).length}</span> Citeback-verified ·{' '}
+          <span className="cmap-stat-highlight">{osmCameras.length.toLocaleString()}</span> loaded · Zoom into any city for full detail
         </span>
         <span>Data: OpenStreetMap contributors (ODbL) · {cameraCount} mapped nationally</span>
       </div>

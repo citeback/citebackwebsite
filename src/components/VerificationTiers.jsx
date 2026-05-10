@@ -61,12 +61,7 @@ export function TierBadge({ tier, size = 'sm' }) {
   const t = TIERS[tier] || TIERS.osm
   return (
     <span
-      className={`vt-badge vt-badge--${size === 'sm' ? 'sm' : 'lg'}`}
-      style={{
-        background: `rgba(${t.colorRaw},0.12)`,
-        border: `1px solid rgba(${t.colorRaw},0.3)`,
-        color: t.color,
-      }}
+      className={`vt-badge vt-badge--${size === 'sm' ? 'sm' : 'lg'} vt-badge--${t.id}`}
     >
       {t.icon} {t.label}
     </span>

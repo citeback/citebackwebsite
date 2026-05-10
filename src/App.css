@@ -6736,13 +6736,16 @@ img {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid;
   padding: 2px 6px;
   white-space: nowrap;
   flex-shrink: 0;
   opacity: 0.9;
+  color: var(--muted);
+  border-color: var(--muted);
 }
+.sf2-status-badge--signed { color: var(--accent); border-color: var(--accent); }
+.sf2-status-badge--passed { color: #2980b9; border-color: #2980b9; }
 
 /* Feed item links (cases, bills, federal bills) */
 .sf2-card {
@@ -7331,8 +7334,11 @@ img {
   background: var(--bg2);
   border-radius: 2px;
   margin-bottom: 8px;
-  /* dynamic width kept inline */
 }
+/* Skeleton bar width variants */
+.sf2-skel-w-1a { width: 60%; } .sf2-skel-w-2a { width: 75%; } .sf2-skel-w-3a { width: 90%; }
+.sf2-skel-w-1b { width: 55%; } .sf2-skel-w-2b { width: 70%; } .sf2-skel-w-3b { width: 85%; }
+.sf2-skel-w-1c { width: 50%; } .sf2-skel-w-2c { width: 68%; } .sf2-skel-w-3c { width: 86%; }
 
 .sf2-skel-bar-sm {
   height: 11px;
