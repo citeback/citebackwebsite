@@ -110,9 +110,9 @@ img {
     height: 360px !important;
   }
 
-  /* Shrink hero padding on mobile */
+  /* Hero padding: app-main already has 60px to clear fixed nav — no extra needed */
   .hero-section {
-    padding-top: 80px !important;
+    padding-top: 12px !important;
   }
 
   /* Stack filter toolbar items */
@@ -778,7 +778,7 @@ img {
 
 /* ── Hero ─────────────────────────────────────────────────────── */
 .hero-section {
-  padding-top: 48px;
+  padding-top: 32px;
   padding-bottom: 0;
   background: var(--bg);
   position: relative;
