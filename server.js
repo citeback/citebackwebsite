@@ -1225,6 +1225,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: logout ────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/logout') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     res.setHeader('Set-Cookie', COOKIE_CLEAR)
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true }))
@@ -1232,6 +1233,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: logout all sessions (bumps password_version, invalidates all JWTs) ──
   if (req.method === 'POST' && req.url === '/account/logout-all') {
+    if (!checkAuthRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' })) }
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
     db.prepare('UPDATE users SET password_version = COALESCE(password_version, 0) + 1 WHERE id = ?').run(claims.userId)

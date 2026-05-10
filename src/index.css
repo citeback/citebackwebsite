@@ -351,11 +351,11 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; }
 
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #2a2a3e; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
 /* Firefox global scrollbar color */
-* { scrollbar-width: thin; scrollbar-color: #1a1a2e transparent; }
+* { scrollbar-width: thin; scrollbar-color: #333 transparent; }
 
 .leaflet-container { background: #0d0d10 !important; }
 
@@ -408,8 +408,8 @@ button, a { transition: background-color 0.15s, color 0.15s, border-color 0.15s,
 /* Visible scrollbars for layers panel */
 .layers-scroll::-webkit-scrollbar { width: 6px; }
 .layers-scroll::-webkit-scrollbar-track { background: transparent; }
-.layers-scroll::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 3px; }
-.layers-scroll::-webkit-scrollbar-thumb:hover { background: #2a2a3e; }
+.layers-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+.layers-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
 
 /* Global spin animation (used by Loader/RefreshCw etc.) */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
