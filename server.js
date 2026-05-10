@@ -906,6 +906,13 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end() }
 
+  // ── Health check ──────────────────────────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/health') {
+    // Simple liveness check — no sensitive info
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: true, ts: new Date().toISOString() }))
+  }
+
   // ── Feedback ───────────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/feedback') {
     if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
