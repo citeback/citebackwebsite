@@ -1,0 +1,246 @@
+/* ── CryptoPrimer (.cp-) ───────────────────────────────────────── */
+
+.cp-section {
+  padding: 80px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.cp-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cp-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+
+.cp-heading {
+  font-size: clamp(22px, 3.5vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.cp-intro {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 620px;
+  margin-bottom: 48px;
+}
+
+/* Why cards grid */
+.cp-why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.cp-why-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 20px 22px;
+}
+
+.cp-why-icon {
+  width: 38px;
+  height: 38px;
+  background: rgba(230, 57, 70, 0.06);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red);
+  margin-bottom: 14px;
+}
+
+.cp-why-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.cp-why-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* Coins section */
+.cp-coins-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 12px;
+}
+
+.cp-coins-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* CoinPanel */
+.cp-coin-panel {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.cp-coin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.cp-coin-header--open {
+  border-bottom: 1px solid var(--border);
+}
+
+.cp-coin-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cp-coin-meta {
+  flex: 1;
+}
+
+.cp-coin-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cp-coin-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.cp-coin-ticker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  font-family: var(--font-mono, monospace);
+}
+
+.cp-coin-tagline {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.cp-coin-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  letter-spacing: 0.04em;
+}
+
+/* Expanded body */
+.cp-coin-body {
+  padding: 20px 24px;
+}
+
+.cp-coin-what {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.cp-coin-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cp-coin-step {
+  display: flex;
+  gap: 16px;
+}
+
+/* Step number circle — border and color kept inline (dynamic coin color) */
+.cp-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cp-step-label {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.cp-step-detail {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.cp-step-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Link — color and border-bottom kept inline (dynamic coin color) */
+.cp-step-link {
+  font-size: 11px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding-bottom: 1px;
+}
+
+/* Send note — border-left kept inline (dynamic coin color) */
+.cp-send-note {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* Footer note */
+.cp-footer-note {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  border-left: 2px solid var(--border);
+  padding-left: 14px;
+}
