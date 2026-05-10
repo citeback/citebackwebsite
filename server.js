@@ -1004,6 +1004,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Health check ──────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/health') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     // Simple liveness check — no sensitive info
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true, ts: new Date().toISOString() }))
@@ -2010,6 +2011,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: list all campaigns (admin view) ────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/campaigns') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
     res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -2024,6 +2026,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: update campaign (status, deadline, goal) ────────────────────────
   if (req.method === 'PATCH' && /^\/admin\/campaigns\/\d+$/.test(req.url)) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     const id = parseInt(req.url.split('/')[3])
     try {
@@ -2049,6 +2052,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: list campaign proposals ────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/proposals') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'proposals.jsonl')
@@ -2061,6 +2065,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: list registry applications ─────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/registry') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'registry.jsonl')
@@ -2089,6 +2094,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: review attorney application ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/attorney-applications/review') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     // Auth BEFORE body parse — unauthed requests never trigger body read
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
@@ -2365,6 +2371,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: approve or reject a sighting ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/moderate') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
@@ -2383,6 +2390,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: bulk approve all pending sightings with lat/lng ────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/approve-all') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
@@ -2532,6 +2540,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Passkey: register options ────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/passkey/register-options') {
+    if (!checkPkRegRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' })) }
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
     try {
@@ -2539,9 +2548,6 @@ const server = http.createServer(async (req, res) => {
       if (!user) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'User not found' })) }
       const existingKeys = db.prepare('SELECT credential_id FROM passkeys WHERE user_id = ?').all(user.id)
       const excludeCredentials = existingKeys.map(k => ({ id: k.credential_id, type: 'public-key' }))
-      if (!checkPkRegRateLimit(ip)) {
-        res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
-      }
       const options = await generateRegistrationOptions({
         rpName: RP_NAME,
         rpID: RP_ID,
