@@ -1951,6 +1951,11 @@ const server = http.createServer(async (req, res) => {
 
   // ── Attorney application ──────────────────────────────────────────────────
   if (req.method === "POST" && req.url === "/attorney/apply") {
+    // Rate limit BEFORE auth check — prevents timing oracle on token validation
+    if (!checkAuthRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes' }))
+    }
     const applyUser = verifyToken(req)
     if (!applyUser) { res.writeHead(401, { "Content-Type": "application/json" }); return res.end(JSON.stringify({ error: "Login required to submit an attorney application" })) }
     try {
@@ -2449,6 +2454,7 @@ const server = http.createServer(async (req, res) => {
 
   // POST /api/campaigns/:id/claim
   if (req.method === 'POST' && /^\/api\/campaigns\/\d+\/claim$/.test(req.url)) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const id = parseInt(req.url.split('/')[3])
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
@@ -2464,6 +2470,7 @@ const server = http.createServer(async (req, res) => {
 
   // PATCH /api/campaigns/:id — update wallet + operator info (owner only)
   if (req.method === 'PATCH' && /^\/api\/campaigns\/\d+$/.test(req.url)) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const id = parseInt(req.url.split('/')[3])
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
