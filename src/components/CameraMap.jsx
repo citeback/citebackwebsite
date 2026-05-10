@@ -440,7 +440,7 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
       : ''
   const sightingStrip = sighting?.photoFilename
     ? `<div style="margin-bottom:10px">
-        <img src="https://ai.citeback.com/photos/${sighting.photoFilename}" alt="Citeback verified photo" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px" />
+        <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback verified photo" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px" />
         <div style="font-size:10px;color:#f97316;font-weight:700;letter-spacing:0.05em">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
         ${sighting.notes ? `<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4">${sighting.notes}</div>` : ''}
       </div>`
@@ -1030,7 +1030,7 @@ export default function CameraMap() {
 
   // Load community sightings — re-runs whenever sightingVersion bumps (post-submit)
   useEffect(() => {
-    fetch('https://ai.citeback.com/sightings/public')
+    fetch(`${AI_URL}/sightings/public`)
       .then(r => r.json())
       .then(d => { if (Array.isArray(d.sightings)) setCommunitySightings(d.sightings) })
       .catch(() => {})
@@ -1051,7 +1051,7 @@ export default function CameraMap() {
 
   // Load base dataset
   useEffect(() => {
-    fetch('https://ai.citeback.com/alpr-us.json')
+    fetch(`${AI_URL}/alpr-us.json`)
       .then(r => r.json())
       .then(data => {
         setOsmCameras(data)
@@ -1061,7 +1061,7 @@ export default function CameraMap() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-    fetch('https://ai.citeback.com/alpr-by-state.json')
+    fetch(`${AI_URL}/alpr-by-state.json`)
       .then(r => r.json())
       .then(setStateCounts)
       .catch(() => {})
@@ -1502,7 +1502,7 @@ export default function CameraMap() {
                   </div>
                   {s.photoFilename && (
                     <img
-                      src={`https://ai.citeback.com/photos/${s.photoFilename}`}
+                      src={`${AI_URL}/photos/${s.photoFilename}`}
                       alt="C2PA verified sighting"
                       style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 8, display: 'block' }}
                     />
