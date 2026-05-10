@@ -292,7 +292,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             </div>
 
             <div>
-              <label htmlFor="apply-email" className="hre-label">Contact Email <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — for status updates only, never published)</span></label>
+              <label htmlFor="apply-email" className="hre-label">Contact Email <span className="hr-label-optional">(optional — for status updates only, never published)</span></label>
               <input id="apply-email" type="email" className="hre-input" placeholder="e.g. you@proton.me"
                 value={form.email} onChange={e => set('email', e.target.value)} maxLength={200} />
             </div>
@@ -412,8 +412,8 @@ export default function HumanRegistry() {
             Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
           </p>
           <div className="hre-verify-note">
-            <p style={{ margin: '0 0 4px', fontStyle: 'italic' }}>Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
-            <p style={{ margin: 0, fontStyle: 'italic' }}>Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
+            <p className="hr-verify-note-p">Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
+            <p className="hr-verify-note-p-last">Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
           </div>
         </div>
       </div>
