@@ -1361,45 +1361,6 @@ const server = http.createServer(async (req, res) => {
     return
   }
 
-  // ── Account: forgot username (lookup by recovery email) ──────────────────
-  if (req.method === 'POST' && req.url === '/account/forgot-username') {
-    // Rate limit: 3/hour per IP (always respond OK to avoid user enumeration)
-    if (!checkForgotUsernameRateLimit(ip)) {
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      return res.end(JSON.stringify({ ok: true, message: 'If that email matches an account, the username has been sent.' }))
-    }
-    try {
-      const body = await parseBody(req)
-      const email = String(body.email || '').toLowerCase().trim()
-      // Always respond OK immediately — never confirm whether email exists
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ ok: true, message: 'If that email matches an account, the username has been sent.' }))
-
-      // Do actual work after response (fire-and-forget)
-      if (!email || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email) || !emailEnabled) return
-
-      // Decrypt all stored emails and find a match — O(n) but users are few
-      const allUsers = db.prepare('SELECT id, username, email_enc FROM users WHERE email_enc IS NOT NULL').all()
-      for (const user of allUsers) {
-        const decrypted = decryptEmail(user.email_enc)
-        if (decrypted && decrypted.toLowerCase() === email) {
-          await mailer.sendMail({
-            from: SMTP_FROM,
-            to: email,
-            subject: 'Citeback — Your Username',
-            text: `You requested your Citeback username.\n\nYour username is: ${user.username}\n\nIf you also need to reset your password, visit https://citeback.com and use \"Forgot your password?\" with this username.\n\nIf you did not make this request, please ignore this email.\n\nCiteback`,
-            html: `<p>You requested your Citeback username.</p><p><strong>Your username is: ${user.username}</strong></p><p>If you also need to reset your password, <a href="https://citeback.com">visit Citeback</a> and use "Forgot your password?" with this username.</p><p>If you did not make this request, please ignore this email.</p><p style="color:#888;font-size:12px">Citeback never stores your identity. This email was only kept for this purpose.</p>`,
-          }).catch(e => console.error('forgot-username email error:', e.message))
-          break // found the match; stop scanning
-        }
-      }
-    } catch (e) {
-      console.error('forgot-username error:', e.message)
-      if (!res.headersSent) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ ok: true })) }
-    }
-    return
-  }
-
   // ── Account: reset password with token ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/reset-password') {
     // Rate limit: prevent brute-forcing token + unlimited bcrypt invocations
@@ -2230,6 +2191,32 @@ const server = http.createServer(async (req, res) => {
       claimedAt: c.claimed_at, activatedAt: c.activated_at,
       walletChangedAt: c.wallet_changed_at || null,
     }))
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify(result))
+  }
+
+  // GET /api/campaigns/:id — single campaign (for deep links and reduced payload)
+  if (req.method === 'GET' && /^\/api\/campaigns\/\d+$/.test(req.url)) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    const id = parseInt(req.url.split('/')[3])
+    if (!Number.isFinite(id) || id < 1) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'invalid id' })) }
+    const c = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id WHERE c.id = ?').get(id)
+    if (!c) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+    const result = {
+      id: c.id, type: c.type, title: c.title, description: c.description,
+      winCondition: c.win_condition, location: c.location, goal: c.goal,
+      raised: c.raised, backers: c.backers, deadline: c.deadline,
+      tags: JSON.parse(c.tags || '[]'), source: c.source,
+      contractContext: c.contract_context,
+      verifyMeta: c.verify_meta ? JSON.parse(c.verify_meta) : null,
+      milestones: c.milestones ? JSON.parse(c.milestones) : null,
+      status: c.status, operatorId: c.operator_id,
+      operatorUsername: c.operator_username,
+      operatorName: c.operator_name, operatorBio: c.operator_bio,
+      walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
+      claimedAt: c.claimed_at, activatedAt: c.activated_at,
+      walletChangedAt: c.wallet_changed_at || null,
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify(result))
   }
