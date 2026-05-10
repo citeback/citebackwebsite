@@ -719,7 +719,7 @@ function isOnTopic(text) {
   return ON_TOPIC_KEYWORDS.some(k => lower.includes(k))
 }
 const makeMsg = (content) => ({ model: 'citeback-filter', message: { role: 'assistant', content }, done: true })
-const DEFLECT = makeMsg("I'm focused on surveillance resistance and the Citeback platform. Ask me about ALPR cameras, privacy rights, campaigns, how to contribute anonymously, or what surveillance technology is deployed near you.")
+const OFF_TOPIC = makeMsg("I'm focused on surveillance resistance and the Citeback platform. Ask me about ALPR cameras, privacy rights, campaigns, how to contribute anonymously, or what surveillance technology is deployed near you.")
 const BUSY = makeMsg("Our AI handles one conversation at a time — your session stays completely isolated. Send yours again in a few seconds.")
 const RATE_LIMITED = makeMsg("Take a breath — our AI runs locally and works through questions one at a time. Try again in a moment.")
 
@@ -1009,7 +1009,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Feedback ───────────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/feedback') {
-    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const { vote } = await parseBody(req)
       if (vote === 'up') stats.thumbsUp++
@@ -1021,7 +1021,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/stats') {
-    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     // Omit operational details (rateLimited, uptime, queueDepth, processing) that
     // would help an attacker profile server load or time requests around restarts.
     res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -1047,7 +1047,7 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ counts }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
-        if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+        if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
         // Validate: must be a real campaign integer — prevents memory bloat with arbitrary keys
         const idNum = parseInt(String(body.campaignId), 10)
         if (!Number.isFinite(idNum) || idNum < 1) {
@@ -2262,7 +2262,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Public sightings (community map layer) ─── ONLY approved ────────────
   if (req.method === 'GET' && req.url === '/sightings/public') {
-    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const file = path.join(DATA_DIR, 'sightings.jsonl')
       const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
@@ -2767,7 +2767,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (hasInjectionInHistory || !isOnTopic(userText)) {
       res.writeHead(200, { 'Content-Type': 'application/json' })
-      return res.end(JSON.stringify(DEFLECT))
+      return res.end(JSON.stringify(OFF_TOPIC))
     }
     const timer = setTimeout(() => {
       const idx = queue.findIndex(q => q.res === res)
