@@ -2071,6 +2071,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: list attorney applications ────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/attorney-applications')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const all = db.prepare('SELECT * FROM attorney_applications ORDER BY submitted_at DESC').all()
@@ -2341,6 +2342,7 @@ const server = http.createServer(async (req, res) => {
 
 // ── Admin: list pending sightings ─────────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/sightings')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'sightings.jsonl')
