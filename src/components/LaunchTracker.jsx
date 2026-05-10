@@ -50,9 +50,9 @@ export default function LaunchTracker() {
         {milestones.map((m, i) => (
           <div key={i} className="lt-milestone-row">
             {m.done
-              ? <CheckCircle size={16} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 1 }} />
-              : <Circle size={16} style={{ color: 'var(--border)', flexShrink: 0, marginTop: 1 }} />}
-            <span className="lt-milestone-text" style={{ color: m.done ? 'var(--text)' : 'var(--muted)' }}>
+              ? <CheckCircle size={16} className="lt-check-done" />
+              : <Circle size={16} className="lt-check-pending" />}
+            <span className={`lt-milestone-text${m.done ? ' lt-milestone-text--done' : ' lt-milestone-text--pending'}`}>
               {m.label}
             </span>
           </div>
