@@ -10,119 +10,49 @@ const facts = [
 
 export default function GuaranteeSection({ setTab }) {
   return (
-    <section
-      style={{
-        borderTop: '1px solid var(--border)',
-        padding: '80px 0',
-      }}
-    >
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-      <div className="guarantee-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+    <section className="guarantee-section">
+      <div className="guarantee-inner">
+      <div className="guarantee-grid">
         {/* Left: text */}
         <div>
-          <div
-            style={{
-              fontSize: '10px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.16em',
-              color: 'var(--red)',
-              fontWeight: 600,
-              marginBottom: '28px',
-            }}
-          >
+          <div className="guarantee-eyebrow">
             The Guarantee
           </div>
 
-          <div
-            style={{
-              fontSize: '36px',
-              fontWeight: 300,
-              letterSpacing: '-0.02em',
-              lineHeight: 1.1,
-              color: 'var(--fg)',
-              marginBottom: '36px',
-            }}
-          >
+          <div className="guarantee-headline">
             Citeback never holds funds. Contributions go directly to operators. Platform monitors via view key.
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="guarantee-paragraphs">
             {[
               'Operators hold their own campaign wallets under the direct wallet model. Citeback never holds, pools, or touches campaign funds.',
               'Every campaign wallet publishes a view key — a read-only key that lets anyone independently verify the balance. Citeback monitors via the same view key and permanently bans any operator who drains early.',
               "This isn't a promise. The wallet architecture and accountability model are published and open for anyone to audit before launch.",
             ].map((para, i) => (
-              <p
-                key={i}
-                style={{
-                  fontSize: '15px',
-                  color: 'var(--gray)',
-                  fontWeight: 300,
-                  lineHeight: 1.65,
-                  margin: 0,
-                }}
-              >
-                {para}
-              </p>
+              <p key={i} className="guarantee-para">{para}</p>
             ))}
           </div>
         </div>
 
         {/* Right: facts + CTA */}
-        <div className="guarantee-facts" style={{ paddingTop: '56px' }}>
+        <div className="guarantee-facts">
           {facts.map((fact, i) => (
-            <div
-              key={i}
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px',
-                padding: '14px 0',
-                borderBottom: '1px solid var(--border)',
-                fontSize: '14px',
-                color: 'var(--fg)',
-                lineHeight: 1.5,
-              }}
-            >
-              <span
-                style={{
-                  color: 'var(--red)',
-                  flexShrink: 0,
-                  marginTop: '1px',
-                }}
-              >
-                →
-              </span>
+            <div key={i} className="guarantee-fact-row">
+              <span className="guarantee-fact-arrow">→</span>
               <span>{fact}</span>
             </div>
           ))}
           {setTab && (
-            <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div className="guarantee-cta-row">
               <button
                 onClick={() => setTab('campaigns')}
-                style={{
-                  background: 'var(--fg)', color: 'var(--bg)',
-                  border: 'none', padding: '12px 24px',
-                  fontSize: 13, letterSpacing: '0.05em', fontWeight: 600,
-                  textTransform: 'uppercase', cursor: 'pointer',
-                  fontFamily: 'var(--font)', transition: 'opacity 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                className="guarantee-cta-primary"
               >
                 Browse Campaigns →
               </button>
               <button
                 onClick={() => setTab('trust')}
-                style={{
-                  background: 'transparent', color: 'var(--fg)',
-                  border: '1px solid var(--border)', padding: '12px 24px',
-                  fontSize: 13, letterSpacing: '0.05em', fontWeight: 500,
-                  textTransform: 'uppercase', cursor: 'pointer',
-                  fontFamily: 'var(--font)', transition: 'border-color 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                className="guarantee-cta-secondary"
               >
                 How It Works →
               </button>

@@ -28,61 +28,38 @@ export default function LaunchTracker() {
   const total = milestones.length
   const pct = Math.round((done / total) * 100)
   return (
-    <div className="launch-tracker" style={{
-      background: 'var(--bg2)',
-      border: '1px solid var(--border)',
-      borderRadius: 0,
-      padding: '28px 32px',
-      maxWidth: 640,
-      margin: '0 auto',
-      boxSizing: 'border-box',
-      width: '100%',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+    <div className="lt-wrapper">
+      <div className="lt-header-row">
         <div>
-          <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Launch Progress</p>
-          <p style={{ color: 'var(--muted)', fontSize: 13 }}>We go live when every prerequisite is met — not before.</p>
+          <p className="lt-title">Launch Progress</p>
+          <p className="lt-subtitle">We go live when every prerequisite is met — not before.</p>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--accent)' }}>{pct}%</div>
-          <div style={{ fontSize: 12, color: 'var(--muted)' }}>{done}/{total} complete</div>
+        <div className="lt-pct-display">
+          <div className="lt-pct-number">{pct}%</div>
+          <div className="lt-pct-label">{done}/{total} complete</div>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div style={{
-        height: 4, background: 'var(--border)',
-        borderRadius: 0, marginBottom: 24, overflow: 'hidden',
-      }}>
-        <div style={{
-          height: '100%', width: `${pct}%`,
-          background: 'var(--red)',
-          borderRadius: 0, transition: 'width 0.8s ease',
-        }} />
+      <div className="lt-progress-track">
+        <div className="lt-progress-fill" style={{ width: `${pct}%` }} />
       </div>
 
       {/* Milestone list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="lt-milestone-list">
         {milestones.map((m, i) => (
-          <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          <div key={i} className="lt-milestone-row">
             {m.done
               ? <CheckCircle size={16} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 1 }} />
               : <Circle size={16} style={{ color: 'var(--border)', flexShrink: 0, marginTop: 1 }} />}
-            <span style={{
-              fontSize: 13, lineHeight: 1.5,
-              color: m.done ? 'var(--text)' : 'var(--muted)',
-              textDecoration: m.done ? 'none' : 'none',
-            }}>
+            <span className="lt-milestone-text" style={{ color: m.done ? 'var(--text)' : 'var(--muted)' }}>
               {m.label}
             </span>
           </div>
         ))}
       </div>
 
-      <div style={{
-        marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)',
-        fontSize: 12, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 6,
-      }}>
+      <div className="lt-footer">
         <Clock size={12} />
         No wallet addresses will be published until all 10 prerequisites are met and publicly verifiable. No address means nowhere to send.
       </div>

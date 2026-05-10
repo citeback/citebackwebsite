@@ -155,10 +155,10 @@ const TYPES = [
     tagline: '2,500+ law enforcement partnerships. Your neighbor\'s doorbell is a police camera.',
     color: '#f97316',
     sections: {
-      what: 'Amazon\'s Ring sells doorbell cameras to homeowners, then operates a platform called “Neighbors” that lets police departments request footage from any camera in any area — without a warrant, without the homeowner\'s active consent, and without the subject\'s knowledge.',
+      what: 'Amazon\'s Ring sells doorbell cameras to homeowners, then operates a platform called "Neighbors" that lets police departments request footage from any camera in any area — without a warrant, without the homeowner\'s active consent, and without the subject\'s knowledge.',
       affects: 'Your movements on public streets, sidewalks, and in front of private homes are recorded by a private camera network that feeds directly to police. Ring has shared footage with law enforcement in response to emergency requests that bypassed homeowner consent entirely. You have no way to know how many Ring cameras cover your route to work.',
       problems: [
-        'Amazon provided footage to police 11 times in 2022 without homeowner consent or a warrant, using an “emergency” exception.',
+        'Amazon provided footage to police 11 times in 2022 without homeowner consent or a warrant, using an "emergency" exception.',
         'Over 2,500 US law enforcement agencies have formal partnerships with Ring as of 2024 — giving them expedited access to camera location data and footage requests.',
         'Police can request footage from Ring\'s Neighbors app without a warrant, subpoena, or court order. Homeowners receive a request but are not legally required to comply — however, Amazon can comply without the homeowner if it chooses.',
         'Ring cameras are disproportionately deployed in gentrifying neighborhoods, extending surveillance networks into communities of color without any public vote or police body camera accountability equivalent.',
@@ -186,7 +186,7 @@ const TYPES = [
       problems: [
         'A man in Arizona was wrongfully investigated for a murder because his cycling route passed the victim\'s house repeatedly. He was identified solely through geofence data.',
         'Geofence warrants covering Black Lives Matter protests were issued in multiple cities in 2020 — effectively giving police the identity of everyone who attended a constitutionally protected protest.',
-        'Keyword warrants have been issued for searches like “abortion pill” and “how to find an abortion.” Google has complied.',
+        'Keyword warrants have been issued for searches like "abortion pill" and "how to find an abortion." Google has complied.',
         'The secrecy orders attached to many geofence warrants mean you may never know your data was searched.',
       ],
       resistance: [
@@ -210,7 +210,7 @@ const TYPES = [
       what: 'Fusion centers are federally-funded state and regional intelligence hubs that aggregate data from dozens of surveillance systems — ALPR, facial recognition, social media monitoring, Stingray intercepts, ShotSpotter, and more — and share it across local, state, and federal agencies including ICE, FBI, and DHS. There are 79 of them in the United States.',
       affects: 'Fusion centers are why ALPR data ends up with ICE. They are the connective tissue that explains how a traffic camera scan in Albuquerque becomes an immigration enforcement action. They also monitor First Amendment-protected activity: a 2012 Senate investigation found that fusion centers produced reports on Occupy Wall Street, anti-war protesters, and Muslim community groups with no terrorism nexus.',
       problems: [
-        'A 2012 Senate Permanent Subcommittee on Investigations report found that fusion centers produced “threat” reports on innocent Americans engaged in constitutionally protected activity.',
+        'A 2012 Senate Permanent Subcommittee on Investigations report found that fusion centers produced "threat" reports on innocent Americans engaged in constitutionally protected activity.',
         'Fusion centers operate with minimal public oversight, inconsistent privacy policies, and no uniform standards for what data can be collected or how long it can be kept.',
         'DHS has poured over $1.4 billion into fusion centers since 2003. Independent audits have found their intelligence value to be negligible — while their civil liberties harm is documented and ongoing.',
         'In New Mexico, the NM Fusion Center (NMFUSION) sits inside the Department of Homeland Security and shares data with all 33 county sheriffs, municipal police, and federal agencies including CBP and ICE.',
@@ -232,27 +232,16 @@ function AccordionCard({ item, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div style={{
-      background: 'var(--bg2)',
-      border: `1px solid ${open ? item.color + '40' : 'var(--border)'}`,
-      borderRadius: 14,
-      overflow: 'hidden',
-      transition: 'border-color 0.2s',
-    }}>
+    <div
+      className="svex-card"
+      style={{
+        border: `1px solid ${open ? item.color + '40' : 'var(--border)'}`,
+      }}
+    >
       {/* Header */}
       <button
         onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          padding: '18px 20px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          textAlign: 'left',
-        }}
+        className="svex-card-header"
       >
         <span style={{
           fontSize: 24,
@@ -266,9 +255,9 @@ function AccordionCard({ item, defaultOpen = false }) {
           justifyContent: 'center',
           flexShrink: 0,
         }}>{item.icon}</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--fg)', lineHeight: 1.3 }}>{item.name}</div>
-          <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3, fontStyle: 'italic' }}>{item.tagline}</div>
+        <div className="svex-card-title-wrap">
+          <div className="svex-card-title">{item.name}</div>
+          <div className="svex-card-tagline">{item.tagline}</div>
         </div>
         <span style={{ color: item.color, flexShrink: 0 }}>
           {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -277,10 +266,10 @@ function AccordionCard({ item, defaultOpen = false }) {
 
       {/* Body */}
       {open && (
-        <div style={{ padding: '0 20px 20px', borderTop: `1px solid ${item.color}20` }}>
+        <div className="svex-card-body" style={{ borderTop: `1px solid ${item.color}20` }}>
 
           {/* What is it */}
-          <div style={{ marginTop: 18 }}>
+          <div className="svex-what-section">
             <div style={{
               display: 'inline-block',
               fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
@@ -288,7 +277,7 @@ function AccordionCard({ item, defaultOpen = false }) {
               background: item.color + '15',
               padding: '3px 10px', borderRadius: 100, marginBottom: 8,
             }}>What is it?</div>
-            <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.75, margin: 0 }}>
+            <p className="svex-what-text">
               {item.sections.what}
             </p>
           </div>
@@ -304,82 +293,45 @@ function AccordionCard({ item, defaultOpen = false }) {
           </div>
 
           {/* The problem */}
-          <div style={{ marginTop: 16 }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-              textTransform: 'uppercase', color: 'var(--muted)',
-              marginBottom: 10,
-            }}>The problem</div>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {item.sections.problems.map((p, i) => (
-                <li key={i} style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 10,
-                  fontSize: 13, color: 'var(--muted)', lineHeight: 1.65,
-                }}>
-                  <span style={{
-                    flexShrink: 0, marginTop: 3,
-                    width: 6, height: 6, borderRadius: '50%',
-                    background: 'var(--accent)', display: 'inline-block',
-                  }} />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="svex-problem-label">The problem</div>
+          <ul className="svex-problem-list">
+            {item.sections.problems.map((p, i) => (
+              <li key={i} className="svex-problem-item">
+                <span className="svex-problem-bullet" />
+                {p}
+              </li>
+            ))}
+          </ul>
 
           {/* What resistance looks like */}
-          <div style={{ marginTop: 16 }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-              textTransform: 'uppercase', color: '#10b981',
-              marginBottom: 10,
-            }}>What resistance looks like</div>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {item.sections.resistance.map((r, i) => (
-                <li key={i} style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 10,
-                  fontSize: 13, color: 'var(--muted)', lineHeight: 1.65,
-                }}>
-                  <span style={{
-                    flexShrink: 0, marginTop: 4,
-                    fontSize: 12,
-                  }}>✓</span>
-                  {r}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="svex-resistance-label">What resistance looks like</div>
+          <ul className="svex-resistance-list">
+            {item.sections.resistance.map((r, i) => (
+              <li key={i} className="svex-resistance-item">
+                <span className="svex-resistance-check">✓</span>
+                {r}
+              </li>
+            ))}
+          </ul>
 
           {/* Fund the fight CTA */}
-          <div style={{
-            marginTop: 18,
-            padding: '14px 16px',
-            background: 'rgba(230,57,70,0.06)',
-            border: '1px solid rgba(230,57,70,0.2)',
-            borderRadius: 10,
-            display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap',
-          }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>Take action</div>
-              <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.6 }}>{item.sections.cta}</p>
+          <div className="svex-cta-box">
+            <div className="svex-cta-inner">
+              <div className="svex-cta-title">Take action</div>
+              <p className="svex-cta-text">{item.sections.cta}</p>
             </div>
           </div>
 
           {/* External links */}
           {item.links && item.links.length > 0 && (
-            <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <div className="svex-links">
               {item.links.map((link, i) => (
                 <a
                   key={i}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 5,
-                    fontSize: 12, color: 'var(--muted)', fontWeight: 500,
-                    border: '1px solid var(--border)', padding: '6px 12px', borderRadius: 7,
-                    textDecoration: 'none',
-                  }}
+                  className="svex-link"
                 >
                   <ExternalLink size={11} /> {link.label}
                 </a>
@@ -394,76 +346,44 @@ function AccordionCard({ item, defaultOpen = false }) {
 
 export default function SurveillanceExplainer({ setTab }) {
   return (
-    <section style={{
-      padding: '72px 24px',
-      borderTop: '1px solid var(--border)',
-      borderBottom: '1px solid var(--border)',
-    }}>
-      <div style={{ maxWidth: 860, margin: '0 auto' }}>
+    <section className="svex-section">
+      <div className="svex-inner">
 
         {/* Section header */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.2)',
-            color: 'var(--accent)', padding: '4px 14px', borderRadius: 100,
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-            marginBottom: 16,
-          }}>Know What You're Fighting</div>
-          <h2 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 12 }}>
+        <div className="svex-header">
+          <div className="svex-know-badge">Know What You're Fighting</div>
+          <h2 className="svex-heading">
             6 Surveillance Technologies. Plain Language.
           </h2>
-          <p style={{ color: 'var(--muted)', fontSize: 15, maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+          <p className="svex-intro">
             What each technology does, why it matters, and what cities have already done to stop it.
           </p>
         </div>
 
         {/* Accordion cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="svex-cards-list">
           {TYPES.map((item, i) => (
             <AccordionCard key={item.id} item={item} defaultOpen={i === 0} />
           ))}
         </div>
 
         {/* Legal disclaimer */}
-        <div style={{
-          marginTop: 32,
-          padding: '12px 18px',
-          background: 'var(--bg2)',
-          border: '1px solid var(--border)',
-          borderRadius: 8,
-          fontSize: 11,
-          color: 'var(--muted)',
-          lineHeight: 1.6,
-          opacity: 0.75,
-        }}>
+        <div className="svex-disclaimer">
           <strong>Not legal advice.</strong> This section is provided for educational purposes only. Citeback is not a law firm and does not provide legal counsel. FOIA requests, litigation, and ordinance campaigns may have jurisdiction-specific requirements. Consult a qualified attorney for legal advice specific to your situation.
         </div>
 
         {/* Bottom CTA */}
-        <div style={{
-          marginTop: 40, textAlign: 'center',
-          padding: '28px 24px',
-          background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 14,
-        }}>
-          <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>
+        <div className="svex-bottom-cta">
+          <div className="svex-bottom-heading">
             Don't see a FOIA request for your city?
           </div>
-          <p style={{ color: 'var(--muted)', fontSize: 14, maxWidth: 480, margin: '0 auto 20px', lineHeight: 1.7 }}>
+          <p className="svex-bottom-text">
             Every unchallenged contract is a green light for more surveillance.
             Fund the litigation, the ordinance fight, or the FOIA request — anonymously, in XMR or ZANO.
           </p>
           <button
             onClick={() => setTab && setTab('campaigns')}
-            style={{
-              display: 'inline-block',
-              background: 'var(--fg)', color: 'var(--bg)',
-              border: 'none',
-              padding: '12px 28px',
-              fontSize: 13, fontWeight: 600,
-              letterSpacing: '0.05em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'var(--font)',
-            }}
+            className="svex-bottom-btn"
           >
             Browse Open Campaigns →
           </button>
