@@ -21,7 +21,7 @@ const MAX_RESPONSE_BYTES = 2 * 1024 * 1024  // 2 MB hard cap
 const SERVICES = {
   overpass:      { base: 'https://overpass-api.de/api/interpreter',        method: 'POST', ttl: 120  },
   courtlistener: { base: 'https://www.courtlistener.com/api/rest/v4/search/', method: 'GET', ttl: 3600 },
-  congress:      { base: 'https://api.congress.gov/v3/bill/',               method: 'GET', ttl: 7200 },
+  congress:      { base: 'https://api.congress.gov/v3/bill/119',             method: 'GET', ttl: 7200 },
   openstates:    { base: 'https://v3.openstates.org/bills',                 method: 'GET', ttl: 7200 },
   lda:           { base: 'https://lda.senate.gov/api/v1/filings/',          method: 'GET', ttl: 3600 },
 }
