@@ -48,113 +48,40 @@ const tracks = [
 
 export default function BuildWithUs({ setTab }) {
   return (
-    <section style={{
-      background: 'var(--bg)',
-      borderTop: '1px solid var(--border)',
-      padding: '80px 24px',
-    }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <section className="bwu-section">
+      <div className="bwu-inner">
 
         {/* Header */}
-        <div style={{ marginBottom: 56 }}>
-          <div style={{
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'var(--red)',
-            fontWeight: 600,
-            marginBottom: 12,
-          }}>
-            Get Involved
-          </div>
-          <h2 style={{
-            fontSize: 'clamp(28px, 4vw, 52px)',
-            fontWeight: 800,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.08,
-            color: 'var(--fg)',
-            marginBottom: 16,
-          }}>
+        <div className="bwu-header">
+          <div className="bwu-eyebrow">Get Involved</div>
+          <h2 className="bwu-headline">
             Build the infrastructure<br />of accountability.
           </h2>
-          <p style={{
-            fontSize: 15,
-            color: 'var(--gray)',
-            lineHeight: 1.7,
-            maxWidth: 560,
-          }}>
+          <p className="bwu-subtext">
             Three ways to contribute. All of them matter. None of them require exposing who you are.
           </p>
         </div>
 
         {/* Track cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 2,
-        }} className="bwu-grid">
+        <div className="bwu-grid">
           {tracks.map((track) => (
-            <div key={track.id} className="bwu-card" style={{
-              background: 'var(--bg2)',
-              border: '1px solid var(--border)',
-              padding: '32px 28px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 20,
-              transition: 'border-color 0.15s',
-            }}>
+            <div key={track.id} className="bwu-card">
               {/* Track header */}
               <div>
-                <div style={{
-                  fontSize: 10,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  color: track.accent,
-                  fontWeight: 600,
-                  marginBottom: 8,
-                }}>
+                <div className="bwu-track-tag" style={{ color: track.accent }}>
                   {track.tag}
                 </div>
-                <div style={{
-                  fontSize: 22,
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--fg)',
-                }}>
-                  {track.label}
-                </div>
+                <div className="bwu-track-label">{track.label}</div>
               </div>
 
               {/* Description */}
-              <p style={{
-                fontSize: 13,
-                color: 'var(--gray)',
-                lineHeight: 1.7,
-                margin: 0,
-              }}>
-                {track.description}
-              </p>
+              <p className="bwu-desc">{track.description}</p>
 
               {/* Detail list */}
-              <ul style={{
-                margin: 0,
-                padding: 0,
-                listStyle: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                flexGrow: 1,
-              }}>
+              <ul className="bwu-detail-list">
                 {track.details.map((d, i) => (
-                  <li key={i} style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 8,
-                    fontSize: 12,
-                    color: 'var(--gray)',
-                    lineHeight: 1.5,
-                  }}>
-                    <span style={{ color: track.accent, flexShrink: 0, marginTop: 2 }}>—</span>
+                  <li key={i} className="bwu-detail-item">
+                    <span className="bwu-detail-dash" style={{ color: track.accent }}>—</span>
                     {d}
                   </li>
                 ))}
@@ -162,18 +89,14 @@ export default function BuildWithUs({ setTab }) {
 
               {/* CTA */}
               {track.id === 'legal' ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+                <div className="bwu-cta-wrapper">
                   <button
                     onClick={() => setTab && setTab('registry', '?role=researcher')}
-                    style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '11px 20px', fontSize: 11, letterSpacing: '0.07em', fontWeight: 600, textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font)', transition: 'opacity 0.15s', minHeight: 44 }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
-                    onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                    className="bwu-btn-primary"
                   >Join as Legal Researcher</button>
                   <button
                     onClick={() => setTab && setTab('registry', '?role=attorney')}
-                    style={{ background: 'transparent', color: 'var(--fg)', border: '1px solid var(--border)', padding: '11px 20px', fontSize: 11, letterSpacing: '0.07em', fontWeight: 600, textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'var(--font)', transition: 'border-color 0.15s', minHeight: 44 }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                    className="bwu-btn-secondary"
                   >I&apos;m a Licensed Attorney</button>
                 </div>
               ) : (
@@ -183,24 +106,8 @@ export default function BuildWithUs({ setTab }) {
                     if (track.id === 'operator') setTab('operators')
                     else if (track.id === 'technical') setTab('registry')
                   }}
-                  style={{
-                    marginTop: 8,
-                    background: 'transparent',
-                    color: 'var(--fg)',
-                    border: '1px solid var(--border)',
-                    padding: '11px 20px',
-                    fontSize: 11,
-                    letterSpacing: '0.07em',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font)',
-                    transition: 'opacity 0.15s, border-color 0.15s',
-                    textAlign: 'center',
-                    minHeight: 44,
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--fg)'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                  className="bwu-btn-secondary"
+                  style={{ marginTop: 8 }}
                 >
                   {track.cta}
                 </button>
@@ -210,15 +117,7 @@ export default function BuildWithUs({ setTab }) {
         </div>
 
         {/* Footer note */}
-        <div style={{
-          marginTop: 32,
-          paddingTop: 24,
-          borderTop: '1px solid var(--border)',
-          fontSize: 11,
-          color: 'var(--gray)',
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
-        }}>
+        <div className="bwu-footer-note">
           All participation is voluntary and pseudonymity is always an option. Platform communication routes through encrypted channels only.
         </div>
       </div>

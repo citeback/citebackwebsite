@@ -1,6 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
-import ThemePicker from './components/ThemePicker'
 import { AuthProvider } from './context/AuthContext'
 import { API_BASE as AI_URL } from './config.js'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
@@ -198,7 +197,6 @@ export default function App() {
         </Routes>
 
         {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
-        <ThemePicker />
         {!showAI && (
           <button
             onClick={() => setShowAI(true)}

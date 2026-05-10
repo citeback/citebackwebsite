@@ -25,71 +25,35 @@ const facts = [
 
 export default function ALPRExplainer({ setTab }) {
   return (
-    <section style={{
-      padding: '72px 24px',
-      borderTop: '1px solid var(--border)',
-      borderBottom: '1px solid var(--border)',
-    }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ marginBottom: 48 }}>
-          <div style={{
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'var(--red)',
-            marginBottom: 12,
-          }}>Know What You're Fighting</div>
-          <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 38px)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 12 }}>
+    <section className="ae-section">
+      <div className="ae-inner">
+        <div className="ae-header">
+          <div className="ae-eyebrow">Know What You're Fighting</div>
+          <h2 className="ae-heading">
             The Surveillance Network Explained
           </h2>
-          <p style={{ color: 'var(--muted)', fontSize: 15, maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
+          <p className="ae-subtitle">
             Flock Safety has deployed over 90,000 cameras across the US, with more coming online daily. Most people have no idea they're being scanned.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+        <div className="ae-grid">
           {facts.map((f, i) => (
-            <div key={i} style={{
-              background: 'var(--bg2)', border: '1px solid var(--border)',
-              borderRadius: 0, padding: 24,
-            }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: 0,
-                background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--red)', marginBottom: 16,
-              }}>{f.icon}</div>
-              <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 10 }}>{f.title}</h3>
-              <p style={{ color: 'var(--muted)', fontSize: 13, lineHeight: 1.75 }}>{f.body}</p>
+            <div key={i} className="ae-fact-card">
+              <div className="ae-fact-icon">{f.icon}</div>
+              <h3 className="ae-fact-title">{f.title}</h3>
+              <p className="ae-fact-body">{f.body}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+        <div className="ae-footer">
           {setTab && (
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button
-                onClick={() => setTab('campaigns')}
-                style={{
-                  background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-                  padding: '12px 24px', fontSize: 13, fontWeight: 600,
-                  letterSpacing: '0.05em', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: 'var(--font)',
-                }}
-              >
+            <div className="ae-btn-row">
+              <button onClick={() => setTab('campaigns')} className="ae-btn-primary">
                 Fund a FOIA Campaign →
               </button>
-              <button
-                onClick={() => setTab('map')}
-                style={{
-                  background: 'transparent', color: 'var(--fg)',
-                  border: '1px solid var(--border)', padding: '12px 24px',
-                  fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
-                  textTransform: 'uppercase', cursor: 'pointer',
-                  fontFamily: 'var(--font)',
-                }}
-              >
+              <button onClick={() => setTab('map')} className="ae-btn-secondary">
                 See the Surveillance Map →
               </button>
             </div>
@@ -98,11 +62,7 @@ export default function ALPRExplainer({ setTab }) {
             href="https://sls.eff.org/technologies/automated-license-plate-readers-alprs"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              color: 'var(--muted)', fontSize: 13, fontWeight: 500,
-              border: '1px solid var(--border)', padding: '8px 16px', borderRadius: 0,
-            }}
+            className="ae-eff-link"
           >
             <ExternalLink size={13} /> Deep dive: EFF's ALPR resource center
           </a>
