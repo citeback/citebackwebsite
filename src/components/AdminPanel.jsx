@@ -90,6 +90,84 @@ function SightingCard({ sighting, onModerate, loading }) {
           <XCircle size={14} /> Reject
         </button>
       </div>
+
+
+      {/* ─── PROPOSALS SECTION ─── */}
+      {adminSection === 'proposals' && (
+        <>
+          <div className="ap-section-header">
+            <div>
+              <h1 className="ap-h1">Campaign Proposals</h1>
+              <div className="ap-subtitle">{proposals.length} proposal{proposals.length !== 1 ? 's' : ''} submitted</div>
+            </div>
+            <button onClick={fetchProposals} className="ap-refresh-btn" disabled={proposalsLoading}>
+              {proposalsLoading ? '⧗ Loading…' : '↻ Refresh'}
+            </button>
+          </div>
+          {proposalsLoading ? (
+            <div className="ap-empty-state">Loading proposals…</div>
+          ) : proposals.length === 0 ? (
+            <div className="ap-empty-state">No proposals yet.</div>
+          ) : (
+            <div className="ap-card">
+              <table className="ap-table">
+                <thead><tr>
+                  <th>Type</th><th>Title</th><th>Location</th><th>Goal</th><th>Submitted</th>
+                </tr></thead>
+                <tbody>
+                  {proposals.map((p, i) => (
+                    <tr key={i}>
+                      <td><span className="ap-badge ap-badge--pending">{p.type}</span></td>
+                      <td>{p.title}</td>
+                      <td className="ap-cell-muted">{p.location}</td>
+                      <td className="ap-cell-muted">${(p.goal || 0).toLocaleString()}</td>
+                      <td className="ap-cell-muted">{p.ts ? new Date(p.ts).toLocaleDateString() : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── REGISTRY SECTION ─── */}
+      {adminSection === 'registry' && (
+        <>
+          <div className="ap-section-header">
+            <div>
+              <h1 className="ap-h1">Expert Directory Applications</h1>
+              <div className="ap-subtitle">{registry.length} application{registry.length !== 1 ? 's' : ''} submitted</div>
+            </div>
+            <button onClick={fetchRegistry} className="ap-refresh-btn" disabled={registryLoading}>
+              {registryLoading ? '⧗ Loading…' : '↻ Refresh'}
+            </button>
+          </div>
+          {registryLoading ? (
+            <div className="ap-empty-state">Loading registry…</div>
+          ) : registry.length === 0 ? (
+            <div className="ap-empty-state">No registry applications yet.</div>
+          ) : (
+            <div className="ap-card">
+              <table className="ap-table">
+                <thead><tr>
+                  <th>Role</th><th>Location</th><th>Background</th><th>Submitted</th>
+                </tr></thead>
+                <tbody>
+                  {registry.map((r, i) => (
+                    <tr key={i}>
+                      <td><span className="ap-badge ap-badge--approved">{r.role}</span></td>
+                      <td className="ap-cell-muted">{r.location}</td>
+                      <td style={{ maxWidth: 320, wordBreak: 'break-word' }}>{r.background?.slice(0, 200)}{r.background?.length > 200 ? '…' : ''}</td>
+                      <td className="ap-cell-muted">{r.ts ? new Date(r.ts).toLocaleDateString() : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
@@ -212,7 +290,15 @@ export default function AdminPanel() {
   // Campaign state
   const [campaigns, setCampaigns] = useState([])
   const [campaignsLoading, setCampaignsLoading] = useState(false)
-  const [campaignStatusUpdating, setCampaignStatusUpdating] = useState(null) // id being updated
+  const [campaignStatusUpdating, setCampaignStatusUpdating] = useState(null)
+
+  // Proposals state
+  const [proposals, setProposals] = useState([])
+  const [proposalsLoading, setProposalsLoading] = useState(false)
+
+  // Registry state
+  const [registry, setRegistry] = useState([])
+  const [registryLoading, setRegistryLoading] = useState(false)
 
   const showToast = (msg, ok = true) => {
     setToast({ msg, ok })
@@ -247,6 +333,28 @@ export default function AdminPanel() {
     }
   }, [])
 
+  const fetchProposals = useCallback(async () => {
+    setProposalsLoading(true)
+    try {
+      const res = await fetch(`${AI_URL}/admin/proposals`, { credentials: 'include' })
+      if (res.status === 401) { setAuthed(false); return }
+      const json = await res.json()
+      setProposals(json.proposals ?? [])
+    } catch { showToast('Failed to load proposals', false) }
+    finally { setProposalsLoading(false) }
+  }, [])
+
+  const fetchRegistry = useCallback(async () => {
+    setRegistryLoading(true)
+    try {
+      const res = await fetch(`${AI_URL}/admin/registry`, { credentials: 'include' })
+      if (res.status === 401) { setAuthed(false); return }
+      const json = await res.json()
+      setRegistry(json.entries ?? [])
+    } catch { showToast('Failed to load registry', false) }
+    finally { setRegistryLoading(false) }
+  }, [])
+
   const fetchCampaigns = useCallback(async () => {
     setCampaignsLoading(true)
     try {
@@ -264,7 +372,7 @@ export default function AdminPanel() {
   const handleCampaignStatus = async (id, status) => {
     setCampaignStatusUpdating(id)
     try {
-      const res = await fetch(`${AI_URL}/campaigns/${id}`, {
+      const res = await fetch(`${AI_URL}/admin/campaigns/${id}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -467,6 +575,24 @@ export default function AdminPanel() {
           🎯 Campaigns
           {campaigns.length > 0 && (
             <span className="ap-count-badge ap-count-badge--blue">{campaigns.length}</span>
+          )}
+        </button>
+        <button
+          onClick={() => { setAdminSection('proposals'); fetchProposals() }}
+          className={`ap-switcher-btn ${adminSection === 'proposals' ? 'ap-switcher-btn--active' : ''}`}
+        >
+          💡 Proposals
+          {proposals.length > 0 && (
+            <span className="ap-count-badge ap-count-badge--blue">{proposals.length}</span>
+          )}
+        </button>
+        <button
+          onClick={() => { setAdminSection('registry'); fetchRegistry() }}
+          className={`ap-switcher-btn ${adminSection === 'registry' ? 'ap-switcher-btn--active' : ''}`}
+        >
+          📋 Registry
+          {registry.length > 0 && (
+            <span className="ap-count-badge ap-count-badge--blue">{registry.length}</span>
           )}
         </button>
       </div>
