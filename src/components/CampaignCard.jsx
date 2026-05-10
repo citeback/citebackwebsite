@@ -70,7 +70,6 @@ export default function CampaignCard({ campaign, onClick }) {
           <button
             onClick={handleShare}
             aria-label={shared ? 'Link copied' : 'Copy campaign link'}
-            className="card-share-btn"
             className={`card-share-btn${shared ? ' card-share-btn--shared' : ' card-share-btn--idle'}`}
           >
             {shared ? <CheckCircle size={14} /> : <Share2 size={14} />}
