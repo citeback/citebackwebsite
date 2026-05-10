@@ -637,7 +637,6 @@ export default function ReputationPage({ setTab }) {
         <div className="rp-earn-list">
           {[
             { label: 'C2PA-verified photo (Proofmode, Galaxy S24+, or Pixel 10)', pts: '+1 pt' },
-            { label: 'Non-C2PA photos accepted but earn no points', pts: '0 pts', soon: false },
             { label: 'New camera not in any existing database', pts: '+2 pts', soon: true },
             { label: 'Community corroboration (Phase 2)', pts: '+3 pts', soon: true },
           ].map((item, i) => (
