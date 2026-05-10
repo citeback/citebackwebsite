@@ -251,16 +251,13 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                         </button>
                       )}
                     </div>
-                    {/* Bar lookup result badge — dynamic styles kept inline (depend on barLookup.status) */}
+                    {/* Bar lookup result badge — CSS classes per status */}
                     {barLookup && (
-                      <div style={{
-                        marginTop: 8, padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
-                        ...(barLookup.status === 'found'
-                          ? { background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981' }
-                          : barLookup.status === 'not_found'
-                            ? { background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.25)', color: '#e63946' }
-                            : { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b' }),
-                      }}>
+                      <div className={`hre-bar-badge hre-bar-badge--${
+                        barLookup.status === 'found' ? 'found'
+                        : barLookup.status === 'not_found' ? 'not-found'
+                        : 'pending'
+                      }`}>
                         {barLookup.status === 'found' && (
                           <><CheckCircle size={12} className="hr-icon-inline" />
                           <strong>Verified:</strong> {barLookup.name}{barLookup.active !== undefined && ` — ${barLookup.active ? 'Active' : 'Inactive'}`}</>
@@ -413,21 +410,14 @@ export default function HumanRegistry() {
       {/* Role slots */}
       <div className="hre-cards-grid">
         {Object.entries(typeConfig).map(([key, cfg]) => (
-          <div key={key} className="hre-card">
-            <div
-              className="hre-card-icon"
-              style={{
-                background: `rgba(${cfg.colorRaw},0.08)`,
-                border: `1px solid rgba(${cfg.colorRaw},0.2)`,
-                color: cfg.color,
-              }}
-            >{cfg.icon}</div>
+          <div key={key} className={`hre-card hre-card--${key}`}>
+            <div className="hre-card-icon">{cfg.icon}</div>
             <div>
               <div className="hre-card-role-label">{cfg.label}</div>
               {key === 'technical' ? (
                 <div className="hre-card-desc">
                   backend engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
-                  <span className="hre-card-pseudo" style={{ color: `rgba(${cfg.colorRaw},0.9)` }}>
+                  <span className="hre-card-pseudo">
                     🔒 Pseudonymous — XMR or ZANO address as identity. No real name required.
                   </span>
                 </div>

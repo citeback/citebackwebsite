@@ -7087,6 +7087,8 @@ img {
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+.ops-role-card--anon .ops-role-label { color: #6ee7b7; }
+.ops-role-card--operator .ops-role-label { color: #f59e0b; }
 
 .ops-role-desc {
   font-size: 13px;
@@ -7173,6 +7175,8 @@ img {
   letter-spacing: 0.08em;
   margin-bottom: 12px;
 }
+.ops-group--proven { color: #6ee7b7; }
+.ops-group--specialized { color: #a78bfa; }
 
 .ops-campaign-types-grid {
   display: flex;
@@ -7184,8 +7188,9 @@ img {
   padding: 12px 16px;
   background: var(--bg2);
   border: 1px solid var(--border);
-  /* border-left is dynamic (group color) — keep inline */
 }
+.ops-type--proven { border-left: 3px solid #6ee7b7; }
+.ops-type--specialized { border-left: 3px solid #a78bfa; }
 
 .ops-tier-row {
   display: grid;
@@ -7369,6 +7374,7 @@ img {
 
 .ops-accordion-icon {
   flex-shrink: 0;
+  color: var(--accent);
 }
 
 .ops-accordion-chevron {
@@ -8962,11 +8968,24 @@ img {
   justify-content: center;
   flex-shrink: 0;
 }
+/* Per-role icon colors */
+.hre-card--attorney .hre-card-icon { background: rgba(93,173,226,0.08); border: 1px solid rgba(93,173,226,0.2); color: #5dade2; }
+.hre-card--billboard .hre-card-icon { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: #ff6b6b; }
+.hre-card--foia .hre-card-icon { background: rgba(187,143,206,0.08); border: 1px solid rgba(187,143,206,0.2); color: #bb8fce; }
+.hre-card--verifier .hre-card-icon { background: rgba(243,156,18,0.08); border: 1px solid rgba(243,156,18,0.2); color: #f39c12; }
+.hre-card--technical .hre-card-icon { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.2); color: #2ecc71; }
+/* Per-role pseudo-note color */
+.hre-card--technical .hre-card-pseudo { color: rgba(46,204,113,0.9); }
 .hre-card-pseudo {
   display: block;
   margin-top: 6px;
   font-weight: 600;
 }
+/* Bar lookup status badge */
+.hre-bar-badge { margin-top: 8px; padding: 8px 12px; border-radius: 8px; font-size: 12px; line-height: 1.5; border: 1px solid; }
+.hre-bar-badge--found { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); color: #10b981; }
+.hre-bar-badge--not-found { background: rgba(230,57,70,0.08); border-color: rgba(230,57,70,0.25); color: #e63946; }
+.hre-bar-badge--pending { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.3); color: #f59e0b; }
 .hre-submit-btn {
   background: var(--bg3);
   border: none;

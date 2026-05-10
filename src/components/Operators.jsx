@@ -6,7 +6,7 @@ function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defau
   return (
     <div className="ops-accordion">
       <button onClick={() => setOpen(o => !o)} className="ops-accordion-btn">
-        {Icon && <Icon size={18} className="ops-accordion-icon" style={{ color }} />}
+        {Icon && <Icon size={18} className="ops-accordion-icon" />}
         <span className="ops-accordion-btn-label">{title}</span>
         {open ? <ChevronDown size={16} className="ops-accordion-chevron" /> : <ChevronRight size={16} className="ops-accordion-chevron" />}
       </button>
@@ -33,14 +33,14 @@ function Req({ ok, pending, children }) {
 }
 
 const campaignTypes = [
-  { label: 'Proven High Impact', color: '#6ee7b7', types: [
+  { label: 'Proven High Impact', color: '#6ee7b7', cls: 'proven', types: [
     { name: 'FOIA Campaigns', desc: 'Public records requests to expose surveillance contracts, costs, and deployment data. Low cost, feeds every other campaign type.' },
     { name: 'Ordinance Campaigns', desc: 'City council campaigns to ban or regulate surveillance locally. Proven playbook across dozens of cities.' },
     { name: 'Public Records Litigation', desc: 'Force disclosure via FOIA litigation and injunctions when agencies refuse. Produces permanent citable records.' },
     { name: 'Counter-Database Projects', desc: 'Accountability mapping of surveillance infrastructure. Feeds litigation, journalism, and legislation.' },
     { name: 'Billboard Campaigns', desc: 'Place public awareness signs near surveillance infrastructure. Simple, visible, hard to ignore.' },
   ]},
-  { label: 'Specialized Actions', color: '#a78bfa', types: [
+  { label: 'Specialized Actions', color: '#a78bfa', cls: 'specialized', types: [
     { name: 'Vendor Accountability', desc: 'Target Clearview, Flock Safety, Palantir by name. Anonymous funding is uniquely valuable here.' },
     { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment campaigns. Operators should consult an attorney before launching.' },
     { name: 'Legal Defense', desc: 'Civil and administrative challenges only. No criminal defense.' },
@@ -105,7 +105,7 @@ export default function Operators() {
           { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', color: '#f59e0b', anon: false },
         ].map(p => (
           <div key={p.role} className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}>
-            <p className="ops-role-label" style={{ color: p.color }}>{p.role}</p>
+            <p className="ops-role-label">{p.role}</p>
             <p className="ops-role-desc">{p.req}</p>
           </div>
         ))}
@@ -171,12 +171,12 @@ export default function Operators() {
 
       {campaignTypes.map((group, gi) => (
         <div key={gi} className="ops-campaign-group">
-          <p className="ops-campaign-group-label" style={{ color: group.color }}>
+          <p className={`ops-campaign-group-label ops-group--${group.cls}`}>
             {group.label}
           </p>
           <div className="ops-campaign-types-grid">
             {group.types.map(t => (
-              <div key={t.name} className="ops-campaign-type" style={{ borderLeft: `3px solid ${group.color}` }}>
+              <div key={t.name} className={`ops-campaign-type ops-type--${group.cls}`}>
                 <strong className="ops-campaign-type-name">{t.name}</strong>
                 <p className="ops-campaign-type-desc">{t.desc}</p>
               </div>

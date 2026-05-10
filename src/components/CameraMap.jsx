@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
+import './CameraMap.css'
 import L from 'leaflet'
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield, MapPin } from 'lucide-react'
@@ -218,13 +219,13 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
         ) : (
           <>
             <div className="cmap-modal-header">
-              <Camera size={18} style={{ color: '#f59e0b' }} />
-              <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)' }}>Submit a Photo</span>
+              <Camera size={18} className="cmap-text-amber" />
+              <span className="cmap-modal-title-text">Submit a Photo</span>
             </div>
             <div className="cmap-modal-subtitle">
               Help keep the map current. Google Street View can be years out of date — your photo from today is more valuable.
               {camera && (
-                <span style={{ display: 'block', marginTop: 4 }}>
+                <span className="cmap-camera-node">
                   📍 Camera node #{camera.id}
                 </span>
               )}
@@ -237,29 +238,20 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                 onDragLeave={() => setDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => inputRef.current?.click()}
-                style={{
-                  border: `2px dashed ${dragging ? '#f59e0b' : 'var(--border)'}`,
-                  borderRadius: 12,
-                  padding: '36px 20px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  background: dragging ? 'rgba(245,158,11,0.05)' : 'var(--bg)',
-                  transition: 'all 0.15s',
-                  marginBottom: 14,
-                }}
+                className={`cmap-dropzone${dragging ? ' cmap-dropzone--dragging' : ''}`}
               >
-                <Upload size={28} style={{ color: dragging ? '#f59e0b' : 'var(--muted)', marginBottom: 10 }} />
-                <div style={{ fontSize: 14, fontWeight: 600, color: dragging ? '#f59e0b' : 'var(--muted)', marginBottom: 4 }}>
+                <Upload size={28} className={dragging ? 'cmap-upload-icon--dragging' : 'cmap-upload-icon'} />
+                <div className={`cmap-drop-label${dragging ? ' cmap-drop-label--dragging' : ''}`}>
                   Drop photo here
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--muted)' }}>
-                  or <span style={{ color: '#f59e0b', textDecoration: 'underline' }}>browse files</span> · JPG, PNG, HEIC · max 20MB
+                <div className="cmap-drop-hint">
+                  or <span className="cmap-drop-browse">browse files</span> · JPG, PNG, HEIC · max 20MB
                 </div>
                 <input
                   ref={inputRef}
                   type="file"
                   accept="image/*"
-                  style={{ display: 'none' }}
+                  className="cmap-file-hidden"
                   onChange={e => { if (e.target.files[0]) processFile(e.target.files[0]) }}
                 />
               </div>
@@ -277,7 +269,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             {/* Error */}
             {error && (
               <div className="cmap-error-box">
-                <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+                <AlertCircle size={14} className="cmap-icon-shrink" />
                 <div>
                   <div className="cmap-error-title">Photo rejected by filter</div>
                   <div className="cmap-error-msg">{error}</div>
@@ -289,8 +281,8 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             {preview && (
               <div className="cmap-preview-section">
                 <div className="cmap-preview-header">
-                  <CheckCircle size={14} style={{ color: '#10b981' }} />
-                  <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>Spam filter passed</span>
+                  <CheckCircle size={14} className="cmap-text-green" />
+                  <span className="cmap-filter-pass-text">Spam filter passed</span>
                   <button
                     onClick={() => { setFile(null); setPreview(null); setError(null) }}
                     className="cmap-preview-remove-btn"
@@ -310,11 +302,10 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             {preview && (
               <div className="cmap-notes-wrap">
                 <label className="cmap-notes-label">
-                  What are we looking at? <span style={{ fontWeight: 400 }}>(optional)</span>
+                  What are we looking at? <span className="cmap-optional-text">(optional)</span>
                 </label>
                 <textarea
-                  className="cmap-textarea"
-                  style={{ minHeight: 60 }}
+                  className="cmap-textarea cmap-textarea--min"
                   placeholder="e.g. Flock camera on pole at intersection, pointing east toward highway on-ramp"
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
@@ -323,7 +314,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             )}
 
             {/* AI filter notice */}
-            <div className="cmap-filter-notice" style={{ marginBottom: preview ? 16 : 0 }}>
+            <div className={`cmap-filter-notice${preview ? ' cmap-filter-notice--preview' : ''}`}>
               🤖 All photos pass a spam filter before review. Photos showing faces, license plates, or unrelated content are automatically blocked. Nothing goes live without human approval.
             </div>
 
@@ -766,7 +757,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <div className="cmap-layer-column">
       {EFF_LAYERS.map(layer => {
         const isOn = activeLayers.has(layer.id)
         const blurb = LAYER_BLURBS[layer.id]
@@ -775,55 +766,41 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
           <div key={layer.id}>
             <button
               onClick={() => toggle(layer.id)}
+              className="cmap-layer-btn"
               style={{
-                display: 'flex', alignItems: 'center', gap: 8,
                 background: isOn ? `${layer.color}14` : 'transparent',
                 border: `1px solid ${isOn ? `${layer.color}40` : 'var(--border)'}`,
-                borderRadius: blurbOpen ? '8px 8px 0 0' : 8, padding: '8px 10px',
-                cursor: 'pointer', width: '100%', textAlign: 'left',
-                transition: 'all 0.15s',
+                borderRadius: blurbOpen ? '8px 8px 0 0' : 8,
               }}
             >
-              <span style={{ fontSize: 14 }}>{layer.icon}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? 'var(--fg)' : 'var(--muted)', lineHeight: 1.2 }}>
+              <span className="cmap-layer-icon">{layer.icon}</span>
+              <div className="cmap-layer-info">
+                <div className={`cmap-layer-label${isOn ? ' cmap-layer-label--on' : ''}`}>
                   {layer.label}
                 </div>
                 {layer.data && layer.data.length > 0 ? (
-                  <div style={{ fontSize: 10, color: layer.color, marginTop: 2, opacity: 0.8 }}>
+                  <div className="cmap-layer-count" style={{ color: layer.color }}>
                     {layer.data.length} confirmed deployments
                   </div>
                 ) : !layer.live ? (
-                  <div style={{ fontSize: 10, color: '#f59e0b', marginTop: 2 }}>Activating soon — EFF Atlas data loading</div>
+                  <div className="cmap-layer-coming-soon">Activating soon — EFF Atlas data loading</div>
                 ) : null}
               </div>
-              <div style={{
-                width: 10, height: 10, borderRadius: '50%',
-                background: isOn ? layer.color : 'var(--border)',
-                flexShrink: 0, transition: 'background 0.15s',
-              }} />
+              <div className="cmap-layer-dot" style={{ background: isOn ? layer.color : 'var(--border)' }} />
             </button>
 
             {/* Inline blurb for non-ALPR layers */}
             {blurb && isOn && blurbOpen && (
-              <div style={{
-                background: `${layer.color}0e`,
-                border: `1px solid ${layer.color}30`,
-                borderTop: 'none',
-                borderRadius: '0 0 8px 8px',
-                padding: '8px 10px 10px',
-              }}>
-                <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.55, marginBottom: 6 }}>
+              <div className="cmap-blurb-container" style={{ background: `${layer.color}0e`, border: `1px solid ${layer.color}30` }}>
+                <div className="cmap-blurb-text">
                   ℹ️ {blurb}
                 </div>
                 <a
                   href={layer.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    color: layer.color, fontSize: 11, fontWeight: 600,
-                    textDecoration: 'none', display: 'inline-block',
-                  }}
+                  className="cmap-blurb-link"
+                  style={{ color: layer.color }}
                 >
                   Learn more ↗
                 </a>
@@ -834,7 +811,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
       })}
 
       {/* Citeback verification tiers */}
-      <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
+      <div className="cmap-layer-divider" />
 
       {[{
         id: 'cb-exclusive',
@@ -865,53 +842,40 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         return (
           <button key={tier.id}
             onClick={() => toggle(tier.id)}
+            className="cmap-tier-btn"
             style={{
-              display: 'flex', alignItems: 'center', gap: 8,
               background: isOn ? `${tier.color}14` : 'transparent',
               border: `1px solid ${isOn ? `${tier.color}55` : 'var(--border)'}`,
-              borderRadius: 8, padding: '8px 10px', marginBottom: 4,
-              cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'all 0.15s',
             }}
           >
-            <span style={{ fontSize: 13 }}>{tier.icon}</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: isOn ? 'var(--text)' : 'var(--muted)', lineHeight: 1.2 }}>{tier.label}</div>
-              <div style={{ fontSize: 10, color: tier.color, marginTop: 2, opacity: 0.85 }}>
+            <span className="cmap-tier-icon">{tier.icon}</span>
+            <div className="cmap-layer-info">
+              <div className={`cmap-tier-label${isOn ? ' cmap-tier-label--on' : ''}`}>{tier.label}</div>
+              <div className="cmap-tier-count" style={{ color: tier.color }}>
                 {tier.count.toLocaleString()} {tier.countLabel}
               </div>
-              {isOn && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2, lineHeight: 1.4 }}>{tier.desc}</div>}
+              {isOn && <div className="cmap-tier-desc">{tier.desc}</div>}
             </div>
-            <div style={{ width: 10, height: 10, borderRadius: '50%', background: isOn ? tier.color : 'var(--border)', flexShrink: 0, transition: 'background 0.15s' }} />
+            <div className="cmap-layer-dot" style={{ background: isOn ? tier.color : 'var(--border)' }} />
           </button>
         )
       })}
 
       {/* Victories divider */}
-      <div style={{ borderTop: '1px solid var(--border)', margin: '8px 0 6px' }} />
+      <div className="cmap-layer-divider" />
       <button
         onClick={() => setShowVictories(v => !v)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: showVictories ? 'rgba(46,204,113,0.1)' : 'transparent',
-          border: `1px solid ${showVictories ? 'rgba(46,204,113,0.4)' : 'var(--border)'}`,
-          borderRadius: 8, padding: '8px 10px',
-          cursor: 'pointer', width: '100%', textAlign: 'left',
-          transition: 'all 0.15s',
-        }}
+        className={`cmap-victories-btn${showVictories ? ' cmap-victories-btn--on' : ' cmap-victories-btn--off'}`}
       >
-        <span style={{ fontSize: 14 }}>✊</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: showVictories ? '#2ecc71' : 'var(--muted)', lineHeight: 1.2 }}>Community Victories</div>
-          <div style={{ fontSize: 10, color: '#2ecc71', marginTop: 2, opacity: 0.8 }}>Programs terminated by community action</div>
+        <span className="cmap-layer-icon">✊</span>
+        <div className="cmap-layer-info">
+          <div className={`cmap-victories-label${showVictories ? ' cmap-victories-label--on' : ''}`}>Community Victories</div>
+          <div className="cmap-victories-hint">Programs terminated by community action</div>
         </div>
-        <div style={{
-          width: 10, height: 10, borderRadius: '50%',
-          background: showVictories ? '#2ecc71' : 'var(--border)',
-          flexShrink: 0, transition: 'background 0.15s',
-        }} />
+        <div className={`cmap-victories-dot${showVictories ? ' cmap-victories-dot--on' : ''}`} />
       </button>
       {showVictories && (
-        <div style={{ fontSize: 11, color: '#86efac', lineHeight: 1.55, padding: '6px 10px', background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 6, marginTop: 2 }}>
+        <div className="cmap-victories-text">
           ✅ Green dots = programs the community successfully shut down. Proof that resistance works.
         </div>
       )}
@@ -1146,34 +1110,30 @@ export default function CameraMap() {
         />
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap', gap: 16 }}>
+      <div className="cmap-map-header">
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Surveillance Map</h2>
-          <p style={{ color: 'var(--muted)', marginTop: 6, fontSize: 14, lineHeight: 1.6, maxWidth: 480 }}>
+          <h2 className="cmap-map-title">Surveillance Map</h2>
+          <p className="cmap-map-subtitle">
             Live ALPR data from OpenStreetMap — {cameraCount} cameras mapped by contributors worldwide.
             Zoom in to load cameras in any area. Every pin has a source.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: 14, fontSize: 12, color: 'var(--muted)', alignItems: 'center' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
+        <div className="cmap-legend-container">
+          <div className="cmap-legend-items">
+            <span className="cmap-legend-item">
+              <span className="cmap-legend-dot cmap-legend-dot--accent" />
               {confirmed} Verified
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#f39c12', display: 'inline-block' }} />
+            <span className="cmap-legend-item">
+              <span className="cmap-legend-dot cmap-legend-dot--amber" />
               {unverified} Unverified
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#e63946', display: 'inline-block' }} />
+            <span className="cmap-legend-item">
+              <span className="cmap-legend-dot cmap-legend-dot--red" />
               OSM Live
             </span>
           </div>
-          <button onClick={() => { setShowForm(!showForm); setSubmitted(false) }} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: 'var(--accent)', border: 'none', color: '#fff',
-            padding: '9px 16px', borderRadius: 8, fontWeight: 600, fontSize: 13, cursor: 'pointer',
-          }}>
+          <button onClick={() => { setShowForm(!showForm); setSubmitted(false) }} className="cmap-submit-camera-btn">
             <Plus size={14} /> Submit Camera
           </button>
         </div>
@@ -1182,62 +1142,51 @@ export default function CameraMap() {
       {/* Community photo stats bar */}
       {totalPhotos > 0 && (
         <div className="cmap-photo-stats-bar">
-          <Camera size={13} style={{ color: '#f59e0b' }} />
-          <span><strong style={{ color: '#f59e0b' }}>{totalPhotos}</strong> community photo{totalPhotos > 1 ? 's' : ''} submitted</span>
+          <Camera size={13} className="cmap-text-amber" />
+          <span><strong className="cmap-text-amber">{totalPhotos}</strong> community photo{totalPhotos > 1 ? 's' : ''} submitted</span>
           {approvedPhotos > 0 && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <Eye size={11} style={{ color: '#10b981' }} /> <strong style={{ color: '#10b981' }}>{approvedPhotos}</strong> live on map
+            <span className="cmap-photo-stats-item">
+              <Eye size={11} className="cmap-text-green" /> <strong className="cmap-text-green">{approvedPhotos}</strong> live on map
             </span>
           )}
           {pendingPhotos > 0 && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <Clock size={11} style={{ color: '#f59e0b' }} /> <strong style={{ color: '#f59e0b' }}>{pendingPhotos}</strong> pending review
+            <span className="cmap-photo-stats-item">
+              <Clock size={11} className="cmap-text-amber" /> <strong className="cmap-text-amber">{pendingPhotos}</strong> pending review
             </span>
           )}
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--muted)' }}>
+          <span className="cmap-photo-stats-hint">
             Click any camera pin → "Submit Photo" to contribute
           </span>
         </div>
       )}
 
       {/* Filter toolbar */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+      <div className="cmap-filter-toolbar">
+        <div className="cmap-filter-label">
           <Filter size={12} /> Filter:
         </div>
         {[['all','All Types'],['alpr','ALPR'],['anpr','ANPR'],['ptz','PTZ']].map(([val, label]) => (
-          <button key={val} onClick={() => setTypeFilter(val)} style={{
-            background: typeFilter === val ? 'var(--accent)' : 'var(--bg3)',
-            border: `1px solid ${typeFilter === val ? 'var(--accent)' : 'var(--border)'}`,
-            color: typeFilter === val ? '#fff' : 'var(--muted)',
-            padding: '5px 12px', borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer',
-          }}>{label}</button>
+          <button key={val} onClick={() => setTypeFilter(val)}
+            className={`cmap-type-filter-btn${typeFilter === val ? ' cmap-type-filter-btn--active' : ' cmap-type-filter-btn--off'}`}
+          >{label}</button>
         ))}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
+        <div className="cmap-filter-right">
+          <div className="cmap-select-wrap">
             <select
               value={selectedState}
               onChange={e => setSelectedState(e.target.value)}
-              style={{
-                background: 'var(--bg3)', border: '1px solid var(--border)',
-                color: selectedState ? 'var(--text)' : 'var(--muted)',
-                padding: '6px 28px 6px 10px', borderRadius: 7, fontSize: 12,
-                outline: 'none', cursor: 'pointer', appearance: 'none',
-              }}
+              className={`cmap-state-select${selectedState ? ' cmap-state-select--filled' : ' cmap-state-select--empty'}`}
             >
               <option value=''>Jump to state...</option>
               {Object.keys(STATE_BBOX).sort().map(st => (
                 <option key={st} value={st}>{st}{stateCounts[st] ? ` — ${stateCounts[st].toLocaleString()}` : ''}</option>
               ))}
             </select>
-            <ChevronDown size={11} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+            <ChevronDown size={11} className="cmap-select-chevron" />
           </div>
-          <button onClick={() => setShowStatPanel(p => !p)} style={{
-            background: showStatPanel ? 'rgba(230,57,70,0.15)' : 'var(--bg3)',
-            border: `1px solid ${showStatPanel ? 'rgba(230,57,70,0.4)' : 'var(--border)'}`,
-            color: showStatPanel ? 'var(--accent)' : 'var(--muted)',
-            padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer',
-          }}>By State</button>
+          <button onClick={() => setShowStatPanel(p => !p)}
+            className={`cmap-stat-panel-btn${showStatPanel ? ' cmap-stat-panel-btn--open' : ' cmap-stat-panel-btn--closed'}`}
+          >By State</button>
         </div>
       </div>
 
