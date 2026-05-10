@@ -4,7 +4,9 @@ import { themes } from './themes'
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('PRESS')
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('citeback-theme') || 'COLD' } catch { return 'COLD' }
+  })
 
   useEffect(() => {
     const t = themes[theme]
@@ -12,6 +14,7 @@ export function ThemeProvider({ children }) {
     Object.entries(t.vars).forEach(([k, v]) => root.style.setProperty(k, v))
     // Set data-theme so CSS selectors like [data-theme="BRUTAL"] work
     root.setAttribute('data-theme', theme)
+    try { localStorage.setItem('citeback-theme', theme) } catch {}
   }, [theme])
 
   return (
