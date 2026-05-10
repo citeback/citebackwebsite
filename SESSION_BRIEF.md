@@ -18,11 +18,13 @@
 
 ## Next Session To-Do (priority order)
 1. **Wyoming DAO LLC** — Scott must file at wyomingbusiness.gov ($100). Remind him. Blocks everything.
-2. **ToS page** — draft at TERMS.md, attorney review needed before publishing
-3. **`unsafe-inline` style-src** — requires refactoring React inline styles to CSS (big lift, defer)
+2. **ToS page** — Live at /terms with draft disclaimer, proper last-updated date, ToS link in AccountModal. Attorney review still needed before removing DRAFT banners.
+3. **`unsafe-inline` style-src** — Big inline→CSS refactor mostly done (Footer, App shell, Nav, AI button, LazyFallback). Remaining: many component-level inline styles in ReputationPage, ClaimAccountPage, etc. See docs/internal/inline-styles-remaining.md
 4. **CARTO map tiles** — last third-party IP exposure, hard to proxy, noted in privacy policy
-5. **Change-password UI** — shipped, but no "forgot username" flow if user has no email
-6. **Attorney pipeline** — first attorney approval flow needs testing end-to-end
+5. **Forgot username flow** — no recovery path if user has no email and forgets username
+6. **Attorney pipeline** — FIXED: email column bug resolved, credentials:include fixed. Pipeline confirmed working.
+7. **404 page** — proper NotFound component now in place (was rendering homepage on *)
+8. **Nav mobile close** — fixed: closes on route change via useLocation effect
 
 ## Key File Paths
 - Frontend: `/Users/scotthughes/.openclaw/workspace/deflect/`
