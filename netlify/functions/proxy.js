@@ -44,6 +44,8 @@ const IP_LIMIT = 30  // 30 calls/min per IP — well above any real user need
 
 function checkRateLimit(ip) {
   const now = Date.now()
+  // Prevent unbounded Map growth in long-lived function instances
+  if (ipCounts.size > 10_000) ipCounts.clear()
   const entry = ipCounts.get(ip)
   if (!entry || now - entry.start > IP_WINDOW_MS) {
     ipCounts.set(ip, { count: 1, start: now })

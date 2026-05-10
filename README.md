@@ -1,52 +1,92 @@
 # Citeback
 
-> Decentralized legal resistance to mass surveillance.
+**Community-funded legal resistance to mass surveillance.**
 
-Citeback is an open-source platform that funds community-driven legal action against ALPR (Automated License Plate Reader) surveillance networks. Billboards. FOIA requests. Legal defense funds. All anonymously funded via Monero.
+Citeback connects citizens with the campaigns, attorneys, and FOIA tools needed to push back against automated license plate readers, facial recognition systems, and other surveillance infrastructure — funded anonymously via privacy cryptocurrency.
 
-## What It Does
+→ **[citeback.com](https://citeback.com)**
 
-- **Maps** ALPR cameras submitted by the community (92,000+ cameras loaded from OpenStreetMap)
-- **Funds campaigns** — billboards, FOIA requests, legal funds — via dedicated Monero (XMR) and Zano (ZANO) wallets
-- **Operates transparently** — every disbursement logged publicly, every rule open source
-- **Contributors need no account** — contribute to any campaign anonymously via Monero or Zano
-- **Operators create accounts** — to claim and run campaigns, an account and reputation tier are required
+---
 
-## Architecture
+## What It Is
 
-Citeback is designed so no individual — including its founder — can unilaterally control funds or censor campaigns.
+A platform for running and funding surveillance resistance campaigns:
 
-- **Direct operator wallets** (Phase 2) — Operators post their own XMR/ZANO wallet addresses; contributions go directly to operator-controlled wallets; Citeback never holds funds
-- **Community governance** — votes govern disbursement rules; a human operator layer (Wyoming DAO LLC) handles campaign review and OFAC screening; operators hold their own wallet keys
-- **Open source rules** — all disbursement logic, fee models, and governance thresholds are in this repo
-- **Append-only action log** — every wallet action is signed and logged permanently
+- **Campaigns** — FOIA requests, legal defense funds, billboard campaigns against ALPR networks
+- **Camera map** — 95,000+ community-reported surveillance cameras from OpenStreetMap and verified sightings
+- **Expert directory** — attorneys, journalists, and researchers working on surveillance law
+- **No platform custody** — operator wallets are posted publicly; contributions go directly from contributor to operator; Citeback never holds funds
+- **Anonymous by design** — contributors need no account; funded via [Monero (XMR)](https://getmonero.org) and [Zano (ZANO)](https://zano.org)
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) and [GOVERNANCE.md](./GOVERNANCE.md) for full specs.
+## How It Works
+
+1. An operator claims a campaign and posts their XMR/ZANO wallet address
+2. Contributors send directly to that wallet — no intermediary, no credit card
+3. The operator provides a Monero view key, allowing anyone to verify the balance publicly
+4. When the campaign milestone is reached, the operator executes and documents the outcome
+
+See [GOVERNANCE.md](./GOVERNANCE.md) for the full governance model, voting rules, and operator accountability protocol.
 
 ## Stack
 
-- Vite + React
-- Monero (XMR) + Zano (ZANO) — privacy-by-default, anonymous contributions
-- Leaflet — camera map
-- Ollama — local AI chatbot (optional)
+| Layer | Technology |
+|---|---|
+| Frontend | Vite + React + Leaflet |
+| API proxy | Netlify Functions |
+| Backend | Node.js (no framework) + SQLite (better-sqlite3) |
+| Auth | JWT (httpOnly cookies) + WebAuthn passkeys |
+| Hosting | Netlify (frontend) + Hetzner VPS (API + AI) |
+| AI chatbot | Ollama + qwen2.5:7b (self-hosted, no logging) |
+| Privacy coins | Monero (XMR) + Zano (ZANO) |
+
+## Privacy Architecture
+
+- All third-party API calls (OpenStreetMap, CourtListener, Congress.gov, OpenStates, Senate LDA) are **proxied through our servers** — your IP is never sent to external services
+- Fonts are **self-hosted** — no CDN requests on page load
+- The AI chatbot runs **locally on our VPS** — conversations are never logged or used for training
+- Account emails are **AES-256-GCM encrypted at rest**
+
+See [docs/internal/ARCHITECTURE-REPUTATION.md](./docs/internal/ARCHITECTURE-REPUTATION.md) and [ARCHITECTURE.md](./ARCHITECTURE.md) for full specs.
+
+## Security
+
+Responsible disclosure: **citeback@proton.me**
+
+See [SECURITY.md](./SECURITY.md) for our full security policy and scope.
+
+The server-side code running at `ai.citeback.com` publishes a SHA-256 hash of itself at [ai.citeback.com/version](https://ai.citeback.com/version) so anyone can verify the live server matches the public source.
 
 ## Running Locally
 
 ```bash
 npm install
-npm run dev
+npm run dev        # frontend at http://localhost:5173
 ```
+
+The backend API runs separately on the Hetzner VPS. For local development, API calls target `https://ai.citeback.com` by default (see `src/config.js`).
 
 ## Current Status
 
-**Phase 1 — Design & Community Review**
+**Pre-launch.** Accounts, passkeys, the camera map, and the expert directory are live. Campaign wallets are not yet active — operators are in onboarding. See [PRE-LAUNCH.md](./PRE-LAUNCH.md) for the full checklist.
 
-Campaign wallets are not yet live. Architecture and governance specs are open for community review. Phase 2 brings the direct wallet model: operators post their own XMR/ZANO addresses, contributions go directly to their wallets, and Citeback monitors via view keys.
+## Repository Structure
 
-## Contributing
-
-PRs welcome. All site changes go through public review. See GOVERNANCE.md for how rule changes work.
+```
+src/                  React frontend
+  components/         Page components
+  context/            Auth, camera count context
+  data/               Static campaign and layer data
+netlify/functions/    Serverless API proxy (external calls)
+public/               Static assets, fonts, sitemap, security.txt
+server.js             VPS backend source (deployed to Hetzner)
+GOVERNANCE.md         Governance rules, voting, operator accountability
+ARCHITECTURE.md       Technical architecture overview
+SECURITY.md           Vulnerability disclosure policy
+PRE-LAUNCH.md         Launch checklist
+TERMS.md              Terms of service (draft, pending attorney review)
+docs/internal/        Internal audit reports and research
+```
 
 ## License
 
-MIT
+[MIT](./LICENSE)
