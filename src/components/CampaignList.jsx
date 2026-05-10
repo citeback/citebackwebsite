@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 import CampaignCard from './CampaignCard'
 import { lazy, Suspense } from 'react'
 const ProposeModal = lazy(() => import('./ProposeModal'))
@@ -65,6 +66,15 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
   )
 
   return (
+    <>
+    {full && (
+      <Helmet>
+        <title>Active Campaigns | Citeback — Fund Surveillance Lawsuits</title>
+        <meta name="description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
+        <meta property="og:title" content="Active Campaigns | Citeback — Fund Surveillance Lawsuits" />
+        <meta property="og:description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
+      </Helmet>
+    )}
     <section className="campaign-list-section" style={{ padding: sectionPadding }}>
       <div className="campaign-list-header">
         <div>
@@ -156,5 +166,6 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
 
       {proposing && <Suspense fallback={null}><ProposeModal onClose={() => setProposing(false)} /></Suspense>}
     </section>
+    </>
   )
 }

@@ -117,11 +117,9 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
       })
       const d = await r.json()
       if (!r.ok) { setClaimError(d.error || 'Claim failed'); setClaiming(false); return }
-      // Refresh campaign data
-      const cr = await fetch(`${AI_URL}/api/campaigns`)
-      const all = await cr.json()
-      const updated = all.find(c => c.id === campaign.id)
-      if (updated) setCampaign(updated)
+      // Refresh single campaign via targeted endpoint
+      const cr = await fetch(`${AI_URL}/api/campaigns/${campaign.id}`)
+      if (cr.ok) { const updated = await cr.json(); setCampaign(updated) }
       setClaiming(false)
     } catch (e) { setClaimError('Network error — try again'); setClaiming(false) }
   }
@@ -137,11 +135,9 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
       })
       const d = await r.json()
       if (!r.ok) { setSaveError(d.error || 'Save failed'); setSavingWallet(false); return }
-      // Refresh campaign
-      const cr = await fetch(`${AI_URL}/api/campaigns`)
-      const all = await cr.json()
-      const updated = all.find(c => c.id === campaign.id)
-      if (updated) setCampaign(updated)
+      // Refresh single campaign via targeted endpoint
+      const cr = await fetch(`${AI_URL}/api/campaigns/${campaign.id}`)
+      if (cr.ok) { const updated = await cr.json(); setCampaign(updated) }
       setSaveSuccess(true); setSavingWallet(false)
     } catch (e) { setSaveError('Network error — try again'); setSavingWallet(false) }
   }
