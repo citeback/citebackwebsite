@@ -65,10 +65,10 @@ export default function BuildWithUs({ setTab }) {
         {/* Track cards */}
         <div className="bwu-grid">
           {tracks.map((track) => (
-            <div key={track.id} className="bwu-card">
+            <div key={track.id} className={`bwu-card bwu-card--${track.id}`}>
               {/* Track header */}
               <div>
-                <div className="bwu-track-tag" style={{ color: track.accent }}>
+                <div className="bwu-track-tag">
                   {track.tag}
                 </div>
                 <div className="bwu-track-label">{track.label}</div>
@@ -81,7 +81,7 @@ export default function BuildWithUs({ setTab }) {
               <ul className="bwu-detail-list">
                 {track.details.map((d, i) => (
                   <li key={i} className="bwu-detail-item">
-                    <span className="bwu-detail-dash" style={{ color: track.accent }}>—</span>
+                    <span className="bwu-detail-dash">—</span>
                     {d}
                   </li>
                 ))}

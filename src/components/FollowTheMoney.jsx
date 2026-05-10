@@ -201,13 +201,13 @@ export default function FollowTheMoney() {
             <div
               key={v.name}
               onClick={() => setExpanded(isOpen ? null : v.name)}
-              className="ftm-vendor-card"
-              style={{ border: `1px solid ${isOpen ? v.color + '55' : 'var(--border)'}` }}
+              className={`ftm-vendor-card${isOpen ? ' ftm-vendor-card--open' : ''}`}
+              style={{ '--vc': v.color }}
             >
               {/* Vendor name + color dot + source link */}
               <div className="ftm-vendor-header">
                 <div className="ftm-vendor-name-row">
-                  <div className="ftm-color-dot" style={{ background: v.color }} />
+                  <div className="ftm-color-dot" />
                   <span className="ftm-vendor-name">{v.name}</span>
                 </div>
                 <a
@@ -228,7 +228,7 @@ export default function FollowTheMoney() {
                   <div className="ftm-stat-label">
                     Federal Contracts
                   </div>
-                  <div className="ftm-stat-value" style={{ color: v.color }}>
+                  <div className="ftm-stat-value">
                     {v.totalContracts}
                   </div>
                   <div className="ftm-stat-sub">
@@ -303,7 +303,7 @@ export default function FollowTheMoney() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="ftm-vendor-link" style={{ color: v.color }}
+                      className="ftm-vendor-link"
                     >
                       Federal contracts on USASpending.gov <ExternalLink size={10} />
                     </a>
@@ -311,9 +311,9 @@ export default function FollowTheMoney() {
                     {/* Flock Safety state-level note */}
                     {!v.ldaQuery && (
                       <div className="ftm-state-lobbying-box">
-                        <Briefcase size={12} style={{ color: v.color, flexShrink: 0, marginTop: 1 }} />
+                        <Briefcase size={12} className="ftm-state-icon" />
                         <div>
-                          <div style={{ color: v.color, fontWeight: 700, fontSize: 11, marginBottom: 2 }}>
+                          <div className="ftm-state-label">
                             State-level lobbying — federal disclosure not required
                           </div>
                           <div className="ftm-state-text">

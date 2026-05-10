@@ -234,14 +234,10 @@ export default function TrustFAQ({ setTab }) {
           <button
             key={i}
             onClick={() => setActiveSection(i)}
-            className="faq-tab-btn"
-            style={{
-              background: activeSection === i ? 'rgba(230,57,70,0.1)' : 'var(--bg2)',
-              borderColor: activeSection === i ? s.color : 'var(--border)',
-              color: activeSection === i ? s.color : 'var(--muted)',
-            }}
+            className={`faq-tab-btn${activeSection === i ? ' faq-tab-btn--active' : ''}`}
+            style={{ '--faq-color': s.color }}
           >
-            <span style={{ color: s.color }}>{s.icon}</span>
+            <span className="faq-tab-icon">{s.icon}</span>
             {s.label}
           </button>
         ))}
