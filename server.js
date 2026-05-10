@@ -12,6 +12,12 @@ import Exifr from 'exifr'
 import AdmZip from 'adm-zip'
 import { createC2pa } from 'c2pa-node'
 import nodemailer from 'nodemailer'
+import {
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse,
+} from '@simplewebauthn/server'
 
 // ── Password entropy check ───────────────────────────────────────────────────
 const COMMON_PASSWORDS = new Set([
@@ -70,6 +76,21 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = path.join(__dirname, 'data')
 const PHOTOS_DIR = path.join(DATA_DIR, 'photos')
 try { fs.mkdirSync(DATA_DIR, { recursive: true }) } catch {}
+// ── Version / verification info ───────────────────────────────────────────────
+const SERVER_FILE = path.join(__dirname, 'server.js')
+let SERVER_SHA256 = 'unknown'
+const DEPLOYED_AT = new Date().toISOString()
+try {
+  const serverBytes = fs.readFileSync(SERVER_FILE)
+  SERVER_SHA256 = createHash('sha256').update(serverBytes).digest('hex')
+  fs.writeFileSync(path.join(__dirname, '.version'), JSON.stringify({
+    sha256: SERVER_SHA256, deployedAt: DEPLOYED_AT,
+    repo: 'https://github.com/citeback/citebackwebsite',
+  }))
+} catch (e) { console.error('version hash error:', e.message) }
+console.log('Server SHA-256:', SERVER_SHA256)
+
+
 try { fs.mkdirSync(PHOTOS_DIR, { recursive: true }) } catch {}
 
 const ALLOWED_IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' }
@@ -201,6 +222,7 @@ db.exec(`
     bar_result TEXT,
     location TEXT NOT NULL,
     background TEXT NOT NULL,
+    email TEXT,
     status TEXT DEFAULT 'pending',
     submitted_at TEXT NOT NULL,
     reviewed_at TEXT,
@@ -210,6 +232,18 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_attorney_submitted ON attorney_applications(submitted_at);
 `)
 
+
+// ── Admin audit log table ──────────────────────────────────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS admin_audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    action TEXT NOT NULL,
+    target_id TEXT,
+    detail TEXT,
+    ip TEXT,
+    created_at TEXT NOT NULL
+  );
+`)
 // Seed campaigns from JSON if table is empty
 ;(function() {
   const n = db.prepare('SELECT COUNT(*) as n FROM campaigns').get().n
@@ -261,11 +295,60 @@ function parseCookies(req) {
 }
 
 const JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days in seconds
-const COOKIE_OPTS = `HttpOnly; Secure; SameSite=Lax; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
-const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/`
+const COOKIE_OPTS = `HttpOnly; Secure; SameSite=Strict; Max-Age=${JWT_COOKIE_MAX_AGE}; Path=/`
+const COOKIE_CLEAR = `token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/`
 
 // Migrate: add password_version column for existing DBs (safe no-op if already exists)
 try { db.prepare('ALTER TABLE users ADD COLUMN password_version INTEGER DEFAULT 0').run() } catch {}
+
+// ── Attorney account fields migration ────────────────────────────────────────
+try { db.prepare('ALTER TABLE users ADD COLUMN attorney_verified INTEGER DEFAULT 0').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN role TEXT DEFAULT NULL').run() } catch {}
+try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_created INTEGER DEFAULT 0').run() } catch {}
+try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
+
+// ── Claim tokens table (for attorney account setup links) ─────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS claim_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    token_hash TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER DEFAULT 0
+  )
+`)
+
+// ── Passkeys table ────────────────────────────────────────────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS passkeys (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    credential_id TEXT UNIQUE NOT NULL,
+    public_key TEXT NOT NULL,
+    sign_count INTEGER DEFAULT 0,
+    device_name TEXT,
+    created_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_passkeys_user ON passkeys(user_id);
+  CREATE INDEX IF NOT EXISTS idx_passkeys_cred ON passkeys(credential_id);
+`)
+
+// ── Passkey challenges table (persistent across restarts) ──────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS passkey_challenges (
+    temp_id TEXT PRIMARY KEY,
+    challenge TEXT NOT NULL,
+    user_id TEXT,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_pk_challenges_ts ON passkey_challenges(created_at);
+`)
+// GC expired challenges on startup and every 5 minutes
+function gcPasskeyChallenges() {
+  db.prepare('DELETE FROM passkey_challenges WHERE created_at < ?').run(Date.now() - 5 * 60 * 1000)
+}
+gcPasskeyChallenges()
+setInterval(gcPasskeyChallenges, 5 * 60 * 1000)
 
 // ── Server-side reauth sessions ───────────────────────────────────────────────
 // userId -> reauthUntil timestamp (in-memory; resets on restart — acceptable)
@@ -339,6 +422,38 @@ function checkBarRateLimit(ip) {
   if (entry.count >= BAR_LIMIT) return false
   entry.count++; return true
 }
+
+// ── WebAuthn / Passkey config ────────────────────────────────────────────────
+const RP_NAME = 'Citeback'
+const RP_ID = 'citeback.com'
+const RP_ORIGIN = 'https://citeback.com'
+// SQLite-backed challenge helpers (survives server restarts)
+function pkChallengeSet(tempId, challenge, userId) {
+  db.prepare('INSERT OR REPLACE INTO passkey_challenges (temp_id, challenge, user_id, created_at) VALUES (?, ?, ?, ?)').run(tempId, challenge, userId ?? null, Date.now())
+}
+function pkChallengeGet(tempId) {
+  const row = db.prepare('SELECT * FROM passkey_challenges WHERE temp_id = ?').get(tempId)
+  if (!row) return null
+  if (Date.now() - row.created_at > 5 * 60 * 1000) { db.prepare('DELETE FROM passkey_challenges WHERE temp_id = ?').run(tempId); return null }
+  return row
+}
+function pkChallengeDelete(tempId) {
+  db.prepare('DELETE FROM passkey_challenges WHERE temp_id = ?').run(tempId)
+}
+
+// Passkey rate limiters (auth: 10/min, register: 5/min)
+const pkAuthRateCounts = new Map()
+const pkRegRateCounts = new Map()
+function _pkRateCheck(map, ip, limit) {
+  const now = Date.now()
+  const WINDOW = 60 * 1000
+  const entry = map.get(ip)
+  if (!entry || now - entry.start > WINDOW) { map.set(ip, { count: 1, start: now }); return true }
+  if (entry.count >= limit) return false
+  entry.count++; return true
+}
+function checkPkAuthRateLimit(ip) { return _pkRateCheck(pkAuthRateCounts, ip, 10) }
+function checkPkRegRateLimit(ip) { return _pkRateCheck(pkRegRateCounts, ip, 5) }
 
 // ── Bar state whitelist ──────────────────────────────────────────────────────
 const US_BAR_STATES = new Set([
@@ -640,14 +755,78 @@ function timingSafeCompare(a, b) {
   if (bufA.length !== bufB.length) return false
   return timingSafeEqual(bufA, bufB)
 }
+
+// ── Admin brute-force lockout (5 failures → 15min lockout per IP) ──────────
+const adminFailCounts = new Map()
+const ADMIN_MAX_FAILS = 5
+const ADMIN_LOCKOUT_MS = 15 * 60 * 1000
+function checkAdminLockout(ip) {
+  const entry = adminFailCounts.get(ip)
+  if (!entry) return true
+  if (entry.lockedUntil && Date.now() < entry.lockedUntil) return false
+  if (entry.lockedUntil && Date.now() >= entry.lockedUntil) { adminFailCounts.delete(ip); return true }
+  return true
+}
+function recordAdminFail(ip) {
+  const entry = adminFailCounts.get(ip) || { fails: 0 }
+  entry.fails = (entry.fails || 0) + 1
+  if (entry.fails >= ADMIN_MAX_FAILS) entry.lockedUntil = Date.now() + ADMIN_LOCKOUT_MS
+  adminFailCounts.set(ip, entry)
+}
+function clearAdminFail(ip) { adminFailCounts.delete(ip) }
+
+// ── Admin session tokens (httpOnly cookie, 4hr TTL) ─────────────────────────
+const adminSessions = new Map()
+const ADMIN_SESSION_TTL = 4 * 60 * 60 * 1000
+const ADMIN_COOKIE = 'cx_admin_token'
+function issueAdminSession(ip) {
+  const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '')
+  adminSessions.set(token, { ip, created: Date.now() })
+  return token
+}
+function verifyAdminSession(req) {
+  const cookies = parseCookies(req)
+  const token = cookies[ADMIN_COOKIE]
+  if (!token) return false
+  const session = adminSessions.get(token)
+  if (!session) return false
+  if (Date.now() - session.created > ADMIN_SESSION_TTL) { adminSessions.delete(token); return false }
+  return true
+}
+function revokeAdminSession(req) {
+  const cookies = parseCookies(req)
+  const token = cookies[ADMIN_COOKIE]
+  if (token) adminSessions.delete(token)
+}
+setInterval(() => {
+  const now = Date.now()
+  for (const [token, s] of adminSessions) {
+    if (now - s.created > ADMIN_SESSION_TTL) adminSessions.delete(token)
+  }
+}, 60 * 60 * 1000)
+
+// ── Admin audit logger ───────────────────────────────────────────────────────
+function auditLog(action, targetId, detail, ip) {
+  try {
+    db.prepare('INSERT INTO admin_audit_log (action, target_id, detail, ip, created_at) VALUES (?, ?, ?, ?, ?)')
+      .run(action, targetId || null, detail || null, ip || null, new Date().toISOString())
+  } catch (e) { console.error('audit log error:', e.message) }
+}
+
 function isAdmin(req, body) {
-  // Header-only. Body secret removed to avoid appearing in request body logs.
+  if (verifyAdminSession(req)) return true
+  // Header-based secret: apply same brute-force lockout as /admin/login
+  const _ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket?.remoteAddress || 'unknown'
+  if (!checkAdminLockout(_ip)) return false
   const headerSecret = req.headers['x-admin-secret']
-  return !!(headerSecret && timingSafeCompare(headerSecret, ADMIN_SECRET))
+  if (headerSecret && timingSafeCompare(headerSecret, ADMIN_SECRET)) { clearAdminFail(_ip); return true }
+  if (headerSecret) recordAdminFail(_ip)
+  return false
 }
 
 // ── HTTP Server ───────────────────────────────────────────────────────────────
 const server = http.createServer(async (req, res) => {
+  const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
 
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end() }
 
@@ -670,6 +849,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Campaign interest counter ──────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/interest') {
+    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       if (body.action === 'counts') {
@@ -677,7 +857,7 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ counts: { ...interestCounts } }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
-        const id = String(body.campaignId)
+        const id = String(body.campaignId).slice(0, 100)
         interestCounts[id] = (interestCounts[id] || 0) + 1
         res.writeHead(200, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ ok: true, campaignId: id, count: interestCounts[id] }))
@@ -697,7 +877,8 @@ const server = http.createServer(async (req, res) => {
       const title = String(body.title || '').slice(0, 200).trim()
       const location = String(body.location || '').slice(0, 200).trim()
       const description = String(body.description || '').slice(0, 2000).trim()
-      const goal = Number(body.goal) || 0
+      const rawGoal = Number(body.goal)
+      const goal = (!Number.isFinite(rawGoal) || rawGoal < 0) ? 0 : Math.min(rawGoal, 1_000_000)
       if (!title || !location || !description) { res.writeHead(400); return res.end(JSON.stringify({ error: 'missing fields' })) }
       appendRecord('proposals.jsonl', { type, title, location, description, goal })
       res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -826,6 +1007,16 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({ ok: true }))
   }
 
+  // ── Account: logout all sessions (bumps password_version, invalidates all JWTs) ──
+  if (req.method === 'POST' && req.url === '/account/logout-all') {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    db.prepare('UPDATE users SET password_version = COALESCE(password_version, 0) + 1 WHERE id = ?').run(claims.userId)
+    res.setHeader('Set-Cookie', COOKIE_CLEAR)
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: true }))
+  }
+
   // ── Account: profile ───────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/account/me') {
     const claims = verifyToken(req)
@@ -834,7 +1025,7 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify({ error: 'Authentication required' }))
     }
 
-    const user = db.prepare('SELECT id, username, reputation, tier, created_at, email_enc FROM users WHERE id = ?').get(claims.userId)
+    const user = db.prepare('SELECT id, username, reputation, tier, created_at, email_enc, attorney_verified, role FROM users WHERE id = ?').get(claims.userId)
     if (!user) {
       res.writeHead(404, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'User not found' }))
@@ -852,6 +1043,8 @@ const server = http.createServer(async (req, res) => {
       createdAt: user.created_at,
       recentEvents: events,
       hasEmail: !!user.email_enc,
+      attorney_verified: user.attorney_verified || 0,
+      role: user.role || null,
     }))
   }
 
@@ -936,6 +1129,18 @@ const server = http.createServer(async (req, res) => {
     }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ hasEmail: !!user?.email_enc, maskedEmail }))
+  }
+
+  // ── Account: attorney info (bar state/number for verified attorneys) ────────
+  if (req.method === 'GET' && req.url === '/account/attorney-info') {
+    const claims = verifyToken(req)
+    if (!claims) {
+      res.writeHead(401, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Authentication required' }))
+    }
+    const appRow = db.prepare('SELECT bar_state, bar_number, status FROM attorney_applications WHERE account_user_id = ? ORDER BY submitted_at DESC LIMIT 1').get(claims.userId)
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ bar_state: appRow?.bar_state || null, bar_number: appRow?.bar_number || null, status: appRow?.status || null }))
   }
 
   // ── Account: request password recovery ───────────────────────────────────
@@ -1083,7 +1288,7 @@ const server = http.createServer(async (req, res) => {
             const isZip = ALLOWED_ZIP_TYPES.has(info.mimeType) || (info.filename || '').toLowerCase().endsWith('.zip')
             if (!isImage && !isZip) { stream.resume(); return }
             const ext = isZip ? 'zip' : ALLOWED_IMAGE_TYPES[info.mimeType]
-            const filename = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`
+            const filename = `${randomUUID()}.${ext}`
             const dest = path.join(PHOTOS_DIR, filename)
             const out = fs.createWriteStream(dest)
             let size = 0
@@ -1117,7 +1322,7 @@ const server = http.createServer(async (req, res) => {
             // Find proof.json for GPS
             const proofEntry = entries.find(e => /proof\.json$/i.test(e.entryName))
             if (jpegEntry) {
-              const jpegFilename = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}.jpg`
+              const jpegFilename = `${randomUUID()}.jpg`
               const jpegDest = path.join(PHOTOS_DIR, jpegFilename)
               // Use readFile (not extractEntryTo) to avoid zip path traversal — entry names can
               // contain '../' sequences that escape PHOTOS_DIR if written directly to disk.
@@ -1377,7 +1582,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Attorney application ──────────────────────────────────────────────────
-  if (req.method === 'POST' && req.url === '/attorney/apply') {
+  if (req.method === "POST" && req.url === "/attorney/apply") {
+    const applyUser = verifyToken(req)
+    if (!applyUser) { res.writeHead(401, { "Content-Type": "application/json" }); return res.end(JSON.stringify({ error: "Login required to submit an attorney application" })) }
     try {
       const body = await parseBody(req)
       // Input validation with strict length limits — no string concat into SQL (parameterized only)
@@ -1386,6 +1593,7 @@ const server = http.createServer(async (req, res) => {
       const bar_number = sanitizeBarNumber(body.bar_number)
       const location = String(body.location || '').trim().slice(0, 300)
       const background = String(body.background || '').trim().slice(0, 3000)
+      const appEmail = String(body.email || '').trim().slice(0, 200) || null
 
       if (!full_name || !bar_state || !location || !background) {
         res.writeHead(400, { 'Content-Type': 'application/json' })
@@ -1411,9 +1619,9 @@ const server = http.createServer(async (req, res) => {
       // All values bound via parameterized query — no SQL injection possible
       db.prepare(`
         INSERT INTO attorney_applications
-          (id, full_name, bar_state, bar_number, bar_verified, bar_result, location, background, status, submitted_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-      `).run(id, full_name, bar_state, bar_number || null, bar_verified, bar_result, location, background, now)
+          (id, full_name, bar_state, bar_number, bar_verified, bar_result, location, background, email, status, submitted_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+      `).run(id, full_name, bar_state, bar_number || null, bar_verified, bar_result, location, background, appEmail, now)
 
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, id, barVerified: !!bar_verified }))
@@ -1454,10 +1662,132 @@ const server = http.createServer(async (req, res) => {
       const changed = db.prepare(
         'UPDATE attorney_applications SET status = ?, reviewed_at = ?, notes = ? WHERE id = ?'
       ).run(newStatus, new Date().toISOString(), notes, id)
+      const reviewIp = req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown'
+      auditLog('attorney_' + action, id, notes || null, reviewIp)
+      if (changed.changes > 0 && action === 'approve') {
+        try {
+          const appRow = db.prepare('SELECT full_name, email, account_created FROM attorney_applications WHERE id = ?').get(id)
+          if (appRow && appRow.email && !appRow.account_created) {
+            // Generate username from full_name
+            const baseName = appRow.full_name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '').slice(0, 15)
+            let newUsername = null
+            for (let attempt = 0; attempt < 5; attempt++) {
+              const suffix = String(Math.floor(1000 + Math.random() * 9000))
+              const candidate = (baseName || 'attorney') + '_' + suffix
+              const existing = db.prepare('SELECT id FROM users WHERE username = ?').get(candidate)
+              if (!existing) { newUsername = candidate; break }
+            }
+            if (!newUsername) {
+              console.error('attorney account creation: could not generate unique username for', id)
+            } else {
+              const newUserId = randomUUID()
+              const randomPw = randomUUID() + randomUUID() // unusable random password
+              const pwHash = await bcrypt.hash(randomPw, 10)
+              const accountCreatedAt = new Date().toISOString()
+              db.prepare(
+                "INSERT INTO users (id, username, password_hash, created_at, attorney_verified, role) VALUES (?, ?, ?, ?, 1, 'attorney')"
+              ).run(newUserId, newUsername, pwHash, accountCreatedAt)
+              // Insert claim token
+              const rawToken = randomBytes(32).toString('hex')
+              const tokenHash = await bcrypt.hash(rawToken, 10)
+              const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+              const claimTokenId = randomUUID()
+              db.prepare('INSERT INTO claim_tokens (id, user_id, token_hash, expires_at, used) VALUES (?, ?, ?, ?, 0)')
+                .run(claimTokenId, newUserId, tokenHash, expiresAt)
+              // Update application
+              db.prepare('UPDATE attorney_applications SET account_created = 1, account_user_id = ? WHERE id = ?')
+                .run(newUserId, id)
+              auditLog('attorney_account_created', id, newUserId, reviewIp)
+              // Send welcome email
+              const claimLink = `https://citeback.com/claim-account?token=${rawToken}&id=${newUserId}`
+              const welcomeText = `Hi ${appRow.full_name},\n\nYour application to the Citeback Expert Directory has been approved. Click the link below to set up your account and access your dashboard.\n\nActivate your account: ${claimLink}\n\n(This link is valid for 7 days)\n\nIf you have any questions, contact citeback@proton.me.\n\nCiteback`
+              if (emailEnabled) {
+                mailer.sendMail({ from: SMTP_FROM, to: appRow.email, subject: 'Welcome to Citeback — set up your account', text: welcomeText }).catch(e => console.error('attorney welcome email error:', e.message))
+              }
+            }
+          } else if (appRow && appRow.email && emailEnabled) {
+            // Already has account — send approval notification only
+            const notifyText = 'Hi ' + appRow.full_name + ',\n\nYour application to the Citeback Expert Directory has been approved. You will be listed in the directory when the platform launches.\n\nIf you have any questions, contact citeback@proton.me.\n\nCiteback'
+            mailer.sendMail({ from: SMTP_FROM, to: appRow.email, subject: 'Your Citeback Expert Directory application has been approved', text: notifyText }).catch(e => console.error('attorney notify error:', e.message))
+          }
+        } catch (e) { console.error('attorney account creation error:', e.message) }
+      } else if (changed.changes > 0 && action === 'reject' && emailEnabled) {
+        try {
+          const appRow = db.prepare('SELECT full_name, email FROM attorney_applications WHERE id = ?').get(id)
+          if (appRow && appRow.email) {
+            const notifyText = 'Hi ' + appRow.full_name + ',\n\nThank you for applying to the Citeback Expert Directory. After review, we are unable to approve your application at this time.' + (notes ? '\n\nNote from reviewer: ' + notes : '') + '\n\nIf you have questions, contact citeback@proton.me.\n\nCiteback'
+            mailer.sendMail({ from: SMTP_FROM, to: appRow.email, subject: 'Update on your Citeback Expert Directory application', text: notifyText }).catch(e => console.error('attorney notify error:', e.message))
+          }
+        } catch (e) { console.error('attorney notify lookup error:', e.message) }
+      }
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: changed.changes > 0, id, status: newStatus }))
     } catch {
       res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+    }
+  }
+
+  // ── Claim account (attorney account setup via token link) ───────────────
+  if (req.method === 'POST' && req.url === '/claim-account') {
+    if (!checkAuthRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const { userId, token, username, password } = body
+      // Generic error to avoid user enumeration
+      const badToken = () => { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid or expired activation link.' })) }
+      if (!userId || !token || !username || !password) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Missing required fields.' }))
+      }
+      // Validate username: 3-20 chars, alphanumeric + underscore only
+      if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Username must be 3-20 characters, letters, numbers, and underscores only.' }))
+      }
+      // Validate password length
+      if (password.length < 8) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Password must be at least 8 characters.' }))
+      }
+      // Validate token format (64 hex chars)
+      if (!/^[0-9a-f]{64}$/.test(token)) return badToken()
+      // Look up user (same response for not-found to avoid enumeration)
+      const user = db.prepare('SELECT id, attorney_verified, role FROM users WHERE id = ?').get(userId)
+      if (!user) return badToken()
+      // Look up claim token
+      const claimRow = db.prepare('SELECT id, token_hash, expires_at, used FROM claim_tokens WHERE user_id = ? AND used = 0').get(userId)
+      if (!claimRow) return badToken()
+      // Check expiry
+      if (new Date(claimRow.expires_at) < new Date()) return badToken()
+      // Timing-safe token comparison via bcrypt
+      const tokenMatch = await bcrypt.compare(token, claimRow.token_hash)
+      if (!tokenMatch) return badToken()
+      // Check username availability
+      const takenUser = db.prepare('SELECT id FROM users WHERE username = ? AND id != ?').get(username, userId)
+      if (takenUser) {
+        res.writeHead(409, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Username is already taken. Choose another.' }))
+      }
+      // Update user with chosen username and hashed password
+      const newHash = await bcrypt.hash(password, 12)
+      db.prepare('UPDATE users SET username = ?, password_hash = ?, password_version = COALESCE(password_version,0)+1 WHERE id = ?')
+        .run(username, newHash, userId)
+      // Mark claim token as used
+      db.prepare('UPDATE claim_tokens SET used = 1 WHERE id = ?').run(claimRow.id)
+      // Issue JWT session cookie
+      const newPv = db.prepare('SELECT password_version FROM users WHERE id = ?').get(userId)?.password_version || 0
+      const sessionToken = jwt.sign({ userId, username, pv: newPv }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      res.setHeader('Set-Cookie', `token=${sessionToken}; ${COOKIE_OPTS}`)
+      auditLog('claim_account_used', userId, username, ip)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, username }))
+    } catch (e) {
+      console.error('claim-account error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Server error. Please try again.' }))
     }
   }
 
@@ -1503,7 +1833,63 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // ── Admin: list pending sightings ─────────────────────────────────────────
+  
+  // ── Admin: login (exchange secret for session cookie) ─────────────────────
+  if (req.method === 'POST' && req.url === '/admin/login') {
+    const clientIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
+    if (!checkAdminLockout(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '900' })
+      return res.end(JSON.stringify({ error: 'Too many failed attempts — locked out for 15 minutes' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const supplied = String(body.secret || '').trim()
+      if (!supplied || !timingSafeCompare(supplied, ADMIN_SECRET)) {
+        recordAdminFail(clientIp)
+        res.writeHead(401, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Invalid secret' }))
+      }
+      clearAdminFail(clientIp)
+      const token = issueAdminSession(clientIp)
+      auditLog('admin_login', null, null, clientIp)
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Set-Cookie': ADMIN_COOKIE + '=' + token + '; HttpOnly; Secure; SameSite=Strict; Max-Age=14400; Path=/',
+      })
+      return res.end(JSON.stringify({ ok: true }))
+    } catch { res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' })) }
+  }
+
+  // ── Admin: logout ──────────────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/admin/logout') {
+    const clientIp = req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown'
+    revokeAdminSession(req)
+    auditLog('admin_logout', null, null, clientIp)
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Set-Cookie': ADMIN_COOKIE + '=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/',
+    })
+    return res.end(JSON.stringify({ ok: true }))
+  }
+
+  // ── Admin: verify session ──────────────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/admin/verify-session') {
+    const valid = verifyAdminSession(req)
+    res.writeHead(valid ? 200 : 401, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: valid }))
+  }
+
+  // ── Admin: audit log ──────────────────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/admin/audit-log') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    try {
+      const rows = db.prepare('SELECT * FROM admin_audit_log ORDER BY created_at DESC LIMIT 200').all()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify(rows))
+    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+  }
+
+// ── Admin: list pending sightings ─────────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/sightings')) {
     if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
@@ -1615,8 +2001,18 @@ const server = http.createServer(async (req, res) => {
     if (campaign.operator_id !== claims.userId) { res.writeHead(403); return res.end(JSON.stringify({ error: 'Not the campaign operator' })) }
     const body = await parseBody(req)
     const fields = {}
-    if (body.walletXmr !== undefined) fields.wallet_xmr = String(body.walletXmr||'').trim().slice(0,200) || null
-    if (body.walletZano !== undefined) fields.wallet_zano = String(body.walletZano||'').trim().slice(0,200) || null
+    // XMR/ZANO addresses: ~95-97 chars, base58 alphabet
+    const WALLET_RE = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{90,110}$/
+    if (body.walletXmr !== undefined) {
+      const w = String(body.walletXmr||'').trim()
+      if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid XMR wallet address format' })) }
+      fields.wallet_xmr = w || null
+    }
+    if (body.walletZano !== undefined) {
+      const w = String(body.walletZano||'').trim()
+      if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid ZANO wallet address format' })) }
+      fields.wallet_zano = w || null
+    }
     if (body.operatorName !== undefined) fields.operator_name = String(body.operatorName||'').trim().slice(0,100) || null
     if (body.operatorBio !== undefined) fields.operator_bio = String(body.operatorBio||'').trim().slice(0,500) || null
     if (!Object.keys(fields).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields' })) }
@@ -1630,12 +2026,211 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({ ok: true, campaign: updated }))
   }
 
+  // ── Passkey: register options ────────────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/passkey/register-options') {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    try {
+      const user = db.prepare('SELECT id, username FROM users WHERE id = ?').get(claims.userId)
+      if (!user) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'User not found' })) }
+      const existingKeys = db.prepare('SELECT credential_id FROM passkeys WHERE user_id = ?').all(user.id)
+      const excludeCredentials = existingKeys.map(k => ({ id: k.credential_id, type: 'public-key' }))
+      if (!checkPkRegRateLimit(ip)) {
+        res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
+      }
+      const options = await generateRegistrationOptions({
+        rpName: RP_NAME,
+        rpID: RP_ID,
+        userID: new TextEncoder().encode(user.id),
+        userName: user.username,
+        userDisplayName: user.username,
+        attestationType: 'none',
+        excludeCredentials,
+        authenticatorSelection: { residentKey: 'preferred', userVerification: 'required' },
+      })
+      const tempId = randomUUID()
+      pkChallengeSet(tempId, options.challenge, user.id)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ options, tempId }))
+    } catch (e) {
+      console.error('passkey register-options error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Passkey: register verify ──────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/passkey/register-verify') {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    try {
+      const body = await parseBody(req)
+      const { response, tempId, deviceName } = body
+      const stored = pkChallengeGet(tempId)
+      if (!stored || stored.user_id !== claims.userId) {
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Challenge expired or invalid.' }))
+      }
+      pkChallengeDelete(tempId) // single-use
+      const verification = await verifyRegistrationResponse({
+        response,
+        expectedChallenge: stored.challenge,
+        expectedOrigin: RP_ORIGIN,
+        expectedRPID: RP_ID,
+      })
+      if (!verification.verified || !verification.registrationInfo) {
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey verification failed.' }))
+      }
+      const { credential } = verification.registrationInfo
+      const credentialId = Buffer.from(credential.id).toString('base64url')
+      const publicKey = Buffer.from(credential.publicKey).toString('base64url')
+      const passkeyId = randomUUID()
+      const safeName = deviceName ? String(deviceName).trim().slice(0, 80) : null
+      db.prepare('INSERT INTO passkeys (id, user_id, credential_id, public_key, sign_count, device_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+        passkeyId, claims.userId, credentialId, publicKey, credential.counter, safeName, new Date().toISOString()
+      )
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, credentialId }))
+    } catch (e) {
+      console.error('passkey register-verify error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Passkey: auth options ─────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/passkey/auth-options') {
+    if (!checkPkAuthRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const username = body.username ? String(body.username).trim() : null
+      let allowCredentials = []
+      let lookupUserId = null
+      if (username) {
+        const user = db.prepare('SELECT id FROM users WHERE username = ?').get(username)
+        if (user) {
+          lookupUserId = user.id
+          const keys = db.prepare('SELECT credential_id FROM passkeys WHERE user_id = ?').all(user.id)
+          allowCredentials = keys.map(k => ({ id: k.credential_id, type: 'public-key' }))
+        }
+      }
+      const options = await generateAuthenticationOptions({
+        rpID: RP_ID,
+        userVerification: 'required',
+        allowCredentials,
+      })
+      const tempId = randomUUID()
+      pkChallengeSet(tempId, options.challenge, lookupUserId)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ options, tempId }))
+    } catch (e) {
+      console.error('passkey auth-options error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Passkey: auth verify ──────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/passkey/auth-verify') {
+    if (!checkPkAuthRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const { response, tempId } = body
+      const stored = pkChallengeGet(tempId)
+      if (!stored) {
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Challenge expired. Please try again.' }))
+      }
+      pkChallengeDelete(tempId) // single-use
+      // Look up passkey by credential ID
+      const rawCredentialId = response.id
+      const passkeyRow = db.prepare('SELECT * FROM passkeys WHERE credential_id = ?').get(rawCredentialId)
+      if (!passkeyRow) {
+        res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey not recognized.' }))
+      }
+      // Cross-check: if challenge was issued for a specific user, credential must belong to that user
+      if (stored.user_id && passkeyRow.user_id !== stored.user_id) {
+        res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey does not match the requested account.' }))
+      }
+      const publicKeyBytes = Buffer.from(passkeyRow.public_key, 'base64url')
+      const verification = await verifyAuthenticationResponse({
+        response,
+        expectedChallenge: stored.challenge,
+        expectedOrigin: RP_ORIGIN,
+        expectedRPID: RP_ID,
+        credential: {
+          id: passkeyRow.credential_id,
+          publicKey: publicKeyBytes,
+          counter: passkeyRow.sign_count,
+        },
+      })
+      if (!verification.verified) {
+        res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey authentication failed.' }))
+      }
+      // Replay protection: new counter must be >= stored (0 counters indicate non-roaming key — allowed)
+      const newCounter = verification.authenticationInfo.newCounter
+      if (passkeyRow.sign_count > 0 && newCounter <= passkeyRow.sign_count) {
+        res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey replay detected. Security violation.' }))
+      }
+      db.prepare('UPDATE passkeys SET sign_count = ? WHERE id = ?').run(newCounter, passkeyRow.id)
+      // Issue JWT
+      const user = db.prepare('SELECT id, username, password_version FROM users WHERE id = ?').get(passkeyRow.user_id)
+      if (!user) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'User not found.' })) }
+      const sessionToken = jwt.sign({ userId: user.id, username: user.username, pv: user.password_version || 0 }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      res.setHeader('Set-Cookie', `token=${sessionToken}; ${COOKIE_OPTS}`)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, username: user.username }))
+    } catch (e) {
+      console.error('passkey auth-verify error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
+  // ── Passkey: list ─────────────────────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/passkey/list') {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    const keys = db.prepare('SELECT id, credential_id, device_name, created_at FROM passkeys WHERE user_id = ? ORDER BY created_at DESC').all(claims.userId)
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ passkeys: keys }))
+  }
+
+  // ── Passkey: delete ───────────────────────────────────────────────────────
+  if (req.method === 'DELETE' && req.url.startsWith('/passkey/')) {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    const credentialId = decodeURIComponent(req.url.slice('/passkey/'.length))
+    if (!credentialId) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Missing credentialId' })) }
+    const result = db.prepare('DELETE FROM passkeys WHERE credential_id = ? AND user_id = ?').run(credentialId, claims.userId)
+    if (result.changes === 0) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey not found or not yours' })) }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: true }))
+  }
+
+
+  // ── Public: version / independent verification ───────────────────────────
+  if (req.method === 'GET' && req.url === '/version') {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({
+      server: {
+        sha256: SERVER_SHA256,
+        deployedAt: DEPLOYED_AT,
+        file: 'server.js',
+        howToVerify: 'Fetch server.js from the public GitHub repo at the matching commit and run: sha256sum server.js — the hash must match.',
+      },
+      frontend: {
+        repo: 'https://github.com/citeback/citebackwebsite',
+        deploys: 'https://app.netlify.com/sites/heroic-yeot-51eaeb/deploys',
+        howToVerify: 'Every frontend deploy on Netlify lists the exact GitHub commit it was built from.',
+      },
+      note: 'SHA-256 is computed from the live server.js at startup. If it matches the public repo, the code running here is exactly what is published.',
+    }))
+  }
+
   // ── AI chat ────────────────────────────────────────────────────────────────
   if (req.method !== 'POST' || req.url !== '/api/chat') {
     res.writeHead(404); return res.end('Not found')
   }
 
-  const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown'
   stats.total++
 
   let rawBody = ''
