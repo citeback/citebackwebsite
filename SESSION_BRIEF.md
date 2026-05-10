@@ -1,5 +1,5 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 04:25 MDT (overnight keepalive — ConversationalInterface CSS migration + a11y)*
+*Last updated: 2026-05-10 05:50 MDT (overnight keepalive — rate limit hardening: /version + /interest pre-body guard)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -31,6 +31,14 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Full audit checklist rerun: all ✅
 - Attorney pipeline E2E test confirmed: /attorney/apply → 401, /admin/attorney-applications → 401, /claim-account → 400 ✅
 - VPS health: active, 3 users, 7 campaigns, 95045 cameras, disk 8% used
+
+## What Changed (5:44–5:55 AM MDT — keepalive)
+- **Full audit checklist rerun**: 0 inline styles, 0 style={varName}, 0 SQL injection, 0 old brand, 0 stack traces in responses ✅
+- **/version endpoint** was missing rate limit — added `checkRateLimit` (public endpoint but should be protected against hammering)
+- **/interest endpoint** — `counts` action had no rate limit and body was parsed before any rate check; moved `checkRateLimit` to top of handler (pre-body), removed duplicate check from `increment` branch
+- Verified: all other endpoints have pre-body rate limiting ✅
+- Attorney pipeline smoke test: all 3 endpoints return expected status codes ✅
+- VPS: active, 3 users, 7 campaigns, disk 8% used ✅
 
 ## What Changed (4:10–4:25 AM MDT — keepalive)
 - **ConversationalInterface.jsx**: discovered 24 inline styles via `const styles={}` object (bypassed `style={{` grep). Migrated to new ConversationalInterface.css (3.35kB CSS chunk). **Zero `style={}` anywhere in entire codebase now.**

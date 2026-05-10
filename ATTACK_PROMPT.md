@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10*
+*Last updated: 2026-05-10 (5:55 AM MDT keepalive)*
 
 ---
 
@@ -305,6 +305,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | CampaignList search input missing aria-label | ✅ FIXED (aria-label="Search campaigns" added) |
 | 2026-05-10 | CameraMap sighting notes input missing aria-label | ✅ FIXED (aria-label="Sighting notes" added) |
 | 2026-05-10 | ConversationalInterface.jsx — 24 inline styles via const styles={} object (bypassed style={{ grep) | ✅ FIXED — migrated to ConversationalInterface.css; zero style={} in entire codebase |
+| 2026-05-10 | /version endpoint missing rate limit | ✅ FIXED (checkRateLimit added) |
+| 2026-05-10 | /interest counts action: no rate limit + body parsed before rate check | ✅ FIXED — checkRateLimit moved to top of handler (pre-body), covers both counts + increment actions |
 | 2026-05-10 | ReputationPage — 'New password' and 'Confirm new password' inputs missing labels | ✅ FIXED (htmlFor/id/aria-label added to both) |
 
 ---
