@@ -353,11 +353,6 @@ function gcPasskeyChallenges() {
 gcPasskeyChallenges()
 setInterval(gcPasskeyChallenges, 5 * 60 * 1000)
 
-// Periodic WAL checkpoint — prevents WAL from growing unbounded between daily backups
-setInterval(() => {
-  try { db.pragma('wal_checkpoint(PASSIVE)') } catch {}
-}, 60 * 60 * 1000)
-
 // ── Server-side reauth sessions ───────────────────────────────────────────────
 // userId -> reauthUntil timestamp (in-memory; resets on restart — acceptable)
 const reauthSessions = new Map()
@@ -531,6 +526,18 @@ setInterval(() => {
   } catch (e) { console.error('Token cleanup error:', e.message) }
 }, 60 * 60 * 1000)
 
+// Periodic GC for in-memory rate-limit maps — prevents unbounded growth from unique IPs
+// Each entry is ~100 bytes; without GC a busy server accumulates millions of stale entries.
+setInterval(() => {
+  const now = Date.now()
+  for (const [k, e] of rateCounts)      { if (now - e.start > RATE_WINDOW)       rateCounts.delete(k)      }
+  for (const [k, e] of authRateCounts)  { if (now - e.start > 15 * 60 * 1000)   authRateCounts.delete(k)  }
+  for (const [k, e] of barRateCounts)   { if (now - e.start > 60 * 1000)        barRateCounts.delete(k)   }
+  for (const [k, e] of pkAuthRateCounts){ if (now - e.start > 60 * 1000)        pkAuthRateCounts.delete(k)}
+  for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
+  for (const [ip, e] of adminFailCounts){ if (e.lockedUntil && now > e.lockedUntil + 60000) adminFailCounts.delete(ip) }
+}, 10 * 60 * 1000) // every 10 minutes
+
 let processing = false
 const queue = []
 function processNext() {
@@ -612,7 +619,8 @@ function normalizeInput(text) {
     .trim()
 }
 function isOnTopic(text) {
-  const normalized = normalizeInput(text)
+  // NFKC collapses Unicode compatibility equivalents (Ⅰ→I, ① →1, fullwidth→ASCII, etc.)
+  const normalized = normalizeInput(text.normalize('NFKC'))
   const lower = normalized.toLowerCase()
   // Hard block on injection patterns
   if (INJECTION_SIGNALS.some(s => lower.includes(s))) return false
@@ -825,6 +833,10 @@ function verifyAdminSession(req) {
   const session = adminSessions.get(token)
   if (!session) return false
   if (Date.now() - session.created > ADMIN_SESSION_TTL) { adminSessions.delete(token); return false }
+  // IP binding: admin session is tied to the IP it was issued on.
+  // A stolen cookie is useless from a different network.
+  const reqIp = req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown'
+  if (session.ip && session.ip !== reqIp) { adminSessions.delete(token); return false }
   return true
 }
 function revokeAdminSession(req) {
@@ -902,20 +914,29 @@ const server = http.createServer(async (req, res) => {
 
   // ── Campaign interest counter ──────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/interest') {
+    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       if (body.action === 'counts') {
-        // Read-only — no rate limit needed
         res.writeHead(200, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ counts: { ...interestCounts } }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
-        // Write — rate limited
-        if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
-        const id = String(body.campaignId).slice(0, 100)
+        // Validate: must be a real campaign integer — prevents memory bloat with arbitrary keys
+        const idNum = parseInt(String(body.campaignId), 10)
+        if (!Number.isFinite(idNum) || idNum < 1) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ error: 'invalid campaignId' }))
+        }
+        const campaignExists = db.prepare('SELECT id FROM campaigns WHERE id = ?').get(idNum)
+        if (!campaignExists) {
+          res.writeHead(404, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ error: 'campaign not found' }))
+        }
+        const id = String(idNum)
         interestCounts[id] = (interestCounts[id] || 0) + 1
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ ok: true, campaignId: id, count: interestCounts[id] }))
+        return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: interestCounts[id] }))
       }
       res.writeHead(400); return res.end(JSON.stringify({ error: 'invalid action' }))
     } catch {
@@ -1278,6 +1299,11 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: reset password with token ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/reset-password') {
+    // Rate limit: prevent brute-forcing token + unlimited bcrypt invocations
+    if (!checkAuthRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Too many attempts — please wait 15 minutes' }))
+    }
     try {
       const body = await parseBody(req)
       const { token, id: tokenId, password } = body
@@ -1767,9 +1793,10 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: review attorney application ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/attorney-applications/review') {
+    // Auth BEFORE body parse — unauthed requests never trigger body read
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
-      if (!isAdmin(req, body)) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
       const { id, action } = body
       if (!id || !['approve', 'reject'].includes(action)) {
         res.writeHead(400); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
@@ -1865,10 +1892,15 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(400, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Username must be 3-20 characters, letters, numbers, and underscores only.' }))
       }
-      // Validate password length
+      // Validate password strength (not just length)
       if (password.length < 8) {
         res.writeHead(400, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Password must be at least 8 characters.' }))
+      }
+      const claimPwError = checkPasswordStrength(password)
+      if (claimPwError) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: claimPwError }))
       }
       // Validate token format (64 hex chars)
       if (!/^[0-9a-f]{64}$/.test(token)) return badToken()
@@ -1940,6 +1972,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Public sightings (community map layer) ─── ONLY approved ────────────
   if (req.method === 'GET' && req.url === '/sightings/public') {
+    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const file = path.join(DATA_DIR, 'sightings.jsonl')
       const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
@@ -2029,9 +2062,9 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: approve or reject a sighting ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/moderate') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
-      if (!isAdmin(req, body)) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
       const { id, action } = body
       if (!id || !['approve', 'reject'].includes(action)) {
         res.writeHead(400); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
@@ -2047,9 +2080,9 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: bulk approve all pending sightings with lat/lng ────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/approve-all') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
-      if (!isAdmin(req, body)) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
       const file = path.join(DATA_DIR, 'sightings.jsonl')
       if (!fs.existsSync(file)) { res.writeHead(200); return res.end(JSON.stringify({ ok: true, approved: 0 })) }
       const lines = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean)
@@ -2144,9 +2177,15 @@ const server = http.createServer(async (req, res) => {
       if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
       // Audit trail: log wallet changes on active campaigns (important for donor trust)
       const walletChanged = (fields.wallet_xmr !== undefined || fields.wallet_zano !== undefined)
-      if (walletChanged && campaign.status === 'active') {
+      if (walletChanged) {
         fields.wallet_changed_at = new Date().toISOString()
-        console.log(`[AUDIT] Campaign ${id} wallet changed by operator ${claims.userId} at ${fields.wallet_changed_at}`)
+        // Write to persistent audit log (not just console — survives log rotation)
+        auditLog('campaign_wallet_update', String(id), JSON.stringify({
+          operator: claims.userId,
+          xmr_changed: fields.wallet_xmr !== undefined,
+          zano_changed: fields.wallet_zano !== undefined,
+          was_active: campaign.status === 'active',
+        }), ip)
       }
       const setClauses = Object.keys(fields).map(k => k + ' = ?').join(', ')
       db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(fields), id)
@@ -2391,18 +2430,26 @@ const server = http.createServer(async (req, res) => {
     if (bodyBytes > MAX_CHAT_BODY) return // destroyed
     let parsed
     try { parsed = JSON.parse(rawBody) } catch { res.writeHead(400); return res.end('Bad request') }
-    const messages = parsed.messages || []
+    // Cap history to last 20 messages — prevents context-stuffing with huge histories
+    const messages = (parsed.messages || []).slice(-20)
     const lastUser = [...messages].reverse().find(m => m.role === 'user')
     // Cap individual message length — prevent single-message context stuffing
     const rawUserText = lastUser?.content || ''
     const userText = typeof rawUserText === 'string' ? rawUserText.slice(0, 4000) : ''
+    // Check injection signals across ALL messages in the thread (multi-turn bypass prevention).
+    // Attackers inject in an early turn then ask a benign question as the last message.
+    // isOnTopic only checks the last user message — hasInjectionInHistory covers the rest.
+    const hasInjectionInHistory = messages.some(m => {
+      const txt = normalizeInput(typeof m.content === 'string' ? m.content.normalize('NFKC') : '')
+      return INJECTION_SIGNALS.some(s => txt.toLowerCase().includes(s))
+    })
     if (!checkRateLimit(ip)) {
       // Second check in case of race (belt + suspenders)
       stats.rateLimited++
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify(RATE_LIMITED))
     }
-    if (!isOnTopic(userText)) {
+    if (hasInjectionInHistory || !isOnTopic(userText)) {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify(DEFLECT))
     }
@@ -2412,7 +2459,9 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify(BUSY))
     }, QUEUE_TIMEOUT)
-    queue.push({ body: rawBody, res, timer })
+    // Forward sanitised capped messages — not the raw client body
+    const safeBody = JSON.stringify({ ...parsed, messages })
+    queue.push({ body: safeBody, res, timer })
     processNext()
   })
 })
