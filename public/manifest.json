@@ -1,0 +1,22 @@
+{
+  "name": "Citeback — Fund the Fight Against Surveillance",
+  "short_name": "Citeback",
+  "description": "Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns. Funded in Monero and Zano.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e63946",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "news", "social"],
+  "lang": "en-US",
+  "scope": "/",
+  "prefer_related_applications": false
+}
