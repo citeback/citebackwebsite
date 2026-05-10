@@ -413,7 +413,7 @@ export default function SurveillanceFeed({ setTab }) {
               <CasesSkeleton />
             ) : casesRetrying ? (
               <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+                <span className="sf-loading-dot" />
                 Retrying CourtListener…
               </div>
             ) : casesError && cases.length === 0 ? (
@@ -553,7 +553,7 @@ export default function SurveillanceFeed({ setTab }) {
 
             {billsLoading && billsRetrying ? (
               <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+                <span className="sf-loading-dot" />
                 Retrying OpenStates…
               </div>
             ) : billsLoading ? (
@@ -728,7 +728,7 @@ export default function SurveillanceFeed({ setTab }) {
 
           {federalLoading && federalRetrying ? (
             <div style={{ padding: '24px 0', color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'sfdot 1s ease-in-out infinite' }} />
+              <span className="sf-loading-dot" />
               Retrying Congress.gov…
             </div>
           ) : federalLoading ? (
@@ -861,13 +861,6 @@ export default function SurveillanceFeed({ setTab }) {
         )}
 
       </div>
-
-      <style>{`
-        @keyframes sfdot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.35; transform: scale(0.7); }
-        }
-      `}</style>
     </section>
   )
 }

@@ -275,7 +275,7 @@ export default function FollowTheMoney() {
                     </div>
                   ) : ldaLoading ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--muted)' }}>
-                      <Loader size={11} style={{ animation: 'spin 1s linear infinite' }} />
+                      <Loader size={11} className="spinning" />
                       <span style={{ fontSize: 11 }}>Loading…</span>
                     </div>
                   ) : lda?.error ? (
@@ -413,13 +413,6 @@ export default function FollowTheMoney() {
           {' '}Expense figures are sampled from the most recent 100 filings per vendor; totals across all filings may be higher.
         </div>
       </div>
-
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   )
 }

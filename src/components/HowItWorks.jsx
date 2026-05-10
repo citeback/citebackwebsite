@@ -294,19 +294,6 @@ export default function HowItWorks({ setTab }) {
           </button>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 700px) {
-          .hiw-grid {
-            grid-template-columns: 1fr !important;
-            gap: 0 !important;
-          }
-          .hiw-sidebar {
-            position: static !important;
-            margin-bottom: 32px;
-          }
-        }
-      `}</style>
     </section>
   )
 }

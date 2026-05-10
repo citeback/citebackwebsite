@@ -155,6 +155,7 @@ export default function ClaimAccountPage({ setTab }) {
               required
             />
             <button type="button" onClick={() => setShowPw(p => !p)}
+              aria-label={showPw ? "Hide password" : "Show password"}
               style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4 }}>
               {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
@@ -198,7 +199,7 @@ export default function ClaimAccountPage({ setTab }) {
 
         <button type="submit" disabled={!canSubmit}
           style={{ background: canSubmit ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: canSubmit ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: canSubmit ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {loading ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Activating…</> : 'Activate Account'}
+          {loading ? <><Loader size={15} className="spinning" /> Activating…</> : 'Activate Account'}
         </button>
       </form>
     </section>

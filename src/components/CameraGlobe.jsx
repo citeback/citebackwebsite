@@ -611,12 +611,6 @@ export default function CameraGlobe() {
       </div>
 
       {/* Pulse animation */}
-      <style>{`
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; box-shadow: 0 0 6px #dc2626; }
-          50% { opacity: 0.4; box-shadow: 0 0 2px #dc2626; }
-        }
-      `}</style>
     </div>
   );
 }

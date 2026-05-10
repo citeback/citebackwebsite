@@ -15,17 +15,6 @@ export default function Manifesto({ setTab }) {
       boxSizing: 'border-box',
       width: '100%',
     }}>
-      <style>{`
-        @media (max-width: 640px) {
-          .manifesto-outer { flex-direction: column !important; gap: 32px !important; padding: 0 !important; }
-          .manifesto-left { flex: 1 1 100% !important; }
-          .manifesto-right { flex: 1 1 100% !important; }
-          .manifesto-grid { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 640px) {
-          .manifesto-section { padding: 48px 24px !important; }
-        }
-      `}</style>
       <div className="manifesto-outer" style={{ display: 'flex', gap: 64, alignItems: 'flex-start' }}>
 
         {/* Left column — 40% */}

@@ -84,7 +84,7 @@ function PasskeyManager() {
           disabled={adding}
           style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: adding ? 'not-allowed' : 'pointer', opacity: adding ? 0.6 : 1 }}
         >
-          {adding ? <Loader size={11} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={11} />}
+          {adding ? <Loader size={11} className="spinning" /> : <Plus size={11} />}
           Add passkey
         </button>
       </div>
@@ -109,7 +109,7 @@ function PasskeyManager() {
       )}
 
       {passkeys === null ? (
-        <div style={{ color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}><Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Loading…</div>
+        <div style={{ color: 'var(--muted)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}><Loader size={12} className="spinning" /> Loading…</div>
       ) : passkeys.length === 0 ? (
         <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>No passkeys yet. Add one to sign in without a password using Touch ID, Face ID, or a hardware key.</p>
       ) : (
@@ -503,7 +503,7 @@ function SessionManager() {
             cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
           }}
         >
-          {loading ? <Loader size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <LogOut size={13} />}
+          {loading ? <Loader size={13} className="spinning" /> : <LogOut size={13} />}
           {loading ? 'Signing out…' : 'Sign out all devices'}
         </button>
       )}
@@ -735,7 +735,7 @@ export default function ReputationPage({ setTab }) {
 
         {sightingsLoading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
-            <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} />
+            <Loader size={14} className="spinning" />
             Loading…
           </div>
         )}

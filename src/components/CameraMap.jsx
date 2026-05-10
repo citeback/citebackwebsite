@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
@@ -302,8 +303,8 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                 background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)',
                 marginBottom: 14, fontSize: 13, color: '#f59e0b',
               }}>
-                <Loader size={14} style={{ animation: 'spin 1s linear infinite' }} />
-                <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+                <Loader size={14} className="spinning" />
+
                 Running spam filter...
               </div>
             )}
@@ -1178,6 +1179,13 @@ export default function CameraMap() {
   const unverified = verifiedCameras.filter(c => !c.confirmed).length
 
   return (
+    <>
+    <Helmet>
+      <title>Surveillance Camera Map | Citeback — 95,000+ ALPR Cameras Documented</title>
+      <meta name="description" content="Explore 95,000+ documented ALPR cameras, facial recognition systems, ShotSpotter, and police drones. Community-sourced and verified surveillance camera map." />
+      <meta property="og:title" content="Surveillance Camera Map | Citeback — 95,000+ ALPR Cameras Documented" />
+      <meta property="og:description" content="Explore 95,000+ documented ALPR cameras, facial recognition systems, ShotSpotter, and police drones. Community-sourced and verified surveillance camera map." />
+    </Helmet>
     <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       {/* Photo submit modal */}
       {showPhotoModal && (
@@ -1351,9 +1359,9 @@ export default function CameraMap() {
       {/* Loading bar */}
       {loading && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 12, color: 'var(--accent)' }}>
-          <Loader size={13} style={{ animation: 'spin 1s linear infinite' }} />
+          <Loader size={13} className="spinning" />
           Loading cameras in viewport from OpenStreetMap...
-          <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+
         </div>
       )}
 
@@ -1655,5 +1663,6 @@ export default function CameraMap() {
         <span>Data: OpenStreetMap contributors (ODbL) · {cameraCount} mapped nationally</span>
       </div>
     </section>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 import CampaignCard from './CampaignCard'
 import { lazy, Suspense } from 'react'
 const ProposeModal = lazy(() => import('./ProposeModal'))
@@ -53,6 +54,15 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
   )
 
   return (
+    <>
+    {full && (
+      <Helmet>
+        <title>Active Campaigns | Citeback — Fund Surveillance Lawsuits</title>
+        <meta name="description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
+        <meta property="og:title" content="Active Campaigns | Citeback — Fund Surveillance Lawsuits" />
+        <meta property="og:description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
+      </Helmet>
+    )}
     <section style={{ padding: full ? '48px 24px' : '64px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
         <div>
@@ -146,5 +156,6 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
 
       {proposing && <Suspense fallback={null}><ProposeModal onClose={() => setProposing(false)} /></Suspense>}
     </section>
+    </>
   )
 }

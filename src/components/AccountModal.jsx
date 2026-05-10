@@ -329,7 +329,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 }}
               >
                 {passkeyLoading
-                  ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Waiting for passkey…</>
+                  ? <><Loader size={15} className="spinning" /> Waiting for passkey…</>
                   : <><Fingerprint size={15} /> Use a passkey</>}
               </button>
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: '-8px 0 12px', lineHeight: 1.5 }}>
@@ -442,7 +442,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 transition: 'all 0.15s',
               }}
             >
-              {loading ? <><Loader size={15} style={{ animation: 'spin 1s linear infinite' }} /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
+              {loading ? <><Loader size={15} className="spinning" /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
             </button>
 
             {tab === 'create' && (

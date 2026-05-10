@@ -270,7 +270,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                           }}
                         >
                           {barLooking
-                            ? <><Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> Checking…</>
+                            ? <><Loader2 size={13} className="spinning" /> Checking…</>
                             : <><Search size={13} /> Verify</>}
                         </button>
                       )}

@@ -324,7 +324,6 @@ export default function ConversationalInterface({ onClose }) {
 
   return (
     <div style={styles.overlay}>
-      <style>{`@keyframes fadeInNote { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }`}</style>
       {/* Close button */}
       <button
         onClick={onClose}
@@ -473,22 +472,6 @@ function TypingIndicator() {
       <span style={{ ...styles.dot, animationDelay: '160ms' }} />
       <span style={{ ...styles.dot, animationDelay: '320ms' }} />
       <span style={styles.thinkingPhrase}>{THINKING_PHRASES[phraseIdx]}</span>
-      <style>{`
-        @keyframes dotPulse {
-          0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-          40% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fadeInNote {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadePhrase {
-          0% { opacity: 0; transform: translateY(4px); }
-          15% { opacity: 1; transform: translateY(0); }
-          85% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-4px); }
-        }
-      `}</style>
     </span>
   )
 }

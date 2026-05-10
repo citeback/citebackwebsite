@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { CheckCircle, AlertCircle, Eye, Loader, Shield, Star, Camera, X, MapPin } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
@@ -150,6 +151,13 @@ export default function SightingForm({ setTab }) {
   }
 
   return (
+    <>
+    <Helmet>
+      <title>Report a Camera | Citeback — Submit C2PA-Verified Surveillance Sightings</title>
+      <meta name="description" content="Spotted an ALPR, facial recognition camera, or ShotSpotter? Submit a C2PA-verified sighting to the Citeback surveillance map. Anonymous, no account required." />
+      <meta property="og:title" content="Report a Camera | Citeback — Submit C2PA-Verified Surveillance Sightings" />
+      <meta property="og:description" content="Spotted an ALPR, facial recognition camera, or ShotSpotter? Submit a C2PA-verified sighting to the Citeback surveillance map. Anonymous, no account required." />
+    </Helmet>
     <section style={{ padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 24px)', maxWidth: 600, margin: '0 auto', width: '100%' }}>
 
       {/* Header */}
@@ -316,7 +324,7 @@ export default function SightingForm({ setTab }) {
 
                   {gpsStatus === 'reading' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
-                      <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Reading location from photo…
+                      <Loader size={12} className="spinning" /> Reading location from photo…
                     </div>
                   )}
                   {gpsStatus === 'found' && (
@@ -332,7 +340,7 @@ export default function SightingForm({ setTab }) {
                   )}
                   {gpsStatus === 'device_reading' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
-                      <Loader size={12} style={{ animation: 'spin 1s linear infinite' }} /> Getting your device location…
+                      <Loader size={12} className="spinning" /> Getting your device location…
                     </div>
                   )}
                   {gpsStatus === 'none' && (
@@ -399,9 +407,9 @@ export default function SightingForm({ setTab }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}>
             {sending
-              ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Verifying & uploading…</>
+              ? <><Loader size={16} className="spinning" /> Verifying & uploading…</>
               : !photoFile ? 'Attach a C2PA photo to continue'
-              : gpsStatus === 'reading' ? <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Reading location…</>
+              : gpsStatus === 'reading' ? <><Loader size={16} className="spinning" /> Reading location…</>
               : gpsStatus === 'none' ? 'No GPS in photo — retake with location enabled'
               : !cameraType ? 'Select camera type above'
               : 'Submit Verified Sighting'
@@ -414,5 +422,6 @@ export default function SightingForm({ setTab }) {
         </form>
       )}
     </section>
+    </>
   )
 }

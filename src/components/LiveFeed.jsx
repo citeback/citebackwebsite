@@ -256,45 +256,6 @@ export default function LiveFeed({ setTab }) {
           </div>
         )}
       </div>
-
-      <style>{`
-        .live-dot {
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: var(--red, #c0392b);
-          animation: pulse-dot 1.8s ease-in-out infinite;
-          flex-shrink: 0;
-        }
-
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%       { opacity: 0.4; transform: scale(0.75); }
-        }
-
-        .feed-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 14px;
-          padding: 14px 0;
-        }
-
-        .feed-item--new {
-          animation: slide-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        @keyframes slide-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </section>
   )
 }

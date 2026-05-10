@@ -198,19 +198,6 @@ export default function CampaignSelector({ setTab }) {
           </button>
         </div>
       )}
-
-      <style>{`
-        @keyframes campaignFadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @media (max-width: 640px) {
-          .campaign-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

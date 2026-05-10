@@ -222,22 +222,6 @@ export default function BuildWithUs({ setTab }) {
           All participation is voluntary and pseudonymity is always an option. Platform communication routes through encrypted channels only.
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .bwu-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        @media (min-width: 769px) and (max-width: 1024px) {
-          .bwu-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        .bwu-card:hover {
-          border-color: var(--fg) !important;
-        }
-      `}</style>
     </section>
   )
 }

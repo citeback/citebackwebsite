@@ -16,17 +16,6 @@ export default function GuaranteeSection({ setTab }) {
         padding: '80px 0',
       }}
     >
-      <style>{`
-        @media (max-width: 700px) {
-          .guarantee-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-          .guarantee-facts {
-            padding-top: 0 !important;
-          }
-        }
-      `}</style>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
       <div className="guarantee-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
         {/* Left: text */}
