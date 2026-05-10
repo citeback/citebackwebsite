@@ -220,6 +220,7 @@ function AttorneyCard({ app, onReview, loading }) {
         <>
           <input
             placeholder="Optional admin note…"
+            aria-label="Review note"
             value={notes}
             onChange={e => setNotes(e.target.value)}
             className="ap-form-input"
@@ -497,6 +498,7 @@ export default function AdminPanel() {
               type="password"
               className="ap-form-input ap-form-input--lg"
               placeholder="Admin secret"
+              aria-label="Admin secret"
               value={secret}
               onChange={e => { setSecret(e.target.value.trim()); setAuthError(false) }}
               autoFocus
@@ -731,6 +733,7 @@ export default function AdminPanel() {
                       <td>
                         <select
                           className="ap-status-select"
+                          aria-label={`Status for ${c.name || c.title || c.id}`}
                           value={c.status || 'unclaimed'}
                           disabled={campaignStatusUpdating === c.id}
                           onChange={e => handleCampaignStatus(c.id, e.target.value)}

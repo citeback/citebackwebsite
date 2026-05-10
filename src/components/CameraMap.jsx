@@ -1170,6 +1170,7 @@ export default function CameraMap() {
             <select
               value={selectedState}
               onChange={e => setSelectedState(e.target.value)}
+              aria-label="Jump to state"
               className={`cmap-state-select${selectedState ? ' cmap-state-select--filled' : ' cmap-state-select--empty'}`}
             >
               <option value=''>Jump to state...</option>

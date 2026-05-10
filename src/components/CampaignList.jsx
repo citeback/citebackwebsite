@@ -124,6 +124,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
             <select
               value={sort}
               onChange={e => setSort(e.target.value)}
+              aria-label="Sort campaigns"
               className="campaign-sort-select"
             >
               {sortOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
