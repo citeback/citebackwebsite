@@ -1123,11 +1123,7 @@ export default function CameraMap() {
   const approvedPhotos = Object.values(photoStore).reduce((sum, arr) => sum + arr.filter(p => p.status === 'approved').length, 0)
   const pendingPhotos = totalPhotos - approvedPhotos
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '9px 12px', borderRadius: 7, fontSize: 13,
-    outline: 'none', fontFamily: 'inherit',
-  }
+
 
   const confirmed = verifiedCameras.filter(c => c.confirmed).length
   const unverified = verifiedCameras.filter(c => !c.confirmed).length
@@ -1140,7 +1136,7 @@ export default function CameraMap() {
       <meta property="og:title" content="Surveillance Camera Map | Citeback — 95,000+ ALPR Cameras Documented" />
       <meta property="og:description" content="Explore 95,000+ documented ALPR cameras, facial recognition systems, ShotSpotter, and police drones. Community-sourced and verified surveillance camera map." />
     </Helmet>
-    <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+    <section className="cmap-section">
       {/* Photo submit modal */}
       {showPhotoModal && (
         <PhotoSubmitModal
@@ -1185,12 +1181,7 @@ export default function CameraMap() {
 
       {/* Community photo stats bar */}
       {totalPhotos > 0 && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
-          background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)',
-          borderRadius: 10, padding: '10px 14px', marginBottom: 14,
-          fontSize: 12, color: 'var(--muted)',
-        }}>
+        <div className="cmap-photo-stats-bar">
           <Camera size={13} style={{ color: '#f59e0b' }} />
           <span><strong style={{ color: '#f59e0b' }}>{totalPhotos}</strong> community photo{totalPhotos > 1 ? 's' : ''} submitted</span>
           {approvedPhotos > 0 && (
@@ -1276,11 +1267,7 @@ export default function CameraMap() {
       )}
 
       {/* Layer toggle hint */}
-      <div style={{
-        background: 'rgba(168,85,247,0.05)', border: '1px solid rgba(168,85,247,0.15)',
-        borderRadius: 10, padding: '10px 14px', marginBottom: 10,
-        fontSize: 12, color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap',
-      }}>
+      <div className="cmap-layer-hint">
         <span style={{ fontSize: 14 }}>🔍</span>
         <span>
           <strong style={{ color: 'var(--text)' }}>6 surveillance layers available</strong> — click the{' '}
@@ -1290,11 +1277,7 @@ export default function CameraMap() {
       </div>
 
       {/* Source notice */}
-      <div style={{
-        background: 'rgba(52,152,219,0.05)', border: '1px solid rgba(52,152,219,0.15)',
-        borderRadius: 10, padding: '12px 16px', marginBottom: 16,
-        fontSize: 13, color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap',
-      }}>
+      <div className="cmap-source-notice">
         <CheckCircle size={14} style={{ color: '#5dade2', flexShrink: 0, marginTop: 1 }} />
         <span>
           Live camera data pulled from <strong style={{ color: 'var(--text)' }}>OpenStreetMap</strong> via Overpass API — {cameraCount} ALPR cameras mapped nationally.
@@ -1335,7 +1318,7 @@ export default function CameraMap() {
 
       {/* Submit camera form */}
       {showForm && (
-        <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, marginBottom: 16 }}>
+        <div className="cmap-form-container">
           {submitted ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--green)', fontWeight: 600 }}>
               <CheckCircle size={18} /> Verified and live on the map.
@@ -1371,7 +1354,7 @@ export default function CameraMap() {
                     </div>
                   )}
                   {mapGpsStatus === 'found' && (
-                    <input style={{ ...inputStyle, fontSize: 12 }} placeholder="Notes (optional) — vendor, mounting, direction"
+                    <input className="cmap-main-input" style={{ fontSize: 12 }} placeholder="Notes (optional) — vendor, mounting, direction"
                       value={form.notes || ''} onChange={e => set('notes', e.target.value)} />
                   )}
                   {submitError && (
@@ -1398,7 +1381,7 @@ export default function CameraMap() {
       )}
 
       {/* Map */}
-      <div className="map-container" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', height: 520, position: 'relative' }}>
+      <div className="map-container">
         <MapContainer center={[38.5, -96.5]} zoom={4} style={{ height: '100%', width: '100%' }} zoomControl>
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -1491,10 +1474,7 @@ export default function CameraMap() {
         </MapContainer>
 
         {/* Surveillance overlay toggle panel */}
-        <div style={{
-          position: 'absolute', top: 10, right: 10, zIndex: 800,
-          display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6,
-        }}>
+        <div className="cmap-overlay-panel-pos">
           <button
             onClick={() => setOverlayPanelOpen(o => !o)}
             title="Surveillance layer toggles"
@@ -1518,25 +1498,15 @@ export default function CameraMap() {
           </button>
 
           {overlayPanelOpen && (
-            <div style={{
-              background: 'var(--card-bg)', border: '1px solid var(--border)',
-              borderRadius: 12, padding: 14, width: 260, maxWidth: 'calc(100vw - 20px)',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-              maxHeight: 460, overflowY: 'auto',
-              scrollbarWidth: 'thin', scrollbarColor: 'var(--accent) transparent',
-            }} className="layers-scroll">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+            <div className="cmap-overlay-panel layers-scroll">
+              <div className="cmap-overlay-panel-header">
                 <Shield size={13} style={{ color: '#a855f7' }} />
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg)', letterSpacing: '0.04em' }}>SURVEILLANCE LAYERS</span>
               </div>
 
               <LayerToggles activeLayers={activeLayers} setActiveLayers={setActiveLayers} showVictories={showVictories} setShowVictories={setShowVictories} communitySightings={communitySightings} dualVerifiedIds={dualVerifiedIds} osmCount={osmCount} />
 
-              <div style={{
-                marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border)',
-                fontSize: 10, color: 'var(--muted)', lineHeight: 1.6,
-              }}>
+              <div className="cmap-overlay-panel-sources">
                 Sources:{' '}
                 <a href="https://atlasofsurveillance.org/search" target="_blank" rel="noopener noreferrer"
                   style={{ color: '#6b7280', textDecoration: 'underline' }}
@@ -1583,15 +1553,7 @@ export default function CameraMap() {
           )}
 
         {/* Map attribution bar */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 800,
-          background: 'rgba(8,6,4,0.75)',
-          backdropFilter: 'blur(4px)',
-          padding: '5px 12px',
-          display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap',
-          fontSize: 10, color: 'rgba(200,196,190,0.7)',
-          pointerEvents: 'auto',
-        }}>
+        <div className="cmap-attribution">
           <span>Camera data:</span>
           <a href="https://openstreetmap.org" target="_blank" rel="noopener noreferrer"
             style={{ color: 'rgba(200,196,190,0.85)', textDecoration: 'underline' }}
