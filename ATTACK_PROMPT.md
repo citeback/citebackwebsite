@@ -296,6 +296,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | passkey/list missing rate limit (pre-auth hammering vector) | ✅ FIXED (checkRateLimit pre-auth) |
 | 2026-05-10 | passkey/delete missing rate limit (timing oracle on auth check) | ✅ FIXED (checkAuthRateLimit pre-auth) |
 | 2026-05-10 | passkey/register-verify missing rate limit (registration abuse vector) | ✅ FIXED (checkPkRegRateLimit pre-auth) |
+| 2026-05-10 | GET /photos/ missing rate limit (photo hotlinking/download DoS) | ✅ FIXED (checkRateLimit added; note: Caddy also intercepts /photos/* directly for performance — Node.js handler is defense-in-depth) |
+| 2026-05-10 | Caddy /photos/* serves files directly (bypasses Node rate limit) | ⚠️ DOCUMENTED — Caddy prevents path traversal; no personal data in photos (EXIF stripped on upload); LOW risk |
 
 ---
 

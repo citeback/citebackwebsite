@@ -19,6 +19,12 @@ scp root@77.42.124.157:/opt/citeback-ai/server.js /workspace/deflect/server.js
 cd /workspace/deflect && git pull && git log --oneline -5
 ```
 
+## What Changed This Session (1:48–2:00 AM MDT)
+- passkey DELETE: URIError crash fixed (decodeURIComponent without try/catch)
+- Rate limits added to: passkey/list, passkey/delete, passkey/register-verify, GET /photos/
+- Caddy serves /photos/* directly (performance optimization) — documented as defense-in-depth
+- Full audit checklist run: 0 inline styles, 0 SQL injection, 0 stack traces, 0 old brand names
+
 ## Priority Queue
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
 2. **ICANN domain verification** — May 14 deadline
