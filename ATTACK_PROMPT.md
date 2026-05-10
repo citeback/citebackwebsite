@@ -298,6 +298,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | passkey/register-verify missing rate limit (registration abuse vector) | ✅ FIXED (checkPkRegRateLimit pre-auth) |
 | 2026-05-10 | GET /photos/ missing rate limit (photo hotlinking/download DoS) | ✅ FIXED (checkRateLimit added; note: Caddy also intercepts /photos/* directly for performance — Node.js handler is defense-in-depth) |
 | 2026-05-10 | Caddy /photos/* serves files directly (bypasses Node rate limit) | ⚠️ DOCUMENTED — Caddy prevents path traversal; no personal data in photos (EXIF stripped on upload); LOW risk |
+| 2026-05-10 | 43 JSON responses missing Content-Type: application/json header | ✅ FIXED (Python regex replace — all writeHead(NNN); res.end(JSON.stringify) patterns updated) |
+| 2026-05-10 | CampaignList search input missing aria-label | ✅ FIXED (aria-label="Search campaigns" added) |
+| 2026-05-10 | CameraMap sighting notes input missing aria-label | ✅ FIXED (aria-label="Sighting notes" added) |
 
 ---
 

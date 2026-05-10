@@ -1,5 +1,5 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 01:55 MDT (overnight keepalive — passkey security fixes)*
+*Last updated: 2026-05-10 03:10 MDT (overnight keepalive — response header hardening + a11y)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -24,6 +24,13 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Rate limits added to: passkey/list, passkey/delete, passkey/register-verify, GET /photos/
 - Caddy serves /photos/* directly (performance optimization) — documented as defense-in-depth
 - Full audit checklist run: 0 inline styles, 0 SQL injection, 0 stack traces, 0 old brand names
+
+## What Changed (3:00–3:10 AM MDT — keepalive)
+- 43 server responses missing `Content-Type: application/json` → all fixed (grep audit caught bare `writeHead(NNN);` calls)
+- 2 missing `aria-label` attributes → CampaignList search + CameraMap sighting notes inputs
+- Full audit checklist rerun: all ✅
+- Attorney pipeline E2E test confirmed: /attorney/apply → 401, /admin/attorney-applications → 401, /claim-account → 400 ✅
+- VPS health: active, 3 users, 7 campaigns, 95045 cameras, disk 8% used
 
 ## Priority Queue
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
