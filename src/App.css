@@ -8224,3 +8224,6 @@ img {
   transition: border-color 0.15s;
 }
 .guarantee-cta-secondary:hover { border-color: var(--fg); }
+
+/* Nav more-btn active state */
+.nav-more-btn.active { color: var(--fg) !important; }

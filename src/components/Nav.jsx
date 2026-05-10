@@ -72,7 +72,6 @@ export default function Nav({ tab, setTab }) {
               key={l.id}
               onClick={() => setTab(l.id)}
               className={`nav-link-btn${tab === l.id ? ' active' : ''}`}
-              style={{ color: tab === l.id ? 'var(--fg)' : 'var(--gray)' }}
             >
               {l.label}
             </button>
@@ -85,8 +84,7 @@ export default function Nav({ tab, setTab }) {
               aria-haspopup="true"
               aria-expanded={moreOpen}
               aria-label="More navigation links"
-              className="nav-more-btn"
-              style={{ color: moreOpen ? 'var(--fg)' : 'var(--gray)' }}
+              className={`nav-more-btn${moreOpen ? ' active' : ''}`}
             >
               More <ChevronDown size={12} />
             </button>
@@ -97,7 +95,6 @@ export default function Nav({ tab, setTab }) {
                     key={l.id}
                     onClick={() => { setTab(l.id); setMoreOpen(false) }}
                     className={`nav-dropdown-item${tab === l.id ? ' active' : ''}`}
-                    style={{ color: tab === l.id ? 'var(--fg)' : undefined }}
                     role="menuitem"
                   >
                     {l.label}
