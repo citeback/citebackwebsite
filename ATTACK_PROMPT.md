@@ -313,6 +313,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | AdminPanel review note input missing aria-label | ✅ FIXED (aria-label="Review note" added) |
 | 2026-05-10 | AdminPanel password input missing aria-label | ✅ FIXED (aria-label="Admin secret" added) |
 | 2026-05-10 | AdminPanel campaign status select missing aria-label | ✅ FIXED (aria-label=`Status for {name}` added) |
+| 2026-05-10 | /account/logout missing rate limit (DoS via cookie spam) | ✅ FIXED (checkRateLimit added pre-response) |
+| 2026-05-10 | /account/logout-all missing rate limit (valid token can loop-increment password_version) | ✅ FIXED (checkAuthRateLimit pre-body; prevents token-holder DoS) |
+| 2026-05-10 | index.css global scrollbar #1a1a2e navy vs App.css #333 dark | ✅ FIXED (index.css ::-webkit-scrollbar-thumb + .layers-scroll normalized to #333) |
 
 ---
 

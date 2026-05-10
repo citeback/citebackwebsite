@@ -9,7 +9,8 @@ Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 **Live:** citeback.com (Netlify, auto-deploys from GitHub `citeback/citebackwebsite`)
 **Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
 **VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
-**Status:** Site working, COLD dark theme, CSS mostly restored. Visual QA pass still needed from Scott.
+**Status:** Site working, COLD dark theme, full CSS. Audit score ~9.8/10. Visual QA pass still needed from Scott.
+**Last keepalive (2026-05-10 11:18 MDT):** /account/logout + logout-all rate limits added; scrollbar colors normalized to #333 site-wide; full audit passed clean — 0 inline styles, 0 SQL injection, all endpoints rate-limited, all a11y labels present, CSP no unsafe-inline.
 
 ## What Broke This Morning (2026-05-10) + What Was Fixed
 
@@ -56,7 +57,7 @@ journalctl -u citeback-ai -n 30 --no-pager
 ```
 
 ## What's Solid (Don't Re-Audit)
-- **Security:** Rate limits on all endpoints, CSP hardened (unsafe-inline removed), passkeys, bcrypt, JWT, timing-safe login, AES-256-GCM encrypted recovery emails, admin IP-bound sessions, fail2ban on VPS, SSH password auth disabled
+- **Security:** Rate limits on all endpoints (incl. logout + logout-all added 2026-05-10 keepalive 7), CSP hardened (unsafe-inline removed), passkeys, bcrypt, JWT, timing-safe login, AES-256-GCM encrypted recovery emails, admin IP-bound sessions, fail2ban on VPS, SSH password auth disabled
 - **SSRF:** AI proxy hardcoded to 127.0.0.1:11435; CA Bar lookup locked to apps.calbar.ca.gov only; body size 20KB JSON / 12MB photo
 - **ZIP uploads:** AdmZip.readFile() (not extractEntryTo) — path traversal protected
 - **AI proxy:** Queue max 5, injection scan across ALL messages (multi-turn bypass prevention), 4000 char message cap
