@@ -15,16 +15,8 @@ export default function ScrollProgress() {
   }, [])
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0,
-      height: 2, zIndex: 1001, background: 'transparent',
-    }}>
-      <div style={{
-        height: '100%',
-        width: `${pct}%`,
-        background: 'var(--red)',
-        transition: 'width 0.05s linear',
-      }} />
+    <div className="scroll-progress-bar" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label="Page scroll progress">
+      <div className="scroll-progress-fill" style={{ width: `${pct}%` }} />
     </div>
   )
 }

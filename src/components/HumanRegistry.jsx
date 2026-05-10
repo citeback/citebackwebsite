@@ -129,10 +129,13 @@ function ApplyModal({ onClose, defaultRole = '' }) {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       })
       if (res.ok) {
         setSubmitted(true)
+      } else if (res.status === 401) {
+        setSubmitError('login_required')
       } else {
         setSubmitError(true)
       }
@@ -367,7 +370,9 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                 background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
                 borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
                 <AlertCircle size={14} />
-                Submission failed — please try again. If the problem persists, email citeback@proton.me.
+                {submitError === 'login_required'
+                  ? 'You must be logged in to submit an attorney application. Create a free account first.'
+                  : 'Submission failed — please try again. If the problem persists, email citeback@proton.me.'}
               </div>
             )}
           </div>

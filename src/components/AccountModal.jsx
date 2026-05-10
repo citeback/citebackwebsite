@@ -8,10 +8,12 @@ import { API_BASE as AI_URL } from '../config.js'
 export default function AccountModal({ onClose, initialTab = 'login', singleMode = false }) {
   const { login, createAccount } = useAuth()
   const modalRef = useRef(null)
-  const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover'
+  const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover' | 'forgot-username'
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', email: '' })
   const [recoverUsername, setRecoverUsername] = useState('')
   const [recoverSent, setRecoverSent] = useState(false)
+  const [forgotUsernameEmail, setForgotUsernameEmail] = useState('')
+  const [forgotUsernameSent, setForgotUsernameSent] = useState(false)
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -96,6 +98,21 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
         body: JSON.stringify({ username: recoverUsername }),
       })
       setRecoverSent(true)
+    } catch {}
+    setLoading(false)
+  }
+
+  const handleForgotUsername = async (e) => {
+    e.preventDefault()
+    if (!forgotUsernameEmail) return
+    setLoading(true)
+    try {
+      await fetch(`${AI_URL}/account/forgot-username`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotUsernameEmail }),
+      })
+      setForgotUsernameSent(true)
     } catch {}
     setLoading(false)
   }
@@ -216,6 +233,43 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
         )}
 
         {/* Forgot password / recover flow */}
+        {tab === 'forgot-username' && (
+          <div>
+            <button onClick={() => { setTab('login'); setForgotUsernameSent(false); setForgotUsernameEmail('') }}
+              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, padding: '0 0 16px 0' }}>
+              ← Back to login
+            </button>
+            <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Forgot your username?</h3>
+            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 20, lineHeight: 1.5 }}>
+              Enter your recovery email. If it matches an account, we’ll send your username.
+            </p>
+            {forgotUsernameSent ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px', background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 10 }}>
+                <CheckCircle size={20} style={{ color: '#6ee7b7', flexShrink: 0 }} />
+                <span style={{ fontWeight: 600, fontSize: 14 }}>If that email matches an account, the username’s on its way.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotUsername} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <input
+                  id="account-forgot-username-email"
+                  type="email"
+                  style={{ width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+                  placeholder="your@email.com"
+                  value={forgotUsernameEmail}
+                  onChange={e => setForgotUsernameEmail(e.target.value)}
+                  aria-label="Recovery email to find username"
+                  autoFocus
+                  required
+                />
+                <button type="submit" disabled={loading || !forgotUsernameEmail}
+                  style={{ background: forgotUsernameEmail ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: forgotUsernameEmail ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: forgotUsernameEmail ? 'pointer' : 'not-allowed' }}>
+                  {loading ? 'Sending…' : 'Send Username'}
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+
         {tab === 'recover' && (
           <div>
             <button onClick={() => { setTab('login'); setRecoverSent(false); setRecoverUsername('') }}
@@ -252,12 +306,12 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
           </div>
         )}
 
-        {tab !== 'recover' && success ? (
+        {tab !== 'recover' && tab !== 'forgot-username' && success ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px', background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 10 }}>
             <CheckCircle size={20} style={{ color: 'var(--green)', flexShrink: 0 }} />
             <span style={{ fontWeight: 600, fontSize: 14 }}>{success}</span>
           </div>
-        ) : tab !== 'recover' ? (
+        ) : tab !== 'recover' && tab !== 'forgot-username' ? (
           <>
           {tab === 'login' && browserSupportsWebAuthn() && (
             <div style={{ marginBottom: 4 }}>
@@ -427,10 +481,16 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               </div>
             )}
             {tab === 'login' && (
-              <button type="button" onClick={() => { setTab('recover'); setError(null) }}
-                style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, textAlign: 'left', padding: 0, textDecoration: 'underline' }}>
-                Forgot your password?
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <button type="button" onClick={() => { setTab('recover'); setError(null) }}
+                  style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, textAlign: 'left', padding: 0, textDecoration: 'underline' }}>
+                  Forgot your password?
+                </button>
+                <button type="button" onClick={() => { setTab('forgot-username'); setError(null) }}
+                  style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, textAlign: 'left', padding: 0, textDecoration: 'underline' }}>
+                  Forgot your username?
+                </button>
+              </div>
             )}
             {singleMode && (
               <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', marginTop: 4 }}>
@@ -454,6 +514,21 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             {tab === 'create' && (
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
                 Scouts don't need an email — browse and report anonymously. Email is only required if you want to run campaigns.
+              </p>
+            )}
+            {tab === 'create' && (
+              <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.7, borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 4 }}>
+                By creating an account you agree to our{' '}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--accent)', textDecoration: 'underline', fontWeight: 600 }}
+                  onClick={e => e.stopPropagation()}
+                >
+                  Terms of Use
+                </a>
+                .
               </p>
             )}
           </form>

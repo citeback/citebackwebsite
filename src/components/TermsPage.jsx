@@ -1,6 +1,27 @@
+const TERMS_LAST_UPDATED = 'May 9, 2026'
+
 export default function TermsPage() {
   return (
     <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
+      {/* Draft disclaimer — top of page, prominent */}
+      <div style={{
+        background: 'rgba(243,156,18,0.06)',
+        border: '1px solid rgba(243,156,18,0.35)',
+        borderLeft: '4px solid #f39c12',
+        padding: '14px 18px',
+        marginBottom: 32,
+        fontSize: 13,
+        color: 'var(--muted)',
+        lineHeight: 1.7,
+        borderRadius: '0 8px 8px 0',
+      }}>
+        <strong style={{ color: '#f39c12', display: 'block', marginBottom: 4 }}>⚠ These terms are in draft form pending legal review.</strong>
+        They are published for community transparency. They have <em>not</em> been reviewed by legal counsel and are subject to change before platform launch.
+        No funds go live until attorney review is complete. Full draft with OFAC disclosures, operator obligations, and §230 notice:{' '}
+        <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
+          style={{ color: 'var(--accent)', textDecoration: 'underline' }}>TERMS.md on GitHub</a>.
+      </div>
+
       <div style={{
         fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
         textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
@@ -8,32 +29,11 @@ export default function TermsPage() {
       <h1 style={{ fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
         Terms of Use
       </h1>
-      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 16 }}>
-        Last updated: May 2026 · Citeback (Wyoming DAO LLC, in formation)
+      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 32 }}>
+        Last updated: <time dateTime="2026-05-09">{TERMS_LAST_UPDATED}</time>
+        {' '}· Citeback (Wyoming DAO LLC, in formation)
+        {' '}· Draft v0.1
       </p>
-      <p style={{ color: 'var(--muted)', fontSize: 12, marginBottom: 24, lineHeight: 1.6 }}>
-        This page is a summary of key terms. The full draft Terms of Use (including OFAC disclosures, operator obligations,
-        §230 notice, immutable platform rules, and fund redirection mechanics) is available at{' '}
-        <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--accent)' }}>TERMS.md on GitHub</a>.
-        These terms will be expanded and consolidated following attorney review prior to launch.
-      </p>
-
-      {/* Attorney review banner */}
-      <div style={{
-        background: 'rgba(243,156,18,0.08)',
-        border: '1px solid rgba(243,156,18,0.3)',
-        borderLeft: '3px solid #f39c12',
-        padding: '16px 20px',
-        marginBottom: 48,
-        fontSize: 13,
-        color: 'var(--muted)',
-        lineHeight: 1.7,
-      }}>
-        <strong style={{ color: '#f39c12' }}>⚠ Pending Attorney Review</strong>
-        <br />
-        These Terms of Use are a public draft. They are published for community transparency and review. They have not yet been reviewed by legal counsel and are subject to change prior to platform launch. No funds go live until attorney review is complete.
-      </div>
 
       {[
         {

@@ -309,6 +309,7 @@ try { db.prepare('ALTER TABLE campaigns ADD COLUMN wallet_changed_at TEXT DEFAUL
 try { db.prepare('ALTER TABLE users ADD COLUMN role TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_created INTEGER DEFAULT 0').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
+try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN email TEXT DEFAULT NULL').run() } catch {}
 
 // ── Claim tokens table (for attorney account setup links) ─────────────────────
 db.exec(`
@@ -458,6 +459,18 @@ function _pkRateCheck(map, ip, limit) {
 function checkPkAuthRateLimit(ip) { return _pkRateCheck(pkAuthRateCounts, ip, 10) }
 function checkPkRegRateLimit(ip) { return _pkRateCheck(pkRegRateCounts, ip, 5) }
 
+// ── Forgot-username rate limiter (3 req / 60min per IP) ─────────────────────
+const forgotUsernameRateCounts = new Map()
+function checkForgotUsernameRateLimit(ip) {
+  const now = Date.now()
+  const WINDOW = 60 * 60 * 1000
+  const LIMIT = 3
+  const entry = forgotUsernameRateCounts.get(ip)
+  if (!entry || now - entry.start > WINDOW) { forgotUsernameRateCounts.set(ip, { count: 1, start: now }); return true }
+  if (entry.count >= LIMIT) return false
+  entry.count++; return true
+}
+
 // ── Bar state whitelist ──────────────────────────────────────────────────────
 const US_BAR_STATES = new Set([
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
@@ -526,6 +539,11 @@ setInterval(() => {
   } catch (e) { console.error('Token cleanup error:', e.message) }
 }, 60 * 60 * 1000)
 
+// ── Scheduled WAL checkpoint (prevents unbounded WAL file growth) ────────────────
+setInterval(() => {
+  try { db.prepare('PRAGMA wal_checkpoint(PASSIVE)').run() } catch (e) { console.error('WAL checkpoint error:', e.message) }
+}, 60 * 60 * 1000) // every hour
+
 // Periodic GC for in-memory rate-limit maps — prevents unbounded growth from unique IPs
 // Each entry is ~100 bytes; without GC a busy server accumulates millions of stale entries.
 setInterval(() => {
@@ -536,6 +554,7 @@ setInterval(() => {
   for (const [k, e] of pkAuthRateCounts){ if (now - e.start > 60 * 1000)        pkAuthRateCounts.delete(k)}
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
   for (const [ip, e] of adminFailCounts){ if (e.lockedUntil && now > e.lockedUntil + 60000) adminFailCounts.delete(ip) }
+  for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
 }, 10 * 60 * 1000) // every 10 minutes
 
 let processing = false
@@ -835,7 +854,7 @@ function verifyAdminSession(req) {
   if (Date.now() - session.created > ADMIN_SESSION_TTL) { adminSessions.delete(token); return false }
   // IP binding: admin session is tied to the IP it was issued on.
   // A stolen cookie is useless from a different network.
-  const reqIp = req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown'
+  const reqIp = getClientIp(req)
   if (session.ip && session.ip !== reqIp) { adminSessions.delete(token); return false }
   return true
 }
@@ -889,6 +908,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Feedback ───────────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/feedback') {
+    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const { vote } = await parseBody(req)
       if (vote === 'up') stats.thumbsUp++
@@ -900,6 +920,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/stats') {
+    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     // Omit operational details (rateLimited, uptime, queueDepth, processing) that
     // would help an attacker profile server load or time requests around restarts.
     res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -947,6 +968,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Anonymous campaign proposal submission ─────────────────────────────────
   if (req.method === 'POST' && req.url === '/submit') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       const allowed = ['billboard', 'legal', 'foia', 'verify', 'other']
@@ -1096,7 +1118,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && req.url === '/account/change-password') {
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
-    if (!checkAuthRateLimit(clientIp)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' })) }
+    if (!checkAuthRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' })) }
     try {
       const body = await parseBody(req)
       const currentPassword = String(body.currentPassword || '')
@@ -1126,6 +1148,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: profile ───────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/account/me') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
@@ -1157,6 +1180,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: sighting history ──────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/account/sightings') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
@@ -1220,6 +1244,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: check if email set (masked) ─────────────────────────────────
   if (req.method === 'GET' && req.url === '/account/email') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
@@ -1240,6 +1265,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Account: attorney info (bar state/number for verified attorneys) ────────
   if (req.method === 'GET' && req.url === '/account/attorney-info') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) {
       res.writeHead(401, { 'Content-Type': 'application/json' })
@@ -1294,6 +1320,82 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {
       console.error('recovery error:', e.message)
       if (!res.headersSent) { res.writeHead(500, {"Content-Type": "application/json"}); res.end(JSON.stringify({error: "Server error"})); }
+    }
+    return
+  }
+
+  // ── Account: forgot username (send username reminder to recovery email) ──────
+  if (req.method === 'POST' && req.url === '/account/forgot-username') {
+    if (!checkForgotUsernameRateLimit(ip)) {
+      // Always respond 200 — never reveal rate limiting status
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, message: 'If that email has an account, your username has been sent.' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const emailRaw = String(body.email || '').toLowerCase().trim()
+      // Always respond OK — never confirm whether email exists
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ ok: true, message: 'If that email has an account, your username has been sent.' }))
+
+      // Fire-and-forget: do the real work after response is sent
+      if (!emailRaw || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailRaw) || !emailEnabled) return
+      // Scan all users to find one with matching encrypted email
+      const allUsers = db.prepare('SELECT id, username, email_enc FROM users WHERE email_enc IS NOT NULL').all()
+      const match = allUsers.find(u => {
+        const decrypted = decryptEmail(u.email_enc)
+        return decrypted && decrypted.toLowerCase() === emailRaw
+      })
+      if (!match) return
+      await mailer.sendMail({
+        from: SMTP_FROM,
+        to: emailRaw,
+        subject: 'Citeback — Your Username',
+        text: `Your Citeback username is: ${match.username}\n\nIf you also forgot your password, visit https://citeback.com and use the "Forgot password?" link on the login screen.\n\nIf you didn't request this, ignore this email.\n\nCiteback never stores your identity. This email was only kept for account recovery.`,
+        html: `<p>Your Citeback username is: <strong>${match.username}</strong></p><p>If you also forgot your password, use the <a href="https://citeback.com">Forgot password?</a> link on the login screen.</p><p>If you didn't request this, ignore this email.</p><p style="color:#888;font-size:12px">Citeback never stores your identity. This email was only kept for account recovery.</p>`,
+      })
+    } catch (e) {
+      console.error('forgot-username error:', e.message)
+      // Response already sent — nothing to do
+    }
+    return
+  }
+
+  // ── Account: forgot username (lookup by recovery email) ──────────────────
+  if (req.method === 'POST' && req.url === '/account/forgot-username') {
+    // Rate limit: 3/hour per IP (always respond OK to avoid user enumeration)
+    if (!checkForgotUsernameRateLimit(ip)) {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, message: 'If that email matches an account, the username has been sent.' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const email = String(body.email || '').toLowerCase().trim()
+      // Always respond OK immediately — never confirm whether email exists
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ ok: true, message: 'If that email matches an account, the username has been sent.' }))
+
+      // Do actual work after response (fire-and-forget)
+      if (!email || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email) || !emailEnabled) return
+
+      // Decrypt all stored emails and find a match — O(n) but users are few
+      const allUsers = db.prepare('SELECT id, username, email_enc FROM users WHERE email_enc IS NOT NULL').all()
+      for (const user of allUsers) {
+        const decrypted = decryptEmail(user.email_enc)
+        if (decrypted && decrypted.toLowerCase() === email) {
+          await mailer.sendMail({
+            from: SMTP_FROM,
+            to: email,
+            subject: 'Citeback — Your Username',
+            text: `You requested your Citeback username.\n\nYour username is: ${user.username}\n\nIf you also need to reset your password, visit https://citeback.com and use \"Forgot your password?\" with this username.\n\nIf you did not make this request, please ignore this email.\n\nCiteback`,
+            html: `<p>You requested your Citeback username.</p><p><strong>Your username is: ${user.username}</strong></p><p>If you also need to reset your password, <a href="https://citeback.com">visit Citeback</a> and use "Forgot your password?" with this username.</p><p>If you did not make this request, please ignore this email.</p><p style="color:#888;font-size:12px">Citeback never stores your identity. This email was only kept for this purpose.</p>`,
+          }).catch(e => console.error('forgot-username email error:', e.message))
+          break // found the match; stop scanning
+        }
+      }
+    } catch (e) {
+      console.error('forgot-username error:', e.message)
+      if (!res.headersSent) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ ok: true })) }
     }
     return
   }
@@ -1678,6 +1780,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Expert directory application ─────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/registry') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       const roles = ['attorney', 'journalist', 'advocate', 'researcher', 'organizer', 'other']
@@ -1808,8 +1911,7 @@ const server = http.createServer(async (req, res) => {
       const changed = db.prepare(
         'UPDATE attorney_applications SET status = ?, reviewed_at = ?, notes = ? WHERE id = ?'
       ).run(newStatus, new Date().toISOString(), notes, id)
-      const reviewIp = req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown'
-      auditLog('attorney_' + action, id, notes || null, reviewIp)
+      auditLog('attorney_' + action, id, notes || null, ip)
       if (changed.changes > 0 && action === 'approve') {
         try {
           const appRow = db.prepare('SELECT full_name, email, account_created FROM attorney_applications WHERE id = ?').get(id)
@@ -1843,7 +1945,7 @@ const server = http.createServer(async (req, res) => {
               // Update application
               db.prepare('UPDATE attorney_applications SET account_created = 1, account_user_id = ? WHERE id = ?')
                 .run(newUserId, id)
-              auditLog('attorney_account_created', id, newUserId, reviewIp)
+              auditLog('attorney_account_created', id, newUserId, ip)
               // Send welcome email
               const claimLink = `https://citeback.com/claim-account?token=${rawToken}&id=${newUserId}`
               const welcomeText = `Hi ${appRow.full_name},\n\nYour application to the Citeback Expert Directory has been approved. Click the link below to set up your account and access your dashboard.\n\nActivate your account: ${claimLink}\n\n(This link is valid for 7 days)\n\nIf you have any questions, contact citeback@proton.me.\n\nCiteback`
@@ -2017,9 +2119,8 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: logout ──────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/logout') {
-    const clientIp = req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown'
     revokeAdminSession(req)
-    auditLog('admin_logout', null, null, clientIp)
+    auditLog('admin_logout', null, null, ip)
     res.writeHead(200, {
       'Content-Type': 'application/json',
       'Set-Cookie': ADMIN_COOKIE + '=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/',
@@ -2112,6 +2213,7 @@ const server = http.createServer(async (req, res) => {
 
   // GET /api/campaigns
   if (req.method === 'GET' && req.url === '/api/campaigns') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
     const result = rows.map(c => ({
       id: c.id, type: c.type, title: c.title, description: c.description,

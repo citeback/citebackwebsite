@@ -45,8 +45,19 @@ const SurveillanceFeed = lazy(() => import('./components/SurveillanceFeed'))
 const ConversationalInterface = lazy(() => import('./components/ConversationalInterface'))
 
 const LazyFallback = ({ label = 'Loading…' }) => (
-  <div role="status" aria-live="polite" style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
+  <div role="status" aria-live="polite" className="lazy-fallback">{label}</div>
 )
+
+function NotFound({ setTab }) {
+  return (
+    <div className="not-found">
+      <div className="not-found-code">404</div>
+      <h1 className="not-found-heading">Page not found</h1>
+      <p className="not-found-body">The page you're looking for doesn't exist or has moved.</p>
+      <button className="not-found-btn" onClick={() => setTab('home')}>Go home</button>
+    </div>
+  )
+}
 
 const TAB_TO_PATH = {
   home: '/',
@@ -141,11 +152,11 @@ export default function App() {
   return (
     <AuthProvider>
     <CameraCountProvider>
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-root">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <ScrollProgress />
       <Nav tab={tab} setTab={setTab} />
-      <main id="main-content" tabIndex={-1} style={{ outline: 'none', flex: 1, display: 'flex', flexDirection: 'column', paddingTop: 60 }}>
+      <main id="main-content" tabIndex={-1} className="app-main">
         {/* ActivityTicker removed */}
 
         <Routes>
@@ -157,7 +168,7 @@ export default function App() {
               <HowItWorks setTab={setTab} />
               <CryptoPrimer />
               <GuaranteeSection setTab={setTab} />
-              <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+              <div className="launch-tracker-section">
                 <LaunchTracker />
               </div>
               <SurveillanceExplainer setTab={setTab} />
@@ -184,24 +195,7 @@ export default function App() {
           <Route path="/cx-admin" element={<Suspense fallback={<LazyFallback label="Loading…" />}><AdminPanel /></Suspense>} />
           <Route path="/reset-password" element={<Suspense fallback={<LazyFallback label="Loading…" />}><ResetPasswordPage setTab={setTab} /></Suspense>} />
           <Route path="/claim-account" element={<Suspense fallback={<LazyFallback label="Loading…" />}><ClaimAccountPage setTab={setTab} /></Suspense>} />
-          <Route path="*" element={
-            <>
-              <Hero setTab={setTab} />
-              <StatsSection />
-              <CampaignSelector setSelectedCampaign={setSelectedCampaign} setTab={setTab} />
-              <HowItWorks setTab={setTab} />
-              <CryptoPrimer />
-              <GuaranteeSection setTab={setTab} />
-              <div style={{ padding: '60px 24px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-                <LaunchTracker />
-              </div>
-              <SurveillanceExplainer setTab={setTab} />
-              <ALPRExplainer setTab={setTab} />
-              <Manifesto setTab={setTab} />
-              <BuildWithUs setTab={setTab} />
-              <LiveFeed setTab={setTab} />
-            </>
-          } />
+          <Route path="*" element={<NotFound setTab={setTab} />} />
         </Routes>
 
         {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
@@ -210,15 +204,7 @@ export default function App() {
             onClick={() => setShowAI(true)}
             aria-label="Ask questions about surveillance, campaigns, and the platform"
             title="Ask questions about surveillance, campaigns, and the platform"
-            style={{
-              position: 'fixed', bottom: 24, right: 24, zIndex: 999,
-              padding: '12px 20px',
-              background: 'var(--fg)', color: 'var(--bg)',
-              border: 'none', fontSize: 13, fontWeight: 500,
-              letterSpacing: '0.04em', cursor: 'pointer',
-              borderRadius: 999,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-            }}
+            className="ai-chat-btn"
           >
             💬 Ask Citeback AI
           </button>
