@@ -7773,3 +7773,33 @@ img {
 .tran-cta-btn:hover { opacity: 0.85; }
 .tran-cta-btn--primary { background: var(--fg); color: var(--bg); }
 .tran-cta-btn--secondary { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+
+/* ── HowItWorks ───────────────────────────────────────────── */
+.hiw-section { padding: 100px 24px; border-top: 1px solid var(--border); background: var(--bg); }
+.hiw-track-toggle { max-width: 1100px; margin: 0 auto 48px; display: flex; gap: 8px; }
+.hiw-track-btn { padding: 9px 20px; border-radius: 999px; border: 1px solid; cursor: pointer; font-size: 13px; font-weight: 600; font-family: var(--font); transition: all 0.15s; }
+.hiw-track-btn--active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.hiw-track-btn--inactive { background: transparent; color: var(--gray); border-color: var(--border); }
+.hiw-layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 200px 1fr; gap: 0 80px; align-items: start; }
+.hiw-sidebar { position: sticky; top: 100px; }
+.hiw-sidebar-label { font-size: 10px; letter-spacing: 0.16em; color: var(--red); text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
+.hiw-sidebar-text { font-size: 13px; color: var(--gray); line-height: 1.7; }
+.hiw-timeline { position: relative; }
+.hiw-line-track { position: absolute; left: 0; top: 12px; bottom: 12px; width: 1px; background: var(--border); overflow: hidden; }
+.hiw-line-fill { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--red); transform: scaleY(0); transform-origin: top; transition: transform 0.1s linear; }
+.hiw-steps { display: flex; flex-direction: column; gap: 64px; }
+.hiw-step { padding-left: 40px; position: relative; transition: opacity 0.4s ease; }
+.hiw-step--active { opacity: 1; }
+.hiw-step--inactive { opacity: 0.4; }
+.hiw-dot { position: absolute; left: -4px; top: 12px; width: 9px; height: 9px; border-radius: 50%; transition: background 0.3s, border-color 0.3s; z-index: 1; }
+.hiw-dot--active { background: var(--red); border: 2px solid var(--red); }
+.hiw-dot--inactive { background: var(--border); border: 2px solid var(--gray); }
+.hiw-step-num { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; transition: color 0.3s; }
+.hiw-step-num--active { color: var(--red); }
+.hiw-step-num--inactive { color: var(--gray); }
+.hiw-step-title { font-size: 22px; font-weight: 400; letter-spacing: -0.01em; margin-bottom: 12px; color: var(--fg); }
+.hiw-step-desc { font-size: 15px; color: var(--gray); line-height: 1.75; max-width: 520px; }
+.hiw-cta-row { max-width: 1100px; margin: 48px auto 0; display: flex; gap: 12px; flex-wrap: wrap; }
+.hiw-cta-primary { background: var(--fg); color: var(--bg); border: none; padding: 12px 28px; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: var(--font); }
+.hiw-cta-secondary { background: transparent; color: var(--fg); border: 1px solid var(--border); padding: 12px 28px; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: var(--font); }
+@media (max-width: 680px) { .hiw-layout { grid-template-columns: 1fr; } .hiw-sidebar { position: static; margin-bottom: 32px; } }
