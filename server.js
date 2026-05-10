@@ -2165,7 +2165,11 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
     }
     try {
-      const body = await parseBody(req)
+      let body
+      try { body = await parseBody(req) } catch {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Invalid request body.' }))
+      }
       const { userId, token, username, password } = body
       // Generic error to avoid user enumeration
       const badToken = () => { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid or expired activation link.' })) }

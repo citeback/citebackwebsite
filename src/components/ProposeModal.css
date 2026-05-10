@@ -1,0 +1,334 @@
+/* ── ProposeModal (.pm-) ───────────────────────────────────────── */
+
+.pm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 3vw, 24px);
+}
+
+.pm-container {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(20px, 5vw, 32px);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Header */
+.pm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.pm-title {
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.pm-step-label {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.pm-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Progress bar */
+.pm-progress-track {
+  height: 3px;
+  background: var(--bg3);
+  border-radius: 100px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.pm-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  border-radius: 100px;
+}
+
+/* Success state */
+.pm-success {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.pm-success-icon {
+  margin-bottom: 16px;
+}
+
+.pm-success-title {
+  font-weight: 800;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.pm-success-desc {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 380px;
+  margin: 0 auto 20px;
+}
+
+.pm-success-note {
+  text-align: left;
+  max-width: 380px;
+  margin: 0 auto 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.pm-success-note-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.pm-done-btn {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* Step 1 */
+.pm-step1 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pm-type-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.pm-type-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pm-type-btn--active {
+  background: rgba(230, 57, 70, 0.1);
+  border-color: rgba(230, 57, 70, 0.5);
+}
+
+.pm-type-btn-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.pm-type-btn-desc {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pm-legal-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  background: rgba(230, 57, 70, 0.05);
+  border: 1px solid rgba(230, 57, 70, 0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.pm-legal-note-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.pm-continue-btn {
+  margin-top: 8px;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.pm-continue-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.pm-continue-btn--disabled {
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Step 2 */
+.pm-step2 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.pm-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+
+.pm-textarea {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  height: 100px;
+  resize: vertical;
+}
+
+.pm-contact-note {
+  background: rgba(230, 57, 70, 0.05);
+  border: 1px solid rgba(230, 57, 70, 0.15);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.pm-email-gate {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(244, 162, 97, 0.08);
+  border: 1px solid rgba(244, 162, 97, 0.35);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.pm-email-gate-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.pm-email-gate-title {
+  color: #f4a261;
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+
+.pm-email-gate-link {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Bottom actions */
+.pm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.pm-back-btn {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pm-submit-btn {
+  flex: 2;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.pm-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.pm-submit-btn--disabled {
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Error */
+.pm-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--accent);
+}

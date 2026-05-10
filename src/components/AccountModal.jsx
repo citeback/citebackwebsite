@@ -218,7 +218,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             </p>
             {forgotUsernameSent ? (
               <div className="am-success">
-                <CheckCircle size={20} style={{ color: '#6ee7b7', flexShrink: 0 }} />
+                <CheckCircle size={20} className="am-success-icon" />
                 <span className="am-success-text">If that email matches an account, the username's on its way.</span>
               </div>
             ) : (
@@ -238,11 +238,6 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   type="submit"
                   disabled={loading || !forgotUsernameEmail}
                   className="am-submit-btn"
-                  style={{
-                    background: forgotUsernameEmail ? 'var(--accent)' : 'var(--bg3)',
-                    color: forgotUsernameEmail ? '#fff' : 'var(--muted)',
-                    cursor: forgotUsernameEmail ? 'pointer' : 'not-allowed',
-                  }}
                 >
                   {loading ? 'Sending…' : 'Send Username'}
                 </button>
@@ -264,7 +259,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             </p>
             {recoverSent ? (
               <div className="am-success">
-                <CheckCircle size={20} style={{ color: '#6ee7b7', flexShrink: 0 }} />
+                <CheckCircle size={20} className="am-success-icon" />
                 <span className="am-success-text">If a recovery email exists, it's on its way.</span>
               </div>
             ) : (
@@ -283,11 +278,6 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   type="submit"
                   disabled={loading || !recoverUsername}
                   className="am-submit-btn"
-                  style={{
-                    background: recoverUsername ? 'var(--accent)' : 'var(--bg3)',
-                    color: recoverUsername ? '#fff' : 'var(--muted)',
-                    cursor: recoverUsername ? 'pointer' : 'not-allowed',
-                  }}
                 >
                   {loading ? 'Sending…' : 'Send Reset Link'}
                 </button>
@@ -298,7 +288,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
 
         {tab !== 'recover' && tab !== 'forgot-username' && success ? (
           <div className="am-success">
-            <CheckCircle size={20} style={{ color: 'var(--green)', flexShrink: 0 }} />
+            <CheckCircle size={20} className="am-success-icon--green" />
             <span className="am-success-text">{success}</span>
           </div>
         ) : tab !== 'recover' && tab !== 'forgot-username' ? (
@@ -311,10 +301,6 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 disabled={passkeyLoading}
                 aria-label="Sign in with a passkey (Touch ID, Face ID, or security key)"
                 className="am-passkey-btn"
-                style={{
-                  cursor: passkeyLoading ? 'not-allowed' : 'pointer',
-                  opacity: passkeyLoading ? 0.6 : 1,
-                }}
               >
                 {passkeyLoading
                   ? <><Loader size={15} className="spinning" /> Waiting for passkey…</>
@@ -333,12 +319,11 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
           <form onSubmit={handleSubmit} className="am-form">
             <div>
               <label htmlFor="account-username" className="am-label">Username</label>
-              <div style={{ position: 'relative' }}>
-                <User size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+              <div className="am-input-wrapper">
+                <User size={14} className="am-input-icon" />
                 <input
                   id="account-username"
-                  className="am-input"
-                  style={{ paddingLeft: 34 }}
+                  className="am-input am-input--padded-l"
                   placeholder="e.g. alpr_watcher"
                   value={form.username}
                   onChange={e => set('username', e.target.value)}
@@ -357,13 +342,12 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
 
             <div>
               <label htmlFor="account-password" className="am-label">Password</label>
-              <div style={{ position: 'relative' }}>
-                <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+              <div className="am-input-wrapper">
+                <Lock size={14} className="am-input-icon" />
                 <input
                   id="account-password"
                   type={showPw ? 'text' : 'password'}
-                  className="am-input"
-                  style={{ paddingLeft: 34, paddingRight: 40 }}
+                  className="am-input am-input--padded-lr"
                   placeholder={tab === 'create' ? 'At least 8 characters' : 'Your password'}
                   value={form.password}
                   onChange={e => set('password', e.target.value)}
@@ -374,7 +358,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   type="button"
                   onClick={() => setShowPw(p => !p)}
                   aria-label={showPw ? 'Hide password' : 'Show password'}
-                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4 }}
+                  className="am-pw-toggle"
                 >
                   {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
@@ -384,13 +368,12 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             {tab === 'create' && (
               <div>
                 <label htmlFor="account-confirm-pw" className="am-label">Confirm Password</label>
-                <div style={{ position: 'relative' }}>
-                  <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+                <div className="am-input-wrapper">
+                  <Lock size={14} className="am-input-icon" />
                   <input
                     id="account-confirm-pw"
                     type={showPw ? 'text' : 'password'}
-                    className="am-input"
-                    style={{ paddingLeft: 34, borderColor: form.confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+                    className={`am-input am-input--padded-l${form.confirmPassword && !passwordsMatch ? ' am-input--error' : ''}`}
                     placeholder="Re-enter password"
                     value={form.confirmPassword}
                     onChange={e => set('confirmPassword', e.target.value)}
@@ -406,20 +389,20 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
 
             {error && (
               <div className="am-error">
-                <AlertCircle size={14} style={{ flexShrink: 0 }} />
+                <AlertCircle size={14} className="am-error-icon" />
                 {error}
               </div>
             )}
 
             {tab === 'create' && form.password.length >= 1 && strength && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="am-strength-row">
                 <div className="am-strength-bar-track">
                   <div
                     className="am-strength-bar-fill"
                     style={{ width: `${(strength.score/4)*100}%`, background: strength.color }}
                   />
                 </div>
-                <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 40 }}>{strength.label}</span>
+                <span className="am-strength-label" style={{ color: strength.color }}>{strength.label}</span>
               </div>
             )}
 
@@ -427,11 +410,6 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               type="submit"
               disabled={!submitEnabled}
               className="am-submit-btn"
-              style={{
-                background: submitEnabled ? 'var(--accent)' : 'var(--bg3)',
-                color: submitEnabled ? '#fff' : 'var(--muted)',
-                cursor: submitEnabled ? 'pointer' : 'not-allowed',
-              }}
             >
               {loading ? <><Loader size={15} className="spinning" /> Working…</> : (tab === 'login' ? 'Log In' : 'Create Account')}
             </button>
@@ -441,7 +419,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 <div>
                   <label htmlFor="account-email" className="am-label">
                     Recovery Email{' '}
-                    <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — required to run campaigns)</span>
+                    <span className="am-label-optional">(optional — required to run campaigns)</span>
                   </label>
                   <input
                     id="account-email"
@@ -510,7 +488,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   href="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--accent)', textDecoration: 'underline', fontWeight: 600 }}
+                  className="am-tos-link"
                   onClick={e => e.stopPropagation()}
                 >
                   Terms of Use

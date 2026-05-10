@@ -169,16 +169,19 @@ grep -n "localhost\|127\.0\.0\|192\.168\." server.js | grep -v "//\|SSRF"
 ```bash
 # Schema check
 ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db ".schema attorney_applications"'
-ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db "PRAGMA table_info(accounts)"'
+ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db "PRAGMA table_info(users)"'
 
-# Smoke test apply endpoint (will fail auth — that's correct)
-curl -s -o /dev/null -w "%{http_code}" https://ai.citeback.com/api/attorney/apply
+# Note: table is 'users' not 'accounts'
+ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db "SELECT COUNT(*) as users FROM users; SELECT COUNT(*) as campaigns FROM campaigns;"'
 
-# Check admin attorney queue endpoint exists
-curl -s -o /dev/null -w "%{http_code}" https://ai.citeback.com/api/admin/attorneys
+# Smoke test apply endpoint (expect 401 — auth required)
+curl -s -o /dev/null -w "%{http_code}" -X POST https://ai.citeback.com/attorney/apply
 
-# Check claim-account endpoint
-curl -s -o /dev/null -w "%{http_code}" https://ai.citeback.com/api/account/claim
+# Check admin attorney queue endpoint exists (expect 401)
+curl -s -o /dev/null -w "%{http_code}" https://ai.citeback.com/admin/attorney-applications
+
+# Check claim-account endpoint (expect 400 — missing fields)
+curl -s -o /dev/null -w "%{http_code}" -X POST https://ai.citeback.com/claim-account
 ```
 
 ---
@@ -195,8 +198,8 @@ ssh root@77.42.124.157 'journalctl -u citeback-ai -n 30 --no-pager'
 # Disk usage
 ssh root@77.42.124.157 'df -h / && du -sh /opt/citeback-ai/data/'
 
-# DB size + integrity
-ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db "PRAGMA integrity_check; SELECT COUNT(*) FROM accounts; SELECT COUNT(*) FROM sightings;"'
+# DB size + integrity (table is 'users' not 'accounts'; sightings stored in .jsonl file)
+ssh root@77.42.124.157 'sqlite3 /opt/citeback-ai/data/citeback.db "PRAGMA integrity_check; SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM campaigns;"'
 
 # fail2ban status
 ssh root@77.42.124.157 'fail2ban-client status sshd'

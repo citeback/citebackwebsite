@@ -3639,6 +3639,101 @@ img {
   flex-shrink: 0;
 }
 
+/* Governance utility / modifier classes */
+.gov-icon-accent { color: var(--accent); }
+.gov-accent      { color: var(--accent); }
+.gov-fg          { color: var(--fg); }
+.gov-red         { color: #f87171; }
+.gov-green       { color: var(--green); }
+.gov-purple      { color: #a78bfa; }
+.gov-blue        { color: #60a5fa; }
+.gov-muted       { color: var(--muted); }
+
+.gov-header-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.gov-mt-12  { margin-top: 12px; }
+.gov-mt-16  { margin-top: 16px; }
+.gov-mb-8   { margin-bottom: 8px; }
+.gov-mb-16  { margin-bottom: 16px; }
+
+.gov-callout-p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.gov-tier-label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.gov-tier-label--purple {
+  margin-top: 16px;
+  color: #a78bfa;
+}
+
+.gov-sublabel {
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.gov-highlight-title {
+  margin: 0;
+  font-weight: 600;
+  color: #a78bfa;
+  font-size: 14px;
+}
+
+.gov-highlight-body {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.gov-highlight-body-14 {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+.gov-indigo-title {
+  margin: 0 0 6px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #818cf8;
+}
+
+.gov-indigo-p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.gov-check-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.gov-check-icon--amber {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.gov-check-icon--done {
+  color: #6ee7b7;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.gov-check-icon--pending {
+  color: var(--border);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
 /* =====================================================
    AccountModal (.am-*)
    ===================================================== */
@@ -3982,4 +4077,102 @@ img {
   border-top: 1px solid var(--border);
   padding-top: 12px;
   margin-top: 4px;
+}
+
+/* AccountModal helpers */
+.am-input-wrapper {
+  position: relative;
+}
+
+.am-input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.am-input--padded-l {
+  padding-left: 34px;
+}
+
+.am-input--padded-lr {
+  padding-left: 34px;
+  padding-right: 40px;
+}
+
+.am-input--error {
+  border-color: #e63946;
+}
+
+.am-pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.am-strength-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.am-strength-label {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 40px;
+}
+
+.am-label-optional {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.am-tos-link {
+  color: var(--accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.am-success-icon {
+  flex-shrink: 0;
+  color: #6ee7b7;
+}
+
+.am-error-icon {
+  flex-shrink: 0;
+}
+
+.am-success-icon--green {
+  flex-shrink: 0;
+  color: var(--green);
+}
+
+.am-submit-btn:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.am-submit-btn:disabled {
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.am-passkey-btn:not(:disabled) {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.am-passkey-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }

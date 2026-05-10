@@ -1,0 +1,199 @@
+/* ── ReauthModal (.rm-) ────────────────────────────────────────── */
+
+.rm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 3vw, 24px);
+}
+
+.rm-container {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(20px, 5vw, 32px);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Header */
+.rm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.rm-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rm-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid rgba(230, 57, 70, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rm-title {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.rm-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.rm-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Info box */
+.rm-info-box {
+  background: rgba(230, 57, 70, 0.05);
+  border: 1px solid rgba(230, 57, 70, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* Form */
+.rm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rm-field {
+  position: relative;
+}
+
+.rm-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.rm-input-wrap {
+  position: relative;
+}
+
+.rm-lock-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.rm-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 40px 11px 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.rm-input--error {
+  border-color: rgba(230, 57, 70, 0.6);
+}
+
+.rm-toggle-pw {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Error */
+.rm-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+/* Actions */
+.rm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.rm-cancel-btn {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.rm-submit-btn {
+  flex: 2;
+  border: none;
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.rm-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.rm-submit-btn--disabled {
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+}
