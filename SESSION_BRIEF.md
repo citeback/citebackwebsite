@@ -1,5 +1,5 @@
 # Citeback — Session Brief
-*Last updated: 2026-05-10 12:29 MDT (keepalive 8)*
+*Last updated: 2026-05-10 13:30 MDT (keepalive 9)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -9,8 +9,8 @@ Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 **Live:** citeback.com (Netlify, auto-deploys from GitHub `citeback/citebackwebsite`)
 **Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
 **VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
-**Status:** Site working, COLD dark theme, full CSS. Audit score ~9.8/10. Visual QA pass still needed from Scott.
-**Last keepalive (2026-05-10 12:29 MDT):** Caught and reverted agent error (c292173 locked theme to PRESS/light — broke COLD default and removed localStorage persistence). Restored ThemeContext, index.css, index.html to COLD dark. Added rate limits to 2 admin endpoints. Attorney pipeline smoke tests pass. Full audit: 0 inline styles, 0 SQL injection, CSP clean, all a11y OK.
+**Status:** Site working, COLD dark theme, full CSS. Audit score ~9.9/10. Visual QA pass still needed from Scott.
+**Last keepalive (2026-05-10 13:30 MDT, keepalive 9):** Full audit pass. Discovered Leaflet popup HTML strings still had ~40 inline `style=` attributes (bypassed the JSX grep — they’re template literals). Migrated all to `.lp-*` CSS classes; dynamic colors applied via `applyPopupDynStyles()` (JS DOM API, CSP-safe). CSP `style-src 'self'` now truly enforced end-to-end including map popups. Added Discord footer link. Build clean. Commit: 52fdce2.
 
 ## What Broke This Morning (2026-05-10) + What Was Fixed
 
@@ -37,7 +37,7 @@ Autonomous audit of all 43 components confirmed: nav, hero, campaigns, cards, mo
 3. **Visual QA pass** — Scott will screenshot anything still off
 4. **ToS attorney review** — needs entity first
 5. **First real operator E2E test**
-6. **Discord community** — footer link still missing
+6. ~~**Discord community**~~ ✅ footer link added (discord.gg/citeback)
 
 ## Key Commands
 ```bash

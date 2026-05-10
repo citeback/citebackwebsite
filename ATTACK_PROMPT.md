@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (12:29 MDT keepalive 8)*
+*Last updated: 2026-05-10 (13:30 MDT keepalive 9)*
 
 ---
 
@@ -145,6 +145,9 @@ grep -r "style={{" src/ --include="*.jsx" -l
 
 # Inline styles — JS object variable (e.g. style={styles.foo} — also move to CSS)
 grep -rn "style={[a-zA-Z]" src/ --include="*.jsx" | grep -v "//" | head -20
+
+# Inline styles — HTML strings in Leaflet popups / template literals (CSP violation!)
+grep -rn 'style="' src/ --include="*.jsx" | grep -v "//" | head -20
 
 # Raw apostrophes in JSX (should be &apos; or curly quotes)
 grep -rn "'" src/ --include="*.jsx" | grep -v "//"
@@ -319,6 +322,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | Agent (keepalive 7.5) locked ThemeContext to PRESS/light, removed setTheme + localStorage | ✅ FIXED — COLD default restored, localStorage persistence restored, setTheme re-exposed |
 | 2026-05-10 | /admin/attorney-applications missing rate limit | ✅ FIXED (checkRateLimit added; isAdmin auth still primary gatekeeper) |
 | 2026-05-10 | /admin/sightings missing rate limit | ✅ FIXED (checkRateLimit added; isAdmin auth still primary gatekeeper) |
+| 2026-05-10 | Leaflet popup HTML strings had ~40 inline style= attributes (bypassed JSX grep — template literals) | ✅ FIXED — all → .lp-* CSS classes; dynamic colors via applyPopupDynStyles() JS DOM API; CSP clean end-to-end |
+| 2026-05-10 | Footer missing Discord link | ✅ FIXED (discord.gg/citeback added next to GitHub link) |
 
 ---
 
