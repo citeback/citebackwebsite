@@ -154,31 +154,15 @@ For maximum privacy when browsing this site, use Tor Browser, a trusted VPN, or 
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false)
   return (
-    <div style={{
-      borderBottom: '1px solid var(--border)',
-      padding: '0',
-    }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%', textAlign: 'left', background: 'none', border: 'none',
-          cursor: 'pointer', padding: '18px 0', display: 'flex',
-          justifyContent: 'space-between', alignItems: 'flex-start', gap: 16,
-          color: 'var(--text)',
-        }}
-      >
-        <span style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, flex: 1 }}>{q}</span>
-        <span style={{ color: 'var(--muted)', flexShrink: 0, marginTop: 2 }}>
+    <div className="faq-item">
+      <button onClick={() => setOpen(o => !o)} className="faq-item-btn">
+        <span className="faq-item-q">{q}</span>
+        <span className="faq-item-chevron">
           {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </span>
       </button>
       {open && (
-        <div style={{
-          fontSize: 13, color: 'var(--muted)', lineHeight: 1.8,
-          paddingBottom: 20, whiteSpace: 'pre-line',
-        }}>
-          {a}
-        </div>
+        <div className="faq-item-answer">{a}</div>
       )}
     </div>
   )
@@ -195,17 +179,13 @@ export default function TrustFAQ({ setTab }) {
       <meta property="og:title" content="How It Works | Citeback — Anonymous Crowdfunding for Surveillance Resistance" />
       <meta property="og:description" content="Learn how Citeback funds surveillance lawsuits anonymously using Monero and Zano. Transparent wallet architecture, community-verified campaigns, zero tracking." />
     </Helmet>
-    <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+    <section className="faq-page">
       {/* Phase Status Banner */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', gap: 12,
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderLeft: '3px solid var(--gray)', borderRadius: 0, padding: '14px 18px', marginBottom: 36,
-      }}>
-        <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🟡</span>
+      <div className="faq-phase-banner">
+        <span className="faq-phase-icon">🟡</span>
         <div>
-          <span style={{ fontWeight: 700, fontSize: 13, color: '#f39c12' }}>Phase 1 — Design &amp; Community Review</span>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
+          <span className="faq-phase-label">Phase 1 — Design &amp; Community Review</span>
+          <p className="faq-phase-text">
             Campaign wallets are not yet live. The architecture and governance specs are published and open for community review.
             Phase 2 brings live wallets and cryptographic verification. Everything described here reflects the
             design that will be implemented — not promises, but auditable specs.
@@ -214,19 +194,16 @@ export default function TrustFAQ({ setTab }) {
       </div>
 
       {/* Header */}
-      <div style={{ marginBottom: 40 }}>
-        <div style={{
-          fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
-          textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
-        }}>Trust &amp; Architecture</div>
-        <h2 style={{ fontSize: 'clamp(22px, 3vw, 38px)', fontWeight: 800, letterSpacing: '-0.03em' }}>How It Works &amp; Why You Can Trust It</h2>
-        <p style={{ color: 'var(--muted)', marginTop: 8, fontSize: 14, maxWidth: 620, lineHeight: 1.7 }}>
+      <div className="faq-header">
+        <div className="faq-eyebrow">Trust &amp; Architecture</div>
+        <h2 className="faq-heading">How It Works &amp; Why You Can Trust It</h2>
+        <p className="faq-heading-desc">
           Citeback is designed so you don't have to trust us. Every claim here is backed by open source code and cryptographic proofs — not promises.
         </p>
       </div>
 
       {/* Trust Pillars */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 48 }}>
+      <div className="faq-pillars-grid">
         {[
           { icon: '🔐', title: 'No Custody — Direct to Operator', desc: 'Contributions go straight to the operator wallet. Platform never holds funds. Balance verified via operator-provided view key.', link: 'https://github.com/citeback/citebackwebsite/blob/main/ARCHITECTURE.md', linkLabel: 'Architecture spec' },
           { icon: '📖', title: 'Open Source Code', desc: 'Every rule is public and auditable.', link: 'https://github.com/citeback/citebackwebsite', linkLabel: 'View on GitHub' },
@@ -240,39 +217,28 @@ export default function TrustFAQ({ setTab }) {
             href={p.link}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              background: 'var(--bg2)', border: '1px solid var(--border)',
-              borderRadius: 0, padding: '16px 18px',
-              display: 'block', textDecoration: 'none', color: 'inherit',
-              transition: 'border-color 0.15s',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+            className="faq-pillar-card"
           >
-            <div style={{ fontSize: 22, marginBottom: 8 }}>{p.icon}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{p.title}</div>
-            <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5, marginBottom: p.prelaunch || p.linkLabel ? 8 : 0 }}>{p.desc}</div>
-            {p.prelaunch && <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600, letterSpacing: '0.04em', marginBottom: 4 }}>⏳ {p.prelaunch}</div>}
-            {p.linkLabel && <div style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600, letterSpacing: '0.03em' }}>{p.linkLabel} →</div>}
+            <div className="faq-pillar-icon">{p.icon}</div>
+            <div className="faq-pillar-title">{p.title}</div>
+            <div className="faq-pillar-desc" style={{ marginBottom: p.prelaunch || p.linkLabel ? 8 : 0 }}>{p.desc}</div>
+            {p.prelaunch && <div className="faq-pillar-prelaunch">⏳ {p.prelaunch}</div>}
+            {p.linkLabel && <div className="faq-pillar-link">{p.linkLabel} →</div>}
           </a>
         ))}
       </div>
 
       {/* Section tabs */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 32 }}>
+      <div className="faq-tabs">
         {sections.map((s, i) => (
           <button
             key={i}
             onClick={() => setActiveSection(i)}
+            className="faq-tab-btn"
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '8px 14px', borderRadius: 0, border: '1px solid',
-              cursor: 'pointer', fontSize: 13, fontWeight: 600,
               background: activeSection === i ? 'rgba(230,57,70,0.1)' : 'var(--bg2)',
               borderColor: activeSection === i ? s.color : 'var(--border)',
               color: activeSection === i ? s.color : 'var(--muted)',
-              transition: 'all 0.15s',
             }}
           >
             <span style={{ color: s.color }}>{s.icon}</span>
@@ -282,71 +248,36 @@ export default function TrustFAQ({ setTab }) {
       </div>
 
       {/* FAQ items */}
-      <div style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 0, padding: '0 24px',
-      }}>
+      <div className="faq-container">
         {sections[activeSection].questions.map((item, i) => (
           <FAQItem key={i} q={item.q} a={item.a} />
         ))}
       </div>
 
       {/* Verification CTA */}
-      <div style={{
-        marginTop: 32, background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderLeft: '3px solid var(--red)', borderRadius: 0, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start',
-      }}>
-        <div style={{ fontSize: 22, flexShrink: 0 }}>🔬</div>
+      <div className="faq-verify-cta">
+        <div className="faq-verify-icon">🔬</div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Don't take our word for it.</div>
-          <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
+          <div className="faq-verify-title">Don't take our word for it.</div>
+          <div className="faq-verify-text">
             The SHA-256 hash of the running server code is published live at{' '}
             <a href="https://ai.citeback.com/version" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>ai.citeback.com/version</a>.
-            Download server.js from the public GitHub repo, run <code style={{ background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: 4 }}>sha256sum server.js</code>, and compare — if the hashes match, the code running here is exactly what’s published.
-            Frontend deploys are verifiable via Netlify’s public deploy log. Full signed-build attestation is on the Phase 2 roadmap.
+            Download server.js from the public GitHub repo, run <code className="faq-verify-code">sha256sum server.js</code>, and compare — if the hashes match, the code running here is exactly what's published.
+            Frontend deploys are verifiable via Netlify's public deploy log. Full signed-build attestation is on the Phase 2 roadmap.
           </div>
         </div>
       </div>
 
       {/* CTA row */}
       {setTab && (
-        <div style={{
-          marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap', paddingTop: 24,
-          borderTop: '1px solid var(--border)',
-        }}>
-          <button
-            onClick={() => setTab('campaigns')}
-            style={{
-              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-              padding: '13px 28px', fontSize: 13, fontWeight: 600,
-              letterSpacing: '0.05em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'var(--font)',
-            }}
-          >
+        <div className="faq-cta-row">
+          <button onClick={() => setTab('campaigns')} className="faq-cta-btn-primary">
             Browse Campaigns →
           </button>
-          <button
-            onClick={() => setTab('operators')}
-            style={{
-              background: 'transparent', color: 'var(--fg)',
-              border: '1px solid var(--border)', padding: '13px 28px',
-              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
-              textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'var(--font)',
-            }}
-          >
+          <button onClick={() => setTab('operators')} className="faq-cta-btn-secondary">
             Run a Campaign →
           </button>
-          <button
-            onClick={() => setTab('governance')}
-            style={{
-              background: 'transparent', color: 'var(--fg)',
-              border: '1px solid var(--border)', padding: '13px 28px',
-              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
-              textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'var(--font)',
-            }}
-          >
+          <button onClick={() => setTab('governance')} className="faq-cta-btn-secondary">
             Governance Spec →
           </button>
         </div>
