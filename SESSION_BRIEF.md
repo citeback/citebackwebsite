@@ -1,129 +1,78 @@
-# Citeback — Next Session Brief
-*Last updated: 2026-05-10 05:50 MDT (overnight keepalive — rate limit hardening: /version + /interest pre-body guard)*
+# Citeback — Session Brief
+*Last updated: 2026-05-10 09:38 MDT*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
+Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 
-## Current State
-**Phase: Pre-launch. Platform security hardened. Rate limits on ALL endpoints. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED. Zero style={} in entire codebase. Passkey endpoints fully hardened.**
-- Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
-- Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
-- 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).
-- **Inline styles: 0 remaining** (from 1,585 original — 100% reduction)
-- **CSP: `unsafe-inline` REMOVED from style-src** — fully hardened CSP
+## Current Site State
+**Live:** citeback.com (Netlify, auto-deploys from GitHub `citeback/citebackwebsite`)
+**Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
+**VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
+**Status:** Site working, COLD dark theme, CSS mostly restored. Visual QA pass still needed from Scott.
 
-## Quick Start
-```bash
-# Pull latest server.js (VPS is source of truth)
-scp root@77.42.124.157:/opt/citeback-ai/server.js /workspace/deflect/server.js
-cd /workspace/deflect && git pull && git log --oneline -5
-```
+## What Broke This Morning (2026-05-10) + What Was Fixed
 
-## What Changed This Session (1:48–2:00 AM MDT)
-- passkey DELETE: URIError crash fixed (decodeURIComponent without try/catch)
-- Rate limits added to: passkey/list, passkey/delete, passkey/register-verify, GET /photos/
-- Caddy serves /photos/* directly (performance optimization) — documented as defense-in-depth
-- Full audit checklist run: 0 inline styles, 0 SQL injection, 0 stack traces, 0 old brand names
+### Root Cause
+The overnight session (05-09 21:35–05-10 04:30) migrated ALL 1,585 inline styles to CSS classes in `App.css`. But `App.css` was **never imported** into the build. Result: 9,134 lines of component CSS were silently ignored — site rendered as naked HTML.
 
-## What Changed (3:00–3:10 AM MDT — keepalive)
-- 43 server responses missing `Content-Type: application/json` → all fixed (grep audit caught bare `writeHead(NNN);` calls)
-- 2 missing `aria-label` attributes → CampaignList search + CameraMap sighting notes inputs
-- Full audit checklist rerun: all ✅
-- Attorney pipeline E2E test confirmed: /attorney/apply → 401, /admin/attorney-applications → 401, /claim-account → 400 ✅
-- VPS health: active, 3 users, 7 campaigns, 95045 cameras, disk 8% used
+### Fixes Shipped (commits in order)
+1. `6df7600` — `import './App.css'` added to App.jsx (was never there)
+2. `42874d3` — Default theme COLD (dark), localStorage persistence restored (was hardcoded PRESS light with no persistence)
+3. `f5e28b9` — `.nav-desktop { display:flex }` restored — primary nav links were invisible
+4. `fcc5859` — Red hero tagline banner removed; Fund a Campaign → red; scrollbars → dark
+5. `60cac6b` — Log In + Join → identical ghost button style
 
-## What Changed (5:44–5:55 AM MDT — keepalive)
-- **Full audit checklist rerun**: 0 inline styles, 0 style={varName}, 0 SQL injection, 0 old brand, 0 stack traces in responses ✅
-- **/version endpoint** was missing rate limit — added `checkRateLimit` (public endpoint but should be protected against hammering)
-- **/interest endpoint** — `counts` action had no rate limit and body was parsed before any rate check; moved `checkRateLimit` to top of handler (pre-body), removed duplicate check from `increment` branch
-- Verified: all other endpoints have pre-body rate limiting ✅
-- Attorney pipeline smoke test: all 3 endpoints return expected status codes ✅
-- VPS: active, 3 users, 7 campaigns, disk 8% used ✅
+### Comprehensive CSS Audit Result
+Autonomous audit of all 43 components confirmed: nav, hero, campaigns, cards, modals, admin, sighting form — all structurally intact. Only 2 minor gaps found (campaign filter buttons + HumanRegistry role buttons) — both already correct in App.css.
 
-## What Changed (4:10–4:25 AM MDT — keepalive)
-- **ConversationalInterface.jsx**: discovered 24 inline styles via `const styles={}` object (bypassed `style={{` grep). Migrated to new ConversationalInterface.css (3.35kB CSS chunk). **Zero `style={}` anywhere in entire codebase now.**
-- **ReputationPage.jsx**: `New password` + `Confirm new password` inputs were missing `<label htmlFor>` + `id`. Fixed (current password already had a label).
-- **ATTACK_PROMPT.md**: added `style={[a-zA-Z]` grep pattern to catch `style={varName}` pattern alongside existing `style={{` check
-- Full audit rerun: 0 inline styles, 0 style={varName}, 0 SQL injection, 0 old brand, 0 stack traces in responses
-- VPS healthy, build clean, pushed to git → Netlify auto-deploying
+### Still Possibly Off (Scott hasn't done full QA yet)
+- Cosmetic details Scott will find on scroll-through
+- Fix in batches from screenshots — don't do one-at-a-time
 
 ## Priority Queue
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
-2. **ICANN domain verification** — May 14 deadline
-3. **ToS attorney review** — needs entity first
-4. ~~**Remove `unsafe-inline` from CSP**~~ ✅ DONE — all 20 inline styles converted, CSP fully hardened
-5. **First real operator E2E test** — claim → wallet → activate
-6. **Attorney pipeline E2E test** — apply → admin approve → claim token → badge
-7. **Discord community** — footer checklist: ToS ✅ Privacy ✅ GitHub ✅ Discord ❌ (needs Discord)
+2. **ICANN domain verification** — May 14 deadline (citeback@proton.me)
+3. **Visual QA pass** — Scott will screenshot anything still off
+4. **ToS attorney review** — needs entity first
+5. **First real operator E2E test**
+6. **Discord community** — footer link still missing
 
-## Inline Styles: COMPLETE ✅
-All 1,585 original inline styles migrated. **0 remaining.**
-- 6× CSS custom property setters → `useRef+useEffect` / callback refs
-- 5× progress bars → `ref.style.setProperty('--width', pct%)` + CSS `var(--width, 0%)`
-- 8× CameraMap layer/tier → CSS `--lc` custom prop + `color-mix()` class-based states
-- 1× MapContainer → `.cmap-leaflet-container { height:100%; width:100% }`
-
-## What's Done (don't re-audit)
-
-### Security (all shipped)
-- Rate limit bypass fixed (clientIp → ip in change-password)
-- 9 unprotected endpoints rate-limited
-- CSP img-src tightened, interest counts → SQLite
-- Magic bytes validation on file uploads
-- EXIF stripping from served photos
-- Admin sessions IP-bound, brute force lockout
-- JWT: expiry enforced, alg:none blocked
-- Passkey sign counts checked (replay protection)
-- Timing-safe login (DUMMY_HASH for unknown usernames)
-- AES-256-GCM encrypted recovery emails at rest
-- DEFLECT → OFF_TOPIC variable rename in server.js (old brand cleanup)
-- Content-Type added to all 429 responses
-- Caddy `via` header removed (info disclosure)
-- Admin audit log (all admin actions recorded to SQLite)
-
-### Server Features
-- GET/PATCH /admin/campaigns — status/deadline/goal management
-- GET /admin/proposals + /admin/registry — full admin inbox
-- GET /api/campaigns/:id — single campaign endpoint
-- POST /account/forgot-username — fire-and-forget
-- /health endpoint, WAL checkpoint hourly
-- Operator milestone emails (5/10/25/50/100 interest signals)
-- Tier-up emails (Tier 0→1, 1→2, 2→3)
-- Reverse geocode on sighting GPS submissions
-- OSM camera update cron (weekly Sunday 3AM)
-
-### Frontend CSS Migration (tonight's main work)
-Original: 1,585 inline styles → Final: 20 (99% reduction)
-
-**Techniques used:**
-1. Static CSS classes for fixed color sets (typeColors, tagColors, tier badges, status colors)
-2. CSS custom properties (`--svex-color`, `--vc`, `--tc`, etc.) for dynamic colors
-3. `color-mix()` for hex-alpha variants (browser support: Chrome 111+, Firefox 113+, Safari 16.2+)
-4. Per-type CSS class selectors (`.hre-card--attorney`, `.rp-tc-0`, etc.)
-5. Descendant selectors for inherited colors (`.bwu-card--legal .bwu-track-tag`)
-
-**Components fully migrated (0 inline styles):**
-AccountModal, AdminPanel, BuildWithUs, ClaimAccountPage, CampaignCard¹, CampaignModal¹, CryptoPrimer², FrontlineFunds, FollowTheMoney², Governance², HumanRegistry, LaunchTracker¹, Operators, ProposeModal¹, ResetPasswordPage, ScrollProgress¹, SightingForm, SurveillanceFeed, SurveillanceExplainer², TrustFAQ², VerificationTiers
-
-¹ 1 progress bar width remaining (dynamic pct%)
-² 1 CSS custom property remaining (intentional pattern)
-
-**CameraMap.css created** — 609 lines, migrated 128/137 inline styles
-
-### UX/Accessibility
-- htmlFor/id linked on ClaimAccountPage, ResetPasswordPage inputs
-- Strength meter (AccountModal, ClaimAccountPage, ResetPasswordPage) → CSS classes
-- Governance participants → CSS classes (no more hardcoded colors)
-- Attorney bar badge 3-state (found/not-found/pending) → CSS classes
-- sitemap.xml: added missing /transparency route
-
-## VPS Commands
+## Key Commands
 ```bash
-ssh root@77.42.124.157 'systemctl is-active citeback-ai'
-ssh root@77.42.124.157 'journalctl -u citeback-ai -n 20 --no-pager'
-scp deflect/server.js root@77.42.124.157:/opt/citeback-ai/server.js
-ssh root@77.42.124.157 'systemctl restart citeback-ai'
+# Local dev
+cd /Users/scotthughes/.openclaw/workspace/deflect && npm run dev -- --port 3002
+
+# Build
+cd /Users/scotthughes/.openclaw/workspace/deflect && npm run build
+
+# Deploy (Netlify auto-deploys from GitHub push — just push to main)
+git add -A && git commit -m "..." && git push origin main
+
+# VPS
+ssh root@77.42.124.157
+systemctl status citeback-ai
+journalctl -u citeback-ai -n 30 --no-pager
 ```
 
-## See Also
-- ATTACK_PROMPT.md — master session checklist and grep patterns
+## What's Solid (Don't Re-Audit)
+- **Security:** Rate limits on all endpoints, CSP hardened (unsafe-inline removed), passkeys, bcrypt, JWT, timing-safe login, AES-256-GCM encrypted recovery emails, admin IP-bound sessions, fail2ban on VPS, SSH password auth disabled
+- **CSS Migration:** 0 inline styles remaining — all in App.css (now imported)
+- **Server features:** All campaigns/proposals/registry admin endpoints, single-campaign API, forgot-username, health endpoint, tier-up + milestone emails, reverse geocode on sightings
+- **VPS hardening:** Auto security updates, sysctl, daily backups, WAL checkpoint, graceful shutdown
+- **Audit score: ~9.5/10** (reports in `docs/internal/`)
+
+## Scott's Preferences (CSS/Design)
+- Default theme: **COLD** (dark, stark)
+- Fund a Campaign button: **red** (var(--accent))
+- Log In / Join: **identical ghost buttons** (same style)
+- Scrollbars: **dark** (#333), NOT red
+- No red quote banners in hero
+- localStorage persists theme choice
+
+## Site Architecture
+- React + Vite SPA → Netlify (static)
+- Node.js/Express server.js → Hetzner VPS (AI proxy only — NOT deployed to Netlify)
+- SQLite DB on VPS
+- GitHub: `citeback/citebackwebsite` → auto-deploys to `heroic-yeot-51eaeb` (citeback@proton.me Netlify account)
+- AI: Ollama qwen2.5:7b on VPS, proxied through Node at localhost:11435, Caddy → ai.citeback.com
