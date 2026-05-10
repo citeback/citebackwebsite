@@ -79,13 +79,13 @@ html, body {
   overflow-x: hidden;
   max-width: 100vw;
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
+  scrollbar-color: #333 transparent;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); opacity: 0.8; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
 
 /* Sections and containers must not overflow */
 section, .container {
@@ -659,28 +659,29 @@ img {
 .nav-auth-login {
   background: none;
   border: 1px solid var(--border);
-  color: var(--fg);
-  padding: 7px 16px;
+  color: var(--gray);
+  padding: 7px 14px;
   font-size: 12px;
   cursor: pointer;
   font-family: inherit;
   letter-spacing: 0.04em;
   transition: border-color 0.15s, color 0.15s;
-  border-radius: 6px 0 0 6px;
+  border-radius: 2px;
 }
-.nav-auth-login:hover { border-color: var(--fg); }
+.nav-auth-login:hover { border-color: var(--fg); color: var(--fg); }
 
 .nav-auth-register {
-  background: var(--fg);
-  border: 1px solid var(--fg);
-  color: var(--bg);
-  padding: 7px 16px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+  padding: 7px 14px;
   font-size: 12px;
   cursor: pointer;
   font-family: inherit;
   letter-spacing: 0.04em;
+  font-weight: 600;
   transition: opacity 0.15s;
-  border-radius: 0 6px 6px 0;
+  border-radius: 2px;
 }
 .nav-auth-register:hover { opacity: 0.85; }
 
@@ -747,8 +748,8 @@ img {
 .nav-mobile-link.active { color: var(--accent) !important; }
 
 .nav-fund-btn {
-  background: var(--fg);
-  color: var(--bg);
+  background: var(--accent);
+  color: #fff;
   border: none;
   padding: 12px 28px;
   font-size: 12px;
@@ -759,7 +760,7 @@ img {
   font-weight: 500;
   transition: background 0.15s;
 }
-.nav-fund-btn:hover { background: var(--gray); }
+.nav-fund-btn:hover { background: var(--accent2, #ff4d5a); }
 
 .nav-mobile-fund-btn {
   width: 100%;
@@ -8635,7 +8636,7 @@ img {
   max-height: 460px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
+  scrollbar-color: #333 transparent;
 }
 
 /* Overlay panel header row */

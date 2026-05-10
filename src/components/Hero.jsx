@@ -72,9 +72,7 @@ export default function Hero({ setTab }) {
 
           {/* Left: headline + CTA */}
           <div>
-            <p className="hero-tagline">
-              Anonymous crowdfunding to fund lawsuits, FOIA requests, and ordinance campaigns against surveillance cameras.
-            </p>
+
             <h1 className="hero-headline">
               The{' '}
               <span
