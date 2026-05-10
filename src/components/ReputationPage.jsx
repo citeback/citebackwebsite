@@ -476,7 +476,7 @@ function SessionManager() {
         Changing your password has the same effect.
       </p>
       {done ? (
-        <div className="rp-session-done">✓ All sessions invalidated. Signing you out…</div>
+        <div className="rp-session-done">✓ All sessions invalidated. Signing you out...</div>
       ) : (
         <button
           onClick={handleLogoutAll}
@@ -485,7 +485,7 @@ function SessionManager() {
           style={{ cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
         >
           {loading ? <Loader size={13} className="spinning" /> : <LogOut size={13} />}
-          {loading ? 'Signing out…' : 'Sign out all devices'}
+          {loading ? 'Signing out...' : 'Sign out all devices'}
         </button>
       )}
       {err && <p style={{ fontSize: 12, color: '#e63946', marginTop: 8 }}>{err}</p>}
@@ -686,24 +686,24 @@ export default function ReputationPage({ setTab }) {
       </button>
 
       {/* Submission history */}
-      <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 12 }}>
+      <div className="rp-section-last">
+        <div className="rp-section-title">
           Your Sightings
         </div>
 
         {sightingsLoading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted)', fontSize: 13, padding: '16px 0' }}>
+          <div className="rp-sightings-loading">
             <Loader size={14} className="spinning" />
-            Loading...
+            Loading…
           </div>
         )}
 
         {!sightingsLoading && sightings && sightings.length === 0 && (
-          <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+          <div className="rp-empty-state">
             No sightings yet.{' '}
             <button
               onClick={() => setTab('report')}
-              style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 13, padding: 0 }}
+              className="rp-inline-link"
             >
               Submit your first one →
             </button>
