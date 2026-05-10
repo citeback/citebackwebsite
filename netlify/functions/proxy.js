@@ -5,43 +5,67 @@
  * to third-party services. Strict allowlist — no arbitrary URL forwarding.
  *
  * Services:
- *   overpass      POST  overpass-api.de/api/interpreter
- *   courtlistener GET   courtlistener.com/api/rest/v4/search/
- *   congress      GET   api.congress.gov/v3/bill/  (API key injected server-side)
- *   openstates    GET   v3.openstates.org/bills    (API key injected server-side)
- *   lda           GET   lda.senate.gov/api/v1/filings/
+ *   overpass      POST  overpass-api.de/api/interpreter      — map camera data
+ *   courtlistener GET   courtlistener.com/api/rest/v4/search/ — case law
+ *   congress      GET   api.congress.gov/v3/bill/             — federal bills (key server-side)
+ *   openstates    GET   v3.openstates.org/bills               — state bills   (key server-side)
+ *   lda           GET   lda.senate.gov/api/v1/filings/        — lobbying data
  */
 
-// API keys — set these in Netlify > Site Settings > Environment Variables
-// (not as VITE_ vars — those are baked into the client bundle)
 const OPENSTATES_KEY = process.env.OPENSTATES_KEY || ''
 const CONGRESS_KEY   = process.env.CONGRESS_KEY   || 'DEMO_KEY'
 
-// Hard size cap on upstream responses (2 MB) — prevent memory exhaustion
-const MAX_RESPONSE_BYTES = 2 * 1024 * 1024
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024  // 2 MB hard cap
 
-// ── Allowed services with base URLs ─────────────────────────────────────────
+// ── Per-service config ───────────────────────────────────────────────────────
 const SERVICES = {
-  overpass:      { base: 'https://overpass-api.de/api/interpreter', method: 'POST' },
-  courtlistener: { base: 'https://www.courtlistener.com/api/rest/v4/search/', method: 'GET' },
-  congress:      { base: 'https://api.congress.gov/v3/bill/',        method: 'GET' },
-  openstates:    { base: 'https://v3.openstates.org/bills',          method: 'GET' },
-  lda:           { base: 'https://lda.senate.gov/api/v1/filings/',   method: 'GET' },
+  overpass:      { base: 'https://overpass-api.de/api/interpreter',        method: 'POST', ttl: 120  },
+  courtlistener: { base: 'https://www.courtlistener.com/api/rest/v4/search/', method: 'GET', ttl: 3600 },
+  congress:      { base: 'https://api.congress.gov/v3/bill/',               method: 'GET', ttl: 7200 },
+  openstates:    { base: 'https://v3.openstates.org/bills',                 method: 'GET', ttl: 7200 },
+  lda:           { base: 'https://lda.senate.gov/api/v1/filings/',          method: 'GET', ttl: 3600 },
 }
 
-// Allowed query param keys per service (prevent unexpected param injection)
+// Whitelisted params per service — nothing else passes through
 const ALLOWED_PARAMS = {
-  overpass:      [],  // body-based; no query params
+  overpass:      [],
   courtlistener: ['q', 'type', 'format', 'order_by', 'page'],
-  congress:      ['format', 'limit', 'sort'],  // api_key injected server-side
-  openstates:    ['q', 'include', 'sort', 'per_page'],  // apikey injected server-side
+  congress:      ['format', 'limit', 'sort'],
+  openstates:    ['q', 'include', 'sort', 'per_page'],
   lda:           ['client_name', 'format', 'limit', 'page'],
 }
 
+// ── Simple IP rate limit (in-memory, per cold-start instance) ────────────────
+// Not a hard guarantee across Lambda instances, but catches obvious hammering
+// within a single warm function container.
+const ipCounts = new Map()
+const IP_WINDOW_MS = 60_000
+const IP_LIMIT = 30  // 30 calls/min per IP — well above any real user need
+
+function checkRateLimit(ip) {
+  const now = Date.now()
+  const entry = ipCounts.get(ip)
+  if (!entry || now - entry.start > IP_WINDOW_MS) {
+    ipCounts.set(ip, { count: 1, start: now })
+    return true
+  }
+  if (entry.count >= IP_LIMIT) return false
+  entry.count++
+  return true
+}
+
+// ── Handler ──────────────────────────────────────────────────────────────────
 export const handler = async (event) => {
-  // Only allow GET (for data) and POST (for overpass bodies)
   if (event.httpMethod !== 'GET' && event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
+  }
+
+  // Rate limit by IP
+  const clientIp = event.headers?.['x-nf-client-connection-ip']
+    || event.headers?.['x-forwarded-for']?.split(',')[0].trim()
+    || 'unknown'
+  if (!checkRateLimit(clientIp)) {
+    return { statusCode: 429, body: JSON.stringify({ error: 'Too many requests' }) }
   }
 
   const params = event.queryStringParameters || {}
@@ -54,18 +78,18 @@ export const handler = async (event) => {
     }
   }
 
-  const { base, method } = SERVICES[service]
+  const { base, method, ttl } = SERVICES[service]
   const allowed = ALLOWED_PARAMS[service]
 
-  // Build query string from whitelisted params only
+  // Build upstream query string from whitelisted params only
   const qs = new URLSearchParams()
   for (const key of allowed) {
-    if (params[key] != null) qs.set(key, params[key])
+    if (params[key] != null) qs.set(key, String(params[key]).slice(0, 500))
   }
 
-  // Inject server-side secrets — never come from client
+  // Inject server-side API keys — never touch the client
   if (service === 'congress')   qs.set('api_key', CONGRESS_KEY)
-  if (service === 'openstates') qs.set('apikey', OPENSTATES_KEY)
+  if (service === 'openstates') qs.set('apikey',  OPENSTATES_KEY)
 
   const upstreamUrl = qs.toString() ? `${base}?${qs}` : base
 
@@ -73,22 +97,21 @@ export const handler = async (event) => {
     const fetchOpts = {
       method,
       headers: { 'User-Agent': 'Citeback/1.0 (https://citeback.com)' },
-      signal: AbortSignal.timeout(20_000), // 20s upstream timeout
+      signal: AbortSignal.timeout(20_000),
     }
 
     if (method === 'POST' && event.body) {
       fetchOpts.body = event.body
-      fetchOpts.headers['Content-Type'] = 'text/plain'  // Overpass expects plain text
+      fetchOpts.headers['Content-Type'] = 'text/plain'
     }
 
     const upstream = await fetch(upstreamUrl, fetchOpts)
 
-    // Read body with size guard
+    // Read with size guard
     const reader = upstream.body?.getReader()
     if (!reader) {
       return { statusCode: 502, body: JSON.stringify({ error: 'Empty upstream response' }) }
     }
-
     let bytesRead = 0
     const chunks = []
     while (true) {
@@ -108,7 +131,7 @@ export const handler = async (event) => {
       statusCode: upstream.status,
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+        'Cache-Control': `public, max-age=${ttl}, stale-while-revalidate=${ttl * 2}`,
         'X-Proxied-By': 'citeback',
       },
       body,
