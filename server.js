@@ -57,6 +57,46 @@ function checkPasswordStrength(pw) {
   return null // passes
 }
 
+// ── Magic bytes validation (Content-Type can be spoofed; bytes cannot) ────────
+function validateMagicBytes(buf, mimeType) {
+  if (!buf || buf.length < 12) return false
+  if (mimeType === 'image/jpeg') return buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF
+  if (mimeType === 'image/png') return buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47
+  if (mimeType === 'image/webp') return buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP'
+  if (mimeType === 'image/heic') return buf.slice(4, 8).toString('ascii') === 'ftyp'
+  // ZIP (Proofmode bundles): PK signature
+  if (['application/zip', 'application/x-zip-compressed', 'application/octet-stream'].includes(mimeType))
+    return buf[0] === 0x50 && buf[1] === 0x4B
+  return false
+}
+
+// ── Strip EXIF/XMP/IPTC from JPEG before serving (protects GPS + camera info) ─
+// Removes all APP1-APP15 segments; keeps APP0 (JFIF), SOF, SOS, and image data.
+function stripJpegExif(filePath) {
+  try {
+    const buf = fs.readFileSync(filePath)
+    if (buf[0] !== 0xFF || buf[1] !== 0xD8) return // Not JPEG
+    const out = [buf.slice(0, 2)] // SOI
+    let i = 2
+    while (i < buf.length - 1) {
+      if (buf[i] !== 0xFF) { out.push(buf.slice(i)); break }
+      const marker = buf[i + 1]
+      if (marker === 0xDA) { out.push(buf.slice(i)); break } // SOS — image data follows
+      if (i + 3 >= buf.length) break
+      const segLen = buf.readUInt16BE(i + 2)
+      if (segLen < 2) break
+      // APP1 (0xE1 = Exif/XMP) through APP15 (0xEF) — strip all
+      if (marker >= 0xE1 && marker <= 0xEF) {
+        i += 2 + segLen
+      } else {
+        out.push(buf.slice(i, i + 2 + segLen))
+        i += 2 + segLen
+      }
+    }
+    fs.writeFileSync(filePath, Buffer.concat(out))
+  } catch { /* non-fatal: serve original if stripping fails */ }
+}
+
 // Real cryptographic C2PA verification — not string matching
 const c2paReader = createC2pa()
 async function verifyC2PA(filePath) {
@@ -742,6 +782,32 @@ const geocode = (address, city, state) => new Promise((resolve) => {
   })
   req.on('error', () => resolve(null))
   req.setTimeout(8000, () => { req.destroy(); resolve(null) })
+})
+
+
+// Reverse geocode GPS coords to human-readable location using Nominatim
+const reverseGeocode = (lat, lng) => new Promise((resolve) => {
+  const opts = {
+    hostname: 'nominatim.openstreetmap.org',
+    path: `/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&format=json&addressdetails=1`,
+    headers: { 'User-Agent': 'citeback.com surveillance map' },
+  }
+  const req = https.get(opts, (res) => {
+    let body = ''
+    res.on('data', chunk => body += chunk)
+    res.on('end', () => {
+      try {
+        const result = JSON.parse(body)
+        const addr = result.address || {}
+        const city = addr.city || addr.town || addr.village || addr.county || ''
+        const state = addr.state || ''
+        const road = addr.road || addr.neighbourhood || ''
+        resolve({ city, state, address: road })
+      } catch { resolve(null) }
+    })
+  })
+  req.on('error', () => resolve(null))
+  req.setTimeout(6000, () => { req.destroy(); resolve(null) })
 })
 
 // Interest counts — persisted in SQLite (survives restarts)
@@ -1556,20 +1622,31 @@ const server = http.createServer(async (req, res) => {
             const isImage = !!ALLOWED_IMAGE_TYPES[info.mimeType]
             const isZip = ALLOWED_ZIP_TYPES.has(info.mimeType) || (info.filename || '').toLowerCase().endsWith('.zip')
             if (!isImage && !isZip) { stream.resume(); return }
+            const declaredMime = info.mimeType
             const ext = isZip ? 'zip' : ALLOWED_IMAGE_TYPES[info.mimeType]
             const filename = `${randomUUID()}.${ext}`
             const dest = path.join(PHOTOS_DIR, filename)
             const out = fs.createWriteStream(dest)
             let size = 0
+            let headerBuf = null // capture first 12 bytes for magic bytes check
             stream.on('data', chunk => {
               size += chunk.length
               if (size > MAX_PHOTO_BYTES) { out.destroy(); fs.unlink(dest, () => {}); stream.resume(); return }
+              if (!headerBuf) headerBuf = chunk.slice(0, 12)
               out.write(chunk)
             })
             stream.on('end', () => {
               photoWritePromise = new Promise((res, rej) => {
                 out.end()
-                out.on('finish', () => { photoFilename = filename; res() })
+                out.on('finish', () => {
+                  // Magic bytes validation — reject if Content-Type was spoofed
+                  if (headerBuf && !validateMagicBytes(headerBuf, declaredMime)) {
+                    fs.unlink(dest, () => {})
+                    return rej(new Error('Invalid file type (magic bytes mismatch)'))
+                  }
+                  photoFilename = filename
+                  res()
+                })
                 out.on('error', rej)
               })
             })
@@ -1620,6 +1697,13 @@ const server = http.createServer(async (req, res) => {
           } catch (e) {
             console.error('zip extract error:', e.message)
           }
+        }
+
+        // Strip EXIF from JPEG before C2PA verification or storage
+        // Removes GPS coordinates, camera model, timestamps. C2PA manifest is in APP11
+        // (not APP1/APP2), so stripping APP1-APP15 preserves C2PA but removes PII.
+        if (photoFilename && photoFilename.match(/\.(jpg|jpeg)$/i)) {
+          stripJpegExif(path.join(PHOTOS_DIR, photoFilename))
         }
 
         // Real cryptographic C2PA verification — verifies the actual manifest signature
@@ -1766,8 +1850,20 @@ const server = http.createServer(async (req, res) => {
 
       // C2PA verified = straight to approved, live on map immediately
       const id = `s_${randomUUID()}`
+      // Fire-and-forget reverse geocode to populate address fields from GPS
+      let finalAddress = address, finalCity = city, finalState = state
+      if (finalLat && finalLng && (!address && !city && !state)) {
+        try {
+          const geo = await reverseGeocode(finalLat, finalLng)
+          if (geo) {
+            finalAddress = geo.address || address
+            finalCity = geo.city || city
+            finalState = geo.state || state
+          }
+        } catch {} // non-fatal, proceed with empty address
+      }
       appendRecord('sightings.jsonl', {
-        id, cameraType, address, city, state,
+        id, cameraType, address: finalAddress, city: finalCity, state: finalState,
         lat: finalLat, lng: finalLng, notes,
         hasPhoto: true, photoFilename,
         hasC2PA: true, status: 'approved', newCamera,
