@@ -91,175 +91,51 @@ export default function HowItWorks({ setTab }) {
   }, [])
 
   return (
-    <section
-      ref={sectionRef}
-      style={{
-        padding: '100px 24px',
-        borderTop: '1px solid var(--border)',
-        background: 'var(--bg)',
-      }}
-    >
+    <section ref={sectionRef} className="hiw-section">
       {/* Track toggle */}
-      <div style={{ maxWidth: 1100, margin: '0 auto 48px', display: 'flex', gap: 8 }}>
+      <div className="hiw-track-toggle">
         <button
           onClick={() => { setTrack('contributor'); setActiveSteps([]) }}
-          style={{
-            padding: '9px 20px',
-            borderRadius: 999,
-            border: '1px solid',
-            cursor: 'pointer',
-            fontSize: 13,
-            fontWeight: 600,
-            fontFamily: 'var(--font)',
-            background: track === 'contributor' ? 'var(--fg)' : 'transparent',
-            color: track === 'contributor' ? 'var(--bg)' : 'var(--gray)',
-            borderColor: track === 'contributor' ? 'var(--fg)' : 'var(--border)',
-            transition: 'all 0.15s',
-          }}
+          className={`hiw-track-btn ${track === 'contributor' ? 'hiw-track-btn--active' : 'hiw-track-btn--inactive'}`}
         >
           I want to fund a campaign
         </button>
         <button
           onClick={() => { setTrack('operator'); setActiveSteps([]) }}
-          style={{
-            padding: '9px 20px',
-            borderRadius: 999,
-            border: '1px solid',
-            cursor: 'pointer',
-            fontSize: 13,
-            fontWeight: 600,
-            fontFamily: 'var(--font)',
-            background: track === 'operator' ? 'var(--fg)' : 'transparent',
-            color: track === 'operator' ? 'var(--bg)' : 'var(--gray)',
-            borderColor: track === 'operator' ? 'var(--fg)' : 'var(--border)',
-            transition: 'all 0.15s',
-          }}
+          className={`hiw-track-btn ${track === 'operator' ? 'hiw-track-btn--active' : 'hiw-track-btn--inactive'}`}
         >
           I want to run a campaign
         </button>
       </div>
 
-      <div className="hiw-grid" style={{
-        maxWidth: 1100,
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: '200px 1fr',
-        gap: '0 80px',
-        alignItems: 'start',
-      }}>
-
+      <div className="hiw-layout">
         {/* Left sticky label */}
-        <div className="hiw-sidebar" style={{ position: 'sticky', top: 100 }}>
-          <div style={{
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            color: 'var(--red)',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            marginBottom: 12,
-          }}>
-            How It Works
-          </div>
-          <p style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.7 }}>
-            Simple. Private. Accountable.
-          </p>
+        <div className="hiw-sidebar">
+          <div className="hiw-sidebar-label">How It Works</div>
+          <p className="hiw-sidebar-text">Simple. Private. Accountable.</p>
         </div>
 
         {/* Right timeline */}
-        <div style={{ position: 'relative' }}>
-
-          {/* Vertical line track */}
-          <div
-            ref={lineTrackRef}
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 12,
-              bottom: 12,
-              width: 1,
-              background: 'var(--border)',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Red fill line */}
-            <div
-              ref={lineRef}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'var(--red)',
-                transform: 'scaleY(0)',
-                transformOrigin: 'top',
-                transition: 'transform 0.1s linear',
-              }}
-            />
+        <div className="hiw-timeline">
+          <div ref={lineTrackRef} className="hiw-line-track">
+            <div ref={lineRef} className="hiw-line-fill" />
           </div>
 
-          {/* Steps */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 64 }}>
+          <div className="hiw-steps">
             {steps.map((s, i) => {
               const active = activeSteps.includes(i)
               return (
                 <div
                   key={i}
                   ref={el => stepRefs.current[i] = el}
-                  style={{
-                    paddingLeft: 40,
-                    position: 'relative',
-                    transition: 'opacity 0.4s ease',
-                    opacity: active ? 1 : 0.4,
-                  }}
+                  className={`hiw-step ${active ? 'hiw-step--active' : 'hiw-step--inactive'}`}
                 >
-                  {/* Dot */}
-                  <div style={{
-                    position: 'absolute',
-                    left: -4,
-                    top: 12,
-                    width: 9,
-                    height: 9,
-                    borderRadius: '50%',
-                    background: active ? 'var(--red)' : 'var(--border)',
-                    border: `2px solid ${active ? 'var(--red)' : 'var(--gray)'}`,
-                    transition: 'background 0.3s, border-color 0.3s',
-                    zIndex: 1,
-                  }} />
-
-                  {/* Step number */}
-                  <div style={{
-                    fontSize: 11,
-                    letterSpacing: '0.1em',
-                    color: active ? 'var(--red)' : 'var(--gray)',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    marginBottom: 8,
-                    transition: 'color 0.3s',
-                  }}>
+                  <div className={`hiw-dot ${active ? 'hiw-dot--active' : 'hiw-dot--inactive'}`} />
+                  <div className={`hiw-step-num ${active ? 'hiw-step-num--active' : 'hiw-step-num--inactive'}`}>
                     {String(i + 1).padStart(2, '0')}
                   </div>
-
-                  {/* Title */}
-                  <h3 style={{
-                    fontSize: 22,
-                    fontWeight: 400,
-                    letterSpacing: '-0.01em',
-                    marginBottom: 12,
-                    color: 'var(--fg)',
-                  }}>
-                    {s.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p style={{
-                    fontSize: 15,
-                    color: 'var(--gray)',
-                    lineHeight: 1.75,
-                    maxWidth: 520,
-                  }}>
-                    {s.desc}
-                  </p>
+                  <h3 className="hiw-step-title">{s.title}</h3>
+                  <p className="hiw-step-desc">{s.desc}</p>
                 </div>
               )
             })}
@@ -268,28 +144,11 @@ export default function HowItWorks({ setTab }) {
       </div>
 
       {setTab && (
-        <div style={{ maxWidth: 1100, margin: '48px auto 0', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setTab('campaigns')}
-            style={{
-              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-              padding: '12px 28px', fontSize: 13, fontWeight: 600,
-              letterSpacing: '0.05em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'var(--font)',
-            }}
-          >
+        <div className="hiw-cta-row">
+          <button onClick={() => setTab('campaigns')} className="hiw-cta-primary">
             {track === 'contributor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
           </button>
-          <button
-            onClick={() => setTab(track === 'contributor' ? 'trust' : 'operators')}
-            style={{
-              background: 'transparent', color: 'var(--fg)',
-              border: '1px solid var(--border)', padding: '12px 28px',
-              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
-              textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'var(--font)',
-            }}
-          >
+          <button onClick={() => setTab(track === 'contributor' ? 'trust' : 'operators')} className="hiw-cta-secondary">
             {track === 'contributor' ? 'Full Trust FAQ →' : 'Operator Requirements →'}
           </button>
         </div>
