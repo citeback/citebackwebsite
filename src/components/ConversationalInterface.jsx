@@ -36,12 +36,12 @@ State legislation: Sen. Peter Wirth pushing ALPR Privacy Bill for 2027 session �
 
 ACTIVE CAMPAIGNS (pre-launch, wallets pending):
 1. FOIA — Bernalillo County Sheriff Flock Contract ($1,200) — full contract, retention policy, access audit log
-2. Billboard — Taos Plaza ($750) — notify tourists and locals they're being scanned
-3. Billboard — Las Cruces PTZ Network ($800) — warn drivers about active face-tracking cameras
-4. Legal Fund — NM ALPR Privacy Bill ($8,000) — attorney prep + expert witnesses for 2027 session
-5. FOIA — APD 1-Year Data Retention ($1,000) — expose who outside APD can query a year of location history
-6. FOIA — Otero County/Alamogordo ($800) — get full contract before a single camera goes live
-7. Verification Bounty — NM ($1,500) — pay verifiers in XMR/ZANO to GPS-confirm 872 mapped cameras
+2. Billboard — Taos Plaza, 18 Cameras Since 2023 ($4,500) — notify tourists and locals they're being scanned
+3. Billboard — Las Cruces PTZ Camera Network ($6,500) — warn drivers about active face-tracking cameras
+4. Legal Fund — NM State ALPR Privacy Bill ($8,000) — attorney prep + expert witnesses for 2027 session
+5. FOIA — Albuquerque PD 1-Year Data Retention ($1,000) — expose who outside APD can query a year of location history
+6. FOIA — Otero County & Alamogordo New Deployment ($800) — get full contract before a single camera goes live
+7. Verification Bounty — New Mexico ($1,500) — pay verifiers in XMR/ZANO to GPS-confirm 872 mapped cameras
 
 VENDOR FACTS:
 Flock Safety (IMPORTANT: this is Flock Safety the ALPR surveillance company — do NOT confuse with FlockDB, which is a completely different database product unrelated to surveillance): 90,000+ cameras, 4,000+ communities, $3.8B valuation. Granted FBI access after promising no federal contracts (Footnote4a 2023). Flock Nova integrates commercial data enrichment.
