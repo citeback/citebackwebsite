@@ -2241,6 +2241,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Serve sighting photos ──────────────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/photos/')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       // Strict filename validation — only alphanumeric, underscores, hyphens, dots
       // No path traversal possible: reject anything with '/' or '..'
