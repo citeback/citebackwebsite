@@ -301,10 +301,11 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             {/* Optional notes */}
             {preview && (
               <div className="cmap-notes-wrap">
-                <label className="cmap-notes-label">
+                <label htmlFor="cmap-photo-notes" className="cmap-notes-label">
                   What are we looking at? <span className="cmap-optional-text">(optional)</span>
                 </label>
                 <textarea
+                  id="cmap-photo-notes"
                   className="cmap-textarea cmap-textarea--min"
                   placeholder="e.g. Flock camera on pole at intersection, pointing east toward highway on-ramp"
                   value={notes}

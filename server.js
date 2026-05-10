@@ -2314,6 +2314,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: logout ──────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/logout') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     revokeAdminSession(req)
     auditLog('admin_logout', null, null, ip)
     res.writeHead(200, {
@@ -2325,6 +2326,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: verify session ──────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/verify-session') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const valid = verifyAdminSession(req)
     res.writeHead(valid ? 200 : 401, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: valid }))
@@ -2332,6 +2334,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: audit log ──────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/audit-log') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const rows = db.prepare('SELECT * FROM admin_audit_log ORDER BY created_at DESC LIMIT 200').all()
