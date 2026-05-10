@@ -1,6 +1,7 @@
 import { CheckCircle, ExternalLink, FileText, Coins, Shield } from 'lucide-react'
 import { ThreatDisclosure } from './VerificationTiers'
 import FollowTheMoney from './FollowTheMoney'
+import { useCameraCount } from '../context/CameraCount'
 
 // TODO Phase 2: Fetch real disbursement data from API (GET /api/disbursements)
 const disbursements = []
@@ -16,6 +17,7 @@ const principles = [
 ]
 
 export default function Transparency({ setTab }) {
+  const cameraCount = useCameraCount()
   return (
     <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       <div style={{ marginBottom: 40 }}>
@@ -49,7 +51,7 @@ export default function Transparency({ setTab }) {
             {
               name: 'OpenStreetMap Contributors',
               url: 'https://www.openstreetmap.org',
-              what: '92,008 ALPR camera locations mapped by volunteers worldwide.',
+              what: `${cameraCount} ALPR camera locations mapped by volunteers worldwide.`,
               note: 'Public dataset — © OpenStreetMap contributors, ODbL',
             },
             {

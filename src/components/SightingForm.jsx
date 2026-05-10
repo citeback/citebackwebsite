@@ -141,16 +141,6 @@ export default function SightingForm({ setTab }) {
     setSending(false)
   }
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-  }
-  const labelStyle = {
-    display: 'block', fontSize: 12, fontWeight: 600,
-    color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em',
-  }
-
   return (
     <>
     <Helmet>
@@ -159,29 +149,24 @@ export default function SightingForm({ setTab }) {
       <meta property="og:title" content="Report a Camera | Citeback — Submit C2PA-Verified Surveillance Sightings" />
       <meta property="og:description" content="Spotted an ALPR, facial recognition camera, or ShotSpotter? Submit a C2PA-verified sighting to the Citeback surveillance map. Anonymous, no account required." />
     </Helmet>
-    <section style={{ padding: 'clamp(48px, 8vw, 80px) clamp(16px, 5vw, 24px)', maxWidth: 600, margin: '0 auto', width: '100%' }}>
+    <section className="sf-page">
 
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
-          borderRadius: 100, padding: '4px 12px', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 16,
-        }}>
+      <div className="sf-header">
+        <div className="sf-eyebrow">
           <Eye size={11} /> Community Intelligence
         </div>
-        <h1 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 12 }}>
+        <h1 className="sf-title">
           Report a Surveillance Sighting
         </h1>
-        <p style={{ color: 'var(--muted)', fontSize: 15, lineHeight: 1.7, maxWidth: 520 }}>
+        <p className="sf-subtitle">
           Take a C2PA-verified photo of the camera. The location is read directly from the photo — no manual entry.
           Verified sightings go live on the map instantly.
         </p>
 
         {isLoggedIn ? (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16, background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
-            <Shield size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+          <div className="sf-status-bar sf-status-bar--auth">
+            <Shield size={13} className="sf-status-icon" style={{ color: 'var(--accent)' }} />
             <div>
               <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>
               {' '}· C2PA photo = <strong style={{ color: '#10b981' }}>+1 pt</strong> (existing camera) or <strong style={{ color: '#10b981' }}>+2 pts</strong> (new discovery)<br />
@@ -189,11 +174,11 @@ export default function SightingForm({ setTab }) {
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 16, background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
-            <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />
+          <div className="sf-status-bar sf-status-bar--anon">
+            <CheckCircle size={13} className="sf-status-icon" style={{ color: 'var(--green)' }} />
             <span>
               Anonymous submissions accepted.{' '}
-              <button onClick={() => setTab('reputation')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600, fontSize: 12, padding: 0 }}>Create an account</button>{' '}
+              <button onClick={() => setTab('reputation')} className="sf-link-btn">Create an account</button>{' '}
               to earn reputation points for verified sightings.
             </span>
           </div>
@@ -241,9 +226,9 @@ export default function SightingForm({ setTab }) {
 
       {/* Success */}
       {submitted ? (
-        <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, textAlign: 'center' }}>
+        <div className="sf-success-card">
           {repEarned?.newTier > 0 && (
-            <div style={{ background: 'linear-gradient(135deg, rgba(230,57,70,0.12), rgba(245,158,11,0.12))', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 16, marginBottom: 20 }}>
+            <div className="sf-tier-unlock">
               <Star size={28} style={{ color: '#f59e0b', marginBottom: 8 }} />
               <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>🎉 Tier {repEarned.newTier} Unlocked!</div>
               <div style={{ fontSize: 13, color: 'var(--muted)' }}>You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $1,000 is now available.'}</div>
@@ -256,7 +241,7 @@ export default function SightingForm({ setTab }) {
           </h2>
 
           {repEarned && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, justifyContent: 'center', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 8, padding: '10px 14px' }}>
+            <div className="sf-rep-badge">
               <Shield size={14} style={{ color: '#10b981' }} />
               <span style={{ fontSize: 13, fontWeight: 600 }}>
                 +{repEarned.points} pt{repEarned.points !== 1 ? 's' : ''}{' '}
@@ -267,7 +252,7 @@ export default function SightingForm({ setTab }) {
           )}
 
           {!isLoggedIn && (
-            <div style={{ background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)', borderRadius: 10, padding: '14px 16px', marginBottom: 20, textAlign: 'left' }}>
+            <div className="sf-promo-box">
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
               <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
                 Create an account and shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1.
@@ -297,18 +282,19 @@ export default function SightingForm({ setTab }) {
 
       ) : (
         /* Form */
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <form onSubmit={handleSubmit} className="sf-form">
 
           {/* Camera type */}
-          <div>
-            <label style={{ ...labelStyle, marginBottom: 10 }}>What did you spot?</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="sf-field">
+            <label className="sf-label" style={{ marginBottom: 10 }}>What did you spot?</label>
+            <div className="sf-camera-type-grid">
               {CAMERA_TYPES.map(t => (
-                <button key={t.id} type="button" onClick={() => setCameraType(t.id)} style={{
-                  background: cameraType === t.id ? 'rgba(230,57,70,0.08)' : 'var(--bg3)',
-                  border: `1px solid ${cameraType === t.id ? 'rgba(230,57,70,0.4)' : 'var(--border)'}`,
-                  borderRadius: 10, padding: '12px 16px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s',
-                }}>
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setCameraType(t.id)}
+                  className={`sf-camera-type-option${cameraType === t.id ? ' sf-camera-type-option--selected' : ''}`}
+                >
                   <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)', marginBottom: 2 }}>{t.label}</div>
                   <div style={{ fontSize: 12, color: 'var(--muted)' }}>{t.desc}</div>
                 </button>
@@ -317,22 +303,15 @@ export default function SightingForm({ setTab }) {
           </div>
 
           {/* Photo — the location source */}
-          <div>
-            <label style={{ ...labelStyle, marginBottom: 10 }}>
+          <div className="sf-field">
+            <label className="sf-label" style={{ marginBottom: 10 }}>
               C2PA Photo <span style={{ color: 'var(--accent)', fontWeight: 700 }}>required</span>
               <span style={{ color: 'var(--muted)', fontWeight: 400, marginLeft: 8 }}>— GPS read from photo automatically</span>
             </label>
 
             {!photoFile ? (
               <>
-                <button type="button" onClick={() => fileInputRef.current?.click()} style={{
-                  width: '100%', background: 'var(--bg3)', border: '2px dashed var(--border)',
-                  borderRadius: 10, padding: '28px', cursor: 'pointer', textAlign: 'center',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, transition: 'border-color 0.15s',
-                }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
-                >
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="sf-photo-drop">
                   <Camera size={28} style={{ color: 'var(--muted)' }} />
                   <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Tap to attach photo</span>
                   <span style={{ fontSize: 12, color: 'var(--muted)' }}>Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
@@ -340,35 +319,31 @@ export default function SightingForm({ setTab }) {
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
                   style={{ display: 'none' }} onChange={handlePhoto} />
 
-                <div style={{ marginTop: 10, padding: '10px 14px', background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.12)', borderRadius: 8, fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <div className="sf-photo-hint">
                   <strong style={{ color: 'var(--text)' }}>Shoot with a C2PA app or device — location must be enabled:</strong><br />
-                  📱 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> — iOS & Android, free, built by Guardian Project for human rights evidence<br />
+                  📱 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> — iOS &amp; Android, free, built by Guardian Project for human rights evidence<br />
                   📲 Samsung Galaxy S24+ or Google Pixel 10 — signs photos automatically
                 </div>
               </>
             ) : (
-              <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+              <div className="sf-photo-preview">
                 <div style={{ position: 'relative' }}>
                   <img src={photoPreview} alt="Sighting" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
-                  <button type="button" onClick={clearPhoto} aria-label="Remove photo" style={{
-                    position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)',
-                    border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                  }}>
+                  <button type="button" onClick={clearPhoto} aria-label="Remove photo" className="sf-photo-clear">
                     <X size={14} />
                   </button>
                 </div>
 
                 <div style={{ padding: '12px 14px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photoFile.name}</div>
+                  <div className="sf-photo-filename">{photoFile.name}</div>
 
                   {gpsStatus === 'reading' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+                    <div className="sf-gps-status sf-gps-status--reading">
                       <Loader size={12} className="spinning" /> Reading location from photo…
                     </div>
                   )}
                   {gpsStatus === 'found' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#10b981', fontWeight: 600 }}>
+                    <div className="sf-gps-status sf-gps-status--found">
                       <MapPin size={12} />
                       {gpsSource === 'zip'
                         ? 'Proofmode bundle — GPS will be read from proof.json'
@@ -379,12 +354,12 @@ export default function SightingForm({ setTab }) {
                     </div>
                   )}
                   {gpsStatus === 'device_reading' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)' }}>
+                    <div className="sf-gps-status sf-gps-status--reading">
                       <Loader size={12} className="spinning" /> Getting your device location…
                     </div>
                   )}
                   {gpsStatus === 'none' && (
-                    <div style={{ background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 12px', fontSize: 12 }}>
+                    <div className="sf-gps-none">
                       <div style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>No GPS found in this photo</div>
                       <div style={{ color: 'var(--muted)', lineHeight: 1.6, marginBottom: 10 }}>
                         GPS was stripped from this photo (common on iOS). You can use your device's current location instead, or retake with location enabled in Proofmode.
@@ -409,18 +384,18 @@ export default function SightingForm({ setTab }) {
           </div>
 
           {/* Notes */}
-          <div>
-            <label htmlFor="sighting-notes" style={labelStyle}>
+          <div className="sf-field">
+            <label htmlFor="sighting-notes" className="sf-label">
               Notes <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span>
             </label>
-            <textarea id="sighting-notes" style={{ ...inputStyle, height: 80, resize: 'vertical' }}
+            <textarea id="sighting-notes" className="sf-input sf-textarea"
               placeholder="Vendor branding? Pole or building mount? Direction it faces?"
               value={notes} onChange={e => setNotes(e.target.value)} />
           </div>
 
           {/* Errors */}
           {error === 'c2pa' && (
-            <div style={{ background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.25)', borderRadius: 10, padding: '14px 16px' }}>
+            <div className="sf-error-box">
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--accent)', fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
                 <AlertCircle size={14} /> C2PA signature not detected
               </div>
@@ -432,22 +407,24 @@ export default function SightingForm({ setTab }) {
             </div>
           )}
           {error === 'generic' && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
+            <div className="sf-error-generic">
               <AlertCircle size={14} /> Submission failed — please try again.
             </div>
           )}
 
           {/* Submit */}
-          <button type="submit" disabled={!canSubmit} style={{
-            background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
-            border: 'none',
-            color: canSubmit ? '#fff' : 'var(--muted)',
-            padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-            cursor: canSubmit ? 'pointer' : 'not-allowed', transition: 'all 0.15s',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className="sf-submit-btn"
+            style={{
+              background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
+              color: canSubmit ? '#fff' : 'var(--muted)',
+              cursor: canSubmit ? 'pointer' : 'not-allowed',
+            }}
+          >
             {sending
-              ? <><Loader size={16} className="spinning" /> Verifying & uploading…</>
+              ? <><Loader size={16} className="spinning" /> Verifying &amp; uploading…</>
               : !photoFile ? 'Attach a C2PA photo to continue'
               : gpsStatus === 'reading' ? <><Loader size={16} className="spinning" /> Reading location…</>
               : gpsStatus === 'none' ? 'No GPS in photo — retake with location enabled'
@@ -456,7 +433,7 @@ export default function SightingForm({ setTab }) {
             }
           </button>
 
-          <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
+          <p className="sf-submit-hint">
             Only publicly visible surveillance infrastructure. Do not submit information about private residences or individuals.
           </p>
         </form>
