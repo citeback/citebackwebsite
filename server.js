@@ -1036,10 +1036,10 @@ const server = http.createServer(async (req, res) => {
 
   // ── Campaign interest counter ──────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/interest') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       if (body.action === 'counts') {
-        // counts is read-only — skip rate limiting
         res.writeHead(200, { 'Content-Type': 'application/json' })
         const rows = db.prepare('SELECT campaign_id, count FROM interest_counts').all()
         const counts = {}
@@ -1047,7 +1047,6 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ counts }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
-        if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
         // Validate: must be a real campaign integer — prevents memory bloat with arbitrary keys
         const idNum = parseInt(String(body.campaignId), 10)
         if (!Number.isFinite(idNum) || idNum < 1) {
@@ -2713,6 +2712,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Public: version / independent verification ───────────────────────────
   if (req.method === 'GET' && req.url === '/version') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({
       server: {
