@@ -1,11 +1,11 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 00:25 MDT (overnight blitz round 3 — COMPLETE)*
+*Last updated: 2026-05-10 00:45 MDT (overnight keepalive — rate limit hardening)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
 
 ## Current State
-**Phase: Pre-launch. Platform fully hardened. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED.**
+**Phase: Pre-launch. Platform security hardened. Rate limits on ALL endpoints. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED.**
 - Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
 - Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
 - 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).

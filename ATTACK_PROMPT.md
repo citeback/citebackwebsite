@@ -289,6 +289,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | Dynamic width progress bars (5×) | ✅ FIXED — ref.style.setProperty('--width', pct%) + CSS var(--width, 0%) |
 | 2026-05-10 | CameraMap 9 remaining (8 layer/tier + 1 MapContainer) | ✅ FIXED — --lc CSS custom prop + color-mix() class states; MapContainer → .cmap-leaflet-container CSS class |
 | 2026-05-10 | unsafe-inline in style-src CSP | ✅ FIXED — removed from netlify.toml; 0 inline styles remain |
+| 2026-05-10 | /attorney/apply missing rate limit | ✅ FIXED (checkAuthRateLimit — 5 req/15min; prevents CA bar API abuse) |
+| 2026-05-10 | /api/campaigns/:id/claim missing rate limit | ✅ FIXED (checkRateLimit standard) |
+| 2026-05-10 | PATCH /api/campaigns/:id missing rate limit | ✅ FIXED (checkRateLimit standard) |
 
 ---
 
