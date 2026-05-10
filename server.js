@@ -643,7 +643,7 @@ function processNext() {
     ollama.on('end', () => { processing = false; processNext() })
   })
   proxy.on('error', (e) => {
-    res.writeHead(502); res.end(JSON.stringify({ error: 'Ollama unavailable' }))
+    res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Ollama unavailable' }))
     processing = false; processNext()
   })
   proxy.write(body); proxy.end()
@@ -1087,9 +1087,9 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: newCount }))
       }
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'invalid action' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'invalid action' }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -1105,12 +1105,12 @@ const server = http.createServer(async (req, res) => {
       const description = String(body.description || '').slice(0, 2000).trim()
       const rawGoal = Number(body.goal)
       const goal = (!Number.isFinite(rawGoal) || rawGoal < 0) ? 0 : Math.min(rawGoal, 1_000_000)
-      if (!title || !location || !description) { res.writeHead(400); return res.end(JSON.stringify({ error: 'missing fields' })) }
+      if (!title || !location || !description) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'missing fields' })) }
       appendRecord('proposals.jsonl', { type, title, location, description, goal })
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -1725,7 +1725,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(429, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait a minute before submitting again.' }))
       }
-      if (fields.honeypot) { res.writeHead(200); return res.end(JSON.stringify({ ok: true })) }
+      if (fields.honeypot) { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: true })) }
 
       // Server-only C2PA verification — client cannot claim hasC2PA, server decides
       const hasC2PA = detectedC2PA
@@ -1894,7 +1894,7 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {
       if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
       console.error('sighting error:', e.message)
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -1907,12 +1907,12 @@ const server = http.createServer(async (req, res) => {
       const role = roles.includes(body.role) ? body.role : 'other'
       const location = String(body.location || '').slice(0, 200).trim()
       const background = String(body.background || '').slice(0, 2000).trim()
-      if (!location || !background) { res.writeHead(400); return res.end(JSON.stringify({ error: 'missing fields' })) }
+      if (!location || !background) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'missing fields' })) }
       appendRecord('registry.jsonl', { role, location, background })
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -2007,7 +2007,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: list all campaigns (admin view) ────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/campaigns') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify(rows.map(c => ({
@@ -2021,12 +2021,12 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: update campaign (status, deadline, goal) ────────────────────────
   if (req.method === 'PATCH' && /^\/admin\/campaigns\/\d+$/.test(req.url)) {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     const id = parseInt(req.url.split('/')[3])
     try {
       const body = await parseBody(req)
       const campaign = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
-      if (!campaign) { res.writeHead(404); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+      if (!campaign) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
       const ALLOWED_STATUSES = ['unclaimed', 'claimed', 'active', 'funded', 'cancelled']
       const updates = {}
       if (body.status && ALLOWED_STATUSES.includes(body.status)) {
@@ -2035,42 +2035,42 @@ const server = http.createServer(async (req, res) => {
       }
       if (body.deadline && /^\d{4}-\d{2}-\d{2}$/.test(String(body.deadline))) updates.deadline = body.deadline
       if (body.goal && Number.isFinite(Number(body.goal)) && Number(body.goal) > 0) updates.goal = Math.round(Number(body.goal))
-      if (!Object.keys(updates).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields to update' })) }
+      if (!Object.keys(updates).length) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'No valid fields to update' })) }
       const setClauses = Object.keys(updates).map(k => k + ' = ?').join(', ')
       db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(updates), id)
       auditLog('admin_campaign_update', String(id), JSON.stringify(updates), ip)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, id, updates }))
-    } catch { res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' })) }
+    } catch { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' })) }
   }
 
   // ── Admin: list campaign proposals ────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/proposals') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'proposals.jsonl')
       const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
       const proposals = lines.map(l => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ proposals: proposals.reverse(), total: proposals.length }))
-    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+    } catch { res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' })) }
   }
 
   // ── Admin: list registry applications ─────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/registry') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'registry.jsonl')
       const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
       const entries = lines.map(l => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ entries: entries.reverse(), total: entries.length }))
-    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+    } catch { res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' })) }
   }
 
   // ── Admin: list attorney applications ────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/attorney-applications')) {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const all = db.prepare('SELECT * FROM attorney_applications ORDER BY submitted_at DESC').all()
       const pending = all.filter(a => a.status === 'pending')
@@ -2079,19 +2079,19 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ pending, approved, rejected, total: all.length }))
     } catch {
-      res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' }))
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' }))
     }
   }
 
   // ── Admin: review attorney application ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/attorney-applications/review') {
     // Auth BEFORE body parse — unauthed requests never trigger body read
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
       const { id, action } = body
       if (!id || !['approve', 'reject'].includes(action)) {
-        res.writeHead(400); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
       }
       const notes = String(body.notes || '').trim().slice(0, 1000) || null
       const newStatus = action === 'approve' ? 'approved' : 'rejected'
@@ -2159,7 +2159,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: changed.changes > 0, id, status: newStatus }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -2279,7 +2279,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ sightings }))
     } catch {
-      res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' }))
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' }))
     }
   }
 
@@ -2307,7 +2307,7 @@ const server = http.createServer(async (req, res) => {
         'Set-Cookie': ADMIN_COOKIE + '=' + token + '; HttpOnly; Secure; SameSite=Strict; Max-Age=14400; Path=/',
       })
       return res.end(JSON.stringify({ ok: true }))
-    } catch { res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' })) }
+    } catch { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' })) }
   }
 
   // ── Admin: logout ──────────────────────────────────────────────────────────
@@ -2330,17 +2330,17 @@ const server = http.createServer(async (req, res) => {
 
   // ── Admin: audit log ──────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/admin/audit-log') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const rows = db.prepare('SELECT * FROM admin_audit_log ORDER BY created_at DESC LIMIT 200').all()
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify(rows))
-    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+    } catch { res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' })) }
   }
 
 // ── Admin: list pending sightings ─────────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/sightings')) {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const file = path.join(DATA_DIR, 'sightings.jsonl')
       const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
@@ -2351,35 +2351,35 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ pending, approved, rejected, total: all.length }))
     } catch {
-      res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' }))
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' }))
     }
   }
 
   // ── Admin: approve or reject a sighting ───────────────────────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/moderate') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
       const { id, action } = body
       if (!id || !['approve', 'reject'].includes(action)) {
-        res.writeHead(400); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
       }
       const newStatus = action === 'approve' ? 'approved' : 'rejected'
       const changed = updateRecord('sightings.jsonl', s => s.id === id, s => ({ ...s, status: newStatus, moderatedAt: new Date().toISOString() }))
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: changed, id, status: newStatus }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
   // ── Admin: bulk approve all pending sightings with lat/lng ────────────────
   if (req.method === 'POST' && req.url === '/admin/sightings/approve-all') {
-    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
       const body = await parseBody(req)
       const file = path.join(DATA_DIR, 'sightings.jsonl')
-      if (!fs.existsSync(file)) { res.writeHead(200); return res.end(JSON.stringify({ ok: true, approved: 0 })) }
+      if (!fs.existsSync(file)) { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: true, approved: 0 })) }
       const lines = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean)
       let count = 0
       const now = new Date().toISOString()
@@ -2397,7 +2397,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, approved: count }))
     } catch {
-      res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' }))
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'bad request' }))
     }
   }
 
@@ -2458,12 +2458,12 @@ const server = http.createServer(async (req, res) => {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const id = parseInt(req.url.split('/')[3])
     const claims = verifyToken(req)
-    if (!claims) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(claims.userId)
-    if (!user || user.tier < 1) { res.writeHead(403); return res.end(JSON.stringify({ error: 'Operator tier required (10+ reputation points)' })) }
+    if (!user || user.tier < 1) { res.writeHead(403, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Operator tier required (10+ reputation points)' })) }
     const campaign = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
-    if (!campaign) { res.writeHead(404); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
-    if (campaign.operator_id) { res.writeHead(409); return res.end(JSON.stringify({ error: 'Campaign already claimed' })) }
+    if (!campaign) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+    if (campaign.operator_id) { res.writeHead(409, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign already claimed' })) }
     db.prepare('UPDATE campaigns SET operator_id = ?, status = ?, claimed_at = ? WHERE id = ?').run(claims.userId, 'claimed', new Date().toISOString(), id)
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true, campaignId: id }))
@@ -2474,10 +2474,10 @@ const server = http.createServer(async (req, res) => {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const id = parseInt(req.url.split('/')[3])
     const claims = verifyToken(req)
-    if (!claims) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Not authenticated' })) }
     const campaign = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
-    if (!campaign) { res.writeHead(404); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
-    if (campaign.operator_id !== claims.userId) { res.writeHead(403); return res.end(JSON.stringify({ error: 'Not the campaign operator' })) }
+    if (!campaign) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+    if (campaign.operator_id !== claims.userId) { res.writeHead(403, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Not the campaign operator' })) }
     try {
       const body = await parseBody(req)
       const fields = {}
@@ -2495,7 +2495,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (body.operatorName !== undefined) fields.operator_name = String(body.operatorName||'').trim().slice(0,100) || null
       if (body.operatorBio !== undefined) fields.operator_bio = String(body.operatorBio||'').trim().slice(0,500) || null
-      if (!Object.keys(fields).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields' })) }
+      if (!Object.keys(fields).length) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'No valid fields' })) }
       const updXmr = fields.wallet_xmr !== undefined ? fields.wallet_xmr : campaign.wallet_xmr
       const updZano = fields.wallet_zano !== undefined ? fields.wallet_zano : campaign.wallet_zano
       if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
