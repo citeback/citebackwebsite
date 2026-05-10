@@ -292,6 +292,10 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | /attorney/apply missing rate limit | ✅ FIXED (checkAuthRateLimit — 5 req/15min; prevents CA bar API abuse) |
 | 2026-05-10 | /api/campaigns/:id/claim missing rate limit | ✅ FIXED (checkRateLimit standard) |
 | 2026-05-10 | PATCH /api/campaigns/:id missing rate limit | ✅ FIXED (checkRateLimit standard) |
+| 2026-05-10 | passkey DELETE: decodeURIComponent without try/catch — URIError on malformed URL hangs request | ✅ FIXED (try/catch, returns 400) |
+| 2026-05-10 | passkey/list missing rate limit (pre-auth hammering vector) | ✅ FIXED (checkRateLimit pre-auth) |
+| 2026-05-10 | passkey/delete missing rate limit (timing oracle on auth check) | ✅ FIXED (checkAuthRateLimit pre-auth) |
+| 2026-05-10 | passkey/register-verify missing rate limit (registration abuse vector) | ✅ FIXED (checkPkRegRateLimit pre-auth) |
 
 ---
 
