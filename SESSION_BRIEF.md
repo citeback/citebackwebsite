@@ -1,5 +1,5 @@
 # Citeback — Session Brief
-*Last updated: 2026-05-10 14:45 MDT (keepalive 10)*
+*Last updated: 2026-05-10 21:55 MDT (keepalive 11)*
 
 ## ⚠️ URGENT: ICANN domain verification - May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -10,7 +10,7 @@ Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 **Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
 **VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
 **Status:** Site working, COLD dark theme, full CSS. Audit score ~9.9/10. Visual QA pass still needed from Scott.
-**Last keepalive (2026-05-10 14:45 MDT, keepalive 10):** Full audit pass. Found and fixed XSS: user-submitted `sighting.notes` was directly interpolated into Leaflet popup HTML template strings without escaping — added `htmlEsc()` helper to CameraMap.jsx. Also fixed missing `Content-Type: text/plain` on 5 bare `writeHead()` error responses in server.js. All other audit items confirmed clean. Commit: 340418d.
+**Last keepalive (2026-05-10 21:55 MDT, keepalive 11):** Full audit pass. Found and fixed: (1) CameraMap textarea missing `htmlFor/id` label association — a11y fix; (2) `/admin/verify-session`, `/admin/logout`, `/admin/audit-log` missing rate limits — added `checkRateLimit` as defense-in-depth; (3) `normalizeInput` zero-width Unicode filter was missing LRM (U+200E), RLM (U+200F), line/para separators (U+2028/2029), and invisible math ops (U+2061-2064) — expanded coverage; (4) Original regex had literal Unicode chars embedded (including line terminators U+2028/2029 that broke Node.js regex parser) — replaced with ASCII `\u` escape sequences. Commits: 20a03bc, 83906b8. VPS healthy: 3 users, 7 campaigns, 95,315 cameras. All smoke tests pass.
 
 ## What Broke This Morning (2026-05-10) + What Was Fixed
 

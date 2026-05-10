@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (14:45 MDT keepalive 10)*
+*Last updated: 2026-05-10 (21:55 MDT keepalive 11)*
 
 ---
 
@@ -326,6 +326,11 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | Footer missing Discord link | ✅ FIXED (discord.gg/citeback added next to GitHub link) |
 | 2026-05-10 | XSS: sighting.notes interpolated into Leaflet HTML without escaping | ✅ FIXED — htmlEsc() helper added to CameraMap.jsx; applied to sighting.notes in buildAlprPopupHTML() |
 | 2026-05-10 | 5 writeHead() calls missing Content-Type: text/plain on text error responses | ✅ FIXED — photos 400/404/500, fallthrough 404, chat body 400 |
+| 2026-05-10 | CameraMap textarea notes missing htmlFor/id label association (a11y) | ✅ FIXED (id=cmap-photo-notes + htmlFor) |
+| 2026-05-10 | /admin/verify-session missing rate limit (DoS vector, unauthenticated) | ✅ FIXED (checkRateLimit added pre-auth) |
+| 2026-05-10 | /admin/logout missing rate limit | ✅ FIXED (checkRateLimit added) |
+| 2026-05-10 | /admin/audit-log missing rate limit | ✅ FIXED (checkRateLimit added, isAdmin still primary gatekeeper) |
+| 2026-05-10 | normalizeInput zero-width Unicode filter missing LRM/RLM/line-sep/para-sep/invisible-math | ✅ FIXED (‎‏  ⁡-⁤ added; switched to ASCII \u escape sequences to prevent Node.js regex parse error) |
 
 ---
 
