@@ -978,8 +978,27 @@ const server = http.createServer(async (req, res) => {
           ON CONFLICT(campaign_id) DO UPDATE SET count = count + 1
         `).run(idNum)
         const row = db.prepare('SELECT count FROM interest_counts WHERE campaign_id = ?').get(idNum)
+        const newCount = row?.count || 1
+        // Fire-and-forget operator milestone notification at 5, 10, 25, 50, 100 interest signals
+        const MILESTONES = [5, 10, 25, 50, 100]
+        if (emailEnabled && MILESTONES.includes(newCount)) {
+          try {
+            const camp = db.prepare('SELECT c.title, c.operator_id, u.email_enc FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id WHERE c.id = ?').get(idNum)
+            if (camp?.email_enc) {
+              const operatorEmail = decryptEmail(camp.email_enc)
+              if (operatorEmail) {
+                mailer.sendMail({
+                  from: SMTP_FROM,
+                  to: operatorEmail,
+                  subject: `Citeback — ${newCount} people are interested in your campaign`,
+                  text: `Your campaign "${camp.title}" has reached ${newCount} interest signals on Citeback.\n\nThis means ${newCount} people have clicked "I'm Interested" on your campaign page. Strong early interest helps campaigns get funded when wallets activate.\n\nView campaign: https://citeback.com/campaigns/${idNum}\n\nCiteback`,
+                }).catch(e => console.error('operator interest notify error:', e.message))
+              }
+            }
+          } catch (e) { console.error('operator interest notify lookup error:', e.message) }
+        }
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: row?.count || 1 }))
+        return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: newCount }))
       }
       res.writeHead(400); return res.end(JSON.stringify({ error: 'invalid action' }))
     } catch {
