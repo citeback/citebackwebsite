@@ -166,16 +166,16 @@ export default function SightingForm({ setTab }) {
 
         {isLoggedIn ? (
           <div className="sf-status-bar sf-status-bar--auth">
-            <Shield size={13} className="sf-status-icon" style={{ color: 'var(--accent)' }} />
+            <Shield size={13} className="sf-status-icon" />
             <div>
-              <strong style={{ color: 'var(--text)' }}>Signed in as {user?.username}</strong>
-              {' '}· C2PA photo = <strong style={{ color: '#10b981' }}>+1 pt</strong> (existing camera) or <strong style={{ color: '#10b981' }}>+2 pts</strong> (new discovery)<br />
-              Shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> (iOS/Android, free) · Samsung Galaxy S24+ · Google Pixel 10
+              <strong className="sf-status-user">Signed in as {user?.username}</strong>
+              {' '}· C2PA photo = <strong className="sf-green-highlight">+1 pt</strong> (existing camera) or <strong className="sf-green-highlight">+2 pts</strong> (new discovery)<br />
+              Shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode</a> (iOS/Android, free) · Samsung Galaxy S24+ · Google Pixel 10
             </div>
           </div>
         ) : (
           <div className="sf-status-bar sf-status-bar--anon">
-            <CheckCircle size={13} className="sf-status-icon" style={{ color: 'var(--green)' }} />
+            <CheckCircle size={13} className="sf-status-icon" />
             <span>
               Anonymous submissions accepted.{' '}
               <button onClick={() => setTab('reputation')} className="sf-link-btn">Create an account</button>{' '}
@@ -202,7 +202,7 @@ export default function SightingForm({ setTab }) {
                 <li>
                   <span className="check-mark">✓</span>
                   <span>
-                    <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode app</a>{' '}
+                    <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode app</a>{' '}
                     (iOS/Android, free) — or Samsung Galaxy S24+ or Pixel 10
                   </span>
                 </li>
@@ -215,8 +215,8 @@ export default function SightingForm({ setTab }) {
                   <span>A publicly visible surveillance camera to photograph (ALPR, CCTV, ShotSpotter, etc.)</span>
                 </li>
               </ul>
-              <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 12, marginBottom: 0, lineHeight: 1.6 }}>
-                <strong style={{ color: 'var(--text)' }}>Why C2PA?</strong>{' '}
+              <p className="sf-checklist-note">
+                <strong>Why C2PA?</strong>{' '}
                 C2PA is an open standard that cryptographically signs photos at capture — proving the image wasn't manipulated and embedding GPS, time, and device metadata. Proofmode adds a second layer: a verifiable proof bundle tied to your photo.
               </p>
             </div>
@@ -229,21 +229,21 @@ export default function SightingForm({ setTab }) {
         <div className="sf-success-card">
           {repEarned?.newTier > 0 && (
             <div className="sf-tier-unlock">
-              <Star size={28} style={{ color: '#f59e0b', marginBottom: 8 }} />
-              <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 4 }}>🎉 Tier {repEarned.newTier} Unlocked!</div>
-              <div style={{ fontSize: 13, color: 'var(--muted)' }}>You're now a <strong style={{ color: 'var(--text)' }}>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $1,000 is now available.'}</div>
+              <Star size={28} className="sf-tier-star" />
+              <div className="sf-tier-title">🎉 Tier {repEarned.newTier} Unlocked!</div>
+              <div className="sf-tier-subtitle">You're now a <strong>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $1,000 is now available.'}</div>
             </div>
           )}
 
-          <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
-          <h2 style={{ fontWeight: 800, fontSize: 22, marginBottom: 8 }}>
+          <CheckCircle size={48} color="var(--green)" className="sf-success-icon" />
+          <h2 className="sf-success-title">
             {repEarned?.newCamera ? '📍 New Camera Documented' : '✅ Sighting Verified'}
           </h2>
 
           {repEarned && (
             <div className="sf-rep-badge">
-              <Shield size={14} style={{ color: '#10b981' }} />
-              <span style={{ fontSize: 13, fontWeight: 600 }}>
+              <Shield size={14} className="sf-rep-icon" />
+              <span className="sf-rep-text">
                 +{repEarned.points} pt{repEarned.points !== 1 ? 's' : ''}{' '}
                 {repEarned.newCamera ? '— new camera, not in any existing database' : '— confirmed existing camera'}{' '}
                 · {repEarned.newReputation} total · {repEarned.tierName}
@@ -253,27 +253,27 @@ export default function SightingForm({ setTab }) {
 
           {!isLoggedIn && (
             <div className="sf-promo-box">
-              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏅 Earn reputation for future sightings</div>
-              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '0 0 10px', lineHeight: 1.6 }}>
-                Create an account and shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1.
+              <div className="sf-promo-title">🏅 Earn reputation for future sightings</div>
+              <p className="sf-promo-text">
+                Create an account and shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode</a> (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1.
               </p>
-              <button onClick={() => setShowClaimModal(true)} style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '9px 16px', borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <button onClick={() => setShowClaimModal(true)} className="sf-promo-btn">
                 <Shield size={13} /> Create Account →
               </button>
             </div>
           )}
 
-          <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: '0 auto 24px' }}>
+          <p className="sf-verified-msg">
             C2PA signature verified. Location read from photo. Camera is live on the map.
           </p>
 
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="sf-action-btns">
             <button onClick={() => { setCameraType(''); setNotes(''); setSubmitted(false); setRepEarned(null); clearPhoto() }}
-              style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '12px 24px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              className="sf-btn-primary">
               Report Another
             </button>
             <button onClick={() => setTab('map')}
-              style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px 24px', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+              className="sf-btn-secondary">
               View the Map
             </button>
           </div>
@@ -286,7 +286,7 @@ export default function SightingForm({ setTab }) {
 
           {/* Camera type */}
           <div className="sf-field">
-            <label className="sf-label" style={{ marginBottom: 10 }}>What did you spot?</label>
+            <label className="sf-label sf-label--spaced">What did you spot?</label>
             <div className="sf-camera-type-grid">
               {CAMERA_TYPES.map(t => (
                 <button
@@ -295,8 +295,8 @@ export default function SightingForm({ setTab }) {
                   onClick={() => setCameraType(t.id)}
                   className={`sf-camera-type-option${cameraType === t.id ? ' sf-camera-type-option--selected' : ''}`}
                 >
-                  <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)', marginBottom: 2 }}>{t.label}</div>
-                  <div style={{ fontSize: 12, color: 'var(--muted)' }}>{t.desc}</div>
+                  <div className="sf-camera-label">{t.label}</div>
+                  <div className="sf-camera-desc">{t.desc}</div>
                 </button>
               ))}
             </div>
@@ -304,37 +304,37 @@ export default function SightingForm({ setTab }) {
 
           {/* Photo — the location source */}
           <div className="sf-field">
-            <label className="sf-label" style={{ marginBottom: 10 }}>
-              C2PA Photo <span style={{ color: 'var(--accent)', fontWeight: 700 }}>required</span>
-              <span style={{ color: 'var(--muted)', fontWeight: 400, marginLeft: 8 }}>— GPS read from photo automatically</span>
+            <label className="sf-label sf-label--spaced">
+              C2PA Photo <span className="sf-required-tag">required</span>
+              <span className="sf-label-hint">— GPS read from photo automatically</span>
             </label>
 
             {!photoFile ? (
               <>
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="sf-photo-drop">
-                  <Camera size={28} style={{ color: 'var(--muted)' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Tap to attach photo</span>
-                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
+                  <Camera size={28} className="sf-drop-icon" />
+                  <span className="sf-drop-title">Tap to attach photo</span>
+                  <span className="sf-drop-hint-text">Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
                   style={{ display: 'none' }} onChange={handlePhoto} />
 
                 <div className="sf-photo-hint">
-                  <strong style={{ color: 'var(--text)' }}>Shoot with a C2PA app or device — location must be enabled:</strong><br />
-                  📱 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a> — iOS &amp; Android, free, built by Guardian Project for human rights evidence<br />
+                  <strong>Shoot with a C2PA app or device — location must be enabled:</strong><br />
+                  📱 <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode</a> — iOS &amp; Android, free, built by Guardian Project for human rights evidence<br />
                   📲 Samsung Galaxy S24+ or Google Pixel 10 — signs photos automatically
                 </div>
               </>
             ) : (
               <div className="sf-photo-preview">
                 <div style={{ position: 'relative' }}>
-                  <img src={photoPreview} alt="Sighting" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
+                  <img src={photoPreview} alt="Sighting" className="sf-preview-img" />
                   <button type="button" onClick={clearPhoto} aria-label="Remove photo" className="sf-photo-clear">
                     <X size={14} />
                   </button>
                 </div>
 
-                <div style={{ padding: '12px 14px' }}>
+                <div className="sf-photo-info">
                   <div className="sf-photo-filename">{photoFile.name}</div>
 
                   {gpsStatus === 'reading' && (
@@ -360,19 +360,14 @@ export default function SightingForm({ setTab }) {
                   )}
                   {gpsStatus === 'none' && (
                     <div className="sf-gps-none">
-                      <div style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 4 }}>No GPS found in this photo</div>
-                      <div style={{ color: 'var(--muted)', lineHeight: 1.6, marginBottom: 10 }}>
+                      <div className="sf-gps-none-title">No GPS found in this photo</div>
+                      <div className="sf-gps-none-text">
                         GPS was stripped from this photo (common on iOS). You can use your device's current location instead, or retake with location enabled in Proofmode.
                       </div>
                       <button
                         type="button"
                         onClick={useDeviceLocation}
-                        style={{
-                          background: 'var(--accent)', border: 'none', color: '#fff',
-                          padding: '8px 14px', borderRadius: 7, fontWeight: 700,
-                          fontSize: 12, cursor: 'pointer',
-                          display: 'inline-flex', alignItems: 'center', gap: 6,
-                        }}
+                        className="sf-use-location-btn"
                       >
                         <MapPin size={12} /> Use my current location
                       </button>
@@ -386,7 +381,7 @@ export default function SightingForm({ setTab }) {
           {/* Notes */}
           <div className="sf-field">
             <label htmlFor="sighting-notes" className="sf-label">
-              Notes <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span>
+              Notes <span className="sf-optional-tag">(optional)</span>
             </label>
             <textarea id="sighting-notes" className="sf-input sf-textarea"
               placeholder="Vendor branding? Pole or building mount? Direction it faces?"
@@ -396,12 +391,12 @@ export default function SightingForm({ setTab }) {
           {/* Errors */}
           {error === 'c2pa' && (
             <div className="sf-error-box">
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--accent)', fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
+              <div className="sf-error-heading">
                 <AlertCircle size={14} /> C2PA signature not detected
               </div>
-              <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0, lineHeight: 1.6 }}>
+              <p className="sf-error-text">
                 This photo doesn't contain a verified C2PA signature. Shoot with{' '}
-                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode</a>,{' '}
+                <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode</a>,{' '}
                 Samsung Galaxy S24+, or Google Pixel 10, then try again.
               </p>
             </div>
