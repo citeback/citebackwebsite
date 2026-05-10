@@ -35,7 +35,7 @@ There is no newsletter. Anonymous browsing and financial contributions to campai
           body: `By using this site, your IP address and standard HTTP request data are processed by the following infrastructure providers. We do not control their data retention — see their respective privacy policies:
 
 • Netlify (hosting): Netlify logs server access including IP addresses. See netlify.com/privacy.
-• Bunny CDN (fonts.bunny.net): Loads the Inter typeface. Bunny CDN logs CDN access requests including IP addresses. See bunny.net/privacy.
+• Fonts: All typefaces (Inter, Space Grotesk, JetBrains Mono) are self-hosted on Citeback's servers. No external font CDN is used.
 • CARTO (map tiles): The surveillance camera map loads tiles from *.basemaps.cartocdn.com. CARTO receives tile request data including IP addresses. See carto.com/privacy.
 • OpenStreetMap Overpass API, CourtListener, api.congress.gov, OpenStates, Senate LDA: All requests to these external data sources are proxied through Citeback's own servers. Your IP address is not exposed to any of these third-party services.
 
