@@ -265,11 +265,16 @@ Track bugs found but not yet fixed here:
 
 | Date | Issue | Status |
 |------|-------|--------|
-| 2026-05-09 | `unsafe-inline` in style-src CSP | In progress |
-| 2026-05-09 | No "forgot username" flow | In progress |
+| 2026-05-09 | `unsafe-inline` in style-src CSP | In progress — 398→230 inline styles remain (excl 168 Leaflet noise) |
+| 2026-05-09 | "forgot username" flow | ✅ DONE (server endpoint + UI in AccountModal) |
 | 2026-05-09 | CARTO tiles expose user IP to third party | Documented in privacy policy only |
 | 2026-05-09 | Attorney pipeline needs E2E test | In progress |
 | 2026-05-09 | Wyoming DAO LLC not filed | Blocked on Scott |
+| 2026-05-10 | EXIF not stripped from uploaded photos | ✅ FIXED (stripJpegExif() added, strips GPS/camera info, preserves APP11/C2PA) |
+| 2026-05-10 | Magic bytes not validated on upload | ✅ FIXED (validateMagicBytes() added) |
+| 2026-05-10 | /claim-account returned 500 on empty body | ✅ FIXED (returns 400) |
+| 2026-05-10 | CameraMap.jsx 168 inline Leaflet styles | ⚠️ PERMANENTLY SKIP — Leaflet injects these internally, cannot be CSS classes |
+| 2026-05-10 | ReputationPage inputs missing labels | ✅ FIXED (added aria-accessible labels) |
 
 ---
 
