@@ -76,15 +76,14 @@ function PasskeyManager() {
     <div className="rp-section">
       <div className="rp-section-header">
         <div className="rp-icon-label">
-          <Fingerprint size={14} style={{ color: 'var(--muted)' }} />
+          <Fingerprint size={14} className="rp-icon-muted" />
           <span className="rp-label">Passkeys</span>
           {ok && <span className="rp-success-text">✓ {ok}</span>}
         </div>
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="rp-add-passkey-btn"
-          style={{ cursor: adding ? 'not-allowed' : 'pointer', opacity: adding ? 0.6 : 1 }}
+          className={`rp-add-passkey-btn${adding ? ' rp-btn--loading' : ''}`}
         >
           {adding ? <Loader size={11} className="spinning" /> : <Plus size={11} />}
           Add passkey
@@ -92,7 +91,7 @@ function PasskeyManager() {
       </div>
 
       {adding && (
-        <div style={{ marginBottom: 10 }}>
+        <div className="rp-adding-wrapper">
           <label htmlFor="rp-device-name" className="rp-sr-label">Device name</label>
           <input
             id="rp-device-name"
@@ -120,16 +119,15 @@ function PasskeyManager() {
         <div className="rp-passkey-list">
           {passkeys.map(pk => (
             <div key={pk.id} className="rp-passkey-item">
-              <Fingerprint size={13} style={{ color: 'var(--muted)', flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
+              <Fingerprint size={13} className="rp-icon-muted-shrink" />
+              <div className="rp-flex1">
                 <div className="rp-label">{pk.device_name || 'Passkey'}</div>
                 <div className="rp-passkey-date">Added {new Date(pk.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
               </div>
               <button
                 onClick={() => handleDelete(pk.credential_id)}
                 disabled={deleting === pk.credential_id}
-                className="rp-passkey-delete-btn"
-                style={{ cursor: deleting === pk.credential_id ? 'not-allowed' : 'pointer', opacity: deleting === pk.credential_id ? 0.5 : 1 }}
+                className={`rp-passkey-delete-btn${deleting === pk.credential_id ? ' rp-btn--deleting' : ''}`}
                 title="Remove passkey"
               >
                 <Trash2 size={13} />
@@ -192,9 +190,9 @@ function EmailManager({ onEmailSaved }) {
 
   return (
     <div className="rp-section">
-      <div className="rp-section-header" style={{ marginBottom: editing ? 12 : 0 }}>
+      <div className={`rp-section-header${!editing ? ' rp-section-header--mb0' : ''}`}>
         <div className="rp-icon-label">
-          <Mail size={14} style={{ color: 'var(--muted)' }} />
+          <Mail size={14} className="rp-icon-muted" />
           <span className="rp-label">Recovery Email</span>
           {saved && <span className="rp-success-text">✓ Saved</span>}
         </div>
@@ -207,7 +205,7 @@ function EmailManager({ onEmailSaved }) {
       {!editing && (
         emailInfo.hasEmail ? (
           <p className="rp-email-info">
-            {emailInfo.maskedEmail} · <span style={{ color: '#10b981' }}>Recovery enabled</span>
+            {emailInfo.maskedEmail} · <span className="rp-recovery-enabled">Recovery enabled</span>
           </p>
         ) : (
           <div className="rp-email-warning">
@@ -216,7 +214,7 @@ function EmailManager({ onEmailSaved }) {
             </p>
             <p className="rp-email-warning-desc">
               Without a recovery email, a forgotten password means permanent loss of your account and reputation.
-              A recovery email is also <strong style={{ color: 'var(--text)' }}>required before you can propose or accept campaign contributions</strong> - to prevent operators from claiming a lost account after receiving funds.
+              A recovery email is also <strong className="rp-color-fg">required before you can propose or accept campaign contributions</strong> - to prevent operators from claiming a lost account after receiving funds.
               A disposable email address is fine.
             </p>
             <button
@@ -318,7 +316,7 @@ function ProgressBar({ rep, tier }) {
   const next = TIER_THRESHOLDS[tier + 1]
   if (next == null) {
     return (
-      <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+      <div className="rp-muted-text">
         Maximum tier reached 🏆
       </div>
     )
@@ -328,8 +326,8 @@ function ProgressBar({ rep, tier }) {
   return (
     <div>
       <div className="rp-progress-row">
-        <span style={{ fontSize: 12, color: 'var(--muted)' }}>Progress to Tier {tier + 1} · {TIER_NAMES[tier + 1]}</span>
-        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{pointsToNext} pts to go</span>
+        <span className="rp-muted-text">Progress to Tier {tier + 1} · {TIER_NAMES[tier + 1]}</span>
+        <span className="rp-progress-pts">{pointsToNext} pts to go</span>
       </div>
       <div className="rp-progress-track">
         <div style={{
@@ -414,9 +412,9 @@ function PasswordManager() {
 
   return (
     <div className="rp-section">
-      <div className="rp-section-header" style={{ marginBottom: open ? 14 : 0 }}>
+      <div className={`rp-section-header${open ? ' rp-section-header--mb14' : ' rp-section-header--mb0'}`}>
         <div className="rp-icon-label">
-          <Lock size={14} style={{ color: 'var(--muted)' }} />
+          <Lock size={14} className="rp-icon-muted" />
           <span className="rp-label">Change Password</span>
           {ok && <span className="rp-success-text">✓ Password updated</span>}
         </div>
@@ -430,16 +428,16 @@ function PasswordManager() {
           <input id="rp-current-pw" type="password" className="rp-input-pw" placeholder="Current password" value={form.current}
             onChange={e => set('current', e.target.value)} autoComplete="current-password" required />
           <div>
-            <input type="password" className="rp-input-pw" style={{ marginBottom: 4 }} placeholder="New password" value={form.next}
+            <input type="password" className="rp-input-pw rp-input-mb4" placeholder="New password" value={form.next}
               onChange={e => set('next', e.target.value)} autoComplete="new-password" required />
-            {str && <div style={{ fontSize: 11, color: str.color, fontWeight: 600 }}>{str.label}</div>}
+            {str && <div className="rp-pw-strength-label" style={{ color: str.color }}>{str.label}</div>}
           </div>
           <input type="password" className="rp-input-pw" placeholder="Confirm new password" value={form.confirm}
             onChange={e => set('confirm', e.target.value)} autoComplete="new-password" required />
-          {form.confirm && !match && <div style={{ fontSize: 11, color: '#e63946' }}>Passwords don't match</div>}
-          {err && <div style={{ fontSize: 12, color: '#e63946' }}>{err}</div>}
+          {form.confirm && !match && <div className="rp-pw-mismatch">Passwords don't match</div>}
+          {err && <div className="rp-error-text">{err}</div>}
           <button type="submit" disabled={loading || !str?.ok || !match}
-            style={{ background: str?.ok && match ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: str?.ok && match ? '#fff' : 'var(--muted)', padding: '10px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: str?.ok && match ? 'pointer' : 'not-allowed' }}>
+            className={`rp-pw-submit-btn${str?.ok && match ? ' rp-pw-submit-btn--active' : ' rp-pw-submit-btn--disabled'}`}>
             {loading ? 'Updating...' : 'Update Password'}
           </button>
           <p className="rp-hint">Changing your password signs out all other devices.</p>
@@ -473,10 +471,10 @@ function SessionManager() {
   return (
     <div className="rp-section">
       <div className="rp-session-header">
-        <ShieldAlert size={14} style={{ color: 'var(--muted)' }} />
+        <ShieldAlert size={14} className="rp-icon-muted" />
         <span className="rp-label">Session Security</span>
       </div>
-      <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5, marginBottom: 12 }}>
+      <p className="rp-session-desc">
         Sign out of all devices at once. Use this if you think your account may be compromised.
         Changing your password has the same effect.
       </p>
@@ -486,14 +484,13 @@ function SessionManager() {
         <button
           onClick={handleLogoutAll}
           disabled={loading}
-          className="rp-logout-btn"
-          style={{ cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
+          className={`rp-logout-btn${loading ? ' rp-btn--loading' : ''}`}
         >
           {loading ? <Loader size={13} className="spinning" /> : <LogOut size={13} />}
           {loading ? 'Signing out...' : 'Sign out all devices'}
         </button>
       )}
-      {err && <p style={{ fontSize: 12, color: '#e63946', marginTop: 8 }}>{err}</p>}
+      {err && <p className="rp-session-error">{err}</p>}
     </div>
   )
 }
@@ -546,7 +543,7 @@ export default function ReputationPage({ setTab }) {
               <div className="rp-tier-info">
                 <div className="rp-tier-name">
                   Tier {i} · {name}
-                  {i === 0 && <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: 'var(--muted)' }}>starting point</span>}
+                  {i === 0 && <span className="rp-tier-starting">starting point</span>}
                 </div>
                 <div className="rp-tier-desc">{TIER_DESCRIPTIONS[i]}</div>
               </div>
@@ -639,8 +636,8 @@ export default function ReputationPage({ setTab }) {
           }}
         >
           <Star size={13} style={{ color: TIER_COLORS[user.tier || 0], flexShrink: 0 }} />
-          <span style={{ color: 'var(--muted)' }}>
-            <strong style={{ color: 'var(--text)' }}>Your access:</strong> {user.tierPerk}
+          <span className="rp-color-muted">
+            <strong className="rp-color-fg">Your access:</strong> {user.tierPerk}
           </span>
         </div>
       )}
@@ -658,12 +655,12 @@ export default function ReputationPage({ setTab }) {
             { label: 'Community corroboration (Phase 2)', pts: '+3 pts', soon: true },
           ].map((item, i) => (
             <div key={i} className="rp-earn-item">
-              <TrendingUp size={12} style={{ color: 'var(--muted)', flexShrink: 0 }} />
-              <span style={{ flex: 1, color: item.soon ? 'var(--muted)' : 'var(--text)' }}>
+              <TrendingUp size={12} className="rp-icon-muted-shrink" />
+              <span className={`rp-earn-label${item.soon ? ' rp-earn-label--soon' : ''}`}>
                 {item.label}
                 {item.soon && <span className="rp-soon-badge">soon</span>}
               </span>
-              <span style={{ fontWeight: 700, fontSize: 12, color: item.soon ? 'var(--muted)' : '#10b981' }}>{item.pts}</span>
+              <span className={item.soon ? 'rp-earn-pts--soon' : 'rp-earn-pts'}>{item.pts}</span>
             </div>
           ))}
         </div>

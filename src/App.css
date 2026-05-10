@@ -8165,6 +8165,11 @@ img {
   gap: 10px;
   align-items: flex-start;
 }
+.lt-check-done { color: #6ee7b7; flex-shrink: 0; margin-top: 1px; }
+.lt-check-pending { color: var(--border); flex-shrink: 0; margin-top: 1px; }
+.lt-milestone-text--done { color: var(--text); }
+.lt-milestone-text--pending { color: var(--muted); }
+
 .lt-milestone-text {
   font-size: 13px;
   line-height: 1.5;
