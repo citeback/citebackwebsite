@@ -1,7 +1,16 @@
+import { Helmet } from 'react-helmet-async'
+
 const TERMS_LAST_UPDATED = 'May 9, 2026'
 
 export default function TermsPage() {
   return (
+    <>
+    <Helmet>
+      <title>Terms of Use | Citeback</title>
+      <meta name="description" content="Citeback terms of use: platform rules, operator obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
+      <meta property="og:title" content="Terms of Use | Citeback" />
+      <meta property="og:description" content="Citeback terms of use: platform rules, operator obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
+    </Helmet>
     <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
       {/* Draft disclaimer — top of page, prominent */}
       <div style={{
@@ -126,5 +135,6 @@ Citeback charges no platform fee on campaign contributions. Citeback's total lia
         </div>
       ))}
     </section>
+    </>
   )
 }

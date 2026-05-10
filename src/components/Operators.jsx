@@ -81,6 +81,31 @@ export default function Operators() {
         </div>
       </div>
 
+      {/* Quick Start path */}
+      <div style={{
+        background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.2)',
+        borderRadius: 10, padding: '20px 24px', marginBottom: 32,
+      }}>
+        <p style={{ fontWeight: 700, fontSize: 12, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
+          ⚡ How to Become a Campaign Operator — 3 Steps
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {[
+            { n: '01', title: 'Report surveillance cameras', desc: 'Use Proofmode (free, iOS/Android) to take GPS-tagged photos of publicly visible surveillance cameras and submit them on the Report tab. Each verified C2PA photo earns you 1–2 reputation points.' },
+            { n: '02', title: 'Reach 10 points → Tier 1 Operator', desc: 'Ten verified sightings unlock your Operator tier. At Tier 1 you can claim and run campaigns up to $1,000. No identity required — just a pseudonymous account and a track record.' },
+            { n: '03', title: 'Claim or propose a campaign', desc: 'Browse unclaimed campaigns and claim one, or propose a new campaign with a specific target, cost breakdown, and milestones. Add your own XMR wallet — contributors send directly to you.' },
+          ].map(s => (
+            <div key={s.n} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 11, color: 'var(--accent)', flexShrink: 0 }}>{s.n}</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>{s.title}</div>
+                <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>{s.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Participant roles */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
         {[

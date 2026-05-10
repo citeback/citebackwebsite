@@ -1,5 +1,14 @@
+import { Helmet } from 'react-helmet-async'
+
 export default function PrivacyPolicy() {
   return (
+    <>
+    <Helmet>
+      <title>Privacy Policy | Citeback — Zero Tracking, No Identity Required</title>
+      <meta name="description" content="Citeback's privacy policy: no tracking, no analytics, no identity collection. Contributions are private by default via Monero and Zano cryptocurrency protocols." />
+      <meta property="og:title" content="Privacy Policy | Citeback — Zero Tracking, No Identity Required" />
+      <meta property="og:description" content="Citeback's privacy policy: no tracking, no analytics, no identity collection. Contributions are private by default via Monero and Zano cryptocurrency protocols." />
+    </Helmet>
     <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
       <div style={{
         fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
@@ -90,5 +99,6 @@ For security vulnerability disclosures: see /.well-known/security.txt`,
         </div>
       ))}
     </section>
+    </>
   )
 }

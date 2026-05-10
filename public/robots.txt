@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
-
+Disallow: /cx-admin
+Disallow: /reset-password
+Disallow: /claim-account
 Sitemap: https://citeback.com/sitemap.xml

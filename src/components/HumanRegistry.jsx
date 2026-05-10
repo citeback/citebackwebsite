@@ -182,15 +182,24 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
             <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Application Received</h3>
             <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 360, margin: '0 auto 16px' }}>
-              Your application is saved and queued for review.
+              You're in the queue. Applications submitted now are first in line when onboarding opens.
             </p>
             <div style={{
-              maxWidth: 360, margin: '0 auto 24px',
+              maxWidth: 380, margin: '0 auto 24px',
               background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
               borderRadius: 10, padding: '14px 16px', textAlign: 'left',
             }}>
               <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> The expert directory and operator verification system open at platform launch. Applications submitted now are first in line when onboarding goes live.
+                <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>What happens next:</div>
+                <ol style={{ paddingLeft: 18, margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <li>Your application is saved to the review queue.</li>
+                  <li>At launch, the team verifies your credentials (bar lookup for attorneys, peer vouches for others).</li>
+                  <li>Once verified, you receive a badge visible to campaign operators seeking legal help.</li>
+                  <li>You'll be matched with funded campaigns in your jurisdiction and practice area.</li>
+                </ol>
+                <p style={{ margin: '10px 0 0', fontStyle: 'italic' }}>
+                  To follow up before launch, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong>.
+                </p>
               </div>
             </div>
             <button onClick={onClose} style={{

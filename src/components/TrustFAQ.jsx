@@ -188,6 +188,13 @@ export default function TrustFAQ({ setTab }) {
   const [activeSection, setActiveSection] = useState(0)
 
   return (
+    <>
+    <Helmet>
+      <title>How It Works | Citeback — Anonymous Crowdfunding for Surveillance Resistance</title>
+      <meta name="description" content="Learn how Citeback funds surveillance lawsuits anonymously using Monero and Zano. Transparent wallet architecture, community-verified campaigns, zero tracking." />
+      <meta property="og:title" content="How It Works | Citeback — Anonymous Crowdfunding for Surveillance Resistance" />
+      <meta property="og:description" content="Learn how Citeback funds surveillance lawsuits anonymously using Monero and Zano. Transparent wallet architecture, community-verified campaigns, zero tracking." />
+    </Helmet>
     <section style={{ padding: '48px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       {/* Phase Status Banner */}
       <div style={{
@@ -345,5 +352,6 @@ export default function TrustFAQ({ setTab }) {
         </div>
       )}
     </section>
+    </>
   )
 }

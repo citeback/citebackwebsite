@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus, LogOut, ShieldAlert, Lock } from 'lucide-react'
 import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser'
 
@@ -611,6 +612,13 @@ export default function ReputationPage({ setTab }) {
 
   // Logged in
   return (
+    <>
+    <Helmet>
+      <title>Your Account | Citeback</title>
+      <meta name="description" content="View your Citeback reputation score, verified sightings, campaign contributions, and account settings. Privacy-first identity built on contributions." />
+      <meta property="og:title" content="Your Account | Citeback" />
+      <meta property="og:description" content="View your Citeback reputation score, verified sightings, campaign contributions, and account settings." />
+    </Helmet>
     <section style={{ padding: 'clamp(32px, 6vw, 64px) clamp(16px, 5vw, 24px)', maxWidth: 640, margin: '0 auto', width: '100%' }}>
       {/* Profile header */}
       <div style={{
@@ -759,5 +767,6 @@ export default function ReputationPage({ setTab }) {
         )}
       </div>
     </section>
+    </>
   )
 }

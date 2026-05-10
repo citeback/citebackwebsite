@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Shield, Lock, Users, Scale, Cpu, AlertTriangle, ExternalLink, ChevronDown, ChevronRight, CheckCircle, Circle } from 'lucide-react'
 
 const sections = [
@@ -100,6 +101,13 @@ function Code({ children }) {
 
 export default function Governance({ setTab }) {
   return (
+    <>
+    <Helmet>
+      <title>Governance | Citeback — Community-Controlled Platform Rules</title>
+      <meta name="description" content="Read Citeback's governance framework: community voting, campaign rules, disbursement controls, and the immutable core of the surveillance resistance platform." />
+      <meta property="og:title" content="Governance | Citeback — Community-Controlled Platform Rules" />
+      <meta property="og:description" content="Read Citeback's governance framework: community voting, campaign rules, disbursement controls, and the immutable core of the surveillance resistance platform." />
+    </Helmet>
     <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 20px 80px' }}>
 
       {/* Header */}
@@ -402,5 +410,6 @@ export default function Governance({ setTab }) {
         </div>
       )}
     </div>
+    </>
   )
 }

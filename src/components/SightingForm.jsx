@@ -30,6 +30,7 @@ export default function SightingForm({ setTab }) {
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)          // null | 'c2pa' | 'no_gps' | 'generic'
+  const [checklistOpen, setChecklistOpen] = useState(false)
   const fileInputRef = useRef(null)
 
   const handlePhoto = async (e) => {
@@ -198,6 +199,45 @@ export default function SightingForm({ setTab }) {
           </div>
         )}
       </div>
+
+      {/* Pre-form checklist */}
+      {!submitted && (
+        <div className="sighting-checklist">
+          <button
+            type="button"
+            onClick={() => setChecklistOpen(o => !o)}
+            className="sighting-checklist-toggle"
+          >
+            <span className="sighting-checklist-arrow">{checklistOpen ? '▾' : '▸'}</span>
+            What you'll need
+          </button>
+          {checklistOpen && (
+            <div className="sighting-checklist-body">
+              <ul>
+                <li>
+                  <span className="check-mark">✓</span>
+                  <span>
+                    <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600 }}>Proofmode app</a>{' '}
+                    (iOS/Android, free) — or Samsung Galaxy S24+ or Pixel 10
+                  </span>
+                </li>
+                <li>
+                  <span className="check-mark">✓</span>
+                  <span>Location services enabled in the app before you take the photo</span>
+                </li>
+                <li>
+                  <span className="check-mark">✓</span>
+                  <span>A publicly visible surveillance camera to photograph (ALPR, CCTV, ShotSpotter, etc.)</span>
+                </li>
+              </ul>
+              <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 12, marginBottom: 0, lineHeight: 1.6 }}>
+                <strong style={{ color: 'var(--text)' }}>Why C2PA?</strong>{' '}
+                C2PA is an open standard that cryptographically signs photos at capture — proving the image wasn't manipulated and embedding GPS, time, and device metadata. Proofmode adds a second layer: a verifiable proof bundle tied to your photo.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Success */}
       {submitted ? (

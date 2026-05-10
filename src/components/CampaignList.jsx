@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet-async'
 import CampaignCard from './CampaignCard'
 import { lazy, Suspense } from 'react'
 const ProposeModal = lazy(() => import('./ProposeModal'))
-import { Plus, Search, SlidersHorizontal } from 'lucide-react'
+import { Plus, Search, SlidersHorizontal, AlertCircle } from 'lucide-react'
 
 const typeFilters = ['All', 'Billboard', 'Legal', 'FOIA', 'Verify']
 const sortOptions = [
@@ -26,12 +25,13 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
   const [proposing, setProposing] = useState(false)
   const [campaigns, setCampaigns] = useState([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
 
   useEffect(() => {
     fetch(`${AI_URL}/api/campaigns`)
       .then(r => r.json())
       .then(data => { setCampaigns(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch(() => { setFetchError(true); setLoading(false) })
   }, [])
 
   const base = full ? campaigns : campaigns.slice(0, 3)
@@ -47,82 +47,81 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       return 0
     })
 
+  const sectionPadding = full ? '48px 24px' : '64px 24px'
+
   if (loading) return (
-    <section style={{ padding: full ? '48px 24px' : '64px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
-      <div style={{ color: 'var(--muted)', fontSize: 15, textAlign: 'center', padding: 48 }}>Loading campaigns…</div>
+    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+      <div className="campaign-list-loading">Loading campaigns…</div>
+    </section>
+  )
+
+  if (fetchError) return (
+    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+      <div className="campaign-list-error">
+        <AlertCircle size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: 'middle' }} />
+        Unable to load campaigns — please refresh the page.
+      </div>
     </section>
   )
 
   return (
-    <>
-    {full && (
-      <Helmet>
-        <title>Active Campaigns | Citeback — Fund Surveillance Lawsuits</title>
-        <meta name="description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
-        <meta property="og:title" content="Active Campaigns | Citeback — Fund Surveillance Lawsuits" />
-        <meta property="og:description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
-      </Helmet>
-    )}
-    <section style={{ padding: full ? '48px 24px' : '64px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
+    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+      <div className="campaign-list-header">
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>
+          <h2 className="campaign-list-h2">
             {full ? 'All Campaigns' : 'Campaigns'}
           </h2>
-          <p style={{ color: 'var(--muted)', marginTop: 4, fontSize: 14 }}>
-            At launch, each campaign will have its own Monero (XMR) and Zano (ZANO) wallet address. Contributions go directly to the operator — Citeback never holds funds. Balance verified via operator-provided view key. Fully public audit trail.
+          <p className="campaign-list-desc">
+            At launch, each campaign will have its own Monero (XMR) and Zano (ZANO) wallet address.
+            Contributions go directly to the operator — Citeback never holds funds.
+            Balance verified via operator-provided view key. Fully public audit trail.
           </p>
         </div>
-        <button onClick={() => setProposing(true)} style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'var(--accent)', border: 'none', color: '#fff',
-          padding: '10px 18px', borderRadius: 'var(--radius)', fontWeight: 600, fontSize: 14, minHeight: 44,
-        }}>
+        <button onClick={() => setProposing(true)} className="campaign-propose-btn">
           <Plus size={15} /> Propose Campaign
         </button>
       </div>
 
-      {/* Filters + Search */}
+      {/* Filters + Search (full view only) */}
       {full && (
-        <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="campaign-filter-bar">
           {/* Search */}
-          <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
-            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+          <div className="campaign-search-wrap">
+            <Search size={14} className="campaign-search-icon" />
             <input
-              value={query} onChange={e => setQuery(e.target.value)}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
               placeholder="Search campaigns or locations..."
-              style={{
-                width: '100%', paddingLeft: 34, padding: '9px 12px 9px 34px',
-                background: 'var(--bg3)', border: '1px solid var(--border)',
-                color: 'var(--text)', borderRadius: 'var(--radius)', fontSize: 13, outline: 'none', fontFamily: 'inherit',
-              }}
+              className="campaign-search-input"
             />
           </div>
 
-          {/* Type filter */}
-          <div style={{ display: 'flex', gap: 6 }}>
+          {/* Type filters */}
+          <div className="campaign-type-filters">
             {typeFilters.map(f => (
-              <button key={f} onClick={() => setFilter(f)} style={{
-                background: filter === f ? 'var(--accent)' : 'var(--bg3)',
-                border: `1px solid ${filter === f ? 'var(--accent)' : 'var(--border)'}`,
-                color: filter === f ? '#fff' : 'var(--muted)',
-                padding: '6px 14px', borderRadius: 'var(--radius)', fontWeight: 500, fontSize: 13, whiteSpace: 'nowrap',
-                transition: 'background 0.15s, border-color 0.15s, color 0.15s',
-              }}
-              onMouseEnter={e => { if (filter !== f) { e.currentTarget.style.borderColor = 'var(--fg)'; e.currentTarget.style.color = 'var(--fg)' } }}
-              onMouseLeave={e => { if (filter !== f) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--muted)' } }}
-              >{f}</button>
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className="campaign-type-filter-btn"
+                style={{
+                  background: filter === f ? 'var(--accent)' : 'var(--bg3)',
+                  border: `1px solid ${filter === f ? 'var(--accent)' : 'var(--border)'}`,
+                  color: filter === f ? '#fff' : 'var(--muted)',
+                }}
+              >
+                {f}
+              </button>
             ))}
           </div>
 
           {/* Sort */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div className="campaign-sort-wrap">
             <SlidersHorizontal size={13} style={{ color: 'var(--muted)' }} />
-            <select value={sort} onChange={e => setSort(e.target.value)} style={{
-              background: 'var(--bg3)', border: '1px solid var(--border)',
-              color: 'var(--text)', padding: '7px 10px', borderRadius: 'var(--radius)', fontSize: 13,
-              outline: 'none', cursor: 'pointer',
-            }}>
+            <select
+              value={sort}
+              onChange={e => setSort(e.target.value)}
+              className="campaign-sort-select"
+            >
               {sortOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
             </select>
           </div>
@@ -130,11 +129,13 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       )}
 
       {filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '48px', color: 'var(--muted)', fontSize: 15 }}>
-          No campaigns match your search.
+        <div className="campaign-list-empty">
+          {query || filter !== 'All'
+            ? 'No campaigns match your search.'
+            : 'No campaigns yet — be the first to propose one.'}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: 20 }}>
+        <div className="campaign-list-grid">
           {filtered.map(c => (
             <CampaignCard
               key={c.id}
@@ -146,16 +147,14 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       )}
 
       {!full && (
-        <div style={{ textAlign: 'center', marginTop: 40 }}>
-          <button onClick={() => setTab('campaigns')} style={{
-            background: 'var(--bg3)', border: '1px solid var(--border)',
-            color: 'var(--text)', padding: '12px 28px', borderRadius: 'var(--radius)', fontWeight: 600, fontSize: 15,
-          }}>View All Campaigns →</button>
+        <div className="campaign-list-view-all">
+          <button onClick={() => setTab('campaigns')} className="campaign-list-view-all-btn">
+            View All Campaigns →
+          </button>
         </div>
       )}
 
       {proposing && <Suspense fallback={null}><ProposeModal onClose={() => setProposing(false)} /></Suspense>}
     </section>
-    </>
   )
 }
