@@ -1887,6 +1887,30 @@ const server = http.createServer(async (req, res) => {
     } catch { res.writeHead(400); return res.end(JSON.stringify({ error: 'bad request' })) }
   }
 
+  // ── Admin: list campaign proposals ────────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/admin/proposals') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    try {
+      const file = path.join(DATA_DIR, 'proposals.jsonl')
+      const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
+      const proposals = lines.map(l => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ proposals: proposals.reverse(), total: proposals.length }))
+    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+  }
+
+  // ── Admin: list registry applications ─────────────────────────────────────
+  if (req.method === 'GET' && req.url === '/admin/registry') {
+    if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
+    try {
+      const file = path.join(DATA_DIR, 'registry.jsonl')
+      const lines = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean) : []
+      const entries = lines.map(l => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ entries: entries.reverse(), total: entries.length }))
+    } catch { res.writeHead(500); return res.end(JSON.stringify({ error: 'server error' })) }
+  }
+
   // ── Admin: list attorney applications ────────────────────────────────────
   if (req.method === 'GET' && req.url.startsWith('/admin/attorney-applications')) {
     if (!isAdmin(req, {})) { res.writeHead(401); return res.end(JSON.stringify({ error: 'unauthorized' })) }
