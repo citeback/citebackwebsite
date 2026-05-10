@@ -1,15 +1,16 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 06:00 MDT (overnight blitz round 2 — COMPLETE)*
+*Last updated: 2026-05-10 00:25 MDT (overnight blitz round 3 — COMPLETE)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
 
 ## Current State
-**Phase: Pre-launch. Platform hardened, CSS migration 99% complete, functionally solid.**
+**Phase: Pre-launch. Platform fully hardened. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED.**
 - Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
 - Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
 - 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).
-- **Inline styles: 20 remaining** (from 1,585 original — 99% reduced)
+- **Inline styles: 0 remaining** (from 1,585 original — 100% reduction)
+- **CSP: `unsafe-inline` REMOVED from style-src** — fully hardened CSP
 
 ## Quick Start
 ```bash
@@ -22,13 +23,17 @@ cd /workspace/deflect && git pull && git log --oneline -5
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
 2. **ICANN domain verification** — May 14 deadline
 3. **ToS attorney review** — needs entity first
-4. **Remove `unsafe-inline` from CSP** — path: use `useEffect + element.style.setProperty()` instead of `style={{ '--prop': val }}` JSX (see ATTACK_PROMPT Known Issues)
+4. ~~**Remove `unsafe-inline` from CSP**~~ ✅ DONE — all 20 inline styles converted, CSP fully hardened
 5. **First real operator E2E test** — claim → wallet → activate
+6. **Attorney pipeline E2E test** — apply → admin approve → claim token → badge
+7. **Discord community** — footer checklist: ToS ✅ Privacy ✅ GitHub ✅ Discord ❌ (needs Discord)
 
-## Remaining 20 Inline Styles (by category)
-- **6× CSS custom property setters** — `--svex-color`, `--vc`, `--faq-color`, `--cc`, `--tag-color`, `--tc/--tc2/--w` — can be converted to `useEffect + style.setProperty()` to remove unsafe-inline
-- **5× Dynamic progress bar widths** — `pct%` in CampaignCard, LaunchTracker, ProposeModal, ScrollProgress, CampaignModal — genuinely dynamic, use CSS animation or accept limitation
-- **9× CameraMap** — 8 layer.color/tier.color dynamic data + 1 MapContainer (Leaflet-required, permanent)
+## Inline Styles: COMPLETE ✅
+All 1,585 original inline styles migrated. **0 remaining.**
+- 6× CSS custom property setters → `useRef+useEffect` / callback refs
+- 5× progress bars → `ref.style.setProperty('--width', pct%)` + CSS `var(--width, 0%)`
+- 8× CameraMap layer/tier → CSS `--lc` custom prop + `color-mix()` class-based states
+- 1× MapContainer → `.cmap-leaflet-container { height:100%; width:100% }`
 
 ## What's Done (don't re-audit)
 
