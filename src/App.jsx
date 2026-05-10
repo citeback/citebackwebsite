@@ -197,7 +197,7 @@ export default function App() {
           <Route path="*" element={<NotFound setTab={setTab} />} />
         </Routes>
 
-        {showAI && <ErrorBoundary label="AI chat" fallback={<div style={{position:'fixed',bottom:80,right:24,zIndex:999,background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:12,padding:16,fontSize:13,color:'var(--muted)'}}>AI unavailable — <button onClick={()=>setShowAI(false)} style={{background:'none',border:'none',color:'var(--accent)',cursor:'pointer',padding:0}}>close</button></div>}><Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense></ErrorBoundary>}
+        {showAI && <ErrorBoundary label="AI chat" fallback={<div className="eb-ai-fallback">AI unavailable — <button onClick={()=>setShowAI(false)} className="eb-ai-close-btn">close</button></div>}><Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense></ErrorBoundary>}
         {!showAI && (
           <button
             onClick={() => setShowAI(true)}

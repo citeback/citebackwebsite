@@ -107,7 +107,7 @@ export default function BuildWithUs({ setTab }) {
                     else if (track.id === 'technical') setTab('registry')
                   }}
                   className="bwu-btn-secondary"
-                  style={{ marginTop: 8 }}
+                  className="bwu-btn-secondary-mt"
                 >
                   {track.cta}
                 </button>

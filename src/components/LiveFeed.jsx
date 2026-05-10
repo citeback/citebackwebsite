@@ -142,7 +142,7 @@ export default function LiveFeed({ setTab }) {
         </div>
 
         {/* Feed */}
-        <div style={{ paddingBottom: setTab ? 0 : 8 }}>
+        <div className={setTab ? 'lf-feed-body' : 'lf-feed-body lf-feed-body--standalone'}>
           {items.map((item) => (
             <div
               key={item.id}

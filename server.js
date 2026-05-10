@@ -643,7 +643,7 @@ function processNext() {
     ollama.on('end', () => { processing = false; processNext() })
   })
   proxy.on('error', (e) => {
-    res.writeHead(502); res.end(JSON.stringify({ error: 'Ollama unavailable', detail: e.message }))
+    res.writeHead(502); res.end(JSON.stringify({ error: 'Ollama unavailable' }))
     processing = false; processNext()
   })
   proxy.write(body); proxy.end()
