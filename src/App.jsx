@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
+import ErrorBoundary from './components/ErrorBoundary'
 import { AuthProvider } from './context/AuthContext'
 import { API_BASE as AI_URL } from './config.js'
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom'
@@ -178,7 +179,7 @@ export default function App() {
           } />
           <Route path="/campaigns/:id" element={<CampaignDeepLink setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
           <Route path="/campaigns" element={<CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
-          <Route path="/map" element={<Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense>} />
+          <Route path="/map" element={<ErrorBoundary label="Camera map"><Suspense fallback={<LazyFallback label="Loading map…" />}><CameraMap /></Suspense></ErrorBoundary>} />
           <Route path="/expert-directory" element={<Suspense fallback={<LazyFallback label="Loading…" />}><HumanRegistry /></Suspense>} />
           <Route path="/transparency" element={<Suspense fallback={<LazyFallback label="Loading…" />}><Transparency setTab={setTab} /></Suspense>} />
           <Route path="/how-it-works" element={<Suspense fallback={<LazyFallback label="Loading…" />}><TrustFAQ setTab={setTab} /></Suspense>} />
@@ -196,7 +197,7 @@ export default function App() {
           <Route path="*" element={<NotFound setTab={setTab} />} />
         </Routes>
 
-        {showAI && <Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense>}
+        {showAI && <ErrorBoundary label="AI chat" fallback={<div style={{position:'fixed',bottom:80,right:24,zIndex:999,background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:12,padding:16,fontSize:13,color:'var(--muted)'}}>AI unavailable — <button onClick={()=>setShowAI(false)} style={{background:'none',border:'none',color:'var(--accent)',cursor:'pointer',padding:0}}>close</button></div>}><Suspense fallback={<LazyFallback label="Loading AI…" />}><ConversationalInterface onClose={() => setShowAI(false)} /></Suspense></ErrorBoundary>}
         {!showAI && (
           <button
             onClick={() => setShowAI(true)}
