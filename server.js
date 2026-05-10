@@ -245,6 +245,14 @@ db.exec(`
     created_at TEXT NOT NULL
   );
 `)
+
+// ── Interest counts table (persists across restarts) ─────────────────────────
+db.exec(`
+  CREATE TABLE IF NOT EXISTS interest_counts (
+    campaign_id INTEGER PRIMARY KEY,
+    count INTEGER DEFAULT 0
+  )
+`)
 // Seed campaigns from JSON if table is empty
 ;(function() {
   const n = db.prepare('SELECT COUNT(*) as n FROM campaigns').get().n
@@ -716,8 +724,7 @@ const geocode = (address, city, state) => new Promise((resolve) => {
   req.setTimeout(8000, () => { req.destroy(); resolve(null) })
 })
 
-// Interest counts — in-memory (resets on restart; soft signal only)
-const interestCounts = {}
+// Interest counts — persisted in SQLite (survives restarts)
 
 // ── Haversine distance (returns km) ───────────────────────────────────────────
 function haversine(lat1, lon1, lat2, lon2) {
@@ -947,7 +954,10 @@ const server = http.createServer(async (req, res) => {
       if (body.action === 'counts') {
         // counts is read-only — skip rate limiting
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ counts: { ...interestCounts } }))
+        const rows = db.prepare('SELECT campaign_id, count FROM interest_counts').all()
+        const counts = {}
+        rows.forEach(r => { counts[r.campaign_id] = r.count })
+        return res.end(JSON.stringify({ counts }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
         if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
@@ -963,9 +973,13 @@ const server = http.createServer(async (req, res) => {
           return res.end(JSON.stringify({ error: 'campaign not found' }))
         }
         const id = String(idNum)
-        interestCounts[id] = (interestCounts[id] || 0) + 1
+        db.prepare(`
+          INSERT INTO interest_counts (campaign_id, count) VALUES (?, 1)
+          ON CONFLICT(campaign_id) DO UPDATE SET count = count + 1
+        `).run(idNum)
+        const row = db.prepare('SELECT count FROM interest_counts WHERE campaign_id = ?').get(idNum)
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: interestCounts[id] }))
+        return res.end(JSON.stringify({ ok: true, campaignId: idNum, count: row?.count || 1 }))
       }
       res.writeHead(400); return res.end(JSON.stringify({ error: 'invalid action' }))
     } catch {
