@@ -1,0 +1,247 @@
+/* ConversationalInterface — migrated from inline styles object */
+
+.ci-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.ci-close-btn {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  z-index: 1001;
+  font-weight: 300;
+  transition: color 0.15s;
+}
+
+.ci-esc-hint {
+  position: fixed;
+  top: 30px;
+  right: 68px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  font-family: inherit;
+  z-index: 1001;
+}
+
+.ci-container {
+  width: 100%;
+  max-width: 680px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 24px 0;
+  box-sizing: border-box;
+}
+
+.ci-starter-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 120px;
+}
+
+.ci-starter-heading {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+.ci-privacy-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  font-style: italic;
+  opacity: 0;
+  animation: fadeInNote 0.6s ease forwards;
+  animation-delay: 2.5s;
+}
+
+.ci-offline-banner {
+  font-size: 13px;
+  color: var(--red);
+  margin-bottom: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ci-starter-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ci-starter-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 0;
+  font-size: 16px;
+  color: var(--fg);
+  cursor: pointer;
+  font-weight: 300;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.ci-message-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-bottom: 100px;
+}
+
+.ci-msg-user {
+  align-self: flex-end;
+  text-align: right;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 85%;
+}
+
+.ci-msg-ai {
+  align-self: flex-start;
+  text-align: left;
+  color: var(--fg);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 100%;
+  min-height: 24px;
+}
+
+.ci-static-badge {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  font-weight: 400;
+}
+
+.ci-feedback-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.ci-feedback-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.ci-feedback-thanks {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.ci-offline-message {
+  align-self: flex-start;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.ci-input-area {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 680px;
+  background-color: var(--bg);
+  padding: 0 24px 32px;
+  box-sizing: border-box;
+}
+
+.ci-red-line {
+  height: 2px;
+  background-color: var(--red);
+  margin-bottom: 0;
+}
+
+.ci-form {
+  width: 100%;
+}
+
+.ci-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--fg);
+  padding: 16px 0;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  caret-color: var(--red);
+}
+
+/* Typing indicator */
+.ci-typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+/* .ci-dot styles are already in index.css or can be here */
+.ci-typing-indicator .ci-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--red);
+  animation: dotPulse 1.2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+.ci-thinking-phrase {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 300;
+  animation: fadePhrase 2.2s ease-in-out infinite;
+}

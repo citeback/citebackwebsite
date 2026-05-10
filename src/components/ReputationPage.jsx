@@ -427,11 +427,13 @@ function PasswordManager() {
           <input id="rp-current-pw" type="password" className="rp-input-pw" placeholder="Current password" value={form.current}
             onChange={e => set('current', e.target.value)} autoComplete="current-password" required />
           <div>
-            <input type="password" className="rp-input-pw rp-input-mb4" placeholder="New password" value={form.next}
+            <label htmlFor="rp-new-pw" className="rp-sr-label">New password</label>
+            <input id="rp-new-pw" type="password" className="rp-input-pw rp-input-mb4" placeholder="New password" value={form.next}
               onChange={e => set('next', e.target.value)} autoComplete="new-password" required />
             {str && <div className={`rp-pw-strength-label strength-label-${str.score}`}>{str.label}</div>}
           </div>
-          <input type="password" className="rp-input-pw" placeholder="Confirm new password" value={form.confirm}
+          <label htmlFor="rp-confirm-pw" className="rp-sr-label">Confirm new password</label>
+          <input id="rp-confirm-pw" type="password" className="rp-input-pw" placeholder="Confirm new password" value={form.confirm}
             onChange={e => set('confirm', e.target.value)} autoComplete="new-password" required />
           {form.confirm && !match && <div className="rp-pw-mismatch">Passwords don't match</div>}
           {err && <div className="rp-error-text">{err}</div>}

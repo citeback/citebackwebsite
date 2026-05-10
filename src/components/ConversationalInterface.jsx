@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { API_BASE } from '../config.js'
+import './ConversationalInterface.css'
 
 const SYSTEM_PROMPT = `You are Citeback — a platform that anonymously funds surveillance resistance campaigns. You speak in first person as the platform itself. You are direct, factual, and passionate about civil liberties. Never make up statistics or facts — if you don't have specific data, say so and point to citeback.com/map.
 
@@ -323,43 +324,43 @@ export default function ConversationalInterface({ onClose }) {
   const offlineMode = ollamaAvailable === false
 
   return (
-    <div style={styles.overlay}>
+    <div className="ci-overlay">
       {/* Close button */}
       <button
         onClick={onClose}
-        style={styles.closeButton}
+        className="ci-close-btn"
         aria-label="Close"
       >
         ×
       </button>
 
       {/* ESC hint */}
-      <span style={styles.escHint}>ESC to close</span>
+      <span className="ci-esc-hint">ESC to close</span>
 
-      <div style={styles.container}>
+      <div className="ci-container">
         {/* Pre-conversation: starter prompts */}
         {!started && messages.length === 0 && (
-          <div style={styles.starterContainer}>
-            <p style={styles.starterHeading}>
+          <div className="ci-starter-container">
+            <p className="ci-starter-heading">
               {offlineMode
                 ? 'Common questions — AI temporarily unavailable'
                 : 'Talk to Citeback'}
             </p>
             {!offlineMode && (
-              <p style={styles.privacyNote}>
+              <p className="ci-privacy-note">
                 Responses may be slow. Your conversations are never logged, never stored, and never used to train AI models — we verified this. Runs on our own server.
               </p>
             )}
             {offlineMode && (
-              <p style={styles.offlineBanner}>
+              <p className="ci-offline-banner">
                 AI is temporarily unavailable. These questions use pre-written answers.
               </p>
             )}
-            <div style={styles.starterPrompts}>
+            <div className="ci-starter-prompts">
               {STARTER_PROMPTS.map((prompt) => (
                 <button
                   key={prompt}
-                  style={styles.starterButton}
+                  className="ci-starter-btn"
                   onClick={() => handleStarterPrompt(prompt)}
                 >
                   {prompt}
@@ -371,28 +372,28 @@ export default function ConversationalInterface({ onClose }) {
 
         {/* Message thread */}
         {messages.length > 0 && (
-          <div style={styles.messageThread} aria-live="polite" aria-label="Conversation">
+          <div className="ci-message-thread" aria-live="polite" aria-label="Conversation">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                style={msg.role === 'user' ? styles.userMessage : styles.aiMessage}
+                className={msg.role === 'user' ? 'ci-msg-user' : 'ci-msg-ai'}
               >
                 {msg.content || (msg.role === 'assistant' && isStreaming && idx === messages.length - 1 ? (
                   <TypingIndicator />
                 ) : null)}
                 {/* Static badge */}
                 {msg.isStatic && (
-                  <span style={styles.staticBadge}>pre-written</span>
+                  <span className="ci-static-badge">pre-written</span>
                 )}
                 {/* Feedback buttons — only on completed AI responses */}
                 {msg.role === 'assistant' && !msg.isStatic && msg.content && !isStreaming && (
-                  <div style={styles.feedbackRow}>
+                  <div className="ci-feedback-row">
                     {feedback[idx] === 'sent' ? (
-                      <span style={styles.feedbackThanks}>thanks</span>
+                      <span className="ci-feedback-thanks">thanks</span>
                     ) : (
                       <>
-                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'up')} aria-label="Mark response as helpful">👍</button>
-                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'down')} aria-label="Mark response as not helpful">👎</button>
+                        <button className="ci-feedback-btn" onClick={() => sendFeedback(idx, 'up')} aria-label="Mark response as helpful">👍</button>
+                        <button className="ci-feedback-btn" onClick={() => sendFeedback(idx, 'down')} aria-label="Mark response as not helpful">👎</button>
                       </>
                     )}
                   </div>
@@ -402,7 +403,7 @@ export default function ConversationalInterface({ onClose }) {
 
             {/* Offline notice — shown after first static response */}
             {isOffline && (
-              <div style={styles.offlineMessage}>
+              <div className="ci-offline-message">
                 AI is temporarily unavailable — answering from pre-written FAQ. Try again shortly.
               </div>
             )}
@@ -412,9 +413,9 @@ export default function ConversationalInterface({ onClose }) {
         )}
 
         {/* Divider + input */}
-        <div style={styles.inputArea}>
-          <div style={styles.redLine} />
-          <form onSubmit={handleSubmit} style={styles.form}>
+        <div className="ci-input-area">
+          <div className="ci-red-line" />
+          <form onSubmit={handleSubmit} className="ci-form">
             <label htmlFor="citeback-chat-input" className="sr-only">Ask Citeback AI</label>
             <input
               id="citeback-chat-input"
@@ -427,7 +428,7 @@ export default function ConversationalInterface({ onClose }) {
               }}
               onFocus={() => !started && setStarted(true)}
               placeholder={isStreaming ? 'Waiting for response…' : offlineMode ? 'Ask anything — pre-written answers only…' : 'Ask anything…'}
-              style={styles.input}
+              className="ci-input"
               disabled={isStreaming}
               autoComplete="off"
               spellCheck={false}
@@ -467,233 +468,12 @@ function TypingIndicator() {
   }, [])
 
   return (
-    <span style={styles.typingIndicator}>
-      <span style={styles.dot} className="ci-dot ci-dot-1" />
-      <span style={styles.dot} className="ci-dot ci-dot-2" />
-      <span style={styles.dot} className="ci-dot ci-dot-3" />
-      <span style={styles.thinkingPhrase}>{THINKING_PHRASES[phraseIdx]}</span>
+    <span className="ci-typing-indicator">
+      <span className="ci-dot ci-dot-1" />
+      <span className="ci-dot ci-dot-2" />
+      <span className="ci-dot ci-dot-3" />
+      <span className="ci-thinking-phrase">{THINKING_PHRASES[phraseIdx]}</span>
     </span>
   )
 }
 
-const styles = {
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    backgroundColor: 'var(--bg)',
-    zIndex: 1000,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflowY: 'auto',
-  },
-  closeButton: {
-    position: 'fixed',
-    top: '24px',
-    right: '28px',
-    background: 'none',
-    border: 'none',
-    fontSize: '28px',
-    color: 'var(--muted)',
-    cursor: 'pointer',
-    lineHeight: 1,
-    padding: '4px 8px',
-    zIndex: 1001,
-    fontWeight: 300,
-    transition: 'color 0.15s',
-  },
-  escHint: {
-    position: 'fixed',
-    top: '30px',
-    right: '68px',
-    fontSize: '11px',
-    color: 'var(--muted)',
-    letterSpacing: '0.05em',
-    fontFamily: 'inherit',
-    zIndex: 1001,
-  },
-  container: {
-    width: '100%',
-    maxWidth: '680px',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '80px 24px 0',
-    boxSizing: 'border-box',
-  },
-  starterContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingBottom: '120px',
-  },
-  starterHeading: {
-    fontSize: '13px',
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: 'var(--muted)',
-    marginBottom: '12px',
-    fontWeight: 400,
-  },
-  privacyNote: {
-    fontSize: '12px',
-    color: 'var(--muted)',
-    lineHeight: 1.6,
-    marginBottom: '20px',
-    paddingBottom: '16px',
-    borderBottom: '1px solid var(--border)',
-    fontStyle: 'italic',
-    opacity: 0,
-    animation: 'fadeInNote 0.6s ease forwards',
-    animationDelay: '2.5s',
-  },
-  offlineBanner: {
-    fontSize: '13px',
-    color: 'var(--red)',
-    marginBottom: '24px',
-    fontWeight: 400,
-    lineHeight: 1.5,
-  },
-  starterPrompts: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-  },
-  starterButton: {
-    background: 'none',
-    border: 'none',
-    textAlign: 'left',
-    padding: '10px 0',
-    fontSize: '16px',
-    color: 'var(--fg)',
-    cursor: 'pointer',
-    fontWeight: 300,
-    lineHeight: 1.5,
-    borderBottom: '1px solid var(--border)',
-    transition: 'color 0.15s',
-    fontFamily: 'inherit',
-  },
-  messageThread: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '28px',
-    paddingBottom: '100px',
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    textAlign: 'right',
-    color: 'var(--muted)',
-    fontSize: '15px',
-    fontWeight: 400,
-    lineHeight: 1.6,
-    maxWidth: '85%',
-  },
-  aiMessage: {
-    alignSelf: 'flex-start',
-    textAlign: 'left',
-    color: 'var(--fg)',
-    fontSize: '16px',
-    fontWeight: 300,
-    lineHeight: 1.75,
-    maxWidth: '100%',
-    minHeight: '24px',
-  },
-  staticBadge: {
-    display: 'inline-block',
-    marginLeft: '10px',
-    fontSize: '10px',
-    color: 'var(--muted)',
-    letterSpacing: '0.06em',
-    textTransform: 'uppercase',
-    verticalAlign: 'middle',
-    fontWeight: 400,
-  },
-  feedbackRow: {
-    display: 'flex',
-    gap: '6px',
-    marginTop: '8px',
-    opacity: 0.5,
-    transition: 'opacity 0.15s',
-  },
-  feedbackBtn: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '14px',
-    padding: '2px 4px',
-    borderRadius: '4px',
-    lineHeight: 1,
-  },
-  feedbackThanks: {
-    fontSize: '11px',
-    color: 'var(--muted)',
-    fontStyle: 'italic',
-  },
-  offlineMessage: {
-    alignSelf: 'flex-start',
-    color: 'var(--muted)',
-    fontSize: '13px',
-    fontWeight: 400,
-    lineHeight: 1.6,
-    fontStyle: 'italic',
-    borderTop: '1px solid var(--border)',
-    paddingTop: '12px',
-  },
-  inputArea: {
-    position: 'fixed',
-    bottom: 0,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '100%',
-    maxWidth: '680px',
-    backgroundColor: 'var(--bg)',
-    padding: '0 24px 32px',
-    boxSizing: 'border-box',
-  },
-  redLine: {
-    height: '2px',
-    backgroundColor: 'var(--red)',
-    marginBottom: '0',
-  },
-  form: {
-    width: '100%',
-  },
-  input: {
-    width: '100%',
-    border: 'none',
-    borderBottom: '1px solid var(--border)',
-    background: 'transparent',
-    fontSize: '18px',
-    fontWeight: 300,
-    color: 'var(--fg)',
-    padding: '16px 0',
-    outline: 'none',
-    fontFamily: 'inherit',
-    boxSizing: 'border-box',
-    caretColor: 'var(--red)',
-  },
-  typingIndicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px',
-    paddingTop: '4px',
-  },
-  dot: {
-    display: 'inline-block',
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    backgroundColor: 'var(--red)',
-    animation: 'dotPulse 1.2s infinite ease-in-out',
-    flexShrink: 0,
-  },
-  thinkingPhrase: {
-    fontSize: '13px',
-    color: 'var(--muted)',
-    fontStyle: 'italic',
-    fontWeight: 300,
-    animation: 'fadePhrase 2.2s ease-in-out infinite',
-  },
-}
