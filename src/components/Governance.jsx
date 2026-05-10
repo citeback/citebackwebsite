@@ -8,7 +8,7 @@ const sections = [
   { id: 'voting', label: 'Voting Mechanics', icon: CheckCircle },
   { id: 'disbursement', label: 'Disbursement', icon: Lock },
   { id: 'human-operator', label: 'Human Operator Layer', icon: Users },
-  { id: 'tee', label: 'Wallet Architecture (Direct)', icon: Lock },
+  { id: 'wallet-architecture', label: 'Wallet Architecture (Direct)', icon: Lock },
   { id: 'bootstrapping', label: 'Bootstrapping', icon: Users },
   { id: 'immutables', label: 'Immutables', icon: AlertTriangle },
   { id: 'prerequisites', label: 'Launch Prerequisites', icon: CheckCircle },
@@ -259,7 +259,7 @@ export default function Governance({ setTab }) {
         </div>
       </Section>
 
-      <Section id="tee" title="Wallet Architecture (Direct Wallet Model)" icon={Lock}>
+      <Section id="wallet-architecture" title="Wallet Architecture (Direct Wallet Model)" icon={Lock}>
         <p>Citeback uses a <strong style={{ color: 'var(--fg)' }}>direct wallet model</strong>: operators hold their own XMR and ZANO wallets. Contributions flow directly from contributors to the operator's wallet — Citeback never holds, pools, or touches campaign funds.</p>
         <div style={{
           marginTop: 16, padding: '12px 16px', borderRadius: 0,
@@ -303,15 +303,16 @@ export default function Governance({ setTab }) {
         <p style={{ marginBottom: 16 }}>The following are enforced by the wallet execution layer. <strong style={{ color: 'var(--fg)' }}>A 100% community vote cannot override them.</strong> Changing them requires forking the platform.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
-            'No platform custody - Citeback never holds campaign wallet keys or funds',
-            'Criminal defense prohibition - no funding of criminal defense campaigns',
-            'Illegal activity prohibition - no funding of campaigns involving illegal activity',
-            'Camera tampering prohibition - no funding of campaigns to disable or interfere with surveillance equipment',
-            'No individual surplus distribution - operations surplus cannot flow to any individual',
-            'Founder ceiling permanence - 5% founder voting ceiling cannot be removed',
-            'Direct wallet permanence - the direct wallet model (no platform custody) is a permanent architectural requirement',
-            'Minimum threshold floor - voting threshold cannot be set below $1 equivalent',
-            'Founder governance ceiling permanence - 5% voting cap cannot be removed by any vote',
+            'No platform key access — Citeback never holds, receives, or controls operator wallet private keys',
+            'Criminal defense prohibition — no funding of criminal defense campaigns',
+            'Illegal activity prohibition — no funding of campaigns involving illegal activity',
+            'Camera tampering prohibition — no funding of campaigns to disable or interfere with surveillance equipment',
+            'No individual surplus distribution — operations surplus cannot flow to any individual as profit',
+            'Founder voting ceiling permanence — 5% founder voting cap is permanent; founders cannot vote on this rule',
+            'No platform custody — the platform may not hold, receive, or transmit campaign funds; direct-to-operator model is permanent',
+            'Minimum threshold floor — voting threshold cannot be set below $1 equivalent',
+            'Founder address registry permanence — founder address registry cannot be modified by any vote',
+            'OFAC SDN match override prohibition — no community vote may override a denial based on an OFAC SDN list match',
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 3 }} />

@@ -131,9 +131,9 @@ Campaign operators (who receive disbursements) are separately screened against t
         a: `Your contribution uses XMR or ZANO protocol-level privacy — no on-chain link between you and the campaign. However, browsing this site creates standard server-side and third-party logs that are separate from your contribution privacy:
 
 • **Hosting:** This site runs on Netlify, which logs visitor IP addresses per standard hosting practice. Netlify's data retention follows their published privacy policy.
-• **Fonts:** This site loads fonts from Bunny CDN (fonts.bunny.net). Bunny CDN logs standard CDN access requests including IP addresses.
+• **Fonts:** All typefaces (Inter, Space Grotesk, JetBrains Mono) are self-hosted on Citeback's servers. No external font CDN is used — no font-related IP exposure.
 • **Map tiles:** The surveillance camera map loads tiles from CARTO (*.basemaps.cartocdn.com). CARTO receives tile requests including your IP address.
-• **External data APIs:** Features powered by CourtListener, USASpending.gov, the Senate LDA API, and api.congress.gov make client-side requests that expose your IP to those services.
+• **External data APIs:** Requests to CourtListener, USASpending.gov, the Senate LDA API, OpenStates, and api.congress.gov are proxied through Citeback's own servers. Your IP address is not exposed to these third-party services.
 • **Form submissions:** Campaign proposals, camera sightings, and expert directory applications are sent directly to Citeback's own server infrastructure. No contact information is collected or required. IP address logging is disabled at the server level. Submission data goes into a moderation queue — no personal data is stored.
 
 For maximum privacy when browsing this site, use Tor Browser, a trusted VPN, or a privacy-preserving proxy. Your XMR or ZANO contribution remains private regardless of browsing method — coin-level privacy is at the protocol layer, not the application layer. These infrastructure disclosures do not affect contribution privacy.`,
