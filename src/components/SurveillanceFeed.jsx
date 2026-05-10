@@ -9,14 +9,8 @@ const CL_QUERIES = [
   '"Flock Safety" surveillance',
 ]
 
-// ── OpenStates — requires a free API key ────────────────────────────────────
-// Get yours at: https://openstates.org/account/profile/
-// Set VITE_OPENSTATES_KEY in your .env file
-const OPENSTATES_KEY = import.meta.env.VITE_OPENSTATES_KEY || ''
-
-// ── Congress.gov — DEMO_KEY works for dev (30 req/hr) ────────────────────────
-// Set VITE_CONGRESS_KEY in your .env for a full key
-const CONGRESS_KEY = import.meta.env.VITE_CONGRESS_KEY || 'DEMO_KEY'
+// API keys are injected server-side by the proxy function — no client exposure
+// Set OPENSTATES_KEY and CONGRESS_KEY in Netlify > Site Settings > Env Vars
 
 // Mock legislative data shown when no OpenStates key is configured
 const MOCK_BILLS = [
@@ -180,7 +174,7 @@ export default function SurveillanceFeed({ setTab }) {
     ]
     const fetches = queries.map(q =>
       fetchWithRetry(
-        `https://www.courtlistener.com/api/rest/v4/search/?q=${encodeURIComponent(q)}&type=o&format=json&order_by=dateFiled+desc`
+        `/.netlify/functions/proxy?service=courtlistener&q=${encodeURIComponent(q)}&type=o&format=json&order_by=dateFiled+desc`
       )
         .then(r => r.json())
         .catch(() => null)
@@ -241,7 +235,7 @@ export default function SurveillanceFeed({ setTab }) {
 
     // Fetch a larger batch to improve odds of matching surveillance-relevant bills
     fetchWithRetry(
-      `https://api.congress.gov/v3/bill/119?format=json&limit=50&api_key=${CONGRESS_KEY}&sort=updateDate+desc`
+      `/.netlify/functions/proxy?service=congress&format=json&limit=50&sort=updateDate+desc`
     )
       .then(r => r.json())
       .then(data => {
@@ -281,12 +275,7 @@ export default function SurveillanceFeed({ setTab }) {
 
   // ── Fetch OpenStates bills (or show mock) ─────────────────────────────────
   useEffect(() => {
-    if (!OPENSTATES_KEY) {
-      setBills(MOCK_BILLS)
-      setBillsLoading(false)
-      return
-    }
-
+    // Key is now injected server-side via the proxy — always attempt the fetch
     let cancelled = false
     setBillsLoading(true)
     setBillsError(null)
@@ -299,7 +288,7 @@ export default function SurveillanceFeed({ setTab }) {
     const stateQuery = 'license+plate+reader+surveillance'
 
     fetchWithRetry(
-      `https://v3.openstates.org/bills?q=${stateQuery}&include=abstracts&sort=updated_desc&per_page=8&apikey=${OPENSTATES_KEY}`
+      `/.netlify/functions/proxy?service=openstates&q=${stateQuery}&include=abstracts&sort=updated_desc&per_page=8`
     )
       .then(r => r.json())
       .then(data => {

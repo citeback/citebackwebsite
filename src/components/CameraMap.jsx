@@ -402,7 +402,7 @@ async function fetchOSMCameras(bounds) {
     );
     out body;
   `
-  const res = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query })
+  const res = await fetch('/.netlify/functions/proxy?service=overpass', { method: 'POST', body: query })
   const data = await res.json()
   return data.elements || []
 }

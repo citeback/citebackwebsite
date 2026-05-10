@@ -1017,6 +1017,38 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({ ok: true }))
   }
 
+  // ── Account: change password ─────────────────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/account/change-password') {
+    const claims = verifyToken(req)
+    if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
+    if (!checkAuthRateLimit(clientIp)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' })) }
+    try {
+      const body = await parseBody(req)
+      const currentPassword = String(body.currentPassword || '')
+      const newPassword = String(body.newPassword || '')
+      if (!currentPassword || !newPassword) {
+        res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'currentPassword and newPassword are required' }))
+      }
+      const user = db.prepare('SELECT id, password_hash, password_version FROM users WHERE id = ?').get(claims.userId)
+      if (!user) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'User not found' })) }
+      const match = await bcrypt.compare(currentPassword, user.password_hash)
+      if (!match) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Current password is incorrect' })) }
+      const strengthError = checkPasswordStrength(newPassword)
+      if (strengthError) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: strengthError })) }
+      const newHash = await bcrypt.hash(newPassword, 12)
+      const newPv = (user.password_version || 0) + 1
+      db.prepare('UPDATE users SET password_hash = ?, password_version = ? WHERE id = ?').run(newHash, newPv, user.id)
+      // Issue a fresh JWT for the current session; all other sessions are invalidated
+      const freshToken = jwt.sign({ userId: user.id, username: claims.username, pv: newPv }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
+      res.setHeader('Set-Cookie', `token=${freshToken}; ${COOKIE_OPTS}`)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true }))
+    } catch (e) {
+      console.error('change-password error:', e.message)
+      res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Server error' }))
+    }
+  }
+
   // ── Account: profile ───────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/account/me') {
     const claims = verifyToken(req)

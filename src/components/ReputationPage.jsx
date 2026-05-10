@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus, LogOut, ShieldAlert } from 'lucide-react'
+import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus, LogOut, ShieldAlert, Lock } from 'lucide-react'
 import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser'
 
 // Detect likely platform for a smarter default passkey name
@@ -378,6 +378,87 @@ function SightingRow({ sighting }) {
   )
 }
 
+function PasswordManager() {
+  const [open, setOpen] = useState(false)
+  const [form, setForm] = useState({ current: '', next: '', confirm: '' })
+  const [loading, setLoading] = useState(false)
+  const [err, setErr] = useState(null)
+  const [ok, setOk] = useState(false)
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setErr(null) }
+
+  // Mirrors server entropy check
+  const strength = (pw) => {
+    if (!pw) return null
+    if (pw.length < 8) return { label: 'Too short', color: '#e63946', ok: false }
+    const cs = (/[a-z]/.test(pw)?26:0)+(/[A-Z]/.test(pw)?26:0)+(/[0-9]/.test(pw)?10:0)+(/[^a-zA-Z0-9]/.test(pw)?32:0)
+    const e = Math.log2(cs||1)*pw.length
+    if (e < 40) return { label: 'Weak', color: '#e63946', ok: false }
+    if (e < 55) return { label: 'Fair', color: '#f59e0b', ok: false }
+    if (e < 70) return { label: 'Good', color: '#2a9d8f', ok: true }
+    return { label: 'Strong', color: '#6ee7b7', ok: true }
+  }
+  const str = strength(form.next)
+  const match = form.next && form.confirm && form.next === form.confirm
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!str?.ok) return
+    if (!match) { setErr('Passwords do not match'); return }
+    setLoading(true); setErr(null)
+    try {
+      const res = await fetch(`${AI_URL}/account/change-password`, {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: form.current, newPassword: form.next }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed')
+      setOk(true)
+      setForm({ current: '', next: '', confirm: '' })
+      setTimeout(() => { setOk(false); setOpen(false) }, 2500)
+    } catch (e) { setErr(e.message) }
+    finally { setLoading(false) }
+  }
+
+  const inp = { width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', padding: '9px 12px', borderRadius: 7, fontSize: 13, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }
+
+  return (
+    <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: open ? 14 : 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Lock size={14} style={{ color: 'var(--muted)' }} />
+          <span style={{ fontSize: 13, fontWeight: 600 }}>Change Password</span>
+          {ok && <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>✓ Password updated</span>}
+        </div>
+        <button onClick={() => { setOpen(o => !o); setErr(null) }}
+          style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 6, padding: '4px 10px', fontSize: 12, cursor: 'pointer' }}>
+          {open ? 'Cancel' : 'Change'}
+        </button>
+      </div>
+      {open && (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input type="password" style={inp} placeholder="Current password" value={form.current}
+            onChange={e => set('current', e.target.value)} autoComplete="current-password" required />
+          <div>
+            <input type="password" style={{ ...inp, marginBottom: 4 }} placeholder="New password" value={form.next}
+              onChange={e => set('next', e.target.value)} autoComplete="new-password" required />
+            {str && <div style={{ fontSize: 11, color: str.color, fontWeight: 600 }}>{str.label}</div>}
+          </div>
+          <input type="password" style={inp} placeholder="Confirm new password" value={form.confirm}
+            onChange={e => set('confirm', e.target.value)} autoComplete="new-password" required />
+          {form.confirm && !match && <div style={{ fontSize: 11, color: '#e63946' }}>Passwords don’t match</div>}
+          {err && <div style={{ fontSize: 12, color: '#e63946' }}>{err}</div>}
+          <button type="submit" disabled={loading || !str?.ok || !match}
+            style={{ background: str?.ok && match ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: str?.ok && match ? '#fff' : 'var(--muted)', padding: '10px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: str?.ok && match ? 'pointer' : 'not-allowed' }}>
+            {loading ? 'Updating…' : 'Update Password'}
+          </button>
+          <p style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5, margin: 0 }}>Changing your password signs out all other devices.</p>
+        </form>
+      )}
+    </div>
+  )
+}
+
 function SessionManager() {
   const { logout } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -625,6 +706,9 @@ export default function ReputationPage({ setTab }) {
 
       {/* Passkey management */}
       <PasskeyManager />
+
+      {/* Change password */}
+      <PasswordManager />
 
       {/* Session security */}
       <SessionManager />

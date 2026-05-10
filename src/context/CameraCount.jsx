@@ -10,7 +10,7 @@ async function fetchCameraCount() {
 node["man_made"="surveillance"]["surveillance:type"="ALPR"];
 out count;`
 
-  const res = await fetch('https://overpass-api.de/api/interpreter', {
+  const res = await fetch('/.netlify/functions/proxy?service=overpass', {
     method: 'POST',
     body: query,
   })

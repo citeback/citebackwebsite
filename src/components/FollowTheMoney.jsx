@@ -96,7 +96,7 @@ const VENDOR_DATA = [
 // Returns { count, totalExpenses, totalIncome, error }
 async function fetchLdaData(clientQuery) {
   try {
-    const url = `https://lda.senate.gov/api/v1/filings/?client_name=${encodeURIComponent(clientQuery)}&format=json&limit=100`
+    const url = `/.netlify/functions/proxy?service=lda&client_name=${encodeURIComponent(clientQuery)}&format=json&limit=100`
     const res = await fetch(url)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
