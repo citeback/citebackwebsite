@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader, Fingerprint } from 'lucide-react'
 import { startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser'
@@ -7,6 +7,7 @@ import { API_BASE as AI_URL } from '../config.js'
 
 export default function AccountModal({ onClose, initialTab = 'login', singleMode = false }) {
   const { login, createAccount } = useAuth()
+  const modalRef = useRef(null)
   const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover'
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', email: '' })
   const [recoverUsername, setRecoverUsername] = useState('')
@@ -18,6 +19,33 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
   const [passkeyLoading, setPasskeyLoading] = useState(false)
 
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setError(null) }
+
+  // Focus trap + Escape handler
+  useEffect(() => {
+    const modal = modalRef.current
+    if (!modal) return
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    focusable[0]?.focus()
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') {
+        const els = modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const first = els[0]
+        const last = els[els.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last?.focus() }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first?.focus() }
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
 
   const handlePasskeyLogin = async () => {
     setPasskeyLoading(true)
@@ -135,11 +163,18 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
   }
 
   const content = (
-    <div style={overlay} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={modal}>
+    <div style={overlay} role="presentation" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="account-modal-heading"
+        style={modal}
+      >
         {/* Close */}
         <button
           onClick={onClose}
+          aria-label="Close"
           style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4, borderRadius: 6 }}
         >
           <X size={18} />
@@ -147,7 +182,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
 
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
-          <h2 style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em', marginBottom: 6 }}>
+          <h2 id="account-modal-heading" style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em', marginBottom: 6 }}>
             {tab === 'login' ? 'Welcome back' : tab === 'create' ? 'Join Citeback' : 'Recover your account'}
           </h2>
           {tab !== 'recover' && (
@@ -198,8 +233,16 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               </div>
             ) : (
               <form onSubmit={handleRecover} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <input style={{ ...inputStyle }} placeholder="Your username" value={recoverUsername}
-                  onChange={e => setRecoverUsername(e.target.value)} autoFocus required />
+                <input
+                  id="account-recover-username"
+                  style={{ ...inputStyle }}
+                  placeholder="Your username"
+                  value={recoverUsername}
+                  onChange={e => setRecoverUsername(e.target.value)}
+                  aria-label="Username for account recovery"
+                  autoFocus
+                  required
+                />
                 <button type="submit" disabled={loading || !recoverUsername}
                   style={{ background: recoverUsername ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: recoverUsername ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: recoverUsername ? 'pointer' : 'not-allowed' }}>
                   {loading ? 'Sending…' : 'Send Reset Link'}
@@ -247,10 +290,11 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
           )}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={labelStyle}>Username</label>
+              <label htmlFor="account-username" style={labelStyle}>Username</label>
               <div style={{ position: 'relative' }}>
                 <User size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
                 <input
+                  id="account-username"
                   style={{ ...inputStyle, paddingLeft: 34 }}
                   placeholder="e.g. alpr_watcher"
                   value={form.username}
@@ -269,10 +313,11 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             </div>
 
             <div>
-              <label style={labelStyle}>Password</label>
+              <label htmlFor="account-password" style={labelStyle}>Password</label>
               <div style={{ position: 'relative' }}>
                 <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
                 <input
+                  id="account-password"
                   type={showPw ? 'text' : 'password'}
                   style={{ ...inputStyle, paddingLeft: 34, paddingRight: 40 }}
                   placeholder={tab === 'create' ? 'At least 8 characters' : 'Your password'}
@@ -284,6 +329,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 <button
                   type="button"
                   onClick={() => setShowPw(p => !p)}
+                  aria-label={showPw ? 'Hide password' : 'Show password'}
                   style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4 }}
                 >
                   {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -293,10 +339,11 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
 
             {tab === 'create' && (
               <div>
-                <label style={labelStyle}>Confirm Password</label>
+                <label htmlFor="account-confirm-pw" style={labelStyle}>Confirm Password</label>
                 <div style={{ position: 'relative' }}>
                   <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
                   <input
+                    id="account-confirm-pw"
                     type={showPw ? 'text' : 'password'}
                     style={{ ...inputStyle, paddingLeft: 34, borderColor: form.confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
                     placeholder="Re-enter password"
@@ -347,11 +394,12 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
             {tab === 'create' && (
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div>
-                  <label style={labelStyle}>
+                  <label htmlFor="account-email" style={labelStyle}>
                     Recovery Email{' '}
                     <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional — required to run campaigns)</span>
                   </label>
                   <input
+                    id="account-email"
                     type="email"
                     style={inputStyle}
                     placeholder="you@example.com"

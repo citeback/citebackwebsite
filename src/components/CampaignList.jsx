@@ -124,7 +124,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
           No campaigns match your search.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: 20 }}>
           {filtered.map(c => (
             <CampaignCard
               key={c.id}

@@ -372,7 +372,7 @@ export default function ConversationalInterface({ onClose }) {
 
         {/* Message thread */}
         {messages.length > 0 && (
-          <div style={styles.messageThread}>
+          <div style={styles.messageThread} aria-live="polite" aria-label="Conversation">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
@@ -392,8 +392,8 @@ export default function ConversationalInterface({ onClose }) {
                       <span style={styles.feedbackThanks}>thanks</span>
                     ) : (
                       <>
-                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'up')} title="Helpful">👍</button>
-                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'down')} title="Not helpful">👎</button>
+                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'up')} aria-label="Mark response as helpful">👍</button>
+                        <button style={styles.feedbackBtn} onClick={() => sendFeedback(idx, 'down')} aria-label="Mark response as not helpful">👎</button>
                       </>
                     )}
                   </div>
@@ -416,7 +416,9 @@ export default function ConversationalInterface({ onClose }) {
         <div style={styles.inputArea}>
           <div style={styles.redLine} />
           <form onSubmit={handleSubmit} style={styles.form}>
+            <label htmlFor="citeback-chat-input" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>Ask Citeback AI</label>
             <input
+              id="citeback-chat-input"
               ref={inputRef}
               type="text"
               value={input}
@@ -431,6 +433,12 @@ export default function ConversationalInterface({ onClose }) {
               autoComplete="off"
               spellCheck={false}
             />
+            <button
+              type="submit"
+              disabled={isStreaming || !input.trim()}
+              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, padding: 0 }}
+              aria-label="Send message"
+            >Send</button>
           </form>
         </div>
       </div>

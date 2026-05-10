@@ -45,7 +45,7 @@ const SurveillanceFeed = lazy(() => import('./components/SurveillanceFeed'))
 const ConversationalInterface = lazy(() => import('./components/ConversationalInterface'))
 
 const LazyFallback = ({ label = 'Loading…' }) => (
-  <div style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
+  <div role="status" aria-live="polite" style={{ padding: '60px 24px', textAlign: 'center', opacity: 0.5, fontSize: 14 }}>{label}</div>
 )
 
 const TAB_TO_PATH = {
@@ -82,6 +82,26 @@ function CampaignDeepLink({ setSelectedCampaign, setTab }) {
 const PATH_TO_TAB = Object.fromEntries(Object.entries(TAB_TO_PATH).map(([k, v]) => [v, k]))
 PATH_TO_TAB['/'] = 'home'
 
+const ROUTE_TITLES = {
+  '/': 'Citeback — Fund the Fight Against Surveillance',
+  '/campaigns': 'Campaigns | Citeback',
+  '/map': 'Camera Map | Citeback',
+  '/expert-directory': 'Expert Directory | Citeback',
+  '/transparency': 'Transparency | Citeback',
+  '/how-it-works': 'How It Works | Citeback',
+  '/governance': 'Governance | Citeback',
+  '/run-a-campaign': 'Run a Campaign | Citeback',
+  '/frontline-funds': 'Frontline Funds | Citeback',
+  '/intelligence-feed': 'Intelligence Feed | Citeback',
+  '/privacy': 'Privacy Policy | Citeback',
+  '/terms': 'Terms | Citeback',
+  '/report': 'Report a Camera | Citeback',
+  '/reputation': 'Reputation | Citeback',
+  '/cx-admin': 'Admin | Citeback',
+  '/reset-password': 'Reset Password | Citeback',
+  '/claim-account': 'Claim Account | Citeback',
+}
+
 const tabToPath = (tab) => TAB_TO_PATH[tab] ?? `/${tab}`
 const pathToTab = (path) => {
   if (PATH_TO_TAB[path]) return PATH_TO_TAB[path]
@@ -98,6 +118,13 @@ export default function App() {
 
   const tab = pathToTab(location.pathname)
   const setTab = (t, query = '') => navigate(tabToPath(t) + query)
+
+  useEffect(() => {
+    const path = location.pathname
+    let title = ROUTE_TITLES[path]
+    if (!title && path.startsWith('/campaigns/')) title = 'Campaign | Citeback'
+    document.title = title || 'Citeback — Fund the Fight Against Surveillance'
+  }, [location.pathname])
 
   useEffect(() => {
     const handler = (e) => setTab(e.detail)

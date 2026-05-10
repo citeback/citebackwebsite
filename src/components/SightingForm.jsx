@@ -302,7 +302,7 @@ export default function SightingForm({ setTab }) {
               <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ position: 'relative' }}>
                   <img src={photoPreview} alt="Sighting" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
-                  <button type="button" onClick={clearPhoto} style={{
+                  <button type="button" onClick={clearPhoto} aria-label="Remove photo" style={{
                     position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.6)',
                     border: 'none', color: '#fff', borderRadius: '50%', width: 28, height: 28,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',

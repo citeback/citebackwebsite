@@ -214,7 +214,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
   return (
     <div style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
       <div style={modalStyle}>
-        <button onClick={onClose} style={{
+        <button onClick={onClose} aria-label="Close" style={{
           position: 'absolute', top: 16, right: 16,
           background: 'none', border: 'none', color: 'var(--muted)',
           cursor: 'pointer', padding: 4, borderRadius: 6,
@@ -433,7 +433,7 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
   const approved = photos.filter(p => p.status === 'approved')
   const pending = photos.filter(p => p.status === 'pending')
   const photoStrip = approved.length > 0
-    ? `<div style="margin:10px 0 6px"><div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:6px">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div><div style="display:flex;gap:4px;flex-wrap:wrap">${approved.map(p => `<img src="${p.dataUrl}" style="width:80px;height:55px;object-fit:cover;border-radius:5px;border:1px solid #292524">`).join('')}</div></div>`
+    ? `<div style="margin:10px 0 6px"><div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:6px">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div><div style="display:flex;gap:4px;flex-wrap:wrap">${approved.map(p => `<img src="${p.dataUrl}" alt="Community submitted camera photo" style="width:80px;height:55px;object-fit:cover;border-radius:5px;border:1px solid #292524">`).join('')}</div></div>`
     : pending.length > 0
       ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
