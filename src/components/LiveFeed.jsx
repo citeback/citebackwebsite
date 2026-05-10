@@ -7,7 +7,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'CAMERA',
-    text: '92,848th camera added to the database',
+    text: '95,045 ALPR cameras now documented in the surveillance map',
   },
   {
     category: 'SURVEILLANCE',
