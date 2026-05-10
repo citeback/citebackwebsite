@@ -2386,6 +2386,31 @@ const server = http.createServer(async (req, res) => {
   })
 })
 
+// ── Process stability handlers ───────────────────────────────────────────────
+// Prevent unhandled rejections from crashing the process (= instant downtime)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[unhandledRejection] at:', promise, 'reason:', reason?.message || reason)
+  // Don't exit — log and continue. The request that caused it will time out gracefully.
+})
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err.message, err.stack)
+  // For truly uncaught exceptions, log and attempt graceful shutdown
+  setTimeout(() => process.exit(1), 3000) // Give systemd time to restart
+})
+
+// Graceful shutdown — drain in-flight requests on SIGTERM (systemctl stop/restart)
+process.on('SIGTERM', () => {
+  console.log('[SIGTERM] Shutting down gracefully...')
+  server.close(() => {
+    console.log('[SIGTERM] Server closed. Exiting.')
+    // Checkpoint WAL before exit
+    try { db.prepare('PRAGMA wal_checkpoint(TRUNCATE)').run() } catch {}
+    process.exit(0)
+  })
+  // Force exit after 10s if connections don't drain
+  setTimeout(() => { console.error('[SIGTERM] Force exit'); process.exit(1) }, 10_000)
+})
+
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Citeback proxy :${PORT} | queue:${MAX_QUEUE} | rate:${RATE_LIMIT}req/min | data:${DATA_DIR} | auth:enabled | admin:enabled`)
 })
