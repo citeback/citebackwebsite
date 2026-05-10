@@ -86,7 +86,8 @@ function stripJpegExif(filePath) {
       const segLen = buf.readUInt16BE(i + 2)
       if (segLen < 2) break
       // APP1 (0xE1 = Exif/XMP) through APP15 (0xEF) — strip all
-      if (marker >= 0xE1 && marker <= 0xEF) {
+      // Exception: APP11 (0xEB) is used by C2PA manifests — preserve it
+      if (marker >= 0xE1 && marker <= 0xEF && marker !== 0xEB) {
         i += 2 + segLen
       } else {
         out.push(buf.slice(i, i + 2 + segLen))

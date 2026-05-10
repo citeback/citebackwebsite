@@ -18,27 +18,14 @@ const sections = [
 function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div id={id} style={{
-      background: 'var(--card-bg)',
-      border: '1px solid var(--border)',
-      borderRadius: 0,
-      marginBottom: 16,
-      overflow: 'hidden'
-    }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-          padding: '18px 24px', background: 'none', border: 'none',
-          cursor: 'pointer', color: 'var(--fg)', textAlign: 'left'
-        }}
-      >
-        <Icon size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-        <span style={{ fontWeight: 600, fontSize: 16, flex: 1 }}>{title}</span>
+    <div id={id} className="gov-section">
+      <button onClick={() => setOpen(o => !o)} className="gov-section-btn">
+        <Icon size={18} className="gov-section-icon" />
+        <span className="gov-section-title">{title}</span>
         {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
       {open && (
-        <div style={{ padding: '0 24px 24px', color: 'var(--muted)', lineHeight: 1.7 }}>
+        <div className="gov-section-body">
           {children}
         </div>
       )}
@@ -48,11 +35,14 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
 
 function Tag({ children, color = '#6ee7b7' }) {
   return (
-    <span style={{
-      display: 'inline-block', padding: '2px 10px', borderRadius: 0,
-      fontSize: 12, fontWeight: 600, marginRight: 6, marginBottom: 4,
-      background: color + '22', color: color, border: `1px solid ${color}44`
-    }}>
+    <span
+      className="gov-tag"
+      style={{
+        background: color + '22',
+        color: color,
+        border: `1px solid ${color}44`
+      }}
+    >
       {children}
     </span>
   )
@@ -60,24 +50,20 @@ function Tag({ children, color = '#6ee7b7' }) {
 
 function Table({ headers, rows }) {
   return (
-    <div style={{ overflowX: 'auto', marginTop: 12 }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+    <div className="gov-table-wrap">
+      <table className="gov-table">
         <thead>
           <tr>
             {headers.map(h => (
-              <th key={h} style={{
-                textAlign: 'left', padding: '8px 12px',
-                borderBottom: '1px solid var(--border)',
-                color: 'var(--accent)', fontWeight: 600, whiteSpace: 'nowrap'
-              }}>{h}</th>
+              <th key={h} className="gov-th">{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+            <tr key={i} className="gov-tr">
               {row.map((cell, j) => (
-                <td key={j} style={{ padding: '8px 12px', verticalAlign: 'top' }}>{cell}</td>
+                <td key={j} className="gov-td">{cell}</td>
               ))}
             </tr>
           ))}
@@ -88,15 +74,7 @@ function Table({ headers, rows }) {
 }
 
 function Code({ children }) {
-  return (
-    <code style={{
-      display: 'block', background: 'var(--bg3)', border: '1px solid var(--border)',
-      borderRadius: 0, padding: '12px 16px', fontFamily: 'monospace', fontSize: 13,
-      color: 'var(--green)', marginTop: 8, marginBottom: 8, whiteSpace: 'pre-wrap'
-    }}>
-      {children}
-    </code>
-  )
+  return <code className="gov-code">{children}</code>
 }
 
 export default function Governance({ setTab }) {
@@ -108,19 +86,19 @@ export default function Governance({ setTab }) {
       <meta property="og:title" content="Governance | Citeback — Community-Controlled Platform Rules" />
       <meta property="og:description" content="Read Citeback's governance framework: community voting, campaign rules, disbursement controls, and the immutable core of the surveillance resistance platform." />
     </Helmet>
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div className="gov-page">
 
       {/* Header */}
-      <div style={{ marginBottom: 40 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+      <div className="gov-header">
+        <div className="gov-header-row">
           <Shield size={28} style={{ color: 'var(--accent)' }} />
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Governance Specification</h1>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div className="gov-header-tags">
           <Tag>Active</Tag>
           <Tag color="#a78bfa">Updated 2026-05-04</Tag>
         </div>
-        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7 }}>
+        <p className="gov-header-desc">
           This document defines how Citeback is governed - how decisions are made,
           how funds are disbursed, what can never be changed, and what must be in place before
           a single dollar is accepted.
@@ -129,26 +107,18 @@ export default function Governance({ setTab }) {
           href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12,
-            padding: '8px 16px', borderRadius: 0, fontSize: 13, fontWeight: 600,
-            background: 'var(--bg2)', border: '1px solid var(--border)',
-            color: 'var(--fg)', textDecoration: 'none'
-          }}
+          className="gov-gh-link"
         >
           <ExternalLink size={14} /> View full document on GitHub
         </a>
       </div>
 
       {/* TOC */}
-      <div style={{
-        background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
-        borderRadius: 0, padding: '16px 20px', marginBottom: 32
-      }}>
-        <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: 1 }}>Contents</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px' }}>
+      <div className="gov-toc">
+        <p className="gov-toc-label">Contents</p>
+        <div className="gov-toc-links">
           {sections.map(s => (
-            <a key={s.id} href={`#${s.id}`} style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>
+            <a key={s.id} href={`#${s.id}`} className="gov-toc-link">
               → {s.label}
             </a>
           ))}
@@ -160,10 +130,7 @@ export default function Governance({ setTab }) {
         <p>Citeback exists because surveillance is asymmetric. Institutions document individuals constantly, at scale, with impunity. Individuals have almost no reciprocal capacity to challenge them or fund accountability work.</p>
         <p style={{ marginTop: 12 }}>The platform ensures that financial access, legal pressure, and platform deplatforming <strong style={{ color: 'var(--fg)' }}>cannot silence lawful accountability work.</strong> It operates within applicable law and supports First Amendment-protected activity.</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Core differentiator:</strong> Established civil liberties organizations must disclose donors and answer to boards. This platform does not. Anonymous coordination enables funding coordination that established organizations are structurally unable to provide - contributors who need privacy, coalitions that can't share mailing lists, causes that require deniability for participants.</p>
-        <div style={{
-          marginTop: 16, padding: '12px 16px', borderRadius: 0,
-          background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)'
-        }}>
+        <div className="gov-highlight gov-highlight--red" style={{ marginTop: 16 }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             <strong style={{ color: '#f87171' }}>What this platform is not:</strong> A tool for harassment, defamation, or attacks on private individuals. A platform for criminal defense or illegal activity. Designed to evade lawful oversight.
           </p>
@@ -171,16 +138,16 @@ export default function Governance({ setTab }) {
       </Section>
 
       <Section id="participants" title="Participants" icon={Users}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="gov-participant-list">
           {[
             { label: 'Contributors', color: 'var(--green)', desc: 'Anyone who sends Monero or Zano to a campaign wallet. No registration. No identity collected. Voting weight derives from cumulative contributions.' },
             { label: 'Operators', color: '#a78bfa', desc: 'Create and manage campaigns. Nostr keys preferred for identity (verifiable without exposing personal data). Must pass OFAC screening with real-name data held by DAO legal entity (never published on-chain), maintain reputation score, and submit verified proof of work. Independent contractors - not agents or employees.' },
             { label: 'The Community', color: '#60a5fa', desc: 'Active contributors who participate in governance votes. No membership list, no token. Governance power flows directly from economic participation.' },
             { label: 'Platform Entity (Wyoming DAO LLC)', color: '#f59e0b', desc: 'The human operator - manages site content, reviews campaign proposals, onboards operators, conducts OFAC pre-screening, and communicates with the community. Cannot access wallet keys (architecture-enforced) or override community governance votes. Accountable to the community via misconduct reports, governance proposals, and the fork right (§9.2).' },
           ].map(p => (
-            <div key={p.label} style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: `3px solid ${p.color}` }}>
+            <div key={p.label} className="gov-participant-card" style={{ borderLeft: `3px solid ${p.color}` }}>
               <strong style={{ color: p.color }}>{p.label}</strong>
-              <p style={{ margin: '6px 0 0', fontSize: 14 }}>{p.desc}</p>
+              <p className="gov-participant-desc">{p.desc}</p>
             </div>
           ))}
         </div>
@@ -226,7 +193,7 @@ export default function Governance({ setTab }) {
             ['Governance', '50 voters', '75% supermajority', '14 days'],
           ]}
         />
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)' }}>
+        <div className="gov-highlight gov-highlight--purple" style={{ marginTop: 16 }}>
           <p style={{ margin: 0, fontWeight: 600, color: '#a78bfa', fontSize: 14 }}>Voting Diversity - High-Value Disbursements (§5.8)</p>
           <p style={{ margin: '8px 0 0', fontSize: 13 }}>Disbursements above $10,000 require approving votes from voters with <strong style={{ color: 'var(--fg)' }}>less than 60% pairwise voting-history overlap</strong> in the prior 180 days (Jaccard similarity). An account must be at least 90 days old with at least 5 prior votes to satisfy this requirement - fresh accounts cannot trivially meet it with zero overlap.</p>
           <p style={{ margin: '8px 0 0', fontSize: 13 }}><strong style={{ color: 'var(--accent)' }}>Small community fallback:</strong> If fewer than 10 eligible accounts exist, the diversity requirement is replaced with a 14-day extended escrow hold + mandatory Major-tier vote.</p>
@@ -242,44 +209,41 @@ export default function Governance({ setTab }) {
             ['$2,000 and above', 'Hold', '60% majority to approve'],
           ]}
         />
-        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign contributions. All funds go directly to the campaign operator\'s wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 - see governance rationale below.</p>
+        <p style={{ marginTop: 16 }}><strong style={{ color: 'var(--green)' }}>Platform fee: Zero.</strong> Citeback takes no percentage from campaign contributions. All funds go directly to the campaign operator's wallet. Platform operating costs are covered by the founding operator. Ratified 2026-05-06 - see governance rationale below.</p>
       </Section>
 
       <Section id="human-operator" title="Human Operator Layer (Wyoming DAO LLC - §9)" icon={Users}>
         <p>Citeback is operated by the <strong style={{ color: 'var(--fg)' }}>Wyoming DAO LLC</strong> (the "platform entity") - an active operator, not a passive relay. The platform entity handles all human-judgment functions; the wallet layer handles all financial execution.</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
-          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #6ee7b7' }}>
+        <div className="gov-op-cards">
+          <div className="gov-op-card gov-op-card--green">
             <strong style={{ color: 'var(--green)' }}>What the platform entity does</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Campaign proposal review (legal judgment); operator onboarding and OFAC pre-screening; site content and documentation; community communications; legal compliance and DAO counsel engagement.</p>
+            <p className="gov-op-card-desc">Campaign proposal review (legal judgment); operator onboarding and OFAC pre-screening; site content and documentation; community communications; legal compliance and DAO counsel engagement.</p>
           </div>
-          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.06)', borderLeft: '3px solid #f87171' }}>
+          <div className="gov-op-card gov-op-card--red">
             <strong style={{ color: '#f87171' }}>What the platform entity cannot do</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Override community governance votes. Approve or block disbursements outside community-voted rules. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges. Access operator identity data for purposes other than OFAC screening and accountability.</p>
+            <p className="gov-op-card-desc">Override community governance votes. Approve or block disbursements outside community-voted rules. Suppress lawful campaigns that meet published guidelines. Use emergency pause to block votes or challenges. Access operator identity data for purposes other than OFAC screening and accountability.</p>
           </div>
-          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(167,139,250,0.06)', borderLeft: '3px solid #a78bfa' }}>
+          <div className="gov-op-card gov-op-card--purple">
             <strong style={{ color: '#a78bfa' }}>OFAC Screening - Two Layers (§9.3)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding - identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> Automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
+            <p className="gov-op-card-desc"><strong style={{ color: 'var(--fg)' }}>Layer 1:</strong> Human OFAC pre-screening of operators at onboarding - identity-level, before any campaign wallet is created.<br /><strong style={{ color: 'var(--fg)' }}>Layer 2:</strong> Automated wallet-level re-check at every disbursement against continuously updated SDN list.<br /><strong style={{ color: '#f87171' }}>Limitation:</strong> Anonymous XMR/ZANO contributor transactions cannot be screened (Monero privacy is protocol-level). This gap requires attorney analysis before launch. See GOVERNANCE.md §9.3.</p>
           </div>
-          <div style={{ padding: '12px 16px', borderRadius: 8, background: 'var(--bg2)', borderLeft: '3px solid #60a5fa' }}>
+          <div className="gov-op-card gov-op-card--blue">
             <strong style={{ color: '#60a5fa' }}>Community accountability for the platform entity (§9.2)</strong>
-            <p style={{ margin: '6px 0 0', fontSize: 14 }}>Misconduct reports (§8); governance proposals constraining operator conduct; campaign rejection appeals (Major-tier community vote can overrule); fork right - if the community loses confidence in the platform entity, a fork is always available.</p>
+            <p className="gov-op-card-desc">Misconduct reports (§8); governance proposals constraining operator conduct; campaign rejection appeals (Major-tier community vote can overrule); fork right - if the community loses confidence in the platform entity, a fork is always available.</p>
           </div>
         </div>
       </Section>
 
       <Section id="wallet-architecture" title="Wallet Architecture (Direct Wallet Model)" icon={Lock}>
         <p>Citeback uses a <strong style={{ color: 'var(--fg)' }}>direct wallet model</strong>: operators hold their own XMR and ZANO wallets. Contributions flow directly from contributors to the operator's wallet — Citeback never holds, pools, or touches campaign funds.</p>
-        <div style={{
-          marginTop: 16, padding: '12px 16px', borderRadius: 0,
-          background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.2)'
-        }}>
+        <div className="gov-highlight" style={{ marginTop: 16 }}>
           <strong style={{ color: 'var(--accent)' }}>How accountability works without custody:</strong>
           <p style={{ margin: '8px 0 0', fontSize: 14 }}>Operators publish a view key (read-only) so anyone can verify the wallet balance in real time. Citeback monitors via the same view key. Early drain before campaign completion triggers an immediate permanent ban and public misconduct record. Operators are pre-screened (OFAC + identity verification) before any campaign goes live. The architecture specification is published on GitHub for community review before any funds are accepted.</p>
         </div>
       </Section>
 
       <Section id="bootstrapping" title="Bootstrapping & Founder Restrictions" icon={Users}>
-        <div style={{ marginBottom: 20, padding: '14px 16px', borderRadius: 8, background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)' }}>
+        <div className="gov-highlight--indigo">
           <p style={{ margin: '0 0 6px', fontWeight: 700, fontSize: 13, color: '#818cf8' }}>Bootstrap Ratification - 2026-05-06</p>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
             The graduated 3-5% platform fee model was eliminated by founding operator Scott Hughes during the pre-launch formation period. Rationale: mission alignment (no extractive relationship with campaigns), operational simplicity, and legal architecture (pure pass-through strengthens agent-of-the-payee argument). This change was not made to avoid regulatory classification - it was made because it is the right structure for this platform's mission. The timing is documented here so the rationale is on record. Valid under §14 bootstrap governance pending formal community ratification upon LLC formation and launch.
@@ -287,20 +251,20 @@ export default function Governance({ setTab }) {
         </div>
         <p>During the bootstrapping period, the founder has <strong style={{ color: 'var(--fg)' }}>zero voting rights</strong>. After bootstrapping ends, the founder is permanently capped at <strong style={{ color: 'var(--fg)' }}>5% of any vote total</strong> - enforced by the wallet-layer founder address registry and immutable (§15).</p>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Bootstrapping ends when all three are met:</strong></p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+        <div className="gov-check-list">
           {[
             'Platform has been live for at least 6 months',
             '3 qualifying governance votes within a 90-day window (50-voter quorum, median contribution ≥ $20, without founder participation)',
             '30-day transition period where both governance regimes apply simultaneously',
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <div key={i} className="gov-check-item">
               <CheckCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 3 }} />
-              <span style={{ fontSize: 14 }}>{item}</span>
+              <span className="gov-check-text">{item}</span>
             </div>
           ))}
         </div>
         <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--accent)' }}>Stagnation escape:</strong> If the platform has been active for 36 months without meeting exit criteria, bootstrapping ends automatically. No constraints are relaxed - the founder retains the permanent 5% cap.</p>
-        <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 0, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)' }}>
+        <div className="gov-highlight gov-highlight--red" style={{ marginTop: 16 }}>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--muted)' }}>
             <strong style={{ color: '#f87171' }}>Founder taint tracking:</strong> 3-hop minimum, 50% decay per hop. Any account with &gt;1% residual founder taint counts fully toward the 5% cap - no further discounting. Founders cannot vote on their own ceiling removal.
           </p>
@@ -309,7 +273,7 @@ export default function Governance({ setTab }) {
 
       <Section id="immutables" title="Immutables" icon={AlertTriangle}>
         <p style={{ marginBottom: 16 }}>The following are enforced by the wallet execution layer. <strong style={{ color: 'var(--fg)' }}>A 100% community vote cannot override them.</strong> Changing them requires forking the platform.</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="gov-check-list">
           {[
             'No platform key access — Citeback never holds, receives, or controls operator wallet private keys',
             'Criminal defense prohibition — no funding of criminal defense campaigns',
@@ -322,9 +286,9 @@ export default function Governance({ setTab }) {
             'Founder address registry permanence — founder address registry cannot be modified by any vote',
             'OFAC SDN match override prohibition — no community vote may override a denial based on an OFAC SDN list match',
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <div key={i} className="gov-check-item">
               <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 3 }} />
-              <span style={{ fontSize: 14 }}>{item}</span>
+              <span className="gov-check-text">{item}</span>
             </div>
           ))}
         </div>
@@ -332,7 +296,7 @@ export default function Governance({ setTab }) {
 
       <Section id="prerequisites" title="Launch Prerequisites" icon={CheckCircle}>
         <p style={{ marginBottom: 16 }}>The platform does not accept funds until <strong style={{ color: 'var(--fg)' }}>all of the following are complete and publicly verifiable:</strong></p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="gov-check-list">
           {[
             { done: true,  text: 'Governance framework published — complete ✅' },
             { done: true,  text: 'Surveillance camera database live — complete ✅' },
@@ -345,7 +309,7 @@ export default function Governance({ setTab }) {
             { done: false, text: 'OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates' },
             { done: false, text: 'First campaign wallet activated' },
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <div key={i} className="gov-check-item">
               {item.done
                 ? <CheckCircle size={14} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 3 }} />
                 : <Circle size={14} style={{ color: 'var(--border)', flexShrink: 0, marginTop: 3 }} />}
@@ -356,11 +320,7 @@ export default function Governance({ setTab }) {
       </Section>
 
       {/* Footer note */}
-      <div style={{
-        marginTop: 32, padding: '16px 20px', borderRadius: 10,
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        fontSize: 13, color: 'var(--muted)', textAlign: 'center'
-      }}>
+      <div className="gov-footer-note">
         This is a living document. Community ratification required before mainnet.{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
           View full specification on GitHub →
@@ -369,41 +329,20 @@ export default function Governance({ setTab }) {
 
       {/* CTA */}
       {setTab && (
-        <div style={{
-          marginTop: 32, padding: '24px', borderRadius: 0,
-          background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 20,
-        }}>
+        <div className="gov-cta">
           <div>
-            <p style={{ fontWeight: 700, color: 'var(--accent)', margin: '0 0 4px', fontSize: 14 }}>
+            <p className="gov-cta-title">
               Governed by code. Funded anonymously.
             </p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>
+            <p className="gov-cta-desc">
               Browse the campaigns this governance structure protects.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setTab('campaigns')}
-              style={{
-                background: 'var(--accent, #6ee7b7)', color: '#000', border: 'none',
-                padding: '10px 22px', fontSize: 13, fontWeight: 700,
-                letterSpacing: '0.03em', cursor: 'pointer',
-                fontFamily: 'var(--font)', borderRadius: 6, flexShrink: 0,
-              }}
-            >
+          <div className="gov-cta-btns">
+            <button onClick={() => setTab('campaigns')} className="gov-cta-primary">
               Browse Campaigns →
             </button>
-            <button
-              onClick={() => setTab('operators')}
-              style={{
-                background: 'transparent', color: 'var(--muted)',
-                border: '1px solid var(--border)', padding: '10px 22px',
-                fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                fontFamily: 'var(--font)', borderRadius: 6, flexShrink: 0,
-              }}
-            >
+            <button onClick={() => setTab('operators')} className="gov-cta-secondary">
               Run a Campaign →
             </button>
           </div>
