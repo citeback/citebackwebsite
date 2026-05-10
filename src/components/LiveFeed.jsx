@@ -78,14 +78,14 @@ export default function LiveFeed({ setTab }) {
     ALL_EVENTS.slice(0, 4).map((ev, i) => ({
       ...ev,
       id: i,
-      addedAt: now - (4 - i) * 30_000, // space them 30s apart in the past
+      addedAt: now - (4 - i) * 30_000,
       isNew: false,
     }))
   )
 
   const [lastUpdate, setLastUpdate] = useState(now)
   const [tick, setTick] = useState(0)
-  const idRef = useRef(ALL_EVENTS.length) // unique id counter
+  const idRef = useRef(ALL_EVENTS.length)
 
   // Tick every second to refresh relative timestamps
   useEffect(() => {
@@ -106,12 +106,10 @@ export default function LiveFeed({ setTab }) {
       }
       setItems(prev => {
         const updated = [newItem, ...prev].slice(0, 6)
-        // Clear isNew flag after animation (600ms)
         return updated
       })
       setLastUpdate(Date.now())
 
-      // Remove isNew after animation completes
       setTimeout(() => {
         setItems(prev =>
           prev.map(it => (it.id === newItem.id ? { ...it, isNew: false } : it))
@@ -123,46 +121,22 @@ export default function LiveFeed({ setTab }) {
   }, [])
 
   return (
-    <section
-      style={{
-        borderBottom: '1px solid var(--border)',
-        padding: '0 24px',
-        background: 'var(--bg)',
-      }}
-    >
-      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+    <section className="lf-section">
+      <div className="lf-inner">
 
         {/* Section header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '32px 0 20px',
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
+        <div className="lf-header">
           {/* LIVE label + pulsing dot */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="lf-live-indicator">
             <span className="live-dot" />
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: '0.18em',
-                color: 'var(--red)',
-                textTransform: 'uppercase',
-              }}
-            >
-              Live
-            </span>
+            <span className="lf-live-label">Live</span>
           </div>
 
           {/* Separator */}
-          <div style={{ width: 1, height: 14, background: 'var(--border)' }} />
+          <div className="lf-sep" />
 
           {/* Last update time */}
-          <span style={{ fontSize: 11, color: 'var(--gray)', letterSpacing: '0.04em' }}>
+          <span className="lf-last-update">
             Updated {formatAge(Date.now() - lastUpdate)}
           </span>
         </div>
@@ -173,83 +147,40 @@ export default function LiveFeed({ setTab }) {
             <div
               key={item.id}
               className={item.isNew ? 'feed-item feed-item--new' : 'feed-item'}
-              style={{ borderBottom: '1px solid var(--border)' }}
             >
               {/* Timestamp */}
-              <span
-                style={{
-                  fontSize: 10,
-                  color: 'var(--gray)',
-                  letterSpacing: '0.06em',
-                  whiteSpace: 'nowrap',
-                  minWidth: 64,
-                  flexShrink: 0,
-                }}
-              >
+              <span className="lf-timestamp">
                 {formatAge(Date.now() - item.addedAt)}
               </span>
 
-              {/* Category tag */}
+              {/* Category tag — color is dynamic */}
               <span
+                className="lf-category-tag"
                 style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
                   color: CATEGORY_COLORS[item.category] || 'var(--gray)',
                   border: `1px solid ${CATEGORY_COLORS[item.category] || 'var(--border)'}`,
-                  padding: '2px 6px',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                  opacity: 0.85,
                 }}
               >
                 {item.category}
               </span>
 
               {/* Event text */}
-              <span
-                style={{
-                  fontSize: 13,
-                  color: 'var(--fg)',
-                  lineHeight: 1.5,
-                  fontWeight: 400,
-                }}
-              >
-                {item.text}
-              </span>
+              <span className="lf-text">{item.text}</span>
             </div>
           ))}
         </div>
 
         {/* CTA after feed */}
         {setTab && (
-          <div style={{ padding: '24px 0', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <p style={{ fontSize: 13, color: 'var(--gray)', margin: 0, lineHeight: 1.6 }}>
+          <div className="lf-cta-row">
+            <p className="lf-cta-text">
               Every item above is a target. Fund the people fighting back.
             </p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', flexShrink: 0 }}>
-              <button
-                onClick={() => setTab('campaigns')}
-                style={{
-                  background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-                  padding: '10px 22px', fontSize: 12, fontWeight: 600,
-                  letterSpacing: '0.05em', textTransform: 'uppercase',
-                  cursor: 'pointer', fontFamily: 'var(--font)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+            <div className="lf-cta-btns">
+              <button onClick={() => setTab('campaigns')} className="lf-btn-primary">
                 Fund a Campaign →
               </button>
-              <button
-                onClick={() => setTab('feed')}
-                style={{
-                  background: 'transparent', color: 'var(--gray)',
-                  border: '1px solid var(--border)', padding: '10px 22px',
-                  fontSize: 12, fontWeight: 500, letterSpacing: '0.05em',
-                  textTransform: 'uppercase', cursor: 'pointer',
-                  fontFamily: 'var(--font)', whiteSpace: 'nowrap',
-                }}
-              >
+              <button onClick={() => setTab('feed')} className="lf-btn-secondary">
                 Full Intelligence Feed →
               </button>
             </div>
