@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Shield, Lock, Users, Scale, AlertTriangle, ExternalLink, ChevronDown, ChevronRight, CheckCircle, Circle } from 'lucide-react'
 
@@ -34,8 +34,12 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
 }
 
 function Tag({ children, color = '#6ee7b7' }) {
+  const tagRef = useRef(null)
+  useEffect(() => {
+    if (tagRef.current) tagRef.current.style.setProperty('--tag-color', color)
+  }, [color])
   return (
-    <span className="gov-tag" style={{ '--tag-color': color }}>
+    <span className="gov-tag" ref={tagRef}>
       {children}
     </span>
   )

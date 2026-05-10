@@ -26,6 +26,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
   const [saveError, setSaveError] = useState('')
   const [saveSuccess, setSaveSuccess] = useState(false)
   const modalRef = useRef(null)
+  const fillRef = useRef(null)
   const AI_URL = API_BASE
   const { isLoggedIn, user } = useAuth()
   const headingId = 'campaign-modal-heading'
@@ -95,6 +96,10 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
   const pct = campaign.walletXMR ? Math.min(100, Math.round((campaign.raised / campaign.goal) * 100)) : 0
+  const prelaunchWidth = !campaign.walletXMR
+  useEffect(() => {
+    if (fillRef.current) fillRef.current.style.setProperty('--width', prelaunchWidth ? '0%' : `${pct}%`)
+  }, [pct, prelaunchWidth])
   const tc = typeColors[campaign.type]
   const funded = campaign.status === 'funded'
   const unclaimed = campaign.status === 'unclaimed'
@@ -198,7 +203,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             </div>
           </div>
           <div className="cm-progress-track">
-            <div className="cm-progress-fill" style={{ width: prelaunch ? '0%' : `${pct}%` }} />
+            <div className="cm-progress-fill" ref={fillRef} />
           </div>
           <div className="cm-progress-meta">
             <span className="cm-progress-meta-item"><MapPin size={11} />{campaign.location}</span>

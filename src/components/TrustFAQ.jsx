@@ -235,7 +235,7 @@ export default function TrustFAQ({ setTab }) {
             key={i}
             onClick={() => setActiveSection(i)}
             className={`faq-tab-btn${activeSection === i ? ' faq-tab-btn--active' : ''}`}
-            style={{ '--faq-color': s.color }}
+            ref={el => { if (el) el.style.setProperty('--faq-color', s.color) }}
           >
             <span className="faq-tab-icon">{s.icon}</span>
             {s.label}

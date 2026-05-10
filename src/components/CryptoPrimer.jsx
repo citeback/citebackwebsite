@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ShieldCheck, CreditCard, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
 import './CryptoPrimer.css'
 
@@ -95,9 +95,13 @@ const COINS = [
 
 function CoinPanel({ coin }) {
   const [open, setOpen] = useState(false)
+  const panelRef = useRef(null)
+  useEffect(() => {
+    if (panelRef.current) panelRef.current.style.setProperty('--cc', coin.color)
+  }, [coin.color])
 
   return (
-    <div className="cp-coin-panel" style={{ '--cc': coin.color }}>
+    <div className="cp-coin-panel" ref={panelRef}>
       {/* Header */}
       <div className={`cp-coin-header${open ? ' cp-coin-header--open' : ''}`}>
         <div className="cp-coin-dot" />

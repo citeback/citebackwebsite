@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
 
 const TYPES = [
@@ -230,11 +230,15 @@ const TYPES = [
 
 function AccordionCard({ item, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
+  const cardRef = useRef(null)
+  useEffect(() => {
+    if (cardRef.current) cardRef.current.style.setProperty('--svex-color', item.color)
+  }, [item.color])
 
   return (
     <div
+      ref={cardRef}
       className={`svex-card${open ? ' svex-card--open' : ''}`}
-      style={{ '--svex-color': item.color }}
     >
       {/* Header */}
       <button

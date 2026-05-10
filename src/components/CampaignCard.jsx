@@ -1,6 +1,6 @@
 import { MapPin, Clock, CheckCircle, Share2, Flame, Rocket, ExternalLink, Users } from 'lucide-react'
 import { typeColors } from '../data/campaigns'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
@@ -8,10 +8,14 @@ function getDaysLeft(deadline) {
 
 export default function CampaignCard({ campaign, onClick }) {
   const [shared, setShared] = useState(false)
+  const fillRef = useRef(null)
   const unclaimed = campaign.status === 'unclaimed'
   const claimed = campaign.status === 'claimed'
   const prelaunch = unclaimed || claimed || !campaign.walletXMR
   const pct = prelaunch ? 0 : Math.min(100, Math.round((campaign.raised / campaign.goal) * 100))
+  useEffect(() => {
+    if (fillRef.current) fillRef.current.style.setProperty('--width', `${pct}%`)
+  }, [pct])
   const tc = typeColors[campaign.type]
   const funded = campaign.status === 'funded'
   const daysLeft = getDaysLeft(campaign.deadline)
@@ -97,7 +101,7 @@ export default function CampaignCard({ campaign, onClick }) {
         <div className="card-progress-track">
           <div
             className={`card-progress-fill ${funded ? 'card-progress-fill--funded' : 'card-progress-fill--active'}`}
-            style={{ width: `${pct}%` }}
+            ref={fillRef}
           />
         </div>
       </div>

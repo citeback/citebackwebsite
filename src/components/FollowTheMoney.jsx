@@ -202,7 +202,7 @@ export default function FollowTheMoney() {
               key={v.name}
               onClick={() => setExpanded(isOpen ? null : v.name)}
               className={`ftm-vendor-card${isOpen ? ' ftm-vendor-card--open' : ''}`}
-              style={{ '--vc': v.color }}
+              ref={el => { if (el) el.style.setProperty('--vc', v.color) }}
             >
               {/* Vendor name + color dot + source link */}
               <div className="ftm-vendor-header">

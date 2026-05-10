@@ -3,6 +3,9 @@
    All .cmap-* helpers that live in JSX, not App.css
    ════════════════════════════════════════════════════════════ */
 
+/* ── MapContainer fill (replaces Leaflet-required inline style) ── */
+.cmap-leaflet-container { height: 100%; width: 100%; }
+
 /* ── Colour utilities ──────────────────────────────────────── */
 .cmap-text-amber  { color: #f59e0b; }
 .cmap-text-green  { color: #10b981; }
@@ -86,7 +89,15 @@
   width: 100%;
   text-align: left;
   transition: all 0.15s;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
+.cmap-layer-btn--on {
+  background: color-mix(in srgb, var(--lc) 8%, transparent);
+  border-color: color-mix(in srgb, var(--lc) 25%, transparent);
+}
+.cmap-layer-btn--blurb-open { border-radius: 8px 8px 0 0; }
 
 .cmap-layer-icon  { font-size: 14px; }
 .cmap-tier-icon   { font-size: 13px; }
@@ -109,8 +120,8 @@
 }
 .cmap-tier-label--on { color: var(--text); }
 
-.cmap-layer-count       { font-size: 10px; margin-top: 2px; opacity: 0.8; }
-.cmap-tier-count        { font-size: 10px; margin-top: 2px; opacity: 0.85; }
+.cmap-layer-count       { font-size: 10px; margin-top: 2px; opacity: 0.8; color: var(--lc); }
+.cmap-tier-count        { font-size: 10px; margin-top: 2px; opacity: 0.85; color: var(--lc); }
 .cmap-layer-coming-soon { font-size: 10px; color: #f59e0b; margin-top: 2px; }
 
 .cmap-layer-dot {
@@ -119,13 +130,17 @@
   border-radius: 50%;
   flex-shrink: 0;
   transition: background 0.15s;
+  background: var(--border);
 }
+.cmap-layer-dot--on { background: var(--lc); }
 
 /* Blurb panel (inline help text under layer button) */
 .cmap-blurb-container {
   border-top: none;
   border-radius: 0 0 8px 8px;
   padding: 8px 10px 10px;
+  background: color-mix(in srgb, var(--lc) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lc) 19%, transparent);
 }
 .cmap-blurb-text {
   font-size: 11px;
@@ -138,6 +153,7 @@
   font-weight: 600;
   text-decoration: none;
   display: inline-block;
+  color: var(--lc);
 }
 
 .cmap-layer-divider { border-top: 1px solid var(--border); margin: 8px 0 6px; }
@@ -154,6 +170,12 @@
   width: 100%;
   text-align: left;
   transition: all 0.15s;
+  background: transparent;
+  border: 1px solid var(--border);
+}
+.cmap-tier-btn--on {
+  background: color-mix(in srgb, var(--lc) 8%, transparent);
+  border-color: color-mix(in srgb, var(--lc) 33%, transparent);
 }
 
 .cmap-tier-desc { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.4; }

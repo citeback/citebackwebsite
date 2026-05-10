@@ -1,5 +1,6 @@
 import { CheckCircle, Circle, Clock } from 'lucide-react'
 import { useCameraCount } from '../context/CameraCount'
+import { useRef, useEffect } from 'react'
 
 const milestonesBase = [
   { done: true,    label: 'Governance framework published' },
@@ -19,6 +20,7 @@ const milestonesBase = [
 
 export default function LaunchTracker() {
   const cameraCount = useCameraCount()
+  const fillRef = useRef(null)
   const milestones = milestonesBase.map(m =>
     m.label === 'CAMERA_COUNT_PLACEHOLDER'
       ? { ...m, label: `Surveillance camera database live (${cameraCount} cameras)` }
@@ -27,6 +29,9 @@ export default function LaunchTracker() {
   const done = milestones.filter(m => m.done).length
   const total = milestones.length
   const pct = Math.round((done / total) * 100)
+  useEffect(() => {
+    if (fillRef.current) fillRef.current.style.setProperty('--width', `${pct}%`)
+  }, [pct])
   return (
     <div className="lt-wrapper">
       <div className="lt-header-row">
@@ -42,7 +47,7 @@ export default function LaunchTracker() {
 
       {/* Progress bar */}
       <div className="lt-progress-track">
-        <div className="lt-progress-fill" style={{ width: `${pct}%` }} />
+        <div className="lt-progress-fill" ref={fillRef} />
       </div>
 
       {/* Milestone list */}

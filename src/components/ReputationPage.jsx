@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus, LogOut, ShieldAlert, Lock } from 'lucide-react'
 import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser'
@@ -309,6 +309,15 @@ function TierBadge({ tier }) {
 function ProgressBar({ rep, tier }) {
   const current = TIER_THRESHOLDS[tier] || 0
   const next = TIER_THRESHOLDS[tier + 1]
+  const fillRef = useRef(null)
+  const pct = next != null ? Math.min(100, ((rep - current) / (next - current)) * 100) : 100
+  useEffect(() => {
+    const el = fillRef.current
+    if (!el) return
+    el.style.setProperty('--tc', TIER_COLORS[tier])
+    el.style.setProperty('--tc2', TIER_COLORS[Math.min(tier + 1, TIER_COLORS.length - 1)])
+    el.style.setProperty('--w', `${pct}%`)
+  }, [tier, pct])
   if (next == null) {
     return (
       <div className="rp-muted-text">
@@ -316,7 +325,6 @@ function ProgressBar({ rep, tier }) {
       </div>
     )
   }
-  const pct = Math.min(100, ((rep - current) / (next - current)) * 100)
   const pointsToNext = next - rep
   return (
     <div>
@@ -325,7 +333,7 @@ function ProgressBar({ rep, tier }) {
         <span className="rp-progress-pts">{pointsToNext} pts to go</span>
       </div>
       <div className="rp-progress-track">
-        <div className="rp-progress-fill" style={{ '--tc': TIER_COLORS[tier], '--tc2': TIER_COLORS[Math.min(tier + 1, TIER_COLORS.length - 1)], '--w': `${pct}%` }} />
+        <div className="rp-progress-fill" ref={fillRef} />
       </div>
       <div className="rp-progress-labels">
         <span>{current} pts</span>

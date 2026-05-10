@@ -470,6 +470,7 @@ img {
   height: 100%;
   background: var(--accent);
   transition: width 0.1s linear;
+  width: var(--width, 0%);
 }
 
 /* ── Nav ─────────────────────────────────────────────────────── */
@@ -1130,6 +1131,7 @@ img {
   height: 100%;
   background: linear-gradient(90deg, var(--accent), #ff6b6b);
   border-radius: 100px;
+  width: var(--width, 0%);
 }
 .cm-progress-meta {
   display: flex;
@@ -1398,7 +1400,7 @@ img {
 .campaign-card .card-desc { color: var(--muted); font-size: 13px; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .campaign-card .card-progress-row { display: flex; justify-content: space-between; margin-bottom: 7px; font-size: 13px; }
 .campaign-card .card-progress-track { height: 3px; background: var(--bg3); border-radius: 0; overflow: hidden; }
-.campaign-card .card-progress-fill { height: 100%; border-radius: 0; }
+.campaign-card .card-progress-fill { height: 100%; border-radius: 0; width: var(--width, 0%); }
 .campaign-card .card-progress-fill--funded { background: var(--green); }
 .campaign-card .card-progress-fill--active { background: var(--red); }
 .campaign-card .card-meta { display: flex; justify-content: space-between; align-items: center; gap: 14px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; flex-wrap: wrap; }
@@ -8270,6 +8272,7 @@ img {
   background: var(--red);
   border-radius: 0;
   transition: width 0.8s ease;
+  width: var(--width, 0%);
 }
 .lt-milestone-list {
   display: flex;

@@ -17,12 +17,16 @@ export default function ProposeModal({ onClose, prefill = {} }) {
   const { isLoggedIn, isReauthed, user } = useAuth()
   const needsEmail = isLoggedIn && user && !user.hasEmail
   const [step, setStep] = useState(1)
+  const fillRef = useRef(null)
   const [form, setForm] = useState({ type: prefill.type || '', title: prefill.title || '', location: prefill.location || '', description: prefill.description || '', goal: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [showReauth, setShowReauth] = useState(false)
   const modalRef = useRef(null)
+  useEffect(() => {
+    if (fillRef.current) fillRef.current.style.setProperty('--width', `${step * 50}%`)
+  }, [step])
   const headingId = 'propose-modal-heading'
 
   useEffect(() => {
@@ -116,7 +120,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
 
         {/* Progress bar */}
         <div className="pm-progress-track">
-          <div className="pm-progress-fill" style={{ width: `${step * 50}%` }} />
+          <div className="pm-progress-fill" ref={fillRef} />
         </div>
 
         {submitted ? (

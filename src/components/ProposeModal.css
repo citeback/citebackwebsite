@@ -70,6 +70,7 @@
   background: var(--accent);
   transition: width 0.3s ease;
   border-radius: 100px;
+  width: var(--width, 0%);
 }
 
 /* Success state */

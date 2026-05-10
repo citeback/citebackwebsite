@@ -766,12 +766,8 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
           <div key={layer.id}>
             <button
               onClick={() => toggle(layer.id)}
-              className="cmap-layer-btn"
-              style={{
-                background: isOn ? `${layer.color}14` : 'transparent',
-                border: `1px solid ${isOn ? `${layer.color}40` : 'var(--border)'}`,
-                borderRadius: blurbOpen ? '8px 8px 0 0' : 8,
-              }}
+              className={`cmap-layer-btn${isOn ? ' cmap-layer-btn--on' : ''}${blurbOpen ? ' cmap-layer-btn--blurb-open' : ''}`}
+              ref={el => { if (el) el.style.setProperty('--lc', layer.color) }}
             >
               <span className="cmap-layer-icon">{layer.icon}</span>
               <div className="cmap-layer-info">
@@ -779,19 +775,22 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
                   {layer.label}
                 </div>
                 {layer.data && layer.data.length > 0 ? (
-                  <div className="cmap-layer-count" style={{ color: layer.color }}>
+                  <div className="cmap-layer-count">
                     {layer.data.length} confirmed deployments
                   </div>
                 ) : !layer.live ? (
                   <div className="cmap-layer-coming-soon">Activating soon — EFF Atlas data loading</div>
                 ) : null}
               </div>
-              <div className="cmap-layer-dot" style={{ background: isOn ? layer.color : 'var(--border)' }} />
+              <div className={`cmap-layer-dot${isOn ? ' cmap-layer-dot--on' : ''}`} />
             </button>
 
             {/* Inline blurb for non-ALPR layers */}
             {blurb && isOn && blurbOpen && (
-              <div className="cmap-blurb-container" style={{ background: `${layer.color}0e`, border: `1px solid ${layer.color}30` }}>
+              <div
+                className="cmap-blurb-container"
+                ref={el => { if (el) el.style.setProperty('--lc', layer.color) }}
+              >
                 <div className="cmap-blurb-text">
                   ℹ️ {blurb}
                 </div>
@@ -800,7 +799,6 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cmap-blurb-link"
-                  style={{ color: layer.color }}
                 >
                   Learn more ↗
                 </a>
@@ -842,21 +840,18 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
         return (
           <button key={tier.id}
             onClick={() => toggle(tier.id)}
-            className="cmap-tier-btn"
-            style={{
-              background: isOn ? `${tier.color}14` : 'transparent',
-              border: `1px solid ${isOn ? `${tier.color}55` : 'var(--border)'}`,
-            }}
+            className={`cmap-tier-btn${isOn ? ' cmap-tier-btn--on' : ''}`}
+            ref={el => { if (el) el.style.setProperty('--lc', tier.color) }}
           >
             <span className="cmap-tier-icon">{tier.icon}</span>
             <div className="cmap-layer-info">
               <div className={`cmap-tier-label${isOn ? ' cmap-tier-label--on' : ''}`}>{tier.label}</div>
-              <div className="cmap-tier-count" style={{ color: tier.color }}>
+              <div className="cmap-tier-count">
                 {tier.count.toLocaleString()} {tier.countLabel}
               </div>
               {isOn && <div className="cmap-tier-desc">{tier.desc}</div>}
             </div>
-            <div className="cmap-layer-dot" style={{ background: isOn ? tier.color : 'var(--border)' }} />
+            <div className={`cmap-layer-dot${isOn ? ' cmap-layer-dot--on' : ''}`} />
           </button>
         )
       })}
@@ -1307,7 +1302,7 @@ export default function CameraMap() {
 
       {/* Map */}
       <div className="map-container">
-        <MapContainer center={[38.5, -96.5]} zoom={4} style={{ height: '100%', width: '100%' }} zoomControl>
+        <MapContainer center={[38.5, -96.5]} zoom={4} className="cmap-leaflet-container" zoomControl>
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://carto.com">CARTO</a> | ALPR data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
