@@ -902,14 +902,16 @@ const server = http.createServer(async (req, res) => {
 
   // ── Campaign interest counter ──────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/interest') {
-    if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     try {
       const body = await parseBody(req)
       if (body.action === 'counts') {
+        // Read-only — no rate limit needed
         res.writeHead(200, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ counts: { ...interestCounts } }))
       }
       if (body.action === 'increment' && body.campaignId != null) {
+        // Write — rate limited
+        if (!checkRateLimit(ip)) { res.writeHead(429); return res.end(JSON.stringify({ error: 'Too many requests' })) }
         const id = String(body.campaignId).slice(0, 100)
         interestCounts[id] = (interestCounts[id] || 0) + 1
         res.writeHead(200, { 'Content-Type': 'application/json' })
