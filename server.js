@@ -95,7 +95,8 @@ try { fs.mkdirSync(PHOTOS_DIR, { recursive: true }) } catch {}
 
 const ALLOWED_IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' }
 const ALLOWED_ZIP_TYPES = new Set(['application/zip', 'application/x-zip-compressed', 'application/octet-stream'])
-const MAX_PHOTO_BYTES = 12 * 1024 * 1024 // 12MB
+const MAX_PHOTO_BYTES = 12 * 1024 * 1024 // 12MB per upload
+const MAX_PHOTOS_DIR_BYTES = 10 * 1024 * 1024 * 1024 // 10GB total photos dir hard cap
 
 const PORT = 11435
 const OLLAMA_HOST = '127.0.0.1'
@@ -1008,13 +1009,11 @@ const server = http.createServer(async (req, res) => {
       }
 
       const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username)
-      if (!user) {
-        res.writeHead(401, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ error: 'Invalid username or password' }))
-      }
-
-      const valid = await bcrypt.compare(password, user.password_hash)
-      if (!valid) {
+      // Timing-safe: always run bcrypt regardless of whether user exists.
+      // Without this, "user not found" returns in ~1ms vs ~100ms for wrong password — enumerable.
+      const DUMMY_HASH = '$2b$12$61HvlwlGyluJ3mFweaDccOSWZCQyRLY/P6YC1MT4w4D1IImXLI3mG'
+      const valid = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH)
+      if (!user || !valid) {
         res.writeHead(401, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Invalid username or password' }))
       }
@@ -1356,6 +1355,30 @@ const server = http.createServer(async (req, res) => {
     const contentType = req.headers['content-type'] || ''
     const isMultipart = contentType.includes('multipart/form-data')
     let fields = {}, photoFilename = null, detectedC2PA = false, photoWritePromise = Promise.resolve()
+
+    // Disk quota guard — refuse uploads if photos dir exceeds 10GB
+    if (isMultipart) {
+      try {
+        const { size: dirSize } = await new Promise((res, rej) => {
+          let total = 0
+          fs.readdir(PHOTOS_DIR, (err, files) => {
+            if (err) return res({ size: 0 })
+            let pending = files.length
+            if (!pending) return res({ size: 0 })
+            files.forEach(f => {
+              fs.stat(path.join(PHOTOS_DIR, f), (e, s) => {
+                if (!e && s?.isFile()) total += s.size
+                if (--pending === 0) res({ size: total })
+              })
+            })
+          })
+        })
+        if (dirSize > MAX_PHOTOS_DIR_BYTES) {
+          res.writeHead(507, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ error: 'Storage limit reached. Please try again later.' }))
+        }
+      } catch { /* non-fatal — proceed */ }
+    }
 
     try {
       if (isMultipart) {
