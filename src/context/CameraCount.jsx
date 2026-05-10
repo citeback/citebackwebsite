@@ -54,7 +54,7 @@ export function CameraCountProvider({ children }) {
 }
 
 /** Returns a formatted string like "94,231+" or "92,000+" if still loading */
-export function useCameraCount(fallback = '92,000+') {
+export function useCameraCount(fallback = '95,000+') {
   const count = useContext(CameraCountContext)
   if (count == null) return fallback
   return count.toLocaleString() + '+'

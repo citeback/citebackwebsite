@@ -722,7 +722,7 @@ const EFF_LAYERS = [
     active: true,
     live: true,
     data: null,
-    description: '92,000+ automatic license plate readers mapped nationally via OpenStreetMap',
+    description: '95,000+ automatic license plate readers mapped nationally via OpenStreetMap',
   },
   {
     id: 'facial',
