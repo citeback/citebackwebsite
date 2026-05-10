@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus } from 'lucide-react'
-import { startRegistration } from '@simplewebauthn/browser'
+import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser'
+
+// Detect likely platform for a smarter default passkey name
+function detectPlatformName() {
+  const ua = navigator.userAgent
+  if (/iPhone/.test(ua)) return 'iPhone'
+  if (/iPad/.test(ua)) return 'iPad'
+  if (/Android/.test(ua)) return 'Android'
+  if (/Mac OS X/.test(ua) && !/like Mac OS/.test(ua)) return 'Mac'
+  if (/Windows/.test(ua)) return 'Windows PC'
+  if (/Linux/.test(ua)) return 'Linux'
+  return ''
+}
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
 
@@ -22,6 +34,8 @@ function PasskeyManager() {
 
   const handleAdd = async () => {
     setAdding(true); setErr(null); setOk(null)
+    // Use user-entered name, fall back to platform detection, then null
+    const resolvedName = deviceName.trim() || detectPlatformName() || null
     try {
       const optRes = await fetch(`${AI_URL}/passkey/register-options`, { credentials: 'include' })
       const { options, tempId } = await optRes.json()
@@ -31,15 +45,16 @@ function PasskeyManager() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ response: credential, tempId, deviceName: deviceName.trim() || null }),
+        body: JSON.stringify({ response: credential, tempId, deviceName: resolvedName }),
       })
       const verData = await verRes.json()
       if (!verRes.ok) throw new Error(verData.error || 'Registration failed')
-      setOk('Passkey added successfully!')
+      setOk(`Passkey added${resolvedName ? ` (${resolvedName})` : ''}!`)
       setDeviceName('')
       load()
     } catch (e) {
-      if (e?.name === 'NotAllowedError') setErr('Passkey setup cancelled.')
+      if (e?.name === 'AbortError') setErr('Passkey setup cancelled.')
+      else if (e?.name === 'NotAllowedError') setErr('Passkey setup cancelled or not allowed.')
       else setErr(e.message || 'Failed to add passkey')
     } finally { setAdding(false) }
   }
@@ -104,7 +119,7 @@ function PasskeyManager() {
               <Fingerprint size={13} style={{ color: 'var(--muted)', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{pk.device_name || 'Passkey'}</div>
-                <div style={{ fontSize: 11, color: 'var(--muted)' }}>Added {new Date(pk.created_at).toLocaleDateString()}</div>
+                <div style={{ fontSize: 11, color: 'var(--muted)' }}>Added {new Date(pk.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
               </div>
               <button
                 onClick={() => handleDelete(pk.credential_id)}

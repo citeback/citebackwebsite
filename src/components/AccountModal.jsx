@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X, User, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Loader, Fingerprint } from 'lucide-react'
-import { startAuthentication } from '@simplewebauthn/browser'
+import { startAuthentication, browserSupportsWebAuthn } from '@simplewebauthn/browser'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE as AI_URL } from '../config.js'
 
@@ -45,10 +45,10 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
       setSuccess('Logged in!')
       setTimeout(onClose, 800)
     } catch (err) {
-      if (err?.name === 'NotAllowedError' || err?.name === 'AbortError') {
+      if (err?.name === 'AbortError') {
+        setError('Passkey login cancelled.')
+      } else if (err?.name === 'NotAllowedError' || err?.message?.includes('No credentials') || err?.message?.includes('No available')) {
         setError('No passkey found on this device. Log in with your password first, then add a passkey from your account dashboard.')
-      } else if (err?.message?.includes('No credentials')) {
-        setError('No passkey registered yet. Log in with your password first, then add a passkey from your account dashboard.')
       } else {
         setError('Passkey failed — try logging in with your password instead.')
       }
@@ -216,12 +216,13 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
           </div>
         ) : tab !== 'recover' ? (
           <>
-          {tab === 'login' && (
+          {tab === 'login' && browserSupportsWebAuthn() && (
             <div style={{ marginBottom: 4 }}>
               <button
                 type="button"
                 onClick={handlePasskeyLogin}
                 disabled={passkeyLoading}
+                aria-label="Sign in with a passkey (Touch ID, Face ID, or security key)"
                 style={{
                   width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
@@ -235,7 +236,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                   : <><Fingerprint size={15} /> Use a passkey</>}
               </button>
               <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: '-8px 0 12px', lineHeight: 1.5 }}>
-                First time? Log in with password below, then add a passkey from your account dashboard.
+                No passkey yet? Log in with password below, then add one from your account dashboard.
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
