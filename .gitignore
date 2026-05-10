@@ -1,12 +1,33 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Environment variables — never commit secrets
 .env
 .env.local
+.env.*.local
+
+# OS artifacts
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+
 # Local Netlify folder
 .netlify
 
 # Large JSON data files — served from Hetzner (ai.citeback.com)
 public/alpr-us.json
 public/alpr-by-state.json
+
+# Editor artifacts
+.vscode/settings.json
+*.swp
+*.swo
+
+# Test artifacts
+coverage/

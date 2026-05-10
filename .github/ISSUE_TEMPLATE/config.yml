@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: mailto:citeback@proton.me
+    about: Please report security issues privately — do not open a public issue
+  - name: Governance feedback
+    url: https://github.com/citeback/citebackwebsite/issues/new?labels=governance
+    about: Feedback on governance rules or operator accountability

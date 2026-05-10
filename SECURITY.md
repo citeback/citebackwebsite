@@ -19,7 +19,7 @@ This policy covers the Citeback web application (`citeback.com`) and the server-
 
 Out of scope:
 - The Hetzner VPS infrastructure itself
-- Third-party services (Netlify, Bunny CDN, CARTO, etc.)
+- Third-party services (Netlify, CARTO map tiles, etc.)
 - OpenStreetMap / Overpass API
 
 ## Privacy
