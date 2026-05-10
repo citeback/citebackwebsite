@@ -298,12 +298,7 @@ const STATUS_CONFIG = {
 function TierBadge({ tier }) {
   return (
     <span
-      className="rp-tier-badge"
-      style={{
-        background: `${TIER_COLORS[tier]}18`,
-        border: `1px solid ${TIER_COLORS[tier]}40`,
-        color: TIER_COLORS[tier],
-      }}
+      className={`rp-tier-badge rp-tc-${tier}`}
     >
       <Shield size={10} />
       Tier {tier} · {TIER_NAMES[tier]}
@@ -330,11 +325,7 @@ function ProgressBar({ rep, tier }) {
         <span className="rp-progress-pts">{pointsToNext} pts to go</span>
       </div>
       <div className="rp-progress-track">
-        <div style={{
-          height: '100%', borderRadius: 100,
-          background: `linear-gradient(90deg, ${TIER_COLORS[tier]}, ${TIER_COLORS[tier + 1]})`,
-          width: `${pct}%`, transition: 'width 0.6s ease',
-        }} />
+        <div className="rp-progress-fill" style={{ '--tc': TIER_COLORS[tier], '--tc2': TIER_COLORS[Math.min(tier + 1, TIER_COLORS.length - 1)], '--w': `${pct}%` }} />
       </div>
       <div className="rp-progress-labels">
         <span>{current} pts</span>
@@ -349,7 +340,7 @@ function SightingRow({ sighting }) {
   const Icon = cfg.icon
   return (
     <div className="rp-sighting-row">
-      <Icon size={14} style={{ color: cfg.color, flexShrink: 0 }} />
+      <Icon size={14} className={`rp-sighting-icon rp-sighting-icon--${sighting.status}`} />
       <div className="rp-sighting-content">
         <div className="rp-sighting-title">
           {CAMERA_TYPE_LABELS[sighting.cameraType] || sighting.cameraType}
@@ -359,7 +350,7 @@ function SightingRow({ sighting }) {
         </div>
       </div>
       <div className="rp-sighting-status">
-        <div style={{ fontSize: 12, color: cfg.color, fontWeight: 600 }}>{cfg.label}</div>
+        <div className={`rp-sighting-status rp-sighting-status--${sighting.status}`}>{cfg.label}</div>
         {sighting.points > 0 && (
           <div className="rp-pts-badge">+{sighting.points} pts</div>
         )}
@@ -430,7 +421,7 @@ function PasswordManager() {
           <div>
             <input type="password" className="rp-input-pw rp-input-mb4" placeholder="New password" value={form.next}
               onChange={e => set('next', e.target.value)} autoComplete="new-password" required />
-            {str && <div className="rp-pw-strength-label" style={{ color: str.color }}>{str.label}</div>}
+            {str && <div className={`rp-pw-strength-label strength-label-${str.score}`}>{str.label}</div>}
           </div>
           <input type="password" className="rp-input-pw" placeholder="Confirm new password" value={form.confirm}
             onChange={e => set('confirm', e.target.value)} autoComplete="new-password" required />
@@ -534,12 +525,7 @@ export default function ReputationPage({ setTab }) {
         <div className="rp-tier-ladder">
           {TIER_NAMES.map((name, i) => (
             <div key={i} className="rp-tier-item">
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: `${TIER_COLORS[i]}18`, border: `1px solid ${TIER_COLORS[i]}30`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 900, fontSize: 15, color: TIER_COLORS[i],
-              }}>{i}</div>
+              <div className={`rp-tier-icon rp-tc-${i}`}>{i}</div>
               <div className="rp-tier-info">
                 <div className="rp-tier-name">
                   Tier {i} · {name}
@@ -591,12 +577,7 @@ export default function ReputationPage({ setTab }) {
         <div className="rp-profile-header">
           <div>
             <div className="rp-avatar-row">
-              <div style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: `${TIER_COLORS[user.tier]}18`, border: `1px solid ${TIER_COLORS[user.tier]}30`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 900, fontSize: 16, color: TIER_COLORS[user.tier],
-              }}>
+              <div className={`rp-avatar-circle rp-tc-${user.tier}`}>
                 {user.username?.[0]?.toUpperCase() || '?'}
               </div>
               <div>
@@ -629,13 +610,9 @@ export default function ReputationPage({ setTab }) {
       {/* Tier perk */}
       {user.tierPerk && (
         <div
-          className="rp-tier-perk"
-          style={{
-            background: `${TIER_COLORS[user.tier || 0]}08`,
-            border: `1px solid ${TIER_COLORS[user.tier || 0]}20`,
-          }}
+          className={`rp-tier-perk rp-tc-${user.tier || 0}`}
         >
-          <Star size={13} style={{ color: TIER_COLORS[user.tier || 0], flexShrink: 0 }} />
+          <Star size={13} className="rp-tier-star" />
           <span className="rp-color-muted">
             <strong className="rp-color-fg">Your access:</strong> {user.tierPerk}
           </span>

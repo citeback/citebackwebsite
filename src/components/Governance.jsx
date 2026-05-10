@@ -35,14 +35,7 @@ function Section({ id, title, icon: Icon, children, defaultOpen = false }) {
 
 function Tag({ children, color = '#6ee7b7' }) {
   return (
-    <span
-      className="gov-tag"
-      style={{
-        background: color + '22',
-        color: color,
-        border: `1px solid ${color}44`
-      }}
-    >
+    <span className="gov-tag" style={{ '--tag-color': color }}>
       {children}
     </span>
   )

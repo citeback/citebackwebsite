@@ -153,14 +153,8 @@ export default function LiveFeed({ setTab }) {
                 {formatAge(Date.now() - item.addedAt)}
               </span>
 
-              {/* Category tag — color is dynamic */}
-              <span
-                className="lf-category-tag"
-                style={{
-                  color: CATEGORY_COLORS[item.category] || 'var(--gray)',
-                  border: `1px solid ${CATEGORY_COLORS[item.category] || 'var(--border)'}`,
-                }}
-              >
+              {/* Category tag */}
+              <span className={`lf-category-tag lf-cat--${(item.category || 'default').toLowerCase()}`}>
                 {item.category}
               </span>
 

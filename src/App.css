@@ -2149,7 +2149,37 @@ img {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  background: color-mix(in srgb, var(--tc) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc) 25%, transparent);
+  color: var(--tc);
 }
+/* Tier color custom properties */
+.rp-tc-0 { --tc: #6b7280; }
+.rp-tc-1 { --tc: #e63946; }
+.rp-tc-2 { --tc: #f59e0b; }
+.rp-tc-3 { --tc: #10b981; }
+/* Tier icon */
+.rp-tier-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: color-mix(in srgb, var(--tc) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc) 19%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 15px; color: var(--tc);
+}
+/* Avatar circle */
+.rp-avatar-circle {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: color-mix(in srgb, var(--tc) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc) 19%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; color: var(--tc);
+}
+/* Sighting row status colors */
+.rp-sighting-icon { flex-shrink: 0; }
+.rp-sighting-icon--pending, .rp-sighting-status--pending { color: #f59e0b; }
+.rp-sighting-icon--approved, .rp-sighting-status--approved { color: #10b981; }
+.rp-sighting-icon--rejected, .rp-sighting-status--rejected { color: #e63946; }
+.rp-sighting-status { font-size: 12px; font-weight: 600; }
 
 /* Hero (logged-out) */
 .rp-hero-intro {
@@ -2231,7 +2261,10 @@ img {
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 13px;
+  background: color-mix(in srgb, var(--tc) 3%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc) 13%, transparent);
 }
+.rp-tier-star { color: var(--tc); flex-shrink: 0; }
 
 /* Earn points */
 .rp-earn-list {
@@ -2307,6 +2340,13 @@ img {
   background: var(--bg3);
   border-radius: 100px;
   overflow: hidden;
+}
+.rp-progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--tc), var(--tc2));
+  width: var(--w);
+  transition: width 0.6s ease;
 }
 .rp-progress-labels {
   display: flex;
@@ -3756,6 +3796,9 @@ img {
   font-weight: 600;
   margin-right: 6px;
   margin-bottom: 4px;
+  color: var(--tag-color);
+  background: color-mix(in srgb, var(--tag-color) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tag-color) 27%, transparent);
 }
 
 /* Table */
@@ -4945,7 +4988,15 @@ img {
   white-space: nowrap;
   flex-shrink: 0;
   opacity: 0.85;
+  border: 1px solid var(--border);
+  color: var(--gray);
 }
+/* LiveFeed category tag colors */
+.lf-cat--surveillance { color: #c0392b; border-color: #c0392b; }
+.lf-cat--governance   { color: #2980b9; border-color: #2980b9; }
+.lf-cat--camera       { color: #8e44ad; border-color: #8e44ad; }
+.lf-cat--campaign     { color: #27ae60; border-color: #27ae60; }
+.lf-cat--milestone    { color: #d35400; border-color: #d35400; }
 .lf-text {
   font-size: 13px;
   color: var(--fg);
