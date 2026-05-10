@@ -148,23 +148,11 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const tabStyle = (active) => ({
-    flex: 1, padding: '8px', borderRadius: 7, fontWeight: 600, fontSize: 13,
-    background: active ? 'var(--bg)' : 'transparent',
-    border: active ? '1px solid var(--border)' : '1px solid transparent',
-    color: active ? 'var(--text)' : 'var(--muted)',
-    cursor: 'pointer',
-  })
-
   return (
     <div
       onClick={onClose}
       role="presentation"
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
-      }}
+      className="cm-backdrop"
     >
       <div
         ref={modalRef}
@@ -172,87 +160,73 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
         aria-modal="true"
         aria-labelledby={headingId}
         onClick={e => e.stopPropagation()}
-        style={{
-          background: 'var(--bg2)', border: '1px solid var(--border)',
-          borderRadius: 20, maxWidth: 560, width: '100%',
-          maxHeight: '92vh', overflowY: 'auto',
-          overflowX: 'hidden',
-          display: 'flex', flexDirection: 'column',
-        }}
+        className="cm-container"
       >
         {/* Header */}
-        <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px) 20px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+        <div className="cm-header">
+          <div className="cm-header-top">
             <span style={{
               background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text,
               padding: '4px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: '0.06em',
             }}>{tc.label}</span>
-            <button onClick={onClose} aria-label="Close campaign details" style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button onClick={onClose} aria-label="Close campaign details" className="cm-close-btn">
               <X size={20} />
             </button>
           </div>
-          <h2 id={headingId} style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, marginBottom: 12 }}>{campaign.title}</h2>
-          <p style={{ color: 'var(--muted)', lineHeight: 1.75, fontSize: 14 }}>{campaign.description}</p>
+          <h2 id={headingId} className="cm-title">{campaign.title}</h2>
+          <p className="cm-description">{campaign.description}</p>
           {campaign.source && (
-            <a href={campaign.source} target="_blank" rel="noopener noreferrer" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              color: 'var(--muted)', fontSize: 12, marginTop: 12,
-              borderBottom: '1px solid var(--border)',
-            }}>
+            <a href={campaign.source} target="_blank" rel="noopener noreferrer" className="cm-source-link">
               <ExternalLink size={11} /> Source / public record
             </a>
           )}
         </div>
 
         {/* Progress */}
-        <div style={{ padding: '18px clamp(16px, 5vw, 28px)', borderBottom: '1px solid var(--border)', background: 'var(--bg3)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div className="cm-progress-section">
+          <div className="cm-progress-row">
             <div>
-              <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-1px' }}>
+              <div className="cm-progress-raised">
                 {unclaimed ? 'Seeking Operator' : prelaunch ? 'Pre-Launch' : `$${campaign.raised.toLocaleString()}`}
               </div>
-              <div style={{ color: 'var(--muted)', fontSize: 12 }}>
+              <div className="cm-progress-label">
                 {unclaimed ? 'Campaign available to claim' : prelaunch ? 'Wallet pending — being set up' : `of $${campaign.goal.toLocaleString()} goal`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent)' }}>
+              <div className="cm-progress-goal">
                 ${campaign.goal.toLocaleString()}
               </div>
-              <div style={{ color: 'var(--muted)', fontSize: 12 }}>funding goal</div>
+              <div className="cm-progress-label">funding goal</div>
             </div>
           </div>
-          <div style={{ height: 5, background: 'var(--bg3)', borderRadius: 100, overflow: 'hidden', marginBottom: 10 }}>
-            <div style={{
-              width: prelaunch ? '0%' : `${pct}%`, height: '100%',
-              background: 'linear-gradient(90deg, var(--accent), #ff6b6b)',
-              borderRadius: 100,
-            }} />
+          <div className="cm-progress-track">
+            <div className="cm-progress-fill" style={{ width: prelaunch ? '0%' : `${pct}%` }} />
           </div>
-          <div style={{ display: 'flex', gap: 20, fontSize: 12, color: 'var(--muted)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{campaign.location}</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={11} />
+          <div className="cm-progress-meta">
+            <span className="cm-progress-meta-item"><MapPin size={11} />{campaign.location}</span>
+            <span className="cm-progress-meta-item"><Clock size={11} />
               {daysLeft > 0 ? `${daysLeft} days left` : 'Deadline passed'}
             </span>
           </div>
         </div>
 
         {/* Body */}
-        <div style={{ padding: 'clamp(16px, 4vw, 24px) clamp(16px, 5vw, 28px)', display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div className="cm-body">
 
           {/* Win condition — all non-verify campaigns */}
           {campaign.type !== 'verify' && campaign.winCondition && (
-            <div style={{ background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 12, padding: 16 }}>
-              <div style={{ fontWeight: 700, fontSize: 11, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Win Condition</div>
+            <div className="cm-win-condition">
+              <div className="cm-section-label--green">Win Condition</div>
               <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>{campaign.winCondition}</div>
             </div>
           )}
 
           {/* Milestones */}
           {campaign.milestones && campaign.milestones.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontWeight: 700, fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Funding Milestones</div>
+            <div className="cm-milestones">
+              <div className="cm-section-label">Funding Milestones</div>
               {campaign.milestones.map((m, i) => (
                 <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -468,18 +442,17 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
               </div>
 
               {/* Interest signal */}
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <div className="cm-actions">
                 <button
                   onClick={handleInterest}
                   disabled={interested}
                   aria-label={interested ? 'Interest recorded' : 'Signal interest in this campaign'}
+                  className="cm-interest-btn"
                   style={{
-                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     background: interested ? 'rgba(46,204,113,0.1)' : 'var(--bg3)',
                     border: `1px solid ${interested ? 'rgba(46,204,113,0.3)' : 'var(--border)'}`,
                     color: interested ? 'var(--green)' : 'var(--text)',
-                    borderRadius: 10, padding: '12px 16px', fontWeight: 600, fontSize: 14,
-                    cursor: interested ? 'default' : 'pointer', transition: 'all 0.2s',
+                    cursor: interested ? 'default' : 'pointer',
                   }}
                 >
                   <ThumbsUp size={15} />
@@ -497,13 +470,8 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 <button
                   onClick={handleShare}
                   aria-label="Share this campaign"
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    background: 'var(--bg3)', border: '1px solid var(--border)',
-                    color: shared ? 'var(--green)' : 'var(--muted)',
-                    borderRadius: 10, padding: '12px 16px', fontWeight: 600, fontSize: 13,
-                    cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap',
-                  }}
+                  className="cm-share-btn"
+                  style={{ color: shared ? 'var(--green)' : 'var(--muted)' }}
                 >
                   <Share2 size={14} />
                   {shared ? 'Copied!' : 'Share'}
@@ -542,23 +510,23 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             /* Active — fund with XMR or ZANO */
             <>
               {/* Currency selector */}
-              <div style={{ display: 'flex', gap: 4, background: 'var(--bg3)', borderRadius: 10, padding: 4 }}>
+              <div className="cm-wallet-tabs">
                 {hasXMR && (
-                  <button style={tabStyle(currency === 'XMR')} onClick={() => { setCurrency('XMR'); setCopied(false) }}>
+                  <button className={`cm-wallet-tab${currency === 'XMR' ? ' cm-wallet-tab--active' : ''}`} onClick={() => { setCurrency('XMR'); setCopied(false) }}>
                     ⬛ Monero (XMR)
                   </button>
                 )}
                 {hasZano && (
-                  <button style={tabStyle(currency === 'ZANO')} onClick={() => { setCurrency('ZANO'); setCopied(false) }}>
+                  <button className={`cm-wallet-tab${currency === 'ZANO' ? ' cm-wallet-tab--active' : ''}`} onClick={() => { setCurrency('ZANO'); setCopied(false) }}>
                     🟣 Zano (ZANO)
                   </button>
                 )}
               </div>
 
               {/* Address / QR tabs */}
-              <div style={{ display: 'flex', gap: 4, background: 'var(--bg3)', borderRadius: 10, padding: 4 }}>
-                <button style={tabStyle(walletTab === 'address')} onClick={() => setWalletTab('address')}>Wallet Address</button>
-                <button style={tabStyle(walletTab === 'qr')} onClick={() => setWalletTab('qr')}>QR Code</button>
+              <div className="cm-wallet-tabs">
+                <button className={`cm-wallet-tab${walletTab === 'address' ? ' cm-wallet-tab--active' : ''}`} onClick={() => setWalletTab('address')}>Wallet Address</button>
+                <button className={`cm-wallet-tab${walletTab === 'qr' ? ' cm-wallet-tab--active' : ''}`} onClick={() => setWalletTab('qr')}>QR Code</button>
               </div>
 
               {walletTab === 'address' ? (
@@ -623,12 +591,9 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
           )}
 
           {/* Tags */}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <div className="cm-tags">
             {campaign.tags.map(t => (
-              <span key={t} style={{
-                background: 'var(--bg3)', border: '1px solid var(--border)',
-                padding: '3px 10px', borderRadius: 100, fontSize: 11, color: 'var(--muted)',
-              }}>#{t}</span>
+              <span key={t} className="cm-tag">#{t}</span>
             ))}
           </div>
         </div>
