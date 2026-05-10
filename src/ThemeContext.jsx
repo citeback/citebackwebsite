@@ -1,24 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 import { themes } from './themes'
 
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem('citeback-theme') || 'COLD' } catch { return 'COLD' }
-  })
-
   useEffect(() => {
-    const t = themes[theme]
+    const t = themes['PRESS']
     const root = document.documentElement
     Object.entries(t.vars).forEach(([k, v]) => root.style.setProperty(k, v))
-    // Set data-theme so CSS selectors like [data-theme="BRUTAL"] work
-    root.setAttribute('data-theme', theme)
-    try { localStorage.setItem('citeback-theme', theme) } catch {}
-  }, [theme])
+    root.setAttribute('data-theme', 'PRESS')
+    // Clear any stale dark theme from localStorage
+    try { localStorage.removeItem('citeback-theme') } catch {}
+  }, [])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, themes }}>
+    <ThemeContext.Provider value={{ theme: 'PRESS', themes }}>
       {children}
     </ThemeContext.Provider>
   )
