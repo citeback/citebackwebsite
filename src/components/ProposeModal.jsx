@@ -128,7 +128,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             </p>
             <div className="pm-success-note">
               <div className="pm-success-note-text">
-                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform's launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
+                <strong className="pm-success-strong">Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform's launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
               </div>
             </div>
             <button onClick={onClose} className="pm-done-btn">Done</button>
@@ -148,7 +148,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             ))}
 
             <div className="pm-legal-note">
-              <AlertCircle size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+              <AlertCircle size={13} className="pm-legal-icon" />
               <p className="pm-legal-note-text">
                 All campaigns must be legal, public-facing actions. No illegal activity will be funded.
                 Community review ensures compliance before any wallet is generated.
@@ -187,13 +187,13 @@ export default function ProposeModal({ onClose, prefill = {} }) {
                 value={form.goal} onChange={e => set('goal', e.target.value)} />
             </div>
             <div className="pm-contact-note">
-              To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
+              To follow up on your submission, email <strong className="pm-success-strong">citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
             {/* Email gate — logged-in operators must have a recovery email */}
             {needsEmail && (
               <div className="pm-email-gate">
-                <Mail size={15} style={{ color: '#f4a261', flexShrink: 0, marginTop: 1 }} />
+                <Mail size={15} className="pm-email-icon" />
                 <div className="pm-email-gate-body">
                   <strong className="pm-email-gate-title">Recovery email required to propose campaigns</strong>
                   Operators must have a recovery email on file — not for identity, but so you can't lose access to an active campaign.

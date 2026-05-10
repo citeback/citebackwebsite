@@ -120,8 +120,7 @@ export default function ClaimAccountPage({ setTab }) {
             <User size={14} className="cla-input-icon" />
             <input
               type="text"
-              className="cla-input cla-input--icon-left"
-              style={{ borderColor: username && !usernameValid ? '#e63946' : undefined }}
+              className={`cla-input cla-input--icon-left${username && !usernameValid ? ' cla-input--error' : ''}`}
               placeholder="3–20 chars, letters/numbers/_"
               value={username}
               onChange={e => { setUsername(e.target.value); setError(null) }}
@@ -162,7 +161,7 @@ export default function ClaimAccountPage({ setTab }) {
             <div className="cla-strength-track">
               <div className="cla-strength-fill" style={{ width: `${(strength.score/4)*100}%`, background: strength.color }} />
             </div>
-            <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 44 }}>{strength.label}</span>
+            <span className="cla-strength-label" style={{ color: strength.color }}>{strength.label}</span>
           </div>
         )}
 
@@ -172,8 +171,7 @@ export default function ClaimAccountPage({ setTab }) {
             <Lock size={14} className="cla-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              className="cla-input cla-input--icon-left"
-              style={{ borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+              className={`cla-input cla-input--icon-left${confirmPassword && !passwordsMatch ? ' cla-input--error' : ''}`}
               placeholder="Re-enter password"
               value={confirmPassword}
               onChange={e => { setConfirmPassword(e.target.value); setError(null) }}
@@ -188,17 +186,13 @@ export default function ClaimAccountPage({ setTab }) {
 
         {error && (
           <div className="cla-error-box">
-            <AlertCircle size={14} style={{ flexShrink: 0 }} />
+            <AlertCircle size={14} className="cla-error-icon" />
             {error}
           </div>
         )}
 
-        <button type="submit" disabled={!canSubmit} className="cla-submit-btn"
-          style={{
-            background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
-            color: canSubmit ? '#fff' : 'var(--muted)',
-            cursor: canSubmit ? 'pointer' : 'not-allowed',
-          }}>
+        <button type="submit" disabled={!canSubmit}
+          className={`cla-submit-btn${canSubmit ? ' cla-submit-btn--active' : ''}`}>
           {loading ? <><Loader size={15} className="spinning" /> Activating…</> : 'Activate Account'}
         </button>
       </form>

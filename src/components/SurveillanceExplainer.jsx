@@ -243,18 +243,10 @@ function AccordionCard({ item, defaultOpen = false }) {
         onClick={() => setOpen(o => !o)}
         className="svex-card-header"
       >
-        <span style={{
-          fontSize: 24,
-          width: 44,
-          height: 44,
-          borderRadius: 10,
-          background: item.color + '18',
-          border: `1px solid ${item.color}30`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>{item.icon}</span>
+        <span
+          className="svex-card-icon"
+          style={{ background: item.color + '18', border: `1px solid ${item.color}30` }}
+        >{item.icon}</span>
         <div className="svex-card-title-wrap">
           <div className="svex-card-title">{item.name}</div>
           <div className="svex-card-tagline">{item.tagline}</div>
@@ -270,24 +262,24 @@ function AccordionCard({ item, defaultOpen = false }) {
 
           {/* What is it */}
           <div className="svex-what-section">
-            <div style={{
-              display: 'inline-block',
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-              textTransform: 'uppercase', color: item.color,
-              background: item.color + '15',
-              padding: '3px 10px', borderRadius: 100, marginBottom: 8,
-            }}>What is it?</div>
+            <div
+              className="svex-what-label"
+              style={{ color: item.color, background: item.color + '15' }}
+            >What is it?</div>
             <p className="svex-what-text">
               {item.sections.what}
             </p>
           </div>
 
           {/* How it affects you */}
-          <div style={{ marginTop: 16, padding: '14px 16px', background: item.color + '0c', borderRadius: 10, borderLeft: `3px solid ${item.color}` }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: item.color, marginBottom: 6 }}>
+          <div
+            className="svex-affects-box"
+            style={{ background: item.color + '0c', borderLeft: `3px solid ${item.color}` }}
+          >
+            <div className="svex-affects-title" style={{ color: item.color }}>
               How it affects you
             </div>
-            <p style={{ fontSize: 14, color: 'var(--fg)', lineHeight: 1.7, margin: 0 }}>
+            <p className="svex-affects-text">
               {item.sections.affects}
             </p>
           </div>

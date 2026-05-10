@@ -62,7 +62,7 @@ export default function ResetPasswordPage({ setTab }) {
     return (
       <section className="rp2-page">
         <div className="rp2-alert-box rp2-alert-box--error">
-          <AlertCircle size={18} style={{ color: '#e63946', flexShrink: 0, marginTop: 1 }} />
+          <AlertCircle size={18} className="rsp-icon-error" />
           <div>
             <p className="rp2-alert-title">Invalid reset link</p>
             <p className="rp2-alert-text">This link is missing required parameters. Request a new one from the login screen.</p>
@@ -79,7 +79,7 @@ export default function ResetPasswordPage({ setTab }) {
     return (
       <section className="rp2-page">
         <div className="rp2-alert-box--success">
-          <CheckCircle size={22} style={{ color: '#6ee7b7', flexShrink: 0 }} />
+          <CheckCircle size={22} className="rsp-icon-success" />
           <div>
             <p className="rp2-alert-title">Password updated</p>
             <p className="rp2-alert-text">You can now log in with your new password.</p>
@@ -106,8 +106,7 @@ export default function ResetPasswordPage({ setTab }) {
             <Lock size={14} className="rp2-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              className="rp2-input"
-              style={{ paddingLeft: 34, paddingRight: 40 }}
+              className="rp2-input rsp-input--icon-both"
               placeholder="At least 8 characters"
               value={password}
               onChange={e => { setPassword(e.target.value); setError(null) }}
@@ -126,9 +125,9 @@ export default function ResetPasswordPage({ setTab }) {
         {password.length > 0 && (
           <div className="rp2-strength-row">
             <div className="rp2-strength-track">
-              <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
+              <div className="rsp-strength-fill" style={{ width: `${(strength.score/4)*100}%`, background: strength.color }} />
             </div>
-            <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 44 }}>{strength.label}</span>
+            <span className="rsp-strength-label" style={{ color: strength.color }}>{strength.label}</span>
           </div>
         )}
 
@@ -138,8 +137,7 @@ export default function ResetPasswordPage({ setTab }) {
             <Lock size={14} className="rp2-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              className="rp2-input"
-              style={{ paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+              className={`rp2-input rsp-input--icon-left${confirmPassword && !passwordsMatch ? ' rsp-input--error' : ''}`}
               placeholder="Re-enter new password"
               value={confirmPassword}
               onChange={e => { setConfirmPassword(e.target.value); setError(null) }}
@@ -154,20 +152,13 @@ export default function ResetPasswordPage({ setTab }) {
 
         {error && (
           <div className="rp2-error-box">
-            <AlertCircle size={14} style={{ flexShrink: 0 }} />
+            <AlertCircle size={14} className="rsp-error-icon" />
             {error}
           </div>
         )}
 
         <button type="submit" disabled={!canSubmit}
-          style={{
-            background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
-            border: 'none',
-            color: canSubmit ? '#fff' : 'var(--muted)',
-            padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
-            cursor: canSubmit ? 'pointer' : 'not-allowed',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}>
+          className={`rsp-submit-btn${canSubmit ? ' rsp-submit-btn--active' : ''}`}>
           {loading ? <><Loader size={15} className="spinning" /> Updating…</> : 'Set New Password'}
         </button>
       </form>

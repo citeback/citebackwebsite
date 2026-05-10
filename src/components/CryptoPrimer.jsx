@@ -160,7 +160,7 @@ function CoinPanel({ coin }) {
             className="cp-send-note"
             style={{ borderLeft: `3px solid ${coin.color}` }}
           >
-            <strong style={{ color: 'var(--fg)' }}>Once you have {coin.ticker}:</strong> Open the campaign you want to fund, copy the wallet address shown, open your {coin.name} wallet, and paste the address into the Send field. Enter the amount and confirm. No login, no account, no receipt — by design.
+            <strong className="cp-send-note-strong">Once you have {coin.ticker}:</strong> Open the campaign you want to fund, copy the wallet address shown, open your {coin.name} wallet, and paste the address into the Send field. Enter the amount and confirm. No login, no account, no receipt — by design.
           </div>
         </div>
       )}

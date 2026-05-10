@@ -165,11 +165,10 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
         {/* Header */}
         <div className="cm-header">
           <div className="cm-header-top">
-            <span style={{
-              background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text,
-              padding: '4px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700,
-              textTransform: 'uppercase', letterSpacing: '0.06em',
-            }}>{tc.label}</span>
+            <span
+              className="cm-type-badge"
+              style={{ background: tc.bg, border: `1px solid ${tc.border}`, color: tc.text }}
+            >{tc.label}</span>
             <button onClick={onClose} aria-label="Close campaign details" className="cm-close-btn">
               <X size={20} />
             </button>
@@ -359,7 +358,6 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                     onClick={handleClaim}
                     disabled={claiming}
                     className="cm-claim-btn"
-                    style={{ cursor: claiming ? 'default' : 'pointer' }}
                   >
                     <Users size={16} />
                     {claiming ? 'Claiming…' : 'Claim this Campaign'}
@@ -409,7 +407,6 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 onClick={handleSaveOperator}
                 disabled={savingWallet || (!operatorForm.walletXmr && !operatorForm.walletZano && !operatorForm.operatorName && !operatorForm.operatorBio)}
                 className="cm-save-btn"
-                style={{ cursor: savingWallet ? 'default' : 'pointer' }}
               >
                 {savingWallet ? 'Saving…' : 'Save & Activate'}
               </button>
@@ -433,20 +430,13 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                   onClick={handleInterest}
                   disabled={interested}
                   aria-label={interested ? 'Interest recorded' : 'Signal interest in this campaign'}
-                  className="cm-interest-btn"
-                  style={{
-                    background: interested ? 'rgba(46,204,113,0.1)' : 'var(--bg3)',
-                    border: `1px solid ${interested ? 'rgba(46,204,113,0.3)' : 'var(--border)'}`,
-                    color: interested ? 'var(--green)' : 'var(--text)',
-                    cursor: interested ? 'default' : 'pointer',
-                  }}
+                  className={`cm-interest-btn${interested ? ' cm-interest-btn--recorded' : ''}`}
                 >
                   <ThumbsUp size={15} />
                   {interested ? 'Interest Recorded' : 'Signal Interest — helps prioritize launch order'}
                   {interestCount > 0 && (
                     <span
-                      className="cm-interest-count"
-                      style={{ background: interested ? 'rgba(46,204,113,0.2)' : 'var(--bg2)' }}
+                      className={`cm-interest-count${interested ? ' cm-interest-count--active' : ''}`}
                     >
                       {interestCount}
                     </span>
@@ -455,8 +445,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 <button
                   onClick={handleShare}
                   aria-label="Share this campaign"
-                  className="cm-share-btn"
-                  style={{ color: shared ? 'var(--green)' : 'var(--muted)' }}
+                  className={`cm-share-btn${shared ? ' cm-share-btn--shared' : ''}`}
                 >
                   <Share2 size={14} />
                   {shared ? 'Copied!' : 'Share'}
@@ -515,9 +504,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                   <div className="cm-wallet-address">
                     {activeWallet}
                   </div>
-                  <button onClick={copyWallet} className="cm-copy-btn" style={{
-                    background: copied ? 'rgba(46,204,113,0.8)' : 'var(--accent)',
-                  }}>
+                  <button onClick={copyWallet} className={`cm-copy-btn${copied ? ' cm-copy-btn--copied' : ''}`}>
                     {copied ? <><CheckCircle size={16} /> Copied!</> : <><Copy size={16} /> Copy {currency} Address</>}
                   </button>
                 </div>

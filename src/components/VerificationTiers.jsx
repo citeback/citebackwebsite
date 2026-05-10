@@ -77,7 +77,7 @@ export function ThreatDisclosure() {
   return (
     <div className="vt-threat">
       <div className="vt-threat-header">
-        <AlertTriangle size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+        <AlertTriangle size={18} className="vt-icon-accent" />
         <div className="vt-threat-title">Adversarial Threat Disclosure</div>
       </div>
 
@@ -129,13 +129,13 @@ export function C2PAExplainer() {
               'The image has not been edited in any way since capture',
             ].map((item, i) => (
               <div key={i} className="vt-c2pa-list-item">
-                <CheckCircle size={12} style={{ color: '#f1c40f', flexShrink: 0, marginTop: 2 }} />
+                <CheckCircle size={12} className="vt-icon-gold" />
                 {item}
               </div>
             ))}
           </div>
           <div className="vt-c2pa-footer">
-            <strong style={{ color: 'var(--text)' }}>How to get a C2PA photo:</strong>{' '}
+            <strong className="vt-fg-text">How to get a C2PA photo:</strong>{' '}
             <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="vt-c2pa-link">Proofmode</a>{' '}
             (iOS/Android, free — built by Guardian Project for human rights evidence) ·{' '}
             Samsung Galaxy S24+ · Google Pixel 10

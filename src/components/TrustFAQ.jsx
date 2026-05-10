@@ -221,7 +221,7 @@ export default function TrustFAQ({ setTab }) {
           >
             <div className="faq-pillar-icon">{p.icon}</div>
             <div className="faq-pillar-title">{p.title}</div>
-            <div className="faq-pillar-desc" style={{ marginBottom: p.prelaunch || p.linkLabel ? 8 : 0 }}>{p.desc}</div>
+            <div className={`faq-pillar-desc${p.prelaunch || p.linkLabel ? ' faq-pillar-desc--spaced' : ''}`}>{p.desc}</div>
             {p.prelaunch && <div className="faq-pillar-prelaunch">⏳ {p.prelaunch}</div>}
             {p.linkLabel && <div className="faq-pillar-link">{p.linkLabel} →</div>}
           </a>
@@ -261,7 +261,7 @@ export default function TrustFAQ({ setTab }) {
           <div className="faq-verify-title">Don't take our word for it.</div>
           <div className="faq-verify-text">
             The SHA-256 hash of the running server code is published live at{' '}
-            <a href="https://ai.citeback.com/version" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>ai.citeback.com/version</a>.
+            <a href="https://ai.citeback.com/version" target="_blank" rel="noopener noreferrer" className="faq-accent-link">ai.citeback.com/version</a>.
             Download server.js from the public GitHub repo, run <code className="faq-verify-code">sha256sum server.js</code>, and compare — if the hashes match, the code running here is exactly what's published.
             Frontend deploys are verifiable via Netlify's public deploy log. Full signed-build attestation is on the Phase 2 roadmap.
           </div>

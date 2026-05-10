@@ -153,7 +153,7 @@ export default function Operators() {
             { tier: 'Legal Entity', unlock: 'Registered LLC, nonprofit, or equivalent on file', cap: 'Up to $30,000' },
             { tier: 'Reviewed', unlock: 'Legal entity + DAO counsel review + $1M liability insurance', cap: 'Up to $125,000' },
           ].map((row, i, arr) => (
-            <div key={row.tier} className="ops-tier-row" style={{ borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <div key={row.tier} className="ops-tier-row">
               <span className="ops-tier-name">{row.tier}</span>
               <span className="ops-tier-unlock">{row.unlock}</span>
               <span className="ops-tier-cap">{row.cap}</span>

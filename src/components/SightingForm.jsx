@@ -317,7 +317,7 @@ export default function SightingForm({ setTab }) {
                   <span className="sf-drop-hint-text">Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
-                  style={{ display: 'none' }} onChange={handlePhoto} />
+                  className="sf-photo-hidden" onChange={handlePhoto} />
 
                 <div className="sf-photo-hint">
                   <strong>Shoot with a C2PA app or device — location must be enabled:</strong><br />
@@ -327,7 +327,7 @@ export default function SightingForm({ setTab }) {
               </>
             ) : (
               <div className="sf-photo-preview">
-                <div style={{ position: 'relative' }}>
+                <div className="sf-photo-relative">
                   <img src={photoPreview} alt="Sighting" className="sf-preview-img" />
                   <button type="button" onClick={clearPhoto} aria-label="Remove photo" className="sf-photo-clear">
                     <X size={14} />
@@ -411,12 +411,7 @@ export default function SightingForm({ setTab }) {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="sf-submit-btn"
-            style={{
-              background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
-              color: canSubmit ? '#fff' : 'var(--muted)',
-              cursor: canSubmit ? 'pointer' : 'not-allowed',
-            }}
+            className={`sf-submit-btn${canSubmit ? ' sf-submit-btn--active' : ''}`}
           >
             {sending
               ? <><Loader size={16} className="spinning" /> Verifying &amp; uploading…</>

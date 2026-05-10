@@ -191,10 +191,8 @@ function ApplyModal({ onClose, defaultRole = '' }) {
               <label className="hre-label">Your Role</label>
               <div className="hre-role-list">
                 {roles.map(r => (
-                  <button key={r.id} onClick={() => set('role', r.id)} className="hre-role-btn" style={{
-                    background: form.role === r.id ? 'rgba(230,57,70,0.1)' : 'var(--bg3)',
-                    border: `1px solid ${form.role === r.id ? 'rgba(230,57,70,0.5)' : 'var(--border)'}`,
-                  }}>
+                  <button key={r.id} onClick={() => set('role', r.id)}
+                    className={`hre-role-btn${form.role === r.id ? ' hre-role-btn--selected' : ''}`}>
                     <div className="hre-role-btn-label">{r.label}</div>
                     <div className="hre-role-btn-desc">{r.desc}</div>
                   </button>
@@ -324,13 +322,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
             <button
               onClick={handleSubmit}
               disabled={!canSubmit}
-              style={{
-                background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
-                border: 'none',
-                color: canSubmit ? '#fff' : 'var(--muted)',
-                padding: '13px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-                cursor: canSubmit ? 'pointer' : 'not-allowed',
-              }}>
+              className={`hre-submit-btn${canSubmit ? ' hre-submit-btn--active' : ''}`}>
               {sending ? 'Submitting...' : 'Submit Application'}
             </button>
             {submitError && (
@@ -422,19 +414,20 @@ export default function HumanRegistry() {
       <div className="hre-cards-grid">
         {Object.entries(typeConfig).map(([key, cfg]) => (
           <div key={key} className="hre-card">
-            <div style={{
-              width: 52, height: 52, borderRadius: 12,
-              background: `rgba(${cfg.colorRaw},0.08)`,
-              border: `1px solid rgba(${cfg.colorRaw},0.2)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: cfg.color,
-            }}>{cfg.icon}</div>
+            <div
+              className="hre-card-icon"
+              style={{
+                background: `rgba(${cfg.colorRaw},0.08)`,
+                border: `1px solid rgba(${cfg.colorRaw},0.2)`,
+                color: cfg.color,
+              }}
+            >{cfg.icon}</div>
             <div>
               <div className="hre-card-role-label">{cfg.label}</div>
               {key === 'technical' ? (
                 <div className="hre-card-desc">
                   backend engineers, Zano/XMR RPC integrators, frontend devs, FOIA automation.
-                  <span style={{ display: 'block', marginTop: 6, color: `rgba(${cfg.colorRaw},0.9)`, fontWeight: 600 }}>
+                  <span className="hre-card-pseudo" style={{ color: `rgba(${cfg.colorRaw},0.9)` }}>
                     🔒 Pseudonymous — XMR or ZANO address as identity. No real name required.
                   </span>
                 </div>

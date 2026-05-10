@@ -355,7 +355,7 @@ export default function SurveillanceFeed({ setTab }) {
                 CourtListener unavailable — check back shortly.
               </div>
             ) : (
-              <div>
+              <div className="sf2-cases-list">
                 {cases.map((c, i) => (
                   <a
                     key={c.cluster_id}
@@ -363,7 +363,6 @@ export default function SurveillanceFeed({ setTab }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="sf2-card"
-                    style={{ borderBottom: i < cases.length - 1 ? '1px solid var(--border)' : 'none' }}
                   >
                     <div className="sf2-title">{c.caseName || 'Unnamed Case'}</div>
                     <div className="sf2-meta">
@@ -420,7 +419,7 @@ export default function SurveillanceFeed({ setTab }) {
             ) : billsLoading ? (
               <BillsSkeleton />
             ) : (
-              <div>
+              <div className="sf2-bills-list">
                 {bills.slice(0, 5).map((b, i) => (
                   <a
                     key={b.id}
@@ -428,7 +427,6 @@ export default function SurveillanceFeed({ setTab }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="sf2-card"
-                    style={{ borderBottom: i < bills.length - 1 ? '1px solid var(--border)' : 'none' }}
                   >
                     <div className="sf2-card-header">
                       <span className="sf2-state-tag">{b.state}</span>
@@ -561,7 +559,7 @@ function CasesSkeleton() {
   return (
     <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+        <div key={i} className="sf2-skel-item">
           <div className="sf2-skel-bar-lg" style={{ width: `${60 + (i % 3) * 15}%` }} />
           <div className="sf2-skel-bar-sm sf2-skel-bar-sm--35" />
         </div>
@@ -574,7 +572,7 @@ function BillsSkeleton() {
   return (
     <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+        <div key={i} className="sf2-skel-item">
           <div className="sf2-skel-bar-lg" style={{ width: `${55 + (i % 3) * 15}%` }} />
           <div className="sf2-skel-bar-sm sf2-skel-bar-sm--45" />
         </div>

@@ -1215,6 +1215,16 @@ img {
   font-size: 14px;
   transition: all 0.2s;
   font-family: inherit;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+}
+.cm-interest-btn--recorded {
+  background: rgba(46,204,113,0.1);
+  border-color: rgba(46,204,113,0.3);
+  color: var(--green);
+  cursor: default;
 }
 .cm-share-btn {
   display: flex;
@@ -1230,7 +1240,9 @@ img {
   transition: all 0.2s;
   white-space: nowrap;
   font-family: inherit;
+  color: var(--muted);
 }
+.cm-share-btn--shared { color: var(--green); }
 .cm-tags {
   display: flex;
   gap: 6px;
@@ -3203,6 +3215,14 @@ img {
   justify-content: center;
   gap: 8px;
   width: 100%;
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.sf-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
 }
 
 .sf-submit-hint {
@@ -7147,8 +7167,8 @@ img {
   gap: 8px;
   padding: 8px 0;
   align-items: start;
-  /* border-bottom is conditional — keep inline */
 }
+.ops-tier-row:not(:last-child) { border-bottom: 1px solid var(--border); }
 
 .ops-tier-name {
   color: var(--accent);
@@ -7272,8 +7292,8 @@ img {
 
 .sf2-skel-item {
   padding: 16px 0;
-  /* dynamic borderBottom kept inline where conditional */
 }
+.sf2-skel-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
 .sf2-skel-bar-lg {
   height: 14px;
@@ -7684,7 +7704,9 @@ img {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  cursor: pointer;
 }
+.cm-claim-btn:disabled { cursor: default; }
 
 .cm-claim-note {
   font-size: 12px;
@@ -7746,7 +7768,9 @@ img {
   padding: 12px 20px;
   font-weight: 700;
   font-size: 14px;
+  cursor: pointer;
 }
+.cm-save-btn:disabled { cursor: default; }
 
 .cm-prelaunch-banner {
   background: rgba(230, 57, 70, 0.06);
@@ -7823,7 +7847,9 @@ img {
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
+  background: var(--accent);
 }
+.cm-copy-btn--copied { background: rgba(46,204,113,0.8); }
 
 .cm-qr-container {
   display: flex;
@@ -7877,6 +7903,7 @@ img {
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 1px 8px;
+  background: var(--bg2);
   font-size: 11px;
   font-weight: 700;
 }
@@ -8301,6 +8328,15 @@ img {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: not-allowed;
+  width: 100%;
+}
+.cla-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
 }
 
 /* ── GuaranteeSection ─────────────────────────────────────────────────────── */
@@ -8771,3 +8807,180 @@ img {
 /* ── ErrorBoundary AI chat fallback ──────────────────────── */
 .eb-ai-fallback { position: fixed; bottom: 80px; right: 24px; z-index: 999; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; font-size: 13px; color: var(--muted); }
 .eb-ai-close-btn { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; }
+
+/* ════════════════════════════════════════════════════════════
+   Batch CSS migration — inline → CSS classes
+   CampaignModal, ResetPasswordPage, SurveillanceFeed,
+   SurveillanceExplainer, CryptoPrimer, ClaimAccountPage,
+   ProposeModal, Operators, HumanRegistry, CampaignCard,
+   VerificationTiers, TrustFAQ, LaunchTracker, SightingForm,
+   Governance
+   ════════════════════════════════════════════════════════════ */
+
+/* ── CampaignModal additions ─────────────────────────────── */
+.cm-type-badge {
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cm-interest-count--active { background: rgba(46,204,113,0.2); }
+
+/* ── ResetPasswordPage ───────────────────────────────────── */
+.rsp-icon-error  { color: #e63946; flex-shrink: 0; margin-top: 1px; }
+.rsp-icon-success { color: #6ee7b7; flex-shrink: 0; }
+.rsp-strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.2s, background 0.2s;
+}
+.rsp-strength-label { font-size: 11px; font-weight: 600; min-width: 44px; }
+.rsp-input--icon-both { padding-left: 34px; padding-right: 40px; }
+.rsp-input--icon-left  { padding-left: 34px; }
+.rsp-input--error { border-color: #e63946 !important; }
+.rsp-error-icon { flex-shrink: 0; }
+.rsp-submit-btn {
+  background: var(--bg3);
+  border: none;
+  color: var(--muted);
+  padding: 13px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+.rsp-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ── SurveillanceFeed — :not(:last-child) borders ────────── */
+.sf2-cases-list .sf2-card:not(:last-child),
+.sf2-bills-list .sf2-card:not(:last-child) { border-bottom: 1px solid var(--border); }
+
+/* ── SurveillanceExplainer ───────────────────────────────── */
+.svex-card-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.svex-what-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 8px;
+}
+.svex-affects-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+.svex-affects-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.svex-affects-text {
+  font-size: 14px;
+  color: var(--fg);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── CryptoPrimer ────────────────────────────────────────── */
+.cp-send-note-strong { color: var(--fg); }
+
+/* ── ClaimAccountPage additions ─────────────────────────── */
+.cla-strength-label { font-size: 11px; font-weight: 600; min-width: 44px; }
+.cla-input--error { border-color: #e63946 !important; }
+.cla-error-icon { flex-shrink: 0; }
+
+/* ── ProposeModal ────────────────────────────────────────── */
+.pm-legal-icon  { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+.pm-email-icon  { color: #f4a261; flex-shrink: 0; margin-top: 1px; }
+.pm-success-strong { color: var(--text); }
+
+/* ── HumanRegistry card icon ─────────────────────────────── */
+.hre-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hre-card-pseudo {
+  display: block;
+  margin-top: 6px;
+  font-weight: 600;
+}
+.hre-submit-btn {
+  background: var(--bg3);
+  border: none;
+  color: var(--muted);
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+.hre-submit-btn--active {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+.hre-role-btn--selected {
+  background: rgba(230,57,70,0.1);
+  border-color: rgba(230,57,70,0.5);
+}
+
+/* ── CampaignCard ────────────────────────────────────────── */
+.cc-raised-text { font-weight: 700; color: var(--text); }
+.cc-raised-text--muted { font-weight: 700; color: var(--muted); }
+.cc-goal-text { color: var(--muted); }
+.cc-share-btn--shared { color: var(--green); }
+
+/* ── VerificationTiers ───────────────────────────────────── */
+.vt-icon-accent { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.vt-icon-gold   { color: #f1c40f; flex-shrink: 0; margin-top: 2px; }
+.vt-fg-text     { color: var(--text); }
+
+/* ── TrustFAQ ────────────────────────────────────────────── */
+.faq-accent-link { color: var(--accent); }
+.faq-pillar-desc--spaced { margin-bottom: 8px; }
+
+/* ── LaunchTracker ───────────────────────────────────────── */
+.lt-icon-done    { color: #6ee7b7; flex-shrink: 0; margin-top: 1px; }
+.lt-icon-pending { color: var(--border); flex-shrink: 0; margin-top: 1px; }
+
+/* ── SightingForm ────────────────────────────────────────── */
+.sf-photo-hidden { display: none; }
+.sf-photo-relative { position: relative; }
+
+/* ── Governance ──────────────────────────────────────────── */
+.gov-participant-border-left { border-left: 3px solid; }
