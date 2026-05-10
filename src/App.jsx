@@ -79,12 +79,10 @@ const TAB_TO_PATH = {
 function CampaignDeepLink({ setSelectedCampaign, setTab }) {
   const { id } = useParams()
   useEffect(() => {
-    fetch(`${AI_URL}/api/campaigns`)
-      .then(r => r.json())
-      .then(all => {
-        const campaign = all.find(c => String(c.id) === id)
-        if (campaign) setSelectedCampaign(campaign)
-      })
+    // Use single-campaign endpoint — avoids fetching all campaigns just to find one
+    fetch(`${AI_URL}/api/campaigns/${id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(campaign => { if (campaign) setSelectedCampaign(campaign) })
       .catch(() => {})
   }, [id])
   return <CampaignList full setSelectedCampaign={setSelectedCampaign} setTab={setTab} />

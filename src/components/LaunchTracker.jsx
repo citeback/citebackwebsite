@@ -4,13 +4,16 @@ import { useCameraCount } from '../context/CameraCount'
 const milestonesBase = [
   { done: true,    label: 'Governance framework published' },
   { done: true,    label: 'CAMERA_COUNT_PLACEHOLDER' },
-  { done: true,    label: 'Expert directory launched — applications open for attorneys, FOIA specialists, and technical contributors' },
+  { done: true,    label: 'Expert directory launched — attorney, FOIA, and technical contributor applications open' },
   { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
-  { done: false,   label: 'Wyoming DAO LLC incorporated' },
+  { done: true,    label: 'Account system live — passkeys, reputation tiers, operator access' },
+  { done: true,    label: 'Attorney credential verification live — CA State Bar auto-lookup, all other states manual review' },
+  { done: true,    label: 'Security audit complete — rate limits, CSP headers, passkeys, encrypted email at rest, fail2ban, VPS hardened' },
+  { done: false,   label: 'Wyoming DAO LLC incorporated — filing at wyomingbusiness.gov ($100)' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
   { done: false,   label: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
-  { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
-  { done: false,   label: 'OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates' },
+  { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection' },
+  { done: false,   label: 'OFAC attorney guidance obtained; operator pre-screening framework operational' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 
