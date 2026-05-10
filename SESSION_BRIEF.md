@@ -1,5 +1,5 @@
 # Citeback — Session Brief
-*Last updated: 2026-05-10 10:20 MDT*
+*Last updated: 2026-05-10 12:29 MDT (keepalive 8)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -10,7 +10,7 @@ Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 **Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
 **VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
 **Status:** Site working, COLD dark theme, full CSS. Audit score ~9.8/10. Visual QA pass still needed from Scott.
-**Last keepalive (2026-05-10 11:18 MDT):** /account/logout + logout-all rate limits added; scrollbar colors normalized to #333 site-wide; full audit passed clean — 0 inline styles, 0 SQL injection, all endpoints rate-limited, all a11y labels present, CSP no unsafe-inline.
+**Last keepalive (2026-05-10 12:29 MDT):** Caught and reverted agent error (c292173 locked theme to PRESS/light — broke COLD default and removed localStorage persistence). Restored ThemeContext, index.css, index.html to COLD dark. Added rate limits to 2 admin endpoints. Attorney pipeline smoke tests pass. Full audit: 0 inline styles, 0 SQL injection, CSP clean, all a11y OK.
 
 ## What Broke This Morning (2026-05-10) + What Was Fixed
 

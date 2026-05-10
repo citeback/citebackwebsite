@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (10:20 AM MDT keepalive)*
+*Last updated: 2026-05-10 (12:29 MDT keepalive 8)*
 
 ---
 
@@ -316,6 +316,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | /account/logout missing rate limit (DoS via cookie spam) | ✅ FIXED (checkRateLimit added pre-response) |
 | 2026-05-10 | /account/logout-all missing rate limit (valid token can loop-increment password_version) | ✅ FIXED (checkAuthRateLimit pre-body; prevents token-holder DoS) |
 | 2026-05-10 | index.css global scrollbar #1a1a2e navy vs App.css #333 dark | ✅ FIXED (index.css ::-webkit-scrollbar-thumb + .layers-scroll normalized to #333) |
+| 2026-05-10 | Agent (keepalive 7.5) locked ThemeContext to PRESS/light, removed setTheme + localStorage | ✅ FIXED — COLD default restored, localStorage persistence restored, setTheme re-exposed |
+| 2026-05-10 | /admin/attorney-applications missing rate limit | ✅ FIXED (checkRateLimit added; isAdmin auth still primary gatekeeper) |
+| 2026-05-10 | /admin/sightings missing rate limit | ✅ FIXED (checkRateLimit added; isAdmin auth still primary gatekeeper) |
 
 ---
 
