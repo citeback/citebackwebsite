@@ -97,14 +97,14 @@ function CoinPanel({ coin }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="cp-coin-panel">
+    <div className="cp-coin-panel" style={{ '--cc': coin.color }}>
       {/* Header */}
       <div className={`cp-coin-header${open ? ' cp-coin-header--open' : ''}`}>
-        <div className="cp-coin-dot" style={{ background: coin.color }} />
+        <div className="cp-coin-dot" />
         <div className="cp-coin-meta">
           <div className="cp-coin-name-row">
             <span className="cp-coin-name">{coin.name}</span>
-            <span className="cp-coin-ticker" style={{ color: coin.color }}>{coin.ticker}</span>
+            <span className="cp-coin-ticker">{coin.ticker}</span>
           </div>
           <div className="cp-coin-tagline">{coin.tagline}</div>
         </div>
@@ -127,7 +127,6 @@ function CoinPanel({ coin }) {
               <div key={i} className="cp-coin-step">
                 <div
                   className="cp-step-num"
-                  style={{ border: `1px solid ${coin.color}`, color: coin.color }}
                 >{i + 1}</div>
                 <div>
                   <div className="cp-step-label">{step.label}</div>
@@ -140,10 +139,6 @@ function CoinPanel({ coin }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cp-step-link"
-                        style={{
-                          color: coin.color,
-                          borderBottom: `1px solid ${coin.color}44`,
-                        }}
                       >
                         {link.text}
                         <ExternalLink size={10} />
@@ -156,10 +151,7 @@ function CoinPanel({ coin }) {
           </div>
 
           {/* Send step — always shown */}
-          <div
-            className="cp-send-note"
-            style={{ borderLeft: `3px solid ${coin.color}` }}
-          >
+          <div className="cp-send-note">
             <strong className="cp-send-note-strong">Once you have {coin.ticker}:</strong> Open the campaign you want to fund, copy the wallet address shown, open your {coin.name} wallet, and paste the address into the Send field. Enter the amount and confirm. No login, no account, no receipt — by design.
           </div>
         </div>

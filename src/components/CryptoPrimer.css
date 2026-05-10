@@ -111,6 +111,7 @@
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  background: var(--cc);
 }
 
 .cp-coin-meta {
@@ -133,6 +134,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   font-family: var(--font-mono, monospace);
+  color: var(--cc);
 }
 
 .cp-coin-tagline {
@@ -191,6 +193,8 @@
   justify-content: center;
   flex-shrink: 0;
   margin-top: 1px;
+  border: 1px solid var(--cc);
+  color: var(--cc);
 }
 
 .cp-step-label {
@@ -222,14 +226,16 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   padding-bottom: 1px;
+  color: var(--cc);
+  border-bottom: 1px solid color-mix(in srgb, var(--cc) 27%, transparent);
 }
 
-/* Send note — border-left kept inline (dynamic coin color) */
 .cp-send-note {
   margin-top: 20px;
   padding: 14px 16px;
   background: var(--bg);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--cc);
   font-size: 12px;
   color: var(--muted);
   line-height: 1.75;

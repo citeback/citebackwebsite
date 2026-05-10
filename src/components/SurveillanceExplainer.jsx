@@ -233,50 +233,39 @@ function AccordionCard({ item, defaultOpen = false }) {
 
   return (
     <div
-      className="svex-card"
-      style={{
-        border: `1px solid ${open ? item.color + '40' : 'var(--border)'}`,
-      }}
+      className={`svex-card${open ? ' svex-card--open' : ''}`}
+      style={{ '--svex-color': item.color }}
     >
       {/* Header */}
       <button
         onClick={() => setOpen(o => !o)}
         className="svex-card-header"
       >
-        <span
-          className="svex-card-icon"
-          style={{ background: item.color + '18', border: `1px solid ${item.color}30` }}
-        >{item.icon}</span>
+        <span className="svex-card-icon">{item.icon}</span>
         <div className="svex-card-title-wrap">
           <div className="svex-card-title">{item.name}</div>
           <div className="svex-card-tagline">{item.tagline}</div>
         </div>
-        <span style={{ color: item.color, flexShrink: 0 }}>
+        <span className="svex-chevron">
           {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </span>
       </button>
 
       {/* Body */}
       {open && (
-        <div className="svex-card-body" style={{ borderTop: `1px solid ${item.color}20` }}>
+        <div className="svex-card-body">
 
           {/* What is it */}
           <div className="svex-what-section">
-            <div
-              className="svex-what-label"
-              style={{ color: item.color, background: item.color + '15' }}
-            >What is it?</div>
+            <div className="svex-what-label">What is it?</div>
             <p className="svex-what-text">
               {item.sections.what}
             </p>
           </div>
 
           {/* How it affects you */}
-          <div
-            className="svex-affects-box"
-            style={{ background: item.color + '0c', borderLeft: `3px solid ${item.color}` }}
-          >
-            <div className="svex-affects-title" style={{ color: item.color }}>
+          <div className="svex-affects-box">
+            <div className="svex-affects-title">
               How it affects you
             </div>
             <p className="svex-affects-text">

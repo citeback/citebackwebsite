@@ -6363,7 +6363,11 @@ img {
   background: var(--bg2);
   border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--border);
   transition: border-color 0.2s;
+}
+.svex-card.svex-card--open {
+  border-color: color-mix(in srgb, var(--svex-color) 25%, transparent);
 }
 
 .svex-card-header {
@@ -6378,7 +6382,8 @@ img {
   text-align: left;
 }
 
-/* Card icon — dynamic bg/border, keep inline */
+/* Card icon bg/border: see .svex-card-icon definition below */
+.svex-chevron { color: var(--svex-color); flex-shrink: 0; }
 
 .svex-card-title {
   font-weight: 700;
@@ -6398,9 +6403,9 @@ img {
   flex: 1;
 }
 
-/* Card body — borderTop dynamic, keep inline */
 .svex-card-body {
   padding: 0 20px 20px;
+  border-top: 1px solid color-mix(in srgb, var(--svex-color) 13%, transparent);
 }
 
 /* What section */
@@ -6415,7 +6420,7 @@ img {
   margin: 0;
 }
 
-/* Affects block — dynamic bg/border/color, keep inline */
+/* Color-driven: what-label, affects-box, affects-title below at their full definitions */
 
 /* Problem section */
 .svex-problem-label {
@@ -8876,6 +8881,8 @@ img {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: color-mix(in srgb, var(--svex-color) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--svex-color) 19%, transparent);
 }
 .svex-what-label {
   display: inline-block;
@@ -8886,11 +8893,15 @@ img {
   padding: 3px 10px;
   border-radius: 100px;
   margin-bottom: 8px;
+  color: var(--svex-color);
+  background: color-mix(in srgb, var(--svex-color) 8%, transparent);
 }
 .svex-affects-box {
   margin-top: 16px;
   padding: 14px 16px;
   border-radius: 10px;
+  background: color-mix(in srgb, var(--svex-color) 5%, transparent);
+  border-left: 3px solid var(--svex-color);
 }
 .svex-affects-title {
   font-size: 11px;
@@ -8898,6 +8909,7 @@ img {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 6px;
+  color: var(--svex-color);
 }
 .svex-affects-text {
   font-size: 14px;
