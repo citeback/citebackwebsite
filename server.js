@@ -394,10 +394,30 @@ function awardReputation(userId, sightingId, eventType, points) {
     INSERT INTO reputation_events (user_id, sighting_id, event_type, points, created_at)
     VALUES (?, ?, ?, ?, ?)
   `).run(userId, sightingId, eventType, points, now)
-  const currentRep = db.prepare('SELECT reputation FROM users WHERE id = ?').get(userId)?.reputation || 0
+  const user = db.prepare('SELECT reputation, tier, email_enc, username FROM users WHERE id = ?').get(userId)
+  const currentRep = user?.reputation || 0
+  const oldTier = user?.tier || 0
   const newRep = currentRep + points
   const newTier = getTierFromRep(newRep)
   db.prepare('UPDATE users SET reputation = ?, tier = ? WHERE id = ?').run(newRep, newTier, userId)
+  // Tier-up email notification (fire-and-forget)
+  if (emailEnabled && newTier > oldTier && user?.email_enc) {
+    const userEmail = decryptEmail(user.email_enc)
+    if (userEmail) {
+      const tierName = TIER_NAMES[newTier]
+      const messages = {
+        1: `Congratulations — you've reached Tier 1 (Operator) on Citeback! You now have access to claim and run campaigns. Visit https://citeback.com/campaigns to browse available campaigns.`,
+        2: `You've reached Tier 2 (Verifier) on Citeback. Verification bounties are now available to you. Keep contributing.`,
+        3: `You've reached Tier 3 (Guardian) on Citeback — the highest tier. Full operator access and governance voting are now unlocked.`,
+      }
+      mailer.sendMail({
+        from: SMTP_FROM,
+        to: userEmail,
+        subject: `Citeback — You've reached ${tierName}!`,
+        text: messages[newTier] || `You've reached ${tierName} on Citeback. Keep contributing.`,
+      }).catch(e => console.error('tier-up email error:', e.message))
+    }
+  }
   return { newRep, newTier }
 }
 
