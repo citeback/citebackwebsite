@@ -1732,3 +1732,595 @@ img {
   flex-shrink: 0;
   margin-top: 1px;
 }
+
+/* ── ReputationPage ── */
+
+/* Page containers */
+.rp-page {
+  padding: clamp(32px, 6vw, 64px) clamp(16px, 5vw, 24px);
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+.rp-page-guest {
+  padding: clamp(48px, 8vw, 80px) clamp(16px, 5vw, 24px);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Section cards */
+.rp-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.rp-section-last {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.rp-profile-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* Section internals */
+.rp-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.rp-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.rp-icon-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Text utilities */
+.rp-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.rp-success-text {
+  font-size: 11px;
+  color: #10b981;
+  font-weight: 600;
+}
+.rp-error-text {
+  font-size: 12px;
+  color: #e63946;
+}
+.rp-muted-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.rp-hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Error box */
+.rp-error-box {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #e63946;
+  margin-bottom: 10px;
+}
+
+/* Inputs */
+.rp-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+.rp-input-field {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+.rp-input-pw {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.rp-btn-sm {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.rp-btn-sm-text {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.rp-add-passkey-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.rp-passkey-delete-btn {
+  background: none;
+  border: none;
+  color: #e63946;
+  padding: 4px;
+}
+.rp-btn-row {
+  display: flex;
+  gap: 8px;
+}
+.rp-btn-primary-sm {
+  flex: 1;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 9px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.rp-btn-cancel {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 9px;
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.rp-btn-primary {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rp-btn-secondary {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.rp-cta-btn {
+  width: 100%;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.rp-email-warning-btn {
+  background: #f4a261;
+  border: none;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+.rp-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 1px solid rgba(230, 57, 70, 0.4);
+  color: #e63946;
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.rp-inline-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0;
+}
+
+/* Form */
+.rp-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Loading */
+.rp-loading {
+  color: var(--muted);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rp-sightings-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+/* Passkeys */
+.rp-passkey-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rp-passkey-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.rp-passkey-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Profile header */
+.rp-profile-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.rp-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.rp-username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rp-username {
+  font-weight: 800;
+  font-size: 18px;
+}
+.rp-attorney-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 100px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6366f1;
+}
+.rp-score-col {
+  text-align: right;
+}
+.rp-rep-score {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  line-height: 1;
+}
+.rp-rep-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Tier badge (static part — keep dynamic background/border/color inline) */
+.rp-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 100px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Hero (logged-out) */
+.rp-hero-intro {
+  margin-bottom: 32px;
+}
+.rp-reputation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.rp-hero-title {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+.rp-hero-desc {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 520px;
+}
+.rp-tier-ladder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.rp-tier-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.rp-tier-info {
+  flex: 1;
+}
+.rp-tier-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.rp-tier-desc {
+  font-size: 12px;
+  color: var(--muted);
+}
+.rp-tier-pts {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+.rp-hero-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Tier perk banner */
+.rp-tier-perk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+/* Earn points */
+.rp-earn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rp-earn-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.rp-soon-badge {
+  margin-left: 6px;
+  font-size: 10px;
+  background: var(--bg3);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--muted);
+}
+
+/* Sightings */
+.rp-sighting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rp-sighting-content {
+  flex: 1;
+  min-width: 0;
+}
+.rp-sighting-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.rp-sighting-addr {
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rp-sighting-status {
+  text-align: right;
+  flex-shrink: 0;
+}
+.rp-pts-badge {
+  font-size: 11px;
+  color: #10b981;
+  font-weight: 700;
+}
+.rp-empty-state {
+  padding: 16px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Progress bar */
+.rp-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.rp-progress-track {
+  height: 8px;
+  background: var(--bg3);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.rp-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Email manager */
+.rp-email-info {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.rp-email-warning {
+  margin-top: 10px;
+  background: rgba(244, 162, 97, 0.08);
+  border: 1px solid rgba(244, 162, 97, 0.35);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.rp-email-warning-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f4a261;
+  margin-bottom: 4px;
+}
+.rp-email-warning-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+/* Session security */
+.rp-session-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.rp-session-done {
+  font-size: 13px;
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* ── ConversationalInterface typing dots ──────────────────── */
+.ci-dot-1 { animation-delay: 0ms !important; }
+.ci-dot-2 { animation-delay: 160ms !important; }
+.ci-dot-3 { animation-delay: 320ms !important; }

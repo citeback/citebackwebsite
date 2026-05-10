@@ -415,7 +415,7 @@ export default function ConversationalInterface({ onClose }) {
         <div style={styles.inputArea}>
           <div style={styles.redLine} />
           <form onSubmit={handleSubmit} style={styles.form}>
-            <label htmlFor="citeback-chat-input" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>Ask Citeback AI</label>
+            <label htmlFor="citeback-chat-input" className="sr-only">Ask Citeback AI</label>
             <input
               id="citeback-chat-input"
               ref={inputRef}
@@ -435,7 +435,7 @@ export default function ConversationalInterface({ onClose }) {
             <button
               type="submit"
               disabled={isStreaming || !input.trim()}
-              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0, padding: 0 }}
+              className="sr-only"
               aria-label="Send message"
             >Send</button>
           </form>
@@ -468,9 +468,9 @@ function TypingIndicator() {
 
   return (
     <span style={styles.typingIndicator}>
-      <span style={{ ...styles.dot, animationDelay: '0ms' }} />
-      <span style={{ ...styles.dot, animationDelay: '160ms' }} />
-      <span style={{ ...styles.dot, animationDelay: '320ms' }} />
+      <span style={styles.dot} className="ci-dot ci-dot-1" />
+      <span style={styles.dot} className="ci-dot ci-dot-2" />
+      <span style={styles.dot} className="ci-dot ci-dot-3" />
       <span style={styles.thinkingPhrase}>{THINKING_PHRASES[phraseIdx]}</span>
     </span>
   )

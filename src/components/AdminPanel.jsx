@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { CheckCircle, XCircle, Clock, MapPin, Eye, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
+import { CheckCircle, XCircle, Clock, MapPin, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
 
@@ -18,98 +18,74 @@ const STATUS_COLORS = {
   rejected: '#e63946',
 }
 
+const CAMPAIGN_STATUSES = ['unclaimed', 'claimed', 'active', 'funded']
+
+function shortWallet(addr) {
+  if (!addr || addr.length < 16) return addr || null
+  return addr.slice(0, 8) + '…' + addr.slice(-8)
+}
+
 function SightingCard({ sighting, onModerate, loading }) {
-  const [mapOpen, setMapOpen] = useState(false)
   const hasCoords = sighting.lat && sighting.lng
   const mapsUrl = hasCoords
     ? `https://maps.google.com/maps?q=${sighting.lat},${sighting.lng}&z=17`
     : null
 
   return (
-    <div style={{
-      background: 'var(--bg2)', border: '1px solid var(--border)',
-      borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12,
-    }}>
+    <div className="ap-card">
       {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>
+      <div className="ap-card-header">
+        <div className="ap-card-title-block">
+          <div className="ap-card-title">
             {CAMERA_TYPE_LABELS[sighting.cameraType] || sighting.cameraType}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="ap-card-location">
             <MapPin size={11} />
             {[sighting.address, sighting.city, sighting.state].filter(Boolean).join(', ')}
           </div>
         </div>
-        <div style={{ fontSize: 11, color: 'var(--muted)', flexShrink: 0, textAlign: 'right' }}>
+        <div className="ap-card-meta-time">
           {new Date(sighting.ts).toLocaleString()}<br />
-          <span style={{ fontSize: 10, opacity: 0.6 }}>{sighting.id}</span>
+          <span className="ap-card-id">{sighting.id}</span>
         </div>
       </div>
 
       {/* Notes */}
       {sighting.notes && (
-        <div style={{
-          background: 'var(--bg3)', borderRadius: 8, padding: '10px 12px',
-          fontSize: 13, color: 'var(--muted)', lineHeight: 1.6,
-        }}>
-          {sighting.notes}
-        </div>
+        <div className="ap-card-notes">{sighting.notes}</div>
       )}
 
-      {/* Meta row */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 11 }}>
-        <span style={{
-          background: hasCoords ? 'rgba(16,185,129,0.1)' : 'rgba(230,57,70,0.1)',
-          color: hasCoords ? '#10b981' : '#e63946',
-          border: `1px solid ${hasCoords ? 'rgba(16,185,129,0.25)' : 'rgba(230,57,70,0.25)'}`,
-          borderRadius: 6, padding: '2px 8px', fontWeight: 600,
-        }}>
+      {/* Meta tags */}
+      <div className="ap-card-tags">
+        <span className={`ap-tag ${hasCoords ? 'ap-tag--green' : 'ap-tag--red'}`}>
           {hasCoords ? '📍 Has coords' : '❌ No coords'}
         </span>
         {sighting.hasC2PA && (
-          <span style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 6, padding: '2px 8px', fontWeight: 600 }}>
-            🔐 C2PA
-          </span>
+          <span className="ap-tag ap-tag--purple">🔐 C2PA</span>
         )}
         {sighting.userId && (
-          <span style={{ background: 'rgba(230,57,70,0.08)', color: 'var(--accent)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 6, padding: '2px 8px', fontWeight: 600 }}>
-            👤 Authenticated
-          </span>
+          <span className="ap-tag ap-tag--accent">👤 Authenticated</span>
         )}
         {mapsUrl && (
-          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style={{
-            background: 'rgba(59,130,246,0.1)', color: '#3b82f6',
-            border: '1px solid rgba(59,130,246,0.25)',
-            borderRadius: 6, padding: '2px 8px', fontWeight: 600,
-            textDecoration: 'none', fontSize: 11,
-          }}>
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="ap-tag ap-tag--blue ap-tag--link">
             🗺 View on Maps
           </a>
         )}
       </div>
 
       {/* Action buttons */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="ap-card-actions">
         <button
           onClick={() => onModerate(sighting.id, 'approve')}
           disabled={loading}
-          style={{
-            flex: 1, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)',
-            color: '#10b981', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13,
-            cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-          }}
+          className="ap-btn-approve"
         >
           <CheckCircle size={14} /> Approve
         </button>
         <button
           onClick={() => onModerate(sighting.id, 'reject')}
           disabled={loading}
-          style={{
-            flex: 1, background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
-            color: '#e63946', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13,
-            cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-          }}
+          className="ap-btn-reject"
         >
           <XCircle size={14} /> Reject
         </button>
@@ -127,30 +103,19 @@ function AttorneyCard({ app, onReview, loading }) {
   const statusColor = { pending: '#f59e0b', approved: '#10b981', rejected: '#e63946' }[app.status] || 'var(--muted)'
 
   return (
-    <div style={{
-      background: 'var(--bg2)', border: '1px solid var(--border)',
-      borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{app.full_name}</div>
-          <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+    <div className="ap-card">
+      <div className="ap-card-header">
+        <div className="ap-card-title-block">
+          <div className="ap-attorney-name">{app.full_name}</div>
+          <div className="ap-attorney-sub">
             {app.bar_state}{app.bar_number ? ` • Bar #${app.bar_number}` : ''} • {app.location}
           </div>
         </div>
-        <div style={{ textAlign: 'right', fontSize: 11, color: 'var(--muted)' }}>
+        <div className="ap-attorney-meta">
           {new Date(app.submitted_at).toLocaleString()}<br />
-          <span style={{
-            display: 'inline-block', marginTop: 4, padding: '2px 8px', borderRadius: 6,
-            fontWeight: 700, fontSize: 10, textTransform: 'uppercase', color: statusColor,
-          }}>{app.status}</span>
+          <span className="ap-attorney-status" style={{ color: statusColor }}>{app.status}</span>
           {app.status === 'approved' && (
-            <span style={{
-              display: 'inline-block', marginTop: 4, marginLeft: 6,
-              padding: '2px 8px', borderRadius: 6, fontWeight: 700, fontSize: 10,
-              textTransform: 'uppercase',
-              color: app.account_created ? '#10b981' : '#f59e0b',
-            }}>
+            <span className={`ap-attorney-acct ${app.account_created ? 'ap-attorney-acct--created' : 'ap-attorney-acct--missing'}`}>
               {app.account_created ? '✓ acct created' : 'no acct'}
             </span>
           )}
@@ -158,27 +123,19 @@ function AttorneyCard({ app, onReview, loading }) {
       </div>
 
       {barResult && (
-        <div style={{
-          padding: '8px 12px', borderRadius: 8, fontSize: 12, lineHeight: 1.5,
-          ...(barResult.status === 'found'
-            ? { background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', color: '#10b981' }
-            : { background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b' }),
-        }}>
+        <div className={`ap-bar-result ${barResult.status === 'found' ? 'ap-bar-result--found' : 'ap-bar-result--warn'}`}>
           {barResult.status === 'found'
             ? <><ShieldCheck size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /><strong>Bar verified:</strong> {barResult.name}{barResult.active !== undefined && ` — ${barResult.active ? 'Active' : 'Inactive'}`}</>
             : barResult.status === 'not_found'
-              ? <><XCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bar # not found in CA State Bar</>            
+              ? <><XCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bar # not found in CA State Bar</>
               : <><Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.bar_state} — manual verification required</>}
         </div>
       )}
 
-      <div style={{
-        background: 'var(--bg3)', borderRadius: 8, padding: '10px 12px',
-        fontSize: 13, color: 'var(--muted)', lineHeight: 1.6,
-      }}>{app.background}</div>
+      <div className="ap-card-notes">{app.background}</div>
 
       {app.notes && (
-        <div style={{ fontSize: 12, color: 'var(--muted)', fontStyle: 'italic' }}>
+        <div className="ap-attorney-admin-notes">
           <MessageSquare size={11} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.notes}
         </div>
       )}
@@ -189,18 +146,13 @@ function AttorneyCard({ app, onReview, loading }) {
             placeholder="Optional admin note…"
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            style={{
-              background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
-              padding: '8px 12px', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none',
-            }}
+            className="ap-form-input"
           />
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => onReview(app.id, 'approve', notes)} disabled={loading}
-              style={{ flex: 1, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', color: '#10b981', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <div className="ap-card-actions">
+            <button onClick={() => onReview(app.id, 'approve', notes)} disabled={loading} className="ap-btn-approve">
               <CheckCircle size={14} /> Approve
             </button>
-            <button onClick={() => onReview(app.id, 'reject', notes)} disabled={loading}
-              style={{ flex: 1, background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', color: '#e63946', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <button onClick={() => onReview(app.id, 'reject', notes)} disabled={loading} className="ap-btn-reject">
               <XCircle size={14} /> Reject
             </button>
           </div>
@@ -212,7 +164,6 @@ function AttorneyCard({ app, onReview, loading }) {
 
 export default function AdminPanel() {
   const [secret, setSecret] = useState('')
-  const [remember, setRemember] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [authError, setAuthError] = useState(false)
   const [authLocked, setAuthLocked] = useState(false)
@@ -245,18 +196,23 @@ export default function AdminPanel() {
       .then(r => { if (r.ok) setAuthed(true) })
       .catch(() => {})
   }, [])
+
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [moderating, setModerating] = useState(false)
   const [toast, setToast] = useState(null)
-  const [activeTab, setActiveTab] = useState('pending') // pending | approved | rejected
+  const [activeTab, setActiveTab] = useState('pending')
   const [bulkLoading, setBulkLoading] = useState(false)
-  // Section toggle: sightings | attorneys
   const [adminSection, setAdminSection] = useState('sightings')
   const [attorneyData, setAttorneyData] = useState(null)
   const [attorneyTab, setAttorneyTab] = useState('pending')
   const [attorneyLoading, setAttorneyLoading] = useState(false)
   const [reviewingAttorney, setReviewingAttorney] = useState(false)
+
+  // Campaign state
+  const [campaigns, setCampaigns] = useState([])
+  const [campaignsLoading, setCampaignsLoading] = useState(false)
+  const [campaignStatusUpdating, setCampaignStatusUpdating] = useState(null) // id being updated
 
   const showToast = (msg, ok = true) => {
     setToast({ msg, ok })
@@ -291,6 +247,39 @@ export default function AdminPanel() {
     }
   }, [])
 
+  const fetchCampaigns = useCallback(async () => {
+    setCampaignsLoading(true)
+    try {
+      const res = await fetch(`${AI_URL}/admin/campaigns`, { credentials: 'include' })
+      if (res.status === 401) { setAuthed(false); return }
+      const json = await res.json()
+      setCampaigns(Array.isArray(json) ? json : (json.campaigns ?? []))
+    } catch {
+      showToast('Failed to load campaigns', false)
+    } finally {
+      setCampaignsLoading(false)
+    }
+  }, [])
+
+  const handleCampaignStatus = async (id, status) => {
+    setCampaignStatusUpdating(id)
+    try {
+      const res = await fetch(`${AI_URL}/campaigns/${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) throw new Error('Status update failed')
+      showToast(`Campaign status → ${status}`, true)
+      await fetchCampaigns()
+    } catch {
+      showToast('Status update failed', false)
+    } finally {
+      setCampaignStatusUpdating(null)
+    }
+  }
+
   const handleAuth = async (e) => {
     e.preventDefault()
     const trimmed = secret.trim()
@@ -319,6 +308,7 @@ export default function AdminPanel() {
     setAuthed(false)
     setData(null)
     setAttorneyData(null)
+    setCampaigns([])
   }
 
   const handleModerate = async (id, action) => {
@@ -387,31 +377,19 @@ export default function AdminPanel() {
     }
   }
 
-  const s = {
-    page: {
-      minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)',
-      padding: 'clamp(24px, 4vw, 48px) clamp(16px, 4vw, 32px)',
-      fontFamily: 'var(--font)',
-    },
-    input: {
-      width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-      color: 'var(--text)', padding: '12px 14px', borderRadius: 8, fontSize: 14,
-      outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-    },
-  }
-
+  // ── Login screen ──────────────────────────────────────────────────────────
   if (!authed) {
     return (
-      <div style={s.page}>
-        <div style={{ maxWidth: 400, margin: '80px auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+      <div className="ap-page">
+        <div className="ap-login-wrapper">
+          <div className="ap-login-title">
             <Lock size={20} style={{ color: 'var(--accent)' }} />
-            <h1 style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.02em' }}>Citeback Admin</h1>
+            <h1>Citeback Admin</h1>
           </div>
-          <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <form onSubmit={handleAuth} className="ap-login-form">
             <input
               type="password"
-              style={s.input}
+              className="ap-form-input ap-form-input--lg"
               placeholder="Admin secret"
               value={secret}
               onChange={e => { setSecret(e.target.value.trim()); setAuthError(false) }}
@@ -419,23 +397,19 @@ export default function AdminPanel() {
               required
             />
             {authError && (
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--accent)', fontSize: 13 }}>
+              <div className="ap-error-msg">
                 <AlertCircle size={14} /> Invalid secret
               </div>
             )}
             {authLocked && (
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: '#f59e0b', fontSize: 13 }}>
+              <div className="ap-locked-msg">
                 <AlertCircle size={14} /> Too many attempts — locked out for 15 minutes
               </div>
             )}
-            <button type="submit" disabled={authLocked} style={{
-              background: authLocked ? 'var(--border)' : 'var(--accent)', border: 'none', color: '#fff',
-              padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
-              cursor: authLocked ? 'not-allowed' : 'pointer',
-            }}>
+            <button type="submit" disabled={authLocked} className={`ap-btn-unlock ${authLocked ? 'ap-btn-unlock--disabled' : ''}`}>
               Unlock
             </button>
-            <p style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
+            <p className="ap-login-hint">
               Session lasts 4 hours · Auto-locks after 30 min inactivity
             </p>
           </form>
@@ -447,59 +421,52 @@ export default function AdminPanel() {
   const currentSightings = data?.[activeTab] || []
   const pendingWithCoords = (data?.pending || []).filter(s => s.lat && s.lng)
   const currentAttorneys = attorneyData?.[attorneyTab] || []
+  const pendingAttorneyCount = attorneyData?.pending?.length ?? 0
 
   return (
-    <div style={s.page}>
+    <div className="ap-page">
       {/* Toast */}
       {toast && (
-        <div style={{
-          position: 'fixed', top: 20, right: 20, zIndex: 9999,
-          background: toast.ok ? 'rgba(16,185,129,0.95)' : 'rgba(230,57,70,0.95)',
-          color: '#fff', borderRadius: 8, padding: '10px 16px', fontWeight: 600, fontSize: 13,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-        }}>
+        <div className={`ap-toast ${toast.ok ? 'ap-toast--ok' : 'ap-toast--err'}`}>
           {toast.msg}
         </div>
       )}
 
       {/* Header row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <div style={{ fontSize: 12, color: 'var(--muted)' }}>Session active · auto-locks after 30 min inactivity</div>
-        <button onClick={handleLogout} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--muted)', padding: '6px 14px', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
-          onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+      <div className="ap-header">
+        <div className="ap-header-info">Session active · auto-locks after 30 min inactivity</div>
+        <button onClick={handleLogout} className="ap-lock-btn">
           Lock Panel
         </button>
       </div>
 
       {/* Section switcher */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'var(--bg2)', borderRadius: 12, padding: 4, width: 'fit-content' }}>
-        <button onClick={() => setAdminSection('sightings')} style={{
-          padding: '9px 18px', borderRadius: 9, border: 'none',
-          background: adminSection === 'sightings' ? 'var(--bg3)' : 'transparent',
-          color: adminSection === 'sightings' ? 'var(--text)' : 'var(--muted)',
-          fontWeight: adminSection === 'sightings' ? 700 : 500, fontSize: 13, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', gap: 6,
-        }}>
+      <div className="ap-section-switcher">
+        <button
+          onClick={() => setAdminSection('sightings')}
+          className={`ap-switcher-btn ${adminSection === 'sightings' ? 'ap-switcher-btn--active' : ''}`}
+        >
           📸 Sightings
           {(data?.pending?.length ?? 0) > 0 && (
-            <span style={{ background: '#f59e0b', color: '#000', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 800 }}>
-              {data.pending.length}
-            </span>
+            <span className="ap-count-badge ap-count-badge--amber">{data.pending.length}</span>
           )}
         </button>
-        <button onClick={() => { setAdminSection('attorneys'); fetchAttorneyData() }} style={{
-          padding: '9px 18px', borderRadius: 9, border: 'none',
-          background: adminSection === 'attorneys' ? 'var(--bg3)' : 'transparent',
-          color: adminSection === 'attorneys' ? 'var(--text)' : 'var(--muted)',
-          fontWeight: adminSection === 'attorneys' ? 700 : 500, fontSize: 13, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', gap: 6,
-        }}>
+        <button
+          onClick={() => { setAdminSection('attorneys'); fetchAttorneyData() }}
+          className={`ap-switcher-btn ${adminSection === 'attorneys' ? 'ap-switcher-btn--active' : ''}`}
+        >
           <Scale size={13} /> Attorney Queue
-          {(attorneyData?.pending?.length ?? 0) > 0 && (
-            <span style={{ background: '#5dade2', color: '#000', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 800 }}>
-              {attorneyData.pending.length}
-            </span>
+          {pendingAttorneyCount > 0 && (
+            <span className="ap-count-badge ap-count-badge--red">{pendingAttorneyCount}</span>
+          )}
+        </button>
+        <button
+          onClick={() => { setAdminSection('campaigns'); fetchCampaigns() }}
+          className={`ap-switcher-btn ${adminSection === 'campaigns' ? 'ap-switcher-btn--active' : ''}`}
+        >
+          🎯 Campaigns
+          {campaigns.length > 0 && (
+            <span className="ap-count-badge ap-count-badge--blue">{campaigns.length}</span>
           )}
         </button>
       </div>
@@ -507,57 +474,47 @@ export default function AdminPanel() {
       {/* ─── SIGHTINGS SECTION ─── */}
       {adminSection === 'sightings' && (
         <>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+          <div className="ap-section-header">
             <div>
-              <h1 style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.03em', marginBottom: 4 }}>Sighting Moderation</h1>
-              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+              <h1 className="ap-h1">Sighting Moderation</h1>
+              <div className="ap-subtitle">
                 {data?.total ?? '–'} total ·{' '}
                 <span style={{ color: STATUS_COLORS.pending }}>{data?.pending?.length ?? 0} pending</span> ·{' '}
                 <span style={{ color: STATUS_COLORS.approved }}>{data?.approved?.length ?? 0} approved</span> ·{' '}
                 <span style={{ color: STATUS_COLORS.rejected }}>{data?.rejected?.length ?? 0} rejected</span>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="ap-action-row">
               {pendingWithCoords.length > 0 && (
-                <button onClick={handleApproveAll} disabled={bulkLoading} style={{
-                  background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)',
-                  color: '#10b981', borderRadius: 8, padding: '9px 14px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: 6,
-                }}>
+                <button onClick={handleApproveAll} disabled={bulkLoading} className="ap-btn-approve-all">
                   <CheckSquare size={14} /> Approve All ({pendingWithCoords.length} with coords)
                 </button>
               )}
-              <button onClick={() => fetchData()} disabled={loading} style={{
-                background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
-                borderRadius: 8, padding: '9px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}>
-                <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+              <button onClick={fetchData} disabled={loading} className="ap-btn-refresh">
+                <RefreshCw size={13} className={loading ? 'ap-spin' : ''} />
                 Refresh
               </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg2)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
+          <div className="ap-tabs">
             {['pending', 'approved', 'rejected'].map(t => (
-              <button key={t} onClick={() => setActiveTab(t)} style={{
-                padding: '8px 16px', borderRadius: 7, border: 'none',
-                background: activeTab === t ? 'var(--bg3)' : 'transparent',
-                color: activeTab === t ? STATUS_COLORS[t] : 'var(--muted)',
-                fontWeight: activeTab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
-                transition: 'all 0.15s', textTransform: 'capitalize',
-              }}>
-                {t} <span style={{ opacity: 0.6, fontSize: 11 }}>({data?.[t]?.length ?? 0})</span>
+              <button
+                key={t}
+                onClick={() => setActiveTab(t)}
+                className={`ap-tab ${activeTab === t ? `ap-tab--active ap-tab--${t}` : ''}`}
+              >
+                {t} <span className="ap-tab-count">({data?.[t]?.length ?? 0})</span>
               </button>
             ))}
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24 }}>Loading…</div>
+            <div className="ap-empty">Loading…</div>
           ) : currentSightings.length === 0 ? (
-            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24, textAlign: 'center' }}>No {activeTab} sightings.</div>
+            <div className="ap-empty">No {activeTab} sightings.</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
+            <div className="ap-list">
               {currentSightings.map(s => (
                 <SightingCard key={s.id} sighting={s} onModerate={handleModerate} loading={moderating} />
               ))}
@@ -569,49 +526,109 @@ export default function AdminPanel() {
       {/* ─── ATTORNEY SECTION ─── */}
       {adminSection === 'attorneys' && (
         <>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+          <div className="ap-section-header">
             <div>
-              <h1 style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.03em', marginBottom: 4 }}>Attorney Applications</h1>
-              <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+              <h1 className="ap-h1">Attorney Applications</h1>
+              <div className="ap-subtitle">
                 {attorneyData?.total ?? '–'} total ·{' '}
                 <span style={{ color: '#f59e0b' }}>{attorneyData?.pending?.length ?? 0} pending</span> ·{' '}
                 <span style={{ color: '#10b981' }}>{attorneyData?.approved?.length ?? 0} approved</span> ·{' '}
                 <span style={{ color: '#e63946' }}>{attorneyData?.rejected?.length ?? 0} rejected</span>
               </div>
             </div>
-            <button onClick={() => fetchAttorneyData()} disabled={attorneyLoading} style={{
-              background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)',
-              borderRadius: 8, padding: '9px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-              <RefreshCw size={13} style={{ animation: attorneyLoading ? 'spin 1s linear infinite' : 'none' }} />
+            <button onClick={fetchAttorneyData} disabled={attorneyLoading} className="ap-btn-refresh">
+              <RefreshCw size={13} className={attorneyLoading ? 'ap-spin' : ''} />
               Refresh
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: 'var(--bg2)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
+          <div className="ap-tabs">
             {['pending', 'approved', 'rejected'].map(t => (
-              <button key={t} onClick={() => setAttorneyTab(t)} style={{
-                padding: '8px 16px', borderRadius: 7, border: 'none',
-                background: attorneyTab === t ? 'var(--bg3)' : 'transparent',
-                color: attorneyTab === t ? ({ pending: '#f59e0b', approved: '#10b981', rejected: '#e63946' }[t]) : 'var(--muted)',
-                fontWeight: attorneyTab === t ? 700 : 500, fontSize: 13, cursor: 'pointer',
-                textTransform: 'capitalize',
-              }}>
-                {t} <span style={{ opacity: 0.6, fontSize: 11 }}>({attorneyData?.[t]?.length ?? 0})</span>
+              <button
+                key={t}
+                onClick={() => setAttorneyTab(t)}
+                className={`ap-tab ${attorneyTab === t ? `ap-tab--active ap-tab--${t}` : ''}`}
+              >
+                {t} <span className="ap-tab-count">({attorneyData?.[t]?.length ?? 0})</span>
               </button>
             ))}
           </div>
 
           {attorneyLoading ? (
-            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24 }}>Loading…</div>
+            <div className="ap-empty">Loading…</div>
           ) : currentAttorneys.length === 0 ? (
-            <div style={{ color: 'var(--muted)', fontSize: 14, padding: 24, textAlign: 'center' }}>No {attorneyTab} attorney applications.</div>
+            <div className="ap-empty">No {attorneyTab} attorney applications.</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 720 }}>
+            <div className="ap-list">
               {currentAttorneys.map(a => (
                 <AttorneyCard key={a.id} app={a} onReview={handleAttorneyReview} loading={reviewingAttorney} />
               ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── CAMPAIGNS SECTION ─── */}
+      {adminSection === 'campaigns' && (
+        <>
+          <div className="ap-section-header">
+            <div>
+              <h1 className="ap-h1">Campaigns</h1>
+              <div className="ap-subtitle">{campaigns.length} total campaigns</div>
+            </div>
+            <button onClick={fetchCampaigns} disabled={campaignsLoading} className="ap-btn-refresh">
+              <RefreshCw size={13} className={campaignsLoading ? 'ap-spin' : ''} />
+              Refresh
+            </button>
+          </div>
+
+          {campaignsLoading ? (
+            <div className="ap-empty">Loading…</div>
+          ) : campaigns.length === 0 ? (
+            <div className="ap-empty">No campaigns found.</div>
+          ) : (
+            <div className="ap-section">
+              <table className="ap-table">
+                <thead>
+                  <tr>
+                    <th>Campaign</th>
+                    <th>Status</th>
+                    <th>Wallet</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaigns.map(c => (
+                    <tr key={c.id}>
+                      <td>
+                        <div className="ap-campaign-name">{c.name || c.title || c.id}</div>
+                        {c.slug && <div className="ap-campaign-slug">/{c.slug}</div>}
+                      </td>
+                      <td>
+                        <select
+                          className="ap-status-select"
+                          value={c.status || 'unclaimed'}
+                          disabled={campaignStatusUpdating === c.id}
+                          onChange={e => handleCampaignStatus(c.id, e.target.value)}
+                        >
+                          {CAMPAIGN_STATUSES.map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        {(c.wallet_address || c.walletAddress)
+                          ? <span className="ap-wallet">{shortWallet(c.wallet_address || c.walletAddress)}</span>
+                          : <span className="ap-wallet ap-wallet--empty">—</span>
+                        }
+                      </td>
+                      <td className="ap-cell-muted">
+                        {c.created_at ? new Date(c.created_at).toLocaleDateString() : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </>
