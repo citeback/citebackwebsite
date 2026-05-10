@@ -743,8 +743,8 @@ export default function AdminPanel() {
                         </select>
                       </td>
                       <td>
-                        {(c.wallet_address || c.walletAddress)
-                          ? <span className="ap-wallet">{shortWallet(c.wallet_address || c.walletAddress)}</span>
+                        {(c.walletXMR || c.walletZANO)
+                          ? <span className="ap-wallet">{shortWallet(c.walletXMR || c.walletZANO)}</span>
                           : <span className="ap-wallet ap-wallet--empty">—</span>
                         }
                       </td>

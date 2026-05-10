@@ -1700,17 +1700,19 @@ const server = http.createServer(async (req, res) => {
           }
         }
 
-        // Strip EXIF from JPEG before C2PA verification or storage
-        // Removes GPS coordinates, camera model, timestamps. C2PA manifest is in APP11
-        // (not APP1/APP2), so stripping APP1-APP15 preserves C2PA but removes PII.
-        if (photoFilename && photoFilename.match(/\.(jpg|jpeg)$/i)) {
-          stripJpegExif(path.join(PHOTOS_DIR, photoFilename))
-        }
-
         // Real cryptographic C2PA verification — verifies the actual manifest signature
         // Not string matching. A forged 'c2pa' string in EXIF will NOT pass this.
+        // C2PA verification runs on the original file (pre-strip) because the C2PA
+        // manifest hash covers the full file bytes.
         if (photoFilename) {
           detectedC2PA = await verifyC2PA(path.join(PHOTOS_DIR, photoFilename))
+        }
+
+        // Strip EXIF from JPEG after C2PA verification — protects user privacy.
+        // Removes GPS coordinates, camera model, timestamps, and other PII from EXIF.
+        // APP11 (C2PA) is preserved; APP1/APP2/IPTC/XMP are stripped.
+        if (photoFilename && photoFilename.match(/\.(jpg|jpeg)$/i)) {
+          stripJpegExif(path.join(PHOTOS_DIR, photoFilename))
         }
       } else {
         fields = await parseBody(req)
