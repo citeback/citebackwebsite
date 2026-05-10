@@ -504,6 +504,12 @@ img {
   height: 60px;
 }
 
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
 .nav-logo-btn {
   background: none;
   border: none;
@@ -526,6 +532,7 @@ img {
   font-size: 13px;
   letter-spacing: 0.04em;
   padding: 0;
+  color: var(--gray);
   transition: color 0.15s;
   font-family: inherit;
 }
