@@ -1,11 +1,11 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 03:10 MDT (overnight keepalive — response header hardening + a11y)*
+*Last updated: 2026-05-10 04:25 MDT (overnight keepalive — ConversationalInterface CSS migration + a11y)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
 
 ## Current State
-**Phase: Pre-launch. Platform security hardened. Rate limits on ALL endpoints. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED. Passkey endpoints fully hardened.**
+**Phase: Pre-launch. Platform security hardened. Rate limits on ALL endpoints. CSS migration 100% COMPLETE. CSP unsafe-inline REMOVED. Zero style={} in entire codebase. Passkey endpoints fully hardened.**
 - Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
 - Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
 - 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).
@@ -31,6 +31,13 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Full audit checklist rerun: all ✅
 - Attorney pipeline E2E test confirmed: /attorney/apply → 401, /admin/attorney-applications → 401, /claim-account → 400 ✅
 - VPS health: active, 3 users, 7 campaigns, 95045 cameras, disk 8% used
+
+## What Changed (4:10–4:25 AM MDT — keepalive)
+- **ConversationalInterface.jsx**: discovered 24 inline styles via `const styles={}` object (bypassed `style={{` grep). Migrated to new ConversationalInterface.css (3.35kB CSS chunk). **Zero `style={}` anywhere in entire codebase now.**
+- **ReputationPage.jsx**: `New password` + `Confirm new password` inputs were missing `<label htmlFor>` + `id`. Fixed (current password already had a label).
+- **ATTACK_PROMPT.md**: added `style={[a-zA-Z]` grep pattern to catch `style={varName}` pattern alongside existing `style={{` check
+- Full audit rerun: 0 inline styles, 0 style={varName}, 0 SQL injection, 0 old brand, 0 stack traces in responses
+- VPS healthy, build clean, pushed to git → Netlify auto-deploying
 
 ## Priority Queue
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.

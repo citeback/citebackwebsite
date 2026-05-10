@@ -140,8 +140,11 @@ Use this every session to find new bugs. Work top-to-bottom. Mark items ✅ when
 ## COMMON BUG PATTERNS TO GREP FOR
 
 ```bash
-# Inline styles (move to CSS)
+# Inline styles — direct object literal (move to CSS)
 grep -r "style={{" src/ --include="*.jsx" -l
+
+# Inline styles — JS object variable (e.g. style={styles.foo} — also move to CSS)
+grep -rn "style={[a-zA-Z]" src/ --include="*.jsx" | grep -v "//" | head -20
 
 # Raw apostrophes in JSX (should be &apos; or curly quotes)
 grep -rn "'" src/ --include="*.jsx" | grep -v "//"
@@ -301,6 +304,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | 43 JSON responses missing Content-Type: application/json header | ✅ FIXED (Python regex replace — all writeHead(NNN); res.end(JSON.stringify) patterns updated) |
 | 2026-05-10 | CampaignList search input missing aria-label | ✅ FIXED (aria-label="Search campaigns" added) |
 | 2026-05-10 | CameraMap sighting notes input missing aria-label | ✅ FIXED (aria-label="Sighting notes" added) |
+| 2026-05-10 | ConversationalInterface.jsx — 24 inline styles via const styles={} object (bypassed style={{ grep) | ✅ FIXED — migrated to ConversationalInterface.css; zero style={} in entire codebase |
+| 2026-05-10 | ReputationPage — 'New password' and 'Confirm new password' inputs missing labels | ✅ FIXED (htmlFor/id/aria-label added to both) |
 
 ---
 
