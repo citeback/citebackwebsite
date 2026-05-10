@@ -1,14 +1,15 @@
 # Citeback — Next Session Brief
-*Last updated: 2026-05-10 05:30 MDT (overnight blitz round 2 — ongoing)*
+*Last updated: 2026-05-10 06:00 MDT (overnight blitz round 2 — COMPLETE)*
 
 ## ⚠️ URGENT: ICANN domain verification — May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
 
 ## Current State
-**Phase: Pre-launch. Platform hardened, CSS migration 85%+ complete, functionally solid.**
+**Phase: Pre-launch. Platform hardened, CSS migration 99% complete, functionally solid.**
 - Live: citeback.com (Netlify) + ai.citeback.com (Hetzner VPS)
 - Health: `curl -s https://ai.citeback.com/health` → `{"ok":true,...}`
 - 95,045 cameras. 3 users. 7 campaigns (deadlines Dec 2026–Jan 2027).
+- **Inline styles: 20 remaining** (from 1,585 original — 99% reduced)
 
 ## Quick Start
 ```bash
@@ -21,8 +22,13 @@ cd /workspace/deflect && git pull && git log --oneline -5
 1. **Wyoming DAO LLC** — wyomingbusiness.gov ($100). Blocks everything legal.
 2. **ICANN domain verification** — May 14 deadline
 3. **ToS attorney review** — needs entity first
-4. **CameraMap CSS migration** — 137 inline styles blocking `unsafe-inline` CSP removal (dedicated session needed)
+4. **Remove `unsafe-inline` from CSP** — path: use `useEffect + element.style.setProperty()` instead of `style={{ '--prop': val }}` JSX (see ATTACK_PROMPT Known Issues)
 5. **First real operator E2E test** — claim → wallet → activate
+
+## Remaining 20 Inline Styles (by category)
+- **6× CSS custom property setters** — `--svex-color`, `--vc`, `--faq-color`, `--cc`, `--tag-color`, `--tc/--tc2/--w` — can be converted to `useEffect + style.setProperty()` to remove unsafe-inline
+- **5× Dynamic progress bar widths** — `pct%` in CampaignCard, LaunchTracker, ProposeModal, ScrollProgress, CampaignModal — genuinely dynamic, use CSS animation or accept limitation
+- **9× CameraMap** — 8 layer.color/tier.color dynamic data + 1 MapContainer (Leaflet-required, permanent)
 
 ## What's Done (don't re-audit)
 
@@ -37,9 +43,10 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Passkey sign counts checked (replay protection)
 - Timing-safe login (DUMMY_HASH for unknown usernames)
 - AES-256-GCM encrypted recovery emails at rest
-- DEFLECT → OFF_TOPIC brand rename in server.js
+- DEFLECT → OFF_TOPIC variable rename in server.js (old brand cleanup)
 - Content-Type added to all 429 responses
 - Caddy `via` header removed (info disclosure)
+- Admin audit log (all admin actions recorded to SQLite)
 
 ### Server Features
 - GET/PATCH /admin/campaigns — status/deadline/goal management
@@ -51,34 +58,31 @@ cd /workspace/deflect && git pull && git log --oneline -5
 - Tier-up emails (Tier 0→1, 1→2, 2→3)
 - Reverse geocode on sighting GPS submissions
 - OSM camera update cron (weekly Sunday 3AM)
-- Admin audit log (all admin actions recorded to SQLite)
 
-### Frontend
-- CSS migration: 1585 → ~230 inline styles (excl CameraMap's 137)
-  - typeColors/tagColors chips → CSS classes (.tc-*, .ff-tag--)
-  - Strength meters → CSS classes (.strength-level-*, .strength-label-*)
-  - AdminPanel status colors → CSS classes (.ap-status-*)
-  - Governance participants → CSS classes (.gov-p-*, .gov-p-label-*)
-  - Batch migration of 15+ other components
-- A11y: htmlFor/id on ClaimAccountPage + ResetPasswordPage + ProposeModal inputs
-- React ErrorBoundary on CameraMap + AI chat
-- AI chat campaign goals fixed (were wrong)
-- LiveFeed camera count fixed (92,848 → 95,045)
-- Transparency live camera count from API
-- Dead code removed: CameraGlobe.jsx, ARCameraOverlay.jsx
-- PWA manifest, theme-color, mobile-web-app-capable
-- SEO: react-helmet-async per-route, sitemap.xml, robots.txt
-- AdminPanel: 5 tabs (Sightings | Attorneys | Campaigns | Proposals | Registry)
-- All hardcoded API URLs → API_BASE config
-- LaunchTracker: 7/13 done
+### Frontend CSS Migration (tonight's main work)
+Original: 1,585 inline styles → Final: 20 (99% reduction)
 
-### UX/Content
-- Hero plain-English tagline above fold
-- SightingForm checklist ("What you'll need")
-- Operators 3-step path at top
-- HumanRegistry "What happens next" after attorney apply
-- 404 page, mobile nav closes on route change
-- Campaign deadlines extended 6 months
+**Techniques used:**
+1. Static CSS classes for fixed color sets (typeColors, tagColors, tier badges, status colors)
+2. CSS custom properties (`--svex-color`, `--vc`, `--tc`, etc.) for dynamic colors
+3. `color-mix()` for hex-alpha variants (browser support: Chrome 111+, Firefox 113+, Safari 16.2+)
+4. Per-type CSS class selectors (`.hre-card--attorney`, `.rp-tc-0`, etc.)
+5. Descendant selectors for inherited colors (`.bwu-card--legal .bwu-track-tag`)
+
+**Components fully migrated (0 inline styles):**
+AccountModal, AdminPanel, BuildWithUs, ClaimAccountPage, CampaignCard¹, CampaignModal¹, CryptoPrimer², FrontlineFunds, FollowTheMoney², Governance², HumanRegistry, LaunchTracker¹, Operators, ProposeModal¹, ResetPasswordPage, ScrollProgress¹, SightingForm, SurveillanceFeed, SurveillanceExplainer², TrustFAQ², VerificationTiers
+
+¹ 1 progress bar width remaining (dynamic pct%)
+² 1 CSS custom property remaining (intentional pattern)
+
+**CameraMap.css created** — 609 lines, migrated 128/137 inline styles
+
+### UX/Accessibility
+- htmlFor/id linked on ClaimAccountPage, ResetPasswordPage inputs
+- Strength meter (AccountModal, ClaimAccountPage, ResetPasswordPage) → CSS classes
+- Governance participants → CSS classes (no more hardcoded colors)
+- Attorney bar badge 3-state (found/not-found/pending) → CSS classes
+- sitemap.xml: added missing /transparency route
 
 ## VPS Commands
 ```bash

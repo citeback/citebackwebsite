@@ -218,10 +218,10 @@ ssh root@77.42.124.157 'curl -s http://localhost:11435/stats'
 ### 🔴 BLOCKERS (must happen before launch)
 1. **Wyoming DAO LLC** — Scott files at wyomingbusiness.gov ($100). Blocks ToS legitimacy.
 2. **Attorney review of ToS** — needs entity first, then attorney signs off
-3. **Remove `unsafe-inline` from style-src CSP** — CameraMap is the blocker (137 inline styles, needs dedicated migration session)
+3. **Remove `unsafe-inline` from style-src CSP** — Path: convert CSS custom property setters from `style={{ '--prop': val }}` JSX to `useEffect + element.style.setProperty()` calls (DOM property, NOT covered by style-src CSP). Then remove the remaining 5 dynamic widths via CSS animations or accept limitation.
 
 ### 🟠 HIGH PRIORITY
-4. **CameraMap CSS migration** — photo panel, layer control, legend panels all need inline styles → CSS (create CameraMap.css)
+4. **Remove inline CSS custom properties** — 6 components use `style={{ '--prop': val }}` for CSS custom properties. Convert to `useEffect + ref + style.setProperty()` to eliminate all 6 inline styles without changing visual behavior.
 5. Attorney pipeline E2E test (apply → admin approve → claim token → badge)
 6. CARTO map tile privacy (document in privacy policy or proxy)
 7. First real campaign onboarding (operators need a known-good flow)
@@ -285,6 +285,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | ClaimAccountPage labels not linked to inputs | ✅ FIXED (htmlFor/id added) |
 | 2026-05-10 | ResetPasswordPage labels not linked to inputs | ✅ FIXED (htmlFor/id added) |
 | 2026-05-10 | Attorney application email stored plaintext | ⚠️ LOW RISK — attorney emails are professional contact info (already public for barred attorneys) |
+| 2026-05-10 | CSS custom properties via style attr (6×) | ⚠️ ACTIVE — convert to useEffect+style.setProperty() to allow unsafe-inline removal from CSP |
+| 2026-05-10 | Dynamic width progress bars (5×) | ⚠️ KNOWN — genuinely dynamic pct%; use CSS animation or var(--w) approach; cannot be static classes |
+| 2026-05-10 | CameraMap 9 remaining (8 layer/tier + 1 MapContainer) | ⚠️ MapContainer: Leaflet-required (permanent skip). Layer/tier: convert layer.color → --lc custom prop |
 
 ---
 
