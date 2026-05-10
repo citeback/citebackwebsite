@@ -11,34 +11,21 @@ export default function TermsPage() {
       <meta property="og:title" content="Terms of Use | Citeback" />
       <meta property="og:description" content="Citeback terms of use: platform rules, operator obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
     </Helmet>
-    <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
+    <section className="legal-page-section">
       {/* Draft disclaimer — top of page, prominent */}
-      <div style={{
-        background: 'rgba(243,156,18,0.06)',
-        border: '1px solid rgba(243,156,18,0.35)',
-        borderLeft: '4px solid #f39c12',
-        padding: '14px 18px',
-        marginBottom: 32,
-        fontSize: 13,
-        color: 'var(--muted)',
-        lineHeight: 1.7,
-        borderRadius: '0 8px 8px 0',
-      }}>
-        <strong style={{ color: '#f39c12', display: 'block', marginBottom: 4 }}>⚠ These terms are in draft form pending legal review.</strong>
+      <div className="legal-draft-notice">
+        <strong className="legal-draft-notice-title">⚠ These terms are in draft form pending legal review.</strong>
         They are published for community transparency. They have <em>not</em> been reviewed by legal counsel and are subject to change before platform launch.
         No funds go live until attorney review is complete. Full draft with OFAC disclosures, operator obligations, and §230 notice:{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--accent)', textDecoration: 'underline' }}>TERMS.md on GitHub</a>.
+          className="legal-draft-notice-link">TERMS.md on GitHub</a>.
       </div>
 
-      <div style={{
-        fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
-        textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
-      }}>Legal</div>
-      <h1 style={{ fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
+      <div className="legal-page-tag">Legal</div>
+      <h1 className="legal-page-heading">
         Terms of Use
       </h1>
-      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 32 }}>
+      <p className="legal-page-subtitle">
         Last updated: <time dateTime="2026-05-09">{TERMS_LAST_UPDATED}</time>
         {' '}· Citeback (Wyoming DAO LLC, in formation)
         {' '}· Draft v0.1
@@ -129,9 +116,9 @@ Citeback charges no platform fee on campaign contributions. Citeback's total lia
           body: `Legal notices and questions: citeback@proton.me`,
         },
       ].map(({ title, body }) => (
-        <div key={title} style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{title}</h2>
-          <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, whiteSpace: 'pre-line' }}>{body}</div>
+        <div key={title} className="legal-page-article">
+          <h2 className="legal-page-article-title">{title}</h2>
+          <div className="legal-page-article-body">{body}</div>
         </div>
       ))}
     </section>

@@ -6,11 +6,9 @@ function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defau
   return (
     <div className="ops-accordion">
       <button onClick={() => setOpen(o => !o)} className="ops-accordion-btn">
-        {Icon && <Icon size={18} style={{ color, flexShrink: 0 }} />}
+        {Icon && <Icon size={18} className="ops-accordion-icon" style={{ color }} />}
         <span className="ops-accordion-btn-label">{title}</span>
-        {open
-          ? <ChevronDown size={16} style={{ color: 'var(--muted)' }} />
-          : <ChevronRight size={16} style={{ color: 'var(--muted)' }} />}
+        {open ? <ChevronDown size={16} className="ops-accordion-chevron" /> : <ChevronRight size={16} className="ops-accordion-chevron" />}
       </button>
       {open && (
         <div className="ops-accordion-body">
@@ -25,11 +23,11 @@ function Req({ ok, pending, children }) {
   return (
     <div className="ops-req-item">
       {pending
-        ? <Clock size={15} className="ops-req-icon" style={{ color: '#a78bfa' }} />
+        ? <Clock size={15} className="ops-req-icon ops-req-icon--pending" />
         : ok
-          ? <CheckCircle size={15} className="ops-req-icon" style={{ color: '#6ee7b7' }} />
-          : <AlertTriangle size={15} className="ops-req-icon" style={{ color: '#f59e0b' }} />}
-      <span style={{ fontSize: 14 }}>{children}</span>
+          ? <CheckCircle size={15} className="ops-req-icon ops-req-icon--ok" />
+          : <AlertTriangle size={15} className="ops-req-icon ops-req-icon--warn" />}
+      <span className="ops-req-text">{children}</span>
     </div>
   )
 }
@@ -58,7 +56,7 @@ export default function Operators() {
       {/* Header */}
       <div className="ops-header">
         <div className="ops-header-icon-row">
-          <Scale size={28} style={{ color: 'var(--accent)' }} />
+          <Scale size={28} className="ops-header-icon" />
           <h1>Run a Campaign</h1>
         </div>
         <p>
@@ -67,10 +65,10 @@ export default function Operators() {
 
         {/* How this works — honest model */}
         <div className="ops-how-box">
-          <p style={{ margin: '0 0 10px' }}>
-            <strong style={{ color: 'var(--text)' }}>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
+          <p className="ops-how-p">
+            <strong>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
           </p>
-          <p style={{ margin: 0 }}>
+          <p className="ops-how-p--last">
             Campaigns are funded milestone by milestone. Operators define deliverables upfront (FOIA filed, billboard live, legal action taken). Each milestone is verified before the next tranche of funding is promoted. Operators start with small campaign caps and earn access to larger amounts through track record.
           </p>
         </div>
@@ -78,7 +76,9 @@ export default function Operators() {
 
       {/* Quick Start path */}
       <div className="ops-quickstart">
-        <p className="ops-quickstart-label">⚡ How to Become a Campaign Operator — 3 Steps</p>
+        <p className="ops-quickstart-label">
+          ⚡ How to Become a Campaign Operator — 3 Steps
+        </p>
         <div className="ops-steps">
           {[
             { n: '01', title: 'Report surveillance cameras', desc: 'Use Proofmode (free, iOS/Android) to take GPS-tagged photos of publicly visible surveillance cameras and submit them on the Report tab. Each verified C2PA photo earns you 1–2 reputation points.' },
@@ -104,10 +104,7 @@ export default function Operators() {
           { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', color: '#6ee7b7', anon: true },
           { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', color: '#f59e0b', anon: false },
         ].map(p => (
-          <div
-            key={p.role}
-            className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}
-          >
+          <div key={p.role} className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}>
             <p className="ops-role-label" style={{ color: p.color }}>{p.role}</p>
             <p className="ops-role-desc">{p.req}</p>
           </div>
@@ -116,7 +113,9 @@ export default function Operators() {
 
       {/* Requirements */}
       <div className="ops-requirements">
-        <p className="ops-requirements-title">What Campaign Operators Need</p>
+        <p className="ops-requirements-title">
+          What Campaign Operators Need
+        </p>
         <Req ok={true}>A pseudonymous account with verified camera sightings. Start at Tier 0 — submit cameras, build reputation, unlock campaign access.</Req>
         <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
         <Req ok={true}>Submit a cost breakdown with defined milestones. Every campaign needs a line-item budget and measurable deliverables.</Req>
@@ -128,49 +127,45 @@ export default function Operators() {
       </div>
 
       {/* What makes a good campaign */}
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>What Makes a Strong Campaign</h2>
+      <h2 className="ops-h2">What Makes a Strong Campaign</h2>
 
       <Accordion title="Has a specific, verifiable target" icon={Shield} defaultOpen>
         <p>The best campaigns name a specific program, agency, vendor, or jurisdiction. "Stop Flock Safety cameras in Taos NM" is fundable. "Fight surveillance" is not.</p>
-        <p style={{ marginTop: 8 }}>You need to define upfront: what does success look like? What's the proof standard? What changes if this campaign wins?</p>
+        <p className="ops-body-p-spaced">You need to define upfront: what does success look like? What's the proof standard? What changes if this campaign wins?</p>
       </Accordion>
 
       <Accordion title="Funded by lawful activity only" icon={CheckCircle}>
         <p>Criminal defense funding is prohibited. Campaigns involving illegal activity are prohibited. Camera tampering is prohibited — these are governance immutables and cannot be voted away.</p>
-        <p style={{ marginTop: 8 }}>Billboard campaigns require an operator attestation of factual accuracy — you certify your claims are verifiable. The platform does not verify content, but you are legally responsible for it.</p>
+        <p className="ops-body-p-spaced">Billboard campaigns require an operator attestation of factual accuracy — you certify your claims are verifiable. The platform does not verify content, but you are legally responsible for it.</p>
       </Accordion>
 
       <Accordion title="Has a realistic cost breakdown with milestones" icon={FileText}>
         <p>Campaign proposals require a cost breakdown and defined milestones. Each milestone has a specific deliverable (FOIA filing receipt, MuckRock URL, photo of billboard) and a specific cost. Funding is released milestone by milestone as each deliverable is verified.</p>
-        <p style={{ marginTop: 8 }}>Vague goals ("raise $50k for legal costs") won't be approved. Specific proposals ("file FOIA with Bernalillo County Sheriff — $800 attorney fee — verified by MuckRock URL") are what the platform is built for.</p>
+        <p className="ops-body-p-spaced">Vague goals ("raise $50k for legal costs") won't be approved. Specific proposals ("file FOIA with Bernalillo County Sheriff — $800 attorney fee — verified by MuckRock URL") are what the platform is built for.</p>
       </Accordion>
 
       <Accordion title="Operator reputation and campaign caps" icon={Building}>
         <p>Campaign access scales with your track record on the platform — not with your application. Start small, deliver, build reputation, earn access to larger campaigns.</p>
-        <div style={{ marginTop: 8, fontSize: 13 }}>
+        <div className="ops-tier-wrap">
           {[
             { tier: 'New Operator', unlock: '10 verified camera sightings (Tier 1 reputation)', cap: 'Up to $1,000 per campaign' },
             { tier: '10 Campaigns', unlock: '10 successfully completed campaigns', cap: 'Up to $7,500 — no legal entity required' },
             { tier: 'Legal Entity', unlock: 'Registered LLC, nonprofit, or equivalent on file', cap: 'Up to $30,000' },
             { tier: 'Reviewed', unlock: 'Legal entity + DAO counsel review + $1M liability insurance', cap: 'Up to $125,000' },
           ].map((row, i, arr) => (
-            <div
-              key={row.tier}
-              className="ops-tier-row"
-              style={{ borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none' }}
-            >
+            <div key={row.tier} className="ops-tier-row" style={{ borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none' }}>
               <span className="ops-tier-name">{row.tier}</span>
               <span className="ops-tier-unlock">{row.unlock}</span>
               <span className="ops-tier-cap">{row.cap}</span>
             </div>
           ))}
         </div>
-        <p style={{ marginTop: 12 }}>Start by submitting and verifying cameras. That's how reputation begins.</p>
+        <p className="ops-tier-note">Start by submitting and verifying cameras. That's how reputation begins.</p>
       </Accordion>
 
       {/* Campaign types */}
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '32px 0 16px' }}>Campaign Types</h2>
-      <p style={{ color: 'var(--muted)', fontSize: 14, marginBottom: 20 }}>
+      <h2 className="ops-h2--spaced">Campaign Types</h2>
+      <p className="ops-section-intro">
         The platform funds any lawful accountability activity. Campaign types below are organized by demonstrated real-world impact.
       </p>
 
@@ -181,13 +176,9 @@ export default function Operators() {
           </p>
           <div className="ops-campaign-types-grid">
             {group.types.map(t => (
-              <div
-                key={t.name}
-                className="ops-campaign-type"
-                style={{ borderLeft: `3px solid ${group.color}` }}
-              >
-                <strong style={{ color: 'var(--text)', fontSize: 14 }}>{t.name}</strong>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--muted)' }}>{t.desc}</p>
+              <div key={t.name} className="ops-campaign-type" style={{ borderLeft: `3px solid ${group.color}` }}>
+                <strong className="ops-campaign-type-name">{t.name}</strong>
+                <p className="ops-campaign-type-desc">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -197,13 +188,13 @@ export default function Operators() {
       {/* Disbursement */}
       <div className="ops-disbursement">
         <div className="ops-disbursement-inner">
-          <Coins size={18} className="ops-disbursement-icon" style={{ color: '#6ee7b7' }} />
+          <Coins size={18} className="ops-disbursement-icon" />
           <div>
             <p className="ops-disbursement-title">How Disbursement Works</p>
-            <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
+            <p className="ops-disbursement-text">
               Operators hold their own XMR wallet. Contributors send directly to that wallet — Citeback never holds funds. Operators publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
             </p>
-            <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, marginTop: 8 }}>
+            <p className="ops-disbursement-text--spaced">
               For Tier 2+ campaigns, funding is released milestone by milestone. Each milestone has a defined deliverable verified by Citeback (C2PA photo, MuckRock FOIA URL, court filing number) before the next tranche is promoted. Converting XMR to fiat for vendor payments is the operator's responsibility.
             </p>
           </div>
@@ -211,7 +202,7 @@ export default function Operators() {
       </div>
 
       <Accordion title="What happens after you submit a proposal" icon={FileText}>
-        <ol style={{ paddingLeft: 18, lineHeight: 2 }}>
+        <ol className="ops-accordion-list">
           <li>Proposal saved to the queue — reviewed when operator onboarding launches</li>
           <li>Reputation and identity verified through the platform's onboarding system</li>
           <li>Tier assigned based on your reputation score and campaign scope</li>
@@ -220,7 +211,7 @@ export default function Operators() {
           <li>Funds disburse milestone-by-milestone as verified deliverables are submitted</li>
           <li>Campaign closes with a public outcome record</li>
         </ol>
-        <p style={{ marginTop: 12 }}>All contributions are final and non-refundable. Campaign wallets are operator-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
+        <p className="ops-accordion-final">All contributions are final and non-refundable. Campaign wallets are operator-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
       </Accordion>
 
       {/* CTA */}
@@ -236,18 +227,13 @@ export default function Operators() {
           >
             Propose a Campaign
           </button>
-          <a
-            href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ops-cta-btn--secondary"
-          >
+          <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" className="ops-cta-btn--secondary">
             <ExternalLink size={14} /> Read the Governance Doc
           </a>
         </div>
         <div className="ops-cta-footer">
           <p>
-            <strong style={{ color: 'var(--text)' }}>Operator onboarding opens at launch.</strong>{' '}
+            <strong>Operator onboarding opens at launch.</strong>{' '}
             In the meantime, start building reputation by submitting and verifying camera sightings — that's how operator access is earned.
           </p>
         </div>

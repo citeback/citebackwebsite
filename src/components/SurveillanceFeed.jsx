@@ -503,8 +503,7 @@ export default function SurveillanceFeed({ setTab }) {
                   href={b.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="sf2-card"
-                  style={{ borderBottom: '1px solid var(--border)' }}
+                  className="sf2-card sf2-card--border-bottom"
                 >
                   <div className="sf2-card-header">
                     <span className="sf2-federal-tag">{b.congress}th</span>
@@ -560,11 +559,11 @@ export default function SurveillanceFeed({ setTab }) {
 
 function CasesSkeleton() {
   return (
-    <div style={{ paddingTop: 8 }}>
+    <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
-        <div key={i} style={{ padding: '16px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-          <div style={{ height: 14, background: 'var(--bg2)', borderRadius: 2, marginBottom: 8, width: `${60 + (i % 3) * 15}%` }} />
-          <div style={{ height: 11, background: 'var(--bg2)', borderRadius: 2, width: '35%' }} />
+        <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+          <div className="sf2-skel-bar-lg" style={{ width: `${60 + (i % 3) * 15}%` }} />
+          <div className="sf2-skel-bar-sm" style={{ width: '35%' }} />
         </div>
       ))}
     </div>
@@ -573,11 +572,11 @@ function CasesSkeleton() {
 
 function BillsSkeleton() {
   return (
-    <div style={{ paddingTop: 8 }}>
+    <div className="sf2-skel-wrap">
       {[...Array(5)].map((_, i) => (
-        <div key={i} style={{ padding: '16px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-          <div style={{ height: 14, background: 'var(--bg2)', borderRadius: 2, marginBottom: 8, width: `${55 + (i % 3) * 15}%` }} />
-          <div style={{ height: 11, background: 'var(--bg2)', borderRadius: 2, width: '45%' }} />
+        <div key={i} className="sf2-skel-item" style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+          <div className="sf2-skel-bar-lg" style={{ width: `${55 + (i % 3) * 15}%` }} />
+          <div className="sf2-skel-bar-sm" style={{ width: '45%' }} />
         </div>
       ))}
     </div>
@@ -586,15 +585,11 @@ function BillsSkeleton() {
 
 function FederalBillsSkeleton() {
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))',
-      paddingTop: 8,
-    }}>
+    <div className="sf2-fed-skel-wrap">
       {[...Array(4)].map((_, i) => (
-        <div key={i} style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ height: 14, background: 'var(--bg2)', borderRadius: 2, marginBottom: 8, width: `${50 + (i % 3) * 18}%` }} />
-          <div style={{ height: 11, background: 'var(--bg2)', borderRadius: 2, width: '55%' }} />
+        <div key={i} className="sf2-fed-skel-item">
+          <div className="sf2-skel-bar-lg" style={{ width: `${50 + (i % 3) * 18}%` }} />
+          <div className="sf2-skel-bar-sm" style={{ width: '55%' }} />
         </div>
       ))}
     </div>

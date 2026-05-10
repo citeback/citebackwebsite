@@ -6,7 +6,7 @@ const stats = [
   { value: '7', label: 'Campaigns queued at launch' },
   { value: '$23,500', label: 'Total campaign funding goals' },
   { value: '$0', label: 'Raised to date — wallets not yet live' },
-  { value: '4/10', label: 'Launch prerequisites cleared' },
+  { value: '7/13', label: 'Launch prerequisites cleared' },
   { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
 ]
 
@@ -134,7 +134,7 @@ export default function Hero({ setTab }) {
             </div>
 
             <p className="hero-trust-line">
-              Pre-launch — no wallets are active yet. 4 of 10 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are operator-held — balance publicly verifiable via view keys.
+              Pre-launch — no wallets are active yet. 7 of 13 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are operator-held — balance publicly verifiable via view keys.
             </p>
           </div>
 

@@ -9,15 +9,12 @@ export default function PrivacyPolicy() {
       <meta property="og:title" content="Privacy Policy | Citeback — Zero Tracking, No Identity Required" />
       <meta property="og:description" content="Citeback's privacy policy: no tracking, no analytics, no identity collection. Contributions are private by default via Monero and Zano cryptocurrency protocols." />
     </Helmet>
-    <section style={{ padding: '64px 24px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
-      <div style={{
-        fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
-        textTransform: 'uppercase', color: 'var(--red)', marginBottom: 12,
-      }}>Legal</div>
-      <h1 style={{ fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
+    <section className="legal-page-section">
+      <div className="legal-page-tag">Legal</div>
+      <h1 className="legal-page-heading">
         Privacy Policy
       </h1>
-      <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 48 }}>
+      <p className="legal-page-subtitle--lg">
         Last updated: May 2026 · Citeback (Wyoming DAO LLC, in formation)
       </p>
 
@@ -93,9 +90,9 @@ OFAC note: Contributions from OFAC-sanctioned individuals are prohibited by our 
 For security vulnerability disclosures: see /.well-known/security.txt`,
         },
       ].map(({ title, body }) => (
-        <div key={title} style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{title}</h2>
-          <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, whiteSpace: 'pre-line' }}>{body}</div>
+        <div key={title} className="legal-page-article">
+          <h2 className="legal-page-article-title">{title}</h2>
+          <div className="legal-page-article-body">{body}</div>
         </div>
       ))}
     </section>

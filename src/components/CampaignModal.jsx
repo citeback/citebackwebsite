@@ -194,7 +194,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 {unclaimed ? 'Campaign available to claim' : prelaunch ? 'Wallet pending — being set up' : `of $${campaign.goal.toLocaleString()} goal`}
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div className="cm-progress-right">
               <div className="cm-progress-goal">
                 ${campaign.goal.toLocaleString()}
               </div>
@@ -219,7 +219,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
           {campaign.type !== 'verify' && campaign.winCondition && (
             <div className="cm-win-condition">
               <div className="cm-section-label--green">Win Condition</div>
-              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>{campaign.winCondition}</div>
+              <div className="cm-win-condition-text">{campaign.winCondition}</div>
             </div>
           )}
 
@@ -228,12 +228,12 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             <div className="cm-milestones">
               <div className="cm-section-label">Funding Milestones</div>
               {campaign.milestones.map((m, i) => (
-                <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <div style={{ fontWeight: 700, fontSize: 13 }}>{m.label}</div>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--accent)' }}>${m.amount.toLocaleString()}</div>
+                <div key={i} className="cm-milestone-item">
+                  <div className="cm-milestone-row">
+                    <div className="cm-milestone-label">{m.label}</div>
+                    <div className="cm-milestone-amount">${m.amount.toLocaleString()}</div>
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.55 }}>{m.desc}</div>
+                  <div className="cm-milestone-desc">{m.desc}</div>
                 </div>
               ))}
             </div>
@@ -241,18 +241,14 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
           {campaign.type === 'verify' ? (
             /* Verification Bounty — full game theory breakdown */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="cm-flex-col-16">
 
               {/* Phase 2 architecture notice */}
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.25)',
-                borderRadius: 10, padding: '12px 14px',
-              }}>
-                <span style={{ fontSize: 16, flexShrink: 0 }}>⚙️</span>
+              <div className="cm-phase2-notice">
+                <span className="cm-phase2-icon">⚙️</span>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 12, color: '#818cf8', marginBottom: 3 }}>Phase 2 Architecture — In Development</div>
-                  <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
+                  <div className="cm-phase2-title">Phase 2 Architecture — In Development</div>
+                  <div className="cm-phase2-desc">
                     The anti-fraud system below describes the planned verification infrastructure. Staking, consensus, and IPFS storage are not yet live. This campaign opens when the system is built and audited.
                   </div>
                 </div>
@@ -260,22 +256,22 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
 
               {/* How it works */}
-              <div style={{ background: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: 12, padding: 18 }}>
-                <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 12, color: '#f39c12', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className="cm-how-it-works">
+                <div className="cm-how-it-works-title">
                   <Zap size={15} /> How Verification Bounties Work
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="cm-steps-list">
                   {[
                     { icon: <Camera size={13} />, label: 'Spot a camera', desc: 'Submit GPS-tagged photo. Hash committed first — prevents copying.' },
                     { icon: <Lock size={13} />, label: 'Stake to verify', desc: `Put up ${campaign.verifyMeta?.stakeRequired || 0.25} XMR stake. Fraud = lose stake. Makes lying expensive.` },
                     { icon: <GitMerge size={13} />, label: '3-of-3 consensus', desc: 'Three independent verifiers must agree. Byzantine fault tolerant — one bad actor can\'t fake it.' },
                     { icon: <Award size={13} />, label: 'Earn bounty', desc: `$${campaign.verifyMeta?.bountyPerCamera || 1.50} per confirmed camera. Bonus $${campaign.verifyMeta?.bonusNewArea || 2.00} for unmapped areas.` },
                   ].map((s, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <div style={{ color: '#f39c12', marginTop: 1, flexShrink: 0 }}>{s.icon}</div>
+                    <div key={i} className="cm-step-row">
+                      <div className="cm-step-icon">{s.icon}</div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 2 }}>{s.label}</div>
-                        <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>{s.desc}</div>
+                        <div className="cm-step-label">{s.label}</div>
+                        <div className="cm-step-desc">{s.desc}</div>
                       </div>
                     </div>
                   ))}
@@ -283,9 +279,9 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
               </div>
 
               {/* Anti-fraud stack */}
-              <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 12, padding: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>Anti-Fraud Stack</div>
-                <div className="anti-fraud-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div className="cm-antifraud-box">
+                <div className="cm-antifraud-title">Anti-Fraud Stack</div>
+                <div className="anti-fraud-grid">
                   {[
                     'Commit-reveal scheme',
                     'GPS metadata required',
@@ -296,8 +292,8 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                     'Geographic diversity bonus',
                     'IPFS permanent storage',
                   ].map((f, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--muted)' }}>
-                      <CheckCircle size={11} style={{ color: 'var(--green)', flexShrink: 0 }} />
+                    <div key={i} className="cm-antifraud-item">
+                      <CheckCircle size={11} className="cm-antifraud-check" />
                       {f}
                     </div>
                   ))}
@@ -305,74 +301,70 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
               </div>
 
               {/* Stats */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              <div className="cm-stats-grid">
                 {[
                   { label: 'Cameras targeted', value: (campaign.verifyMeta?.camerasTargeted || 0).toLocaleString() },
                   { label: 'Bounty per camera', value: `$${campaign.verifyMeta?.bountyPerCamera || 1.50}` },
                   { label: 'Confirmations req.', value: `${campaign.verifyMeta?.confirmationsRequired || 3}-of-3` },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 18, fontWeight: 900, color: '#f39c12', letterSpacing: '-0.5px' }}>{s.value}</div>
-                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>{s.label}</div>
+                  <div key={i} className="cm-stat-item">
+                    <div className="cm-stat-value">{s.value}</div>
+                    <div className="cm-stat-label">{s.label}</div>
                   </div>
                 ))}
               </div>
 
-              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7, padding: '0 2px' }}>
+              <div className="cm-wallet-pending-text">
                 Wallets pending activation. Fund this campaign to open the bounty pool.
                 Verifiers apply through the Expert Directory. All payouts in XMR — anonymous, instant, no bank required.
               </div>
 
-              <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 16, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, textAlign: 'center' }}>
-                <strong style={{ color: 'var(--text)' }}>No notifications — by design.</strong><br />
+              <div className="cm-info-box">
+                <strong className="cm-strong-text">No notifications — by design.</strong><br />
                 Citeback doesn't collect emails or contact info. Bookmark this page — bounties will appear here when the wallet activates.
               </div>
             </div>
 
           ) : unclaimed ? (
             /* Unclaimed — needs an operator */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ background: 'rgba(155,89,182,0.07)', border: '1px solid rgba(155,89,182,0.25)', borderRadius: 12, padding: 18 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
-                  <Users size={16} style={{ color: '#9b59b6' }} /> This Campaign Needs an Operator
+            <div className="cm-flex-col-16">
+              <div className="cm-unclaimed-banner">
+                <div className="cm-banner-header">
+                  <Users size={16} className="cm-icon-purple" /> This Campaign Needs an Operator
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <p className="cm-muted-text">
                   This is a suggested campaign — fully researched and ready to run. An Operator claims it, adds their own
                   XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the operator's wallet.
                   Citeback never holds funds.
                 </p>
                 {campaign.operatorName && (
-                  <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 8 }}>Operator: <strong style={{ color: 'var(--text)' }}>{campaign.operatorName}</strong></p>
+                  <p className="cm-operator-name">Operator: <strong className="cm-strong-text">{campaign.operatorName}</strong></p>
                 )}
               </div>
 
               {!isLoggedIn ? (
-                <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, color: 'var(--muted)' }}>
-                  <strong style={{ color: 'var(--text)' }}>Log in to claim this campaign.</strong><br />
+                <div className="cm-info-box">
+                  <strong className="cm-strong-text">Log in to claim this campaign.</strong><br />
                   You need an Operator account (10+ reputation points).
                 </div>
               ) : !canClaim ? (
-                <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, color: 'var(--muted)' }}>
-                  <strong style={{ color: 'var(--text)' }}>Operator tier required.</strong><br />
+                <div className="cm-info-box">
+                  <strong className="cm-strong-text">Operator tier required.</strong><br />
                   Earn 10+ reputation points by submitting verified camera sightings. You have {user?.reputation || 0} pts ({10 - (user?.reputation || 0)} more needed).
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {claimError && <div style={{ color: 'var(--accent)', fontSize: 13, textAlign: 'center' }}>{claimError}</div>}
+                <div className="cm-flex-col-10">
+                  {claimError && <div className="cm-claim-error">{claimError}</div>}
                   <button
                     onClick={handleClaim}
                     disabled={claiming}
-                    style={{
-                      background: 'rgba(155,89,182,0.15)', border: '1px solid rgba(155,89,182,0.4)',
-                      color: '#bb8fce', borderRadius: 10, padding: '14px 20px',
-                      fontWeight: 700, fontSize: 15, cursor: claiming ? 'default' : 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    }}
+                    className="cm-claim-btn"
+                    style={{ cursor: claiming ? 'default' : 'pointer' }}
                   >
                     <Users size={16} />
                     {claiming ? 'Claiming…' : 'Claim this Campaign'}
                   </button>
-                  <p style={{ fontSize: 12, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
+                  <p className="cm-claim-note">
                     After claiming, add your XMR and ZANO wallet addresses to activate the campaign.
                   </p>
                 </div>
@@ -381,46 +373,43 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
           ) : isUserOperator && !hasWallet ? (
             /* Operator — needs to add wallet */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ background: 'rgba(155,89,182,0.07)', border: '1px solid rgba(155,89,182,0.25)', borderRadius: 12, padding: 18 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
-                  <Wallet size={16} style={{ color: '#9b59b6' }} /> You're the Operator — Add Your Wallets
+            <div className="cm-flex-col-14">
+              <div className="cm-unclaimed-banner">
+                <div className="cm-banner-header">
+                  <Wallet size={16} className="cm-icon-purple" /> You're the Operator — Add Your Wallets
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <p className="cm-muted-text">
                   Add your XMR and ZANO wallet addresses to activate this campaign. Contributors will send funds directly to your wallets — Citeback never holds funds.
                 </p>
               </div>
 
               {[['Monero (XMR) wallet address', 'walletXmr', 'Your XMR address…'], ['Zano (ZANO) wallet address', 'walletZano', 'Your ZANO address…'], ['Your name or alias (public)', 'operatorName', 'e.g. Taos Privacy Coalition'], ['About you / this effort (public)', 'operatorBio', 'Brief background on who\'s running this campaign…']].map(([label, key, placeholder]) => (
-                <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 600 }}>{label}</label>
+                <div key={key} className="cm-form-field">
+                  <label className="cm-form-label">{label}</label>
                   {key === 'operatorBio' ? (
                     <textarea
                       value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
                       placeholder={placeholder} rows={3}
-                      style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 8, padding: '9px 12px', fontSize: 13, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+                      className="cm-form-textarea"
                     />
                   ) : (
                     <input
                       value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
                       placeholder={placeholder}
-                      style={{ background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text)', borderRadius: 8, padding: '9px 12px', fontSize: 13, outline: 'none', fontFamily: 'inherit' }}
+                      className="cm-form-input"
                     />
                   )}
                 </div>
               ))}
 
-              {saveError && <div style={{ color: 'var(--accent)', fontSize: 13 }}>{saveError}</div>}
-              {saveSuccess && <div style={{ color: 'var(--green)', fontSize: 13 }}>✓ Saved! Campaign will activate once both wallets are set.</div>}
+              {saveError && <div className="cm-save-error">{saveError}</div>}
+              {saveSuccess && <div className="cm-save-success">✓ Saved! Campaign will activate once both wallets are set.</div>}
 
               <button
                 onClick={handleSaveOperator}
                 disabled={savingWallet || (!operatorForm.walletXmr && !operatorForm.walletZano && !operatorForm.operatorName && !operatorForm.operatorBio)}
-                style={{
-                  background: 'rgba(155,89,182,0.15)', border: '1px solid rgba(155,89,182,0.4)',
-                  color: '#bb8fce', borderRadius: 10, padding: '12px 20px',
-                  fontWeight: 700, fontSize: 14, cursor: savingWallet ? 'default' : 'pointer',
-                }}
+                className="cm-save-btn"
+                style={{ cursor: savingWallet ? 'default' : 'pointer' }}
               >
                 {savingWallet ? 'Saving…' : 'Save & Activate'}
               </button>
@@ -428,15 +417,12 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
           ) : !hasWallet ? (
             /* Pre-launch state (generic — claimed by someone else, no wallet yet) */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{
-                background: 'rgba(230,57,70,0.06)', border: '1px solid rgba(230,57,70,0.2)',
-                borderRadius: 12, padding: 18,
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 8 }}>
-                  <Rocket size={16} style={{ color: 'var(--accent)' }} /> Pre-Launch Campaign
+            <div className="cm-flex-col-14">
+              <div className="cm-prelaunch-banner">
+                <div className="cm-banner-header">
+                  <Rocket size={16} className="cm-icon-accent" /> Pre-Launch Campaign
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+                <p className="cm-muted-text">
                   This campaign has been claimed and is being prepared for launch. The operator is setting up their wallet addresses. Check back soon.
                 </p>
               </div>
@@ -458,11 +444,10 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                   <ThumbsUp size={15} />
                   {interested ? 'Interest Recorded' : 'Signal Interest — helps prioritize launch order'}
                   {interestCount > 0 && (
-                    <span style={{
-                      background: interested ? 'rgba(46,204,113,0.2)' : 'var(--bg2)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 100, padding: '1px 8px', fontSize: 11, fontWeight: 700,
-                    }}>
+                    <span
+                      className="cm-interest-count"
+                      style={{ background: interested ? 'rgba(46,204,113,0.2)' : 'var(--bg2)' }}
+                    >
                       {interestCount}
                     </span>
                   )}
@@ -478,11 +463,8 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                 </button>
               </div>
 
-              <div style={{
-                background: 'var(--bg3)', border: '1px solid var(--border)',
-                borderRadius: 10, padding: 16, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, textAlign: 'center',
-              }}>
-                <strong style={{ color: 'var(--text)' }}>No notifications — by design.</strong><br />
+              <div className="cm-info-box">
+                <strong className="cm-strong-text">No notifications — by design.</strong><br />
                 Anonymous interest signal only. When wallets activate,
                 both XMR and ZANO addresses will appear right here. Bookmark this page and check back.
               </div>
@@ -490,17 +472,13 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
           ) : funded ? (
             /* Funded state */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.25)',
-                borderRadius: 10, padding: 16, color: 'var(--green)', fontWeight: 600,
-              }}>
+            <div className="cm-flex-col-14">
+              <div className="cm-funded-notice">
                 <CheckCircle size={18} /> Fully funded. Action in progress.
               </div>
-              <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Proof of Execution</div>
-                <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+              <div className="cm-funded-box">
+                <div className="cm-proof-label">Proof of Execution</div>
+                <div className="cm-muted-text">
                   Receipt, vendor invoice, and photo documentation will be posted here upon completion.
                 </div>
               </div>
@@ -531,60 +509,52 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
               {walletTab === 'address' ? (
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  <div className="cm-wallet-label">
                     {currency === 'XMR' ? 'Monero (XMR)' : 'Zano (ZANO)'} — This Campaign Only
                   </div>
-                  <div style={{
-                    background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8,
-                    padding: '12px 14px', fontFamily: 'var(--mono)', fontSize: 11,
-                    wordBreak: 'break-all', color: 'var(--muted)', lineHeight: 1.7, marginBottom: 12,
-                    userSelect: 'all',
-                  }}>
+                  <div className="cm-wallet-address">
                     {activeWallet}
                   </div>
-                  <button onClick={copyWallet} style={{
-                    display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'center',
+                  <button onClick={copyWallet} className="cm-copy-btn" style={{
                     background: copied ? 'rgba(46,204,113,0.8)' : 'var(--accent)',
-                    border: 'none', color: '#fff', padding: '12px 20px', borderRadius: 9,
-                    fontWeight: 700, fontSize: 15, cursor: 'pointer',
                   }}>
                     {copied ? <><CheckCircle size={16} /> Copied!</> : <><Copy size={16} /> Copy {currency} Address</>}
                   </button>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-                  <div style={{ background: 'white', padding: 16, borderRadius: 12 }}>
+                <div className="cm-qr-container">
+                  <div className="cm-qr-box">
                     <QRCodeSVG
                       value={currency === 'XMR' ? `monero:${activeWallet}` : `zano:${activeWallet}`}
                       size={180}
                     />
                   </div>
-                  <p style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.6 }}>
+                  <p className="cm-qr-desc">
                     Scan with any {currency === 'XMR' ? 'Monero' : 'Zano'} wallet app. Amount is up to you.
                   </p>
                 </div>
               )}
 
-              <div style={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 10, padding: 14, fontSize: 13, color: 'var(--muted)', lineHeight: 1.7 }}>
+              <div className="cm-wallet-note">
                 {currency === 'XMR' ? (
-                  <><strong style={{ color: 'var(--text)' }}>New to Monero?</strong>{' '}
-                  Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (iOS/Android),{' '}
-                  <a href="https://monerujo.io" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Monerujo</a> (Android), or{' '}
-                  <a href="https://featherwallet.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Feather Wallet</a> (desktop — built-in Tor).{' '}
-                  Get XMR via <a href="https://haveno.exchange" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Haveno</a> (P2P DEX, no KYC) or{' '}
-                  <a href="https://xmrswap.me" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>atomic swap</a> (BTC→XMR, no KYC). For maximum privacy, broadcast your transaction over Tor.</>
+                  <><strong className="cm-strong-text">New to Monero?</strong>{' '}
+                  Download <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" className="cm-link">Cake Wallet</a> (iOS/Android),{' '}
+                  <a href="https://monerujo.io" target="_blank" rel="noopener noreferrer" className="cm-link">Monerujo</a> (Android), or{' '}
+                  <a href="https://featherwallet.org" target="_blank" rel="noopener noreferrer" className="cm-link">Feather Wallet</a> (desktop — built-in Tor).{' '}
+                  Get XMR via <a href="https://haveno.exchange" target="_blank" rel="noopener noreferrer" className="cm-link">Haveno</a> (P2P DEX, no KYC) or{' '}
+                  <a href="https://xmrswap.me" target="_blank" rel="noopener noreferrer" className="cm-link">atomic swap</a> (BTC→XMR, no KYC). For maximum privacy, broadcast your transaction over Tor.</>
                 ) : (
-                  <><strong style={{ color: 'var(--text)' }}>New to Zano?</strong>{' '}
-                  Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Zano Wallet</a> (desktop) or{' '}
-                  <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>Cake Wallet</a> (mobile — Zano supported).{' '}
-                  Get ZANO at <a href="https://tradeogre.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>TradeOgre</a> (no KYC) or{' '}
-                  <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>KuCoin</a> (KYC required).</>
+                  <><strong className="cm-strong-text">New to Zano?</strong>{' '}
+                  Download the <a href="https://zano.org/downloads" target="_blank" rel="noopener noreferrer" className="cm-link">Zano Wallet</a> (desktop) or{' '}
+                  <a href="https://cakewallet.com" target="_blank" rel="noopener noreferrer" className="cm-link">Cake Wallet</a> (mobile — Zano supported).{' '}
+                  Get ZANO at <a href="https://tradeogre.com" target="_blank" rel="noopener noreferrer" className="cm-link">TradeOgre</a> (no KYC) or{' '}
+                  <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer" className="cm-link">KuCoin</a> (KYC required).</>
                 )}
               </div>
 
               {/* Official domains disclaimer */}
-              <div style={{ background: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: 10, padding: '12px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.65 }}>
-                ⚠️ <strong style={{ color: '#f39c12' }}>Only contribute to campaigns from an official Citeback domain.</strong>{' '}
+              <div className="cm-disclaimer">
+                ⚠️ <strong className="cm-strong-warn">Only contribute to campaigns from an official Citeback domain.</strong>{' '}
                 Official sites: citeback.com · citeback.net · citeback.org
               </div>
             </>
