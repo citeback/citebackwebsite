@@ -101,6 +101,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
               onChange={e => setQuery(e.target.value)}
               placeholder="Search campaigns or locations…"
               className="campaign-search-input"
+              aria-label="Search campaigns"
             />
           </div>
 

@@ -1280,6 +1280,7 @@ export default function CameraMap() {
                   )}
                   {mapGpsStatus === 'found' && (
                     <input className="cmap-main-input cmap-main-input--sm" placeholder="Notes (optional) — vendor, mounting, direction"
+                      aria-label="Sighting notes"
                       value={form.notes || ''} onChange={e => set('notes', e.target.value)} />
                   )}
                   {submitError && (
