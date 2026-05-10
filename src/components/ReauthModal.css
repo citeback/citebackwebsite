@@ -144,6 +144,12 @@
   padding: 4px;
 }
 
+/* strong text override inside info box */
+.rm-info-box strong { color: var(--text); }
+
+/* Error icon */
+.rm-error-icon { flex-shrink: 0; }
+
 /* Error */
 .rm-error {
   display: flex;

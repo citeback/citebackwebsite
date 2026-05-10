@@ -106,7 +106,7 @@ export default function ReauthModal({ onSuccess, onCancel, actionLabel = 'contin
 
         {/* Explanation */}
         <div className="rm-info-box">
-          <strong style={{ color: 'var(--text)' }}>Logged in as @{user?.username}.</strong>{' '}
+          <strong>Logged in as @{user?.username}.</strong>{' '}
           Re-enter your password to confirm this action. This protects your account if someone has access to your session.
         </div>
 
@@ -142,7 +142,7 @@ export default function ReauthModal({ onSuccess, onCancel, actionLabel = 'contin
           {/* Error */}
           {error && (
             <div className="rm-error">
-              <AlertCircle size={14} style={{ flexShrink: 0 }} />
+              <AlertCircle size={14} className="rm-error-icon" />
               {error}
             </div>
           )}
