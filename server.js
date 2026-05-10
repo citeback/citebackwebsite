@@ -353,6 +353,11 @@ function gcPasskeyChallenges() {
 gcPasskeyChallenges()
 setInterval(gcPasskeyChallenges, 5 * 60 * 1000)
 
+// Periodic WAL checkpoint — prevents WAL from growing unbounded between daily backups
+setInterval(() => {
+  try { db.pragma('wal_checkpoint(PASSIVE)') } catch {}
+}, 60 * 60 * 1000)
+
 // ── Server-side reauth sessions ───────────────────────────────────────────────
 // userId -> reauthUntil timestamp (in-memory; resets on restart — acceptable)
 const reauthSessions = new Map()
@@ -883,8 +888,16 @@ const server = http.createServer(async (req, res) => {
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/stats') {
+    // Omit operational details (rateLimited, uptime, queueDepth, processing) that
+    // would help an attacker profile server load or time requests around restarts.
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify({ ...stats, queueDepth: queue.length, processing, uptime: Math.floor((Date.now() - new Date(stats.since).getTime()) / 1000) + 's', cameraCount: osmCameras.length }))
+    return res.end(JSON.stringify({
+      thumbsUp: stats.thumbsUp,
+      thumbsDown: stats.thumbsDown,
+      total: stats.total,
+      since: stats.since,
+      cameraCount: osmCameras.length,
+    }))
   }
 
   // ── Campaign interest counter ──────────────────────────────────────────────
@@ -1860,12 +1873,17 @@ const server = http.createServer(async (req, res) => {
       // Look up user (same response for not-found to avoid enumeration)
       const user = db.prepare('SELECT id, attorney_verified, role FROM users WHERE id = ?').get(userId)
       if (!user) return badToken()
-      // Look up claim token
-      const claimRow = db.prepare('SELECT id, token_hash, expires_at, used FROM claim_tokens WHERE user_id = ? AND used = 0').get(userId)
+      // Atomic token burn: mark used=1 before any async work to close TOCTOU race window.
+      // If two concurrent requests race in, only one UPDATE will find used=0; the other gets changes=0.
+      // Step 1: read token hash while still unused
+      const claimRow = db.prepare('SELECT id, token_hash, expires_at FROM claim_tokens WHERE user_id = ? AND used = 0').get(userId)
       if (!claimRow) return badToken()
-      // Check expiry
+      // Check expiry before burning
       if (new Date(claimRow.expires_at) < new Date()) return badToken()
-      // Timing-safe token comparison via bcrypt
+      // Step 2: atomically mark used — only one concurrent request can win this UPDATE
+      const burned = db.prepare('UPDATE claim_tokens SET used = 1 WHERE id = ? AND used = 0').run(claimRow.id)
+      if (burned.changes === 0) return badToken() // lost the race; token already consumed
+      // Step 3: verify token (token is now burned regardless of outcome — admin must reissue if wrong)
       const tokenMatch = await bcrypt.compare(token, claimRow.token_hash)
       if (!tokenMatch) return badToken()
       // Check username availability
@@ -1878,8 +1896,6 @@ const server = http.createServer(async (req, res) => {
       const newHash = await bcrypt.hash(password, 12)
       db.prepare('UPDATE users SET username = ?, password_hash = ?, password_version = COALESCE(password_version,0)+1 WHERE id = ?')
         .run(username, newHash, userId)
-      // Mark claim token as used
-      db.prepare('UPDATE claim_tokens SET used = 1 WHERE id = ?').run(claimRow.id)
       // Issue JWT session cookie
       const newPv = db.prepare('SELECT password_version FROM users WHERE id = ?').get(userId)?.password_version || 0
       const sessionToken = jwt.sign({ userId, username, pv: newPv }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
@@ -2103,37 +2119,42 @@ const server = http.createServer(async (req, res) => {
     const campaign = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
     if (!campaign) { res.writeHead(404); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
     if (campaign.operator_id !== claims.userId) { res.writeHead(403); return res.end(JSON.stringify({ error: 'Not the campaign operator' })) }
-    const body = await parseBody(req)
-    const fields = {}
-    // XMR/ZANO addresses: ~95-97 chars, base58 alphabet
-    const WALLET_RE = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{90,110}$/
-    if (body.walletXmr !== undefined) {
-      const w = String(body.walletXmr||'').trim()
-      if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid XMR wallet address format' })) }
-      fields.wallet_xmr = w || null
+    try {
+      const body = await parseBody(req)
+      const fields = {}
+      // XMR/ZANO addresses: ~95-97 chars, base58 alphabet
+      const WALLET_RE = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{90,110}$/
+      if (body.walletXmr !== undefined) {
+        const w = String(body.walletXmr||'').trim()
+        if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid XMR wallet address format' })) }
+        fields.wallet_xmr = w || null
+      }
+      if (body.walletZano !== undefined) {
+        const w = String(body.walletZano||'').trim()
+        if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid ZANO wallet address format' })) }
+        fields.wallet_zano = w || null
+      }
+      if (body.operatorName !== undefined) fields.operator_name = String(body.operatorName||'').trim().slice(0,100) || null
+      if (body.operatorBio !== undefined) fields.operator_bio = String(body.operatorBio||'').trim().slice(0,500) || null
+      if (!Object.keys(fields).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields' })) }
+      const updXmr = fields.wallet_xmr !== undefined ? fields.wallet_xmr : campaign.wallet_xmr
+      const updZano = fields.wallet_zano !== undefined ? fields.wallet_zano : campaign.wallet_zano
+      if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
+      // Audit trail: log wallet changes on active campaigns (important for donor trust)
+      const walletChanged = (fields.wallet_xmr !== undefined || fields.wallet_zano !== undefined)
+      if (walletChanged && campaign.status === 'active') {
+        fields.wallet_changed_at = new Date().toISOString()
+        console.log(`[AUDIT] Campaign ${id} wallet changed by operator ${claims.userId} at ${fields.wallet_changed_at}`)
+      }
+      const setClauses = Object.keys(fields).map(k => k + ' = ?').join(', ')
+      db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(fields), id)
+      const updated = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ ok: true, campaign: updated }))
+    } catch (e) {
+      console.error('campaign PATCH error:', e.message)
+      if (!res.headersSent) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Bad request' })) }
     }
-    if (body.walletZano !== undefined) {
-      const w = String(body.walletZano||'').trim()
-      if (w && !WALLET_RE.test(w)) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid ZANO wallet address format' })) }
-      fields.wallet_zano = w || null
-    }
-    if (body.operatorName !== undefined) fields.operator_name = String(body.operatorName||'').trim().slice(0,100) || null
-    if (body.operatorBio !== undefined) fields.operator_bio = String(body.operatorBio||'').trim().slice(0,500) || null
-    if (!Object.keys(fields).length) { res.writeHead(400); return res.end(JSON.stringify({ error: 'No valid fields' })) }
-    const updXmr = fields.wallet_xmr !== undefined ? fields.wallet_xmr : campaign.wallet_xmr
-    const updZano = fields.wallet_zano !== undefined ? fields.wallet_zano : campaign.wallet_zano
-    if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
-    // Audit trail: log wallet changes on active campaigns (important for donor trust)
-    const walletChanged = (fields.wallet_xmr !== undefined || fields.wallet_zano !== undefined)
-    if (walletChanged && campaign.status === 'active') {
-      fields.wallet_changed_at = new Date().toISOString()
-      console.log(`[AUDIT] Campaign ${id} wallet changed by operator ${claims.userId} at ${fields.wallet_changed_at}`)
-    }
-    const setClauses = Object.keys(fields).map(k => k + ' = ?').join(', ')
-    db.prepare('UPDATE campaigns SET ' + setClauses + ' WHERE id = ?').run(...Object.values(fields), id)
-    const updated = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(id)
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify({ ok: true, campaign: updated }))
   }
 
   // ── Passkey: register options ────────────────────────────────────────────────
