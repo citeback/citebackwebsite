@@ -159,7 +159,7 @@ export default function FollowTheMoney() {
     <div className="ftm-page">
       {/* Header */}
       <div className="ftm-header">
-        <div style={{ marginBottom: 8 }}>
+        <div className="ftm-mb-8">
           <div className="ftm-eyebrow">Federal Surveillance Contracts</div>
           <div className="ftm-title-row">
             <h3 className="ftm-title">Follow the Money</h3>
@@ -174,7 +174,7 @@ export default function FollowTheMoney() {
             href="https://www.usaspending.gov"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--accent)', textDecoration: 'none' }}
+            className="ftm-link-accent"
           >
             USASpending.gov
           </a>
@@ -183,7 +183,7 @@ export default function FollowTheMoney() {
             href="https://lda.senate.gov"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--accent)', textDecoration: 'none' }}
+            className="ftm-link-accent"
           >
             Senate LDA
           </a>
@@ -249,7 +249,7 @@ export default function FollowTheMoney() {
                       <div className="ftm-badge">
                         State-level lobbying
                       </div>
-                      <div className="ftm-stat-sub" style={{ opacity: 0.6, marginTop: 2 }}>
+                      <div className="ftm-stat-sub ftm-stat-sub--faded">
                         Federal disclosure not required
                       </div>
                     </div>
@@ -259,12 +259,12 @@ export default function FollowTheMoney() {
                       <span>Loading…</span>
                     </div>
                   ) : lda?.error ? (
-                    <div className="ftm-stat-sub" style={{ opacity: 0.6 }}>
+                    <div className="ftm-stat-sub ftm-opacity-60">
                       LDA unavailable
                     </div>
                   ) : (
                     <div>
-                      <div className="ftm-stat-value" style={{ color: 'var(--fg, #e2e8f0)' }}>
+                      <div className="ftm-stat-value ftm-stat-value--fg">
                         {lda?.count != null ? `${lda.count.toLocaleString()} filings` : '—'}
                       </div>
                       {(lda?.totalExpenses > 0 || lda?.totalIncome > 0) && (
@@ -272,7 +272,7 @@ export default function FollowTheMoney() {
                           {lda.totalExpenses > 0
                             ? `${formatDollars(lda.totalExpenses)} expenses reported`
                             : `${formatDollars(lda.totalIncome)} income reported`}
-                          <span style={{ opacity: 0.6 }}> (sample)</span>
+                          <span className="ftm-opacity-60"> (sample)</span>
                         </div>
                       )}
                     </div>
@@ -282,28 +282,28 @@ export default function FollowTheMoney() {
 
               {/* Top award */}
               <div className="ftm-top-award">
-                <div style={{ color: 'var(--muted)', marginBottom: 2 }}>Largest single federal award</div>
-                <div style={{ fontWeight: 700, color: 'var(--text)' }}>{v.topAward}</div>
-                <div style={{ color: 'var(--muted)', fontSize: 11 }}>{v.topAwardDesc}</div>
+                <div className="ftm-award-label">Largest single federal award</div>
+                <div className="ftm-award-value">{v.topAward}</div>
+                <div className="ftm-award-desc">{v.topAwardDesc}</div>
               </div>
 
               {/* Expanded detail */}
               {isOpen && (
                 <div className="ftm-expanded">
                   <div className="ftm-expanded-agency">
-                    <strong style={{ color: 'var(--muted)', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.06em' }}>Agency</strong>
+                    <strong className="ftm-agency-label">Agency</strong>
                     <br />
                     {v.topAwardAgency}
                   </div>
-                  <p style={{ marginBottom: 12 }}>{v.note}</p>
+                  <p className="ftm-note">{v.note}</p>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div className="ftm-link-col">
                     <a
                       href={`https://www.usaspending.gov/search/?object_class=&recipient_search_text=${encodeURIComponent(v.recipients[0])}&award_type_codes=A,B,C,D`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: v.color, textDecoration: 'none', fontSize: 11, fontWeight: 600 }}
+                      className="ftm-vendor-link" style={{ color: v.color }}
                     >
                       Federal contracts on USASpending.gov <ExternalLink size={10} />
                     </a>
@@ -316,7 +316,7 @@ export default function FollowTheMoney() {
                           <div style={{ color: v.color, fontWeight: 700, fontSize: 11, marginBottom: 2 }}>
                             State-level lobbying — federal disclosure not required
                           </div>
-                          <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
+                          <div className="ftm-state-text">
                             Flock Safety primarily lobbies state legislatures to secure local police contracts.
                             Federal LDA filings are not required for state-level activity. The real lobbying
                             footprint lives in state disclosure databases — not tracked centrally.
@@ -332,7 +332,7 @@ export default function FollowTheMoney() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--muted)', textDecoration: 'none', fontSize: 11, fontWeight: 600 }}
+                        className="ftm-lda-link"
                       >
                         Lobbying filings on Senate LDA <ExternalLink size={10} />
                       </a>
@@ -351,16 +351,16 @@ export default function FollowTheMoney() {
 
       {/* Attribution + caveats */}
       <div className="ftm-disclaimer">
-        <AlertCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
+        <AlertCircle size={14} className="ftm-disclaimer-icon" />
         <div>
-          <span style={{ color: 'var(--text)', fontWeight: 600 }}>Federal figures only. </span>
+          <span className="ftm-disclaimer-bold">Federal figures only. </span>
           State and local surveillance spending is not tracked centrally — the real dollar totals are far higher.
           {' '}Contract data from{' '}
           <a
             href="https://www.usaspending.gov"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--accent)', textDecoration: 'none' }}
+            className="ftm-link-accent"
           >
             USASpending.gov
           </a>
@@ -370,7 +370,7 @@ export default function FollowTheMoney() {
             href="https://lda.senate.gov"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--accent)', textDecoration: 'none' }}
+            className="ftm-link-accent"
           >
             Senate Office of Public Records
           </a>

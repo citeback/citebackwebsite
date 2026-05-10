@@ -158,7 +158,7 @@ function SightingCard({ sighting, onModerate, loading }) {
                     <tr key={i}>
                       <td><span className="ap-badge ap-badge--approved">{r.role}</span></td>
                       <td className="ap-cell-muted">{r.location}</td>
-                      <td style={{ maxWidth: 320, wordBreak: 'break-word' }}>{r.background?.slice(0, 200)}{r.background?.length > 200 ? '…' : ''}</td>
+                      <td className="ap-cell-break">{r.background?.slice(0, 200)}{r.background?.length > 200 ? '…' : ''}</td>
                       <td className="ap-cell-muted">{r.ts ? new Date(r.ts).toLocaleDateString() : '—'}</td>
                     </tr>
                   ))}
@@ -203,10 +203,10 @@ function AttorneyCard({ app, onReview, loading }) {
       {barResult && (
         <div className={`ap-bar-result ${barResult.status === 'found' ? 'ap-bar-result--found' : 'ap-bar-result--warn'}`}>
           {barResult.status === 'found'
-            ? <><ShieldCheck size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /><strong>Bar verified:</strong> {barResult.name}{barResult.active !== undefined && ` — ${barResult.active ? 'Active' : 'Inactive'}`}</>
+            ? <><ShieldCheck size={12} className="ap-inline-icon" /><strong>Bar verified:</strong> {barResult.name}{barResult.active !== undefined && ` — ${barResult.active ? 'Active' : 'Inactive'}`}</>
             : barResult.status === 'not_found'
-              ? <><XCircle size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bar # not found in CA State Bar</>
-              : <><Clock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.bar_state} — manual verification required</>}
+              ? <><XCircle size={12} className="ap-inline-icon" />Bar # not found in CA State Bar</>
+              : <><Clock size={12} className="ap-inline-icon" />{app.bar_state} — manual verification required</>}
         </div>
       )}
 
@@ -214,7 +214,7 @@ function AttorneyCard({ app, onReview, loading }) {
 
       {app.notes && (
         <div className="ap-attorney-admin-notes">
-          <MessageSquare size={11} style={{ verticalAlign: 'middle', marginRight: 4 }} />{app.notes}
+          <MessageSquare size={11} className="ap-inline-icon" />{app.notes}
         </div>
       )}
 
@@ -491,7 +491,7 @@ export default function AdminPanel() {
       <div className="ap-page">
         <div className="ap-login-wrapper">
           <div className="ap-login-title">
-            <Lock size={20} style={{ color: 'var(--accent)' }} />
+            <Lock size={20} className="ap-icon-accent" />
             <h1>Citeback Admin</h1>
           </div>
           <form onSubmit={handleAuth} className="ap-login-form">
@@ -605,9 +605,9 @@ export default function AdminPanel() {
               <h1 className="ap-h1">Sighting Moderation</h1>
               <div className="ap-subtitle">
                 {data?.total ?? '–'} total ·{' '}
-                <span style={{ color: STATUS_COLORS.pending }}>{data?.pending?.length ?? 0} pending</span> ·{' '}
-                <span style={{ color: STATUS_COLORS.approved }}>{data?.approved?.length ?? 0} approved</span> ·{' '}
-                <span style={{ color: STATUS_COLORS.rejected }}>{data?.rejected?.length ?? 0} rejected</span>
+                <span className="ap-color-pending">{data?.pending?.length ?? 0} pending</span> ·{' '}
+                <span className="ap-color-approved">{data?.approved?.length ?? 0} approved</span> ·{' '}
+                <span className="ap-color-rejected">{data?.rejected?.length ?? 0} rejected</span>
               </div>
             </div>
             <div className="ap-action-row">
@@ -657,9 +657,9 @@ export default function AdminPanel() {
               <h1 className="ap-h1">Attorney Applications</h1>
               <div className="ap-subtitle">
                 {attorneyData?.total ?? '–'} total ·{' '}
-                <span style={{ color: '#f59e0b' }}>{attorneyData?.pending?.length ?? 0} pending</span> ·{' '}
-                <span style={{ color: '#10b981' }}>{attorneyData?.approved?.length ?? 0} approved</span> ·{' '}
-                <span style={{ color: '#e63946' }}>{attorneyData?.rejected?.length ?? 0} rejected</span>
+                <span className="ap-color-pending">{attorneyData?.pending?.length ?? 0} pending</span> ·{' '}
+                <span className="ap-color-approved">{attorneyData?.approved?.length ?? 0} approved</span> ·{' '}
+                <span className="ap-color-rejected">{attorneyData?.rejected?.length ?? 0} rejected</span>
               </div>
             </div>
             <button onClick={fetchAttorneyData} disabled={attorneyLoading} className="ap-btn-refresh">

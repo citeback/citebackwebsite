@@ -71,7 +71,7 @@ export default function CampaignCard({ campaign, onClick }) {
             onClick={handleShare}
             aria-label={shared ? 'Link copied' : 'Copy campaign link'}
             className="card-share-btn"
-            style={{ color: shared ? 'var(--green)' : 'var(--muted)' }}
+            className={`card-share-btn${shared ? ' card-share-btn--shared' : ' card-share-btn--idle'}`}
           >
             {shared ? <CheckCircle size={14} /> : <Share2 size={14} />}
           </button>
@@ -87,7 +87,7 @@ export default function CampaignCard({ campaign, onClick }) {
       {/* Progress */}
       <div>
         <div className="card-progress-row">
-          <span style={{ fontWeight: 700, color: prelaunch ? 'var(--muted)' : 'var(--text)' }}>
+          <span className={`card-raised-label${prelaunch ? ' card-raised-label--prelaunch' : ' card-raised-label--active'}`}>
             {unclaimed
               ? 'Awaiting operator'
               : claimed
@@ -96,7 +96,7 @@ export default function CampaignCard({ campaign, onClick }) {
               ? 'Pre-launch'
               : `$${campaign.raised.toLocaleString()} raised`}
           </span>
-          <span style={{ color: 'var(--muted)' }}>${campaign.goal.toLocaleString()} goal</span>
+          <span className="card-goal-label">${campaign.goal.toLocaleString()} goal</span>
         </div>
         <div className="card-progress-track">
           <div

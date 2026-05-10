@@ -1393,6 +1393,12 @@ img {
 .campaign-card .card-meta-left { display: flex; gap: 14px; }
 .campaign-card .card-meta-item { display: flex; align-items: center; gap: 4px; }
 .campaign-card .card-source-link { display: flex; align-items: center; gap: 3px; color: var(--accent); font-size: 11px; font-weight: 600; text-decoration: none; }
+.campaign-card .card-share-btn--shared { color: var(--green); }
+.campaign-card .card-share-btn--idle { color: var(--muted); }
+.campaign-card .card-raised-label { font-weight: 700; }
+.campaign-card .card-raised-label--prelaunch { color: var(--muted); }
+.campaign-card .card-raised-label--active { color: var(--text); }
+.campaign-card .card-goal-label { color: var(--muted); }
 
 /* ── Campaign type badge (shared across Card + Modal) ────── */
 .campaign-type-badge {
@@ -2788,6 +2794,14 @@ img {
   to   { transform: rotate(360deg); }
 }
 
+/* AdminPanel — converted inline styles */
+.ap-icon-accent    { color: var(--accent); }
+.ap-color-pending  { color: #f59e0b; }
+.ap-color-approved { color: #10b981; }
+.ap-color-rejected { color: #e63946; }
+.ap-inline-icon    { vertical-align: middle; margin-right: 4px; }
+.ap-cell-break     { max-width: 320px; word-break: break-word; }
+
 /* =====================================================
    SightingForm (.sf-*)
    ===================================================== */
@@ -3442,6 +3456,44 @@ img {
   margin-top: 12px;
   opacity: 0.5;
 }
+
+/* FollowTheMoney — converted inline styles */
+.ftm-mb-8        { margin-bottom: 8px; }
+.ftm-link-accent { color: var(--accent); text-decoration: none; }
+.ftm-stat-sub--faded  { opacity: 0.6; margin-top: 2px; }
+.ftm-opacity-60  { opacity: 0.6; }
+.ftm-stat-value--fg { color: var(--fg, #e2e8f0); }
+.ftm-award-label { color: var(--muted); margin-bottom: 2px; }
+.ftm-award-value { font-weight: 700; color: var(--text); }
+.ftm-award-desc  { color: var(--muted); font-size: 11px; }
+.ftm-agency-label {
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.ftm-note        { margin-bottom: 12px; }
+.ftm-link-col    { display: flex; flex-direction: column; gap: 6px; }
+.ftm-vendor-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+}
+.ftm-state-text  { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.ftm-lda-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+}
+.ftm-disclaimer-icon  { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+.ftm-disclaimer-bold  { color: var(--text); font-weight: 600; }
 
 /* =====================================================
    Governance (.gov-*)
