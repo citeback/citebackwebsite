@@ -48,18 +48,16 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
       return 0
     })
 
-  const sectionPadding = full ? '48px 24px' : '64px 24px'
-
   if (loading) return (
-    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+    <section className={`campaign-list-section${full ? ' campaign-list-section--full' : ''}`}>
       <div className="campaign-list-loading">Loading campaigns…</div>
     </section>
   )
 
   if (fetchError) return (
-    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+    <section className={`campaign-list-section${full ? ' campaign-list-section--full' : ''}`}>
       <div className="campaign-list-error">
-        <AlertCircle size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: 'middle' }} />
+        <AlertCircle size={18} className="campaign-list-error-icon" />
         Unable to load campaigns — please refresh the page.
       </div>
     </section>
@@ -75,7 +73,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
         <meta property="og:description" content="Browse active crowdfunding campaigns to fund surveillance lawsuits, FOIA requests, and ordinance fights. Anonymous Monero (XMR) and Zano contributions." />
       </Helmet>
     )}
-    <section className="campaign-list-section" style={{ padding: sectionPadding }}>
+    <section className={`campaign-list-section${full ? ' campaign-list-section--full' : ''}`}>
       <div className="campaign-list-header">
         <div>
           <h2 className="campaign-list-h2">
@@ -112,12 +110,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className="campaign-type-filter-btn"
-                style={{
-                  background: filter === f ? 'var(--accent)' : 'var(--bg3)',
-                  border: `1px solid ${filter === f ? 'var(--accent)' : 'var(--border)'}`,
-                  color: filter === f ? '#fff' : 'var(--muted)',
-                }}
+                className={`campaign-type-filter-btn${filter === f ? ' campaign-type-filter-btn--active' : ''}`}
               >
                 {f}
               </button>
@@ -126,7 +119,7 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
 
           {/* Sort */}
           <div className="campaign-sort-wrap">
-            <SlidersHorizontal size={13} style={{ color: 'var(--muted)' }} />
+            <SlidersHorizontal size={13} className="campaign-sort-icon" />
             <select
               value={sort}
               onChange={e => setSort(e.target.value)}

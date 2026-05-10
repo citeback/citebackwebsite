@@ -194,67 +194,37 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const overlayStyle = {
-    position: 'fixed', inset: 0, zIndex: 9999,
-    background: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(6px)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: 20,
-  }
-  const modalStyle = {
-    background: '#141210', border: '1px solid #292524',
-    borderRadius: 16, padding: 28, width: '100%', maxWidth: 520,
-    position: 'relative', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
-  }
-  const inputStyle = {
-    width: '100%', background: '#0a0908', border: '1px solid #292524',
-    color: '#fafaf9', padding: '10px 12px', borderRadius: 8, fontSize: 13,
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-    resize: 'vertical',
-  }
-
   return (
-    <div style={overlayStyle} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div style={modalStyle}>
-        <button onClick={onClose} aria-label="Close" style={{
-          position: 'absolute', top: 16, right: 16,
-          background: 'none', border: 'none', color: 'var(--muted)',
-          cursor: 'pointer', padding: 4, borderRadius: 6,
-          display: 'flex', alignItems: 'center',
-        }}>
+    <div className="cmap-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="cmap-modal-container">
+        <button onClick={onClose} aria-label="Close" className="cmap-modal-close">
           <X size={18} />
         </button>
 
         {success ? (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>📸</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginBottom: 8 }}>
+          <div className="cmap-success-center">
+            <div className="cmap-success-emoji">📸</div>
+            <div className="cmap-success-title">
               Photo submitted — thanks!
             </div>
-            <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, maxWidth: 340, margin: '0 auto 20px' }}>
+            <div className="cmap-success-body">
               Your photo is in the review queue. It'll appear on the map once it clears the spam filter — usually within a few hours.
             </div>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center',
-              fontSize: 12, color: '#f59e0b', fontWeight: 600,
-            }}>
+            <div className="cmap-success-status">
               <Clock size={13} /> Pending community review
             </div>
-            <button onClick={onClose} style={{
-              marginTop: 20, background: '#f59e0b', border: 'none', color: '#000',
-              padding: '10px 24px', borderRadius: 8, fontWeight: 700, fontSize: 13,
-              cursor: 'pointer',
-            }}>Done</button>
+            <button onClick={onClose} className="cmap-success-done-btn">Done</button>
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+            <div className="cmap-modal-header">
               <Camera size={18} style={{ color: '#f59e0b' }} />
               <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)' }}>Submit a Photo</span>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 20, lineHeight: 1.5 }}>
+            <div className="cmap-modal-subtitle">
               Help keep the map current. Google Street View can be years out of date — your photo from today is more valuable.
               {camera && (
-                <span style={{ display: 'block', marginTop: 4, color: 'var(--muted)' }}>
+                <span style={{ display: 'block', marginTop: 4 }}>
                   📍 Camera node #{camera.id}
                 </span>
               )}
@@ -297,12 +267,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
 
             {/* Checking spinner */}
             {checking && (
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '14px 16px', borderRadius: 10,
-                background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)',
-                marginBottom: 14, fontSize: 13, color: '#f59e0b',
-              }}>
+              <div className="cmap-checking-box">
                 <Loader size={14} className="spinning" />
 
                 Running spam filter...
@@ -311,29 +276,24 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
 
             {/* Error */}
             {error && (
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                padding: '12px 14px', borderRadius: 10,
-                background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
-                marginBottom: 14, fontSize: 13, color: '#ef4444',
-              }}>
+              <div className="cmap-error-box">
                 <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
                 <div>
-                  <div style={{ fontWeight: 600, marginBottom: 2 }}>Photo rejected by filter</div>
-                  <div style={{ opacity: 0.85 }}>{error}</div>
+                  <div className="cmap-error-title">Photo rejected by filter</div>
+                  <div className="cmap-error-msg">{error}</div>
                 </div>
               </div>
             )}
 
             {/* Preview */}
             {preview && (
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <div className="cmap-preview-section">
+                <div className="cmap-preview-header">
                   <CheckCircle size={14} style={{ color: '#10b981' }} />
                   <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>Spam filter passed</span>
                   <button
                     onClick={() => { setFile(null); setPreview(null); setError(null) }}
-                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12, padding: 0 }}
+                    className="cmap-preview-remove-btn"
                   >
                     Remove
                   </button>
@@ -341,19 +301,20 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                 <img
                   src={preview}
                   alt="Preview"
-                  style={{ width: '100%', borderRadius: 10, border: '1px solid var(--border)', maxHeight: 220, objectFit: 'cover' }}
+                  className="cmap-preview-img"
                 />
               </div>
             )}
 
             {/* Optional notes */}
             {preview && (
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }}>
+              <div className="cmap-notes-wrap">
+                <label className="cmap-notes-label">
                   What are we looking at? <span style={{ fontWeight: 400 }}>(optional)</span>
                 </label>
                 <textarea
-                  style={{ ...inputStyle, minHeight: 60 }}
+                  className="cmap-textarea"
+                  style={{ minHeight: 60 }}
                   placeholder="e.g. Flock camera on pole at intersection, pointing east toward highway on-ramp"
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
@@ -362,21 +323,14 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
             )}
 
             {/* AI filter notice */}
-            <div style={{
-              fontSize: 11, color: 'var(--muted)', lineHeight: 1.6,
-              borderTop: '1px solid var(--border)', paddingTop: 12, marginBottom: preview ? 16 : 0,
-            }}>
+            <div className="cmap-filter-notice" style={{ marginBottom: preview ? 16 : 0 }}>
               🤖 All photos pass a spam filter before review. Photos showing faces, license plates, or unrelated content are automatically blocked. Nothing goes live without human approval.
             </div>
 
             {preview && (
               <button
                 onClick={handleSubmit}
-                style={{
-                  width: '100%', background: '#f59e0b', border: 'none', color: '#000',
-                  padding: '12px', borderRadius: 9, fontWeight: 700, fontSize: 14,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                }}
+                className="cmap-photo-submit-btn"
               >
                 <Camera size={15} /> Submit for Review
               </button>
