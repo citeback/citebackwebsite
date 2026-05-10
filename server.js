@@ -2555,6 +2555,9 @@ const server = http.createServer(async (req, res) => {
 
   // ── Passkey: register verify ──────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/passkey/register-verify') {
+    if (!checkPkRegRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many attempts. Try again later.' }))
+    }
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
     try {
@@ -2682,6 +2685,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── Passkey: list ─────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/passkey/list') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
     const keys = db.prepare('SELECT id, credential_id, device_name, created_at FROM passkeys WHERE user_id = ? ORDER BY created_at DESC').all(claims.userId)
@@ -2691,9 +2695,13 @@ const server = http.createServer(async (req, res) => {
 
   // ── Passkey: delete ───────────────────────────────────────────────────────
   if (req.method === 'DELETE' && req.url.startsWith('/passkey/')) {
+    if (!checkAuthRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
-    const credentialId = decodeURIComponent(req.url.slice('/passkey/'.length))
+    let credentialId
+    try { credentialId = decodeURIComponent(req.url.slice('/passkey/'.length)) } catch {
+      res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Invalid credential ID' }))
+    }
     if (!credentialId) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Missing credentialId' })) }
     const result = db.prepare('DELETE FROM passkeys WHERE credential_id = ? AND user_id = ?').run(credentialId, claims.userId)
     if (result.changes === 0) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Passkey not found or not yours' })) }
