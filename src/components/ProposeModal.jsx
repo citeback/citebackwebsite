@@ -3,6 +3,7 @@ import { X, CheckCircle, AlertCircle, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import ReauthModal from './ReauthModal'
 import { API_BASE as AI_URL } from '../config.js'
+import './ProposeModal.css'
 
 const types = [
   { id: 'billboard', label: '📋 Billboard', desc: 'Place a public awareness sign next to a surveillance camera' },
@@ -82,12 +83,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
     doSubmit()
   }
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
-    outline: 'none', fontFamily: 'inherit',
-  }
-  const labelStyle = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6 }
+  const isSubmitActive = form.title && form.location && form.description && form.goal && !sending && !needsEmail
 
   return (
     <>
@@ -98,86 +94,62 @@ export default function ProposeModal({ onClose, prefill = {} }) {
         onCancel={() => setShowReauth(false)}
       />
     )}
-    <div
-      onClick={onClose}
-      role="presentation"
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 3vw, 24px)',
-      }}
-    >
+    <div onClick={onClose} role="presentation" className="pm-overlay">
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={headingId}
         onClick={e => e.stopPropagation()}
-        style={{
-          background: 'var(--bg2)', border: '1px solid var(--border)',
-          borderRadius: 18, padding: 'clamp(20px, 5vw, 32px)', maxWidth: 560, width: '100%',
-          maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden',
-        }}
+        className="pm-container"
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="pm-header">
           <div>
-            <h2 id={headingId} style={{ fontWeight: 800, fontSize: 20 }}>Propose a Campaign</h2>
-            <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 2 }}>Step {step} of 2</div>
+            <h2 id={headingId} className="pm-title">Propose a Campaign</h2>
+            <div className="pm-step-label">Step {step} of 2</div>
           </div>
-          <button onClick={onClose} aria-label="Close proposal form" style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button onClick={onClose} aria-label="Close proposal form" className="pm-close-btn">
             <X size={20} />
           </button>
         </div>
 
         {/* Progress bar */}
-        <div style={{ height: 3, background: 'var(--bg3)', borderRadius: 100, marginBottom: 28, overflow: 'hidden' }}>
-          <div style={{ width: `${step * 50}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease', borderRadius: 100 }} />
+        <div className="pm-progress-track">
+          <div className="pm-progress-fill" style={{ width: `${step * 50}%` }} />
         </div>
 
         {submitted ? (
-          <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <CheckCircle size={48} color="var(--green)" style={{ marginBottom: 16 }} />
-            <h3 style={{ fontWeight: 800, fontSize: 20, marginBottom: 8 }}>Proposal Submitted</h3>
-            <p style={{ color: 'var(--muted)', fontSize: 14, lineHeight: 1.7, maxWidth: 380, margin: '0 auto 20px' }}>
+          <div className="pm-success">
+            <CheckCircle size={48} color="var(--green)" className="pm-success-icon" />
+            <h3 className="pm-success-title">Proposal Submitted</h3>
+            <p className="pm-success-desc">
               Your proposal is saved. Operator onboarding and campaign review open at platform launch — submitted proposals are first in line.
             </p>
-            <div style={{
-              textAlign: 'left', maxWidth: 380, margin: '0 auto 20px',
-              background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)',
-              borderRadius: 10, padding: '14px 16px',
-            }}>
-              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform’s launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
+            <div className="pm-success-note">
+              <div className="pm-success-note-text">
+                <strong style={{ color: 'var(--text)' }}>Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform's launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
               </div>
             </div>
-            <button onClick={onClose} style={{
-              background: 'var(--accent)', border: 'none', color: '#fff',
-              padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-            }}>Done</button>
+            <button onClick={onClose} className="pm-done-btn">Done</button>
           </div>
         ) : step === 1 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>What type of action?</div>
+          <div className="pm-step1">
+            <div className="pm-type-label">What type of action?</div>
             {types.map(t => (
-              <button key={t.id} onClick={() => set('type', t.id)} style={{
-                background: form.type === t.id ? 'rgba(230,57,70,0.1)' : 'var(--bg3)',
-                border: `1px solid ${form.type === t.id ? 'rgba(230,57,70,0.5)' : 'var(--border)'}`,
-                borderRadius: 10, padding: '14px 18px', textAlign: 'left',
-                cursor: 'pointer', transition: 'all 0.15s',
-              }}>
-                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)', marginBottom: 3 }}>{t.label}</div>
-                <div style={{ fontSize: 12, color: 'var(--muted)' }}>{t.desc}</div>
+              <button
+                key={t.id}
+                onClick={() => set('type', t.id)}
+                className={`pm-type-btn${form.type === t.id ? ' pm-type-btn--active' : ''}`}
+              >
+                <div className="pm-type-btn-title">{t.label}</div>
+                <div className="pm-type-btn-desc">{t.desc}</div>
               </button>
             ))}
 
-            <div style={{
-              display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 8,
-              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
-              borderRadius: 8, padding: '10px 12px',
-            }}>
+            <div className="pm-legal-note">
               <AlertCircle size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
+              <p className="pm-legal-note-text">
                 All campaigns must be legal, public-facing actions. No illegal activity will be funded.
                 Community review ensures compliance before any wallet is generated.
               </p>
@@ -186,89 +158,65 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <button
               onClick={() => form.type && setStep(2)}
               disabled={!form.type}
-              style={{
-                marginTop: 8, background: form.type ? 'var(--accent)' : 'var(--bg3)',
-                border: 'none', color: form.type ? '#fff' : 'var(--muted)',
-                padding: '12px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-                cursor: form.type ? 'pointer' : 'not-allowed',
-              }}>
+              className={`pm-continue-btn${form.type ? ' pm-continue-btn--active' : ' pm-continue-btn--disabled'}`}
+            >
               Continue →
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div className="pm-step2">
             <div>
-              <label htmlFor="prop-title" style={labelStyle}>Campaign Title</label>
-              <input id="prop-title" style={inputStyle} placeholder="e.g. Billboard - US-54 & Main St, Tucumcari NM"
+              <label htmlFor="prop-title" className="pm-label">Campaign Title</label>
+              <input id="prop-title" className="pm-input" placeholder="e.g. Billboard - US-54 & Main St, Tucumcari NM"
                 value={form.title} onChange={e => set('title', e.target.value)} />
             </div>
             <div>
-              <label htmlFor="prop-location" style={labelStyle}>Location</label>
-              <input id="prop-location" style={inputStyle} placeholder="City, State"
+              <label htmlFor="prop-location" className="pm-label">Location</label>
+              <input id="prop-location" className="pm-input" placeholder="City, State"
                 value={form.location} onChange={e => set('location', e.target.value)} />
             </div>
             <div>
-              <label htmlFor="prop-description" style={labelStyle}>Description</label>
-              <textarea id="prop-description" style={{ ...inputStyle, height: 100, resize: 'vertical' }}
+              <label htmlFor="prop-description" className="pm-label">Description</label>
+              <textarea id="prop-description" className="pm-textarea"
                 placeholder="Describe the action, why it matters, and what the funds will specifically cover..."
                 value={form.description} onChange={e => set('description', e.target.value)} />
             </div>
             <div>
-              <label htmlFor="prop-goal" style={labelStyle}>Funding Goal (USD)</label>
-              <input id="prop-goal" style={inputStyle} type="number" placeholder="e.g. 750"
+              <label htmlFor="prop-goal" className="pm-label">Funding Goal (USD)</label>
+              <input id="prop-goal" className="pm-input" type="number" placeholder="e.g. 750"
                 value={form.goal} onChange={e => set('goal', e.target.value)} />
             </div>
-            <div style={{
-              background: 'rgba(230,57,70,0.05)', border: '1px solid rgba(230,57,70,0.15)',
-              borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.7,
-            }}>
+            <div className="pm-contact-note">
               To follow up on your submission, email <strong style={{ color: 'var(--text)' }}>citeback@proton.me</strong> from a privacy-preserving email. For maximum anonymity, use Tor Browser.
             </div>
 
             {/* Email gate — logged-in operators must have a recovery email */}
             {needsEmail && (
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                background: 'rgba(244,162,97,0.08)', border: '1px solid rgba(244,162,97,0.35)',
-                borderRadius: 10, padding: '12px 14px',
-              }}>
+              <div className="pm-email-gate">
                 <Mail size={15} style={{ color: '#f4a261', flexShrink: 0, marginTop: 1 }} />
-                <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.65 }}>
-                  <strong style={{ color: '#f4a261', display: 'block', marginBottom: 3 }}>Recovery email required to propose campaigns</strong>
+                <div className="pm-email-gate-body">
+                  <strong className="pm-email-gate-title">Recovery email required to propose campaigns</strong>
                   Operators must have a recovery email on file — not for identity, but so you can't lose access to an active campaign.
                   A disposable address is fine.{' '}
-                  <a
-                    href="/reputation"
-                    onClick={onClose}
-                    style={{ color: 'var(--accent)', textDecoration: 'underline' }}
-                  >Add one in your account settings →</a>
+                  <a href="/reputation" onClick={onClose} className="pm-email-gate-link">
+                    Add one in your account settings →
+                  </a>
                 </div>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-              <button onClick={() => setStep(1)} style={{
-                flex: 1, background: 'var(--bg3)', border: '1px solid var(--border)',
-                color: 'var(--text)', padding: '12px', borderRadius: 10, fontWeight: 600,
-              }}>← Back</button>
+            <div className="pm-actions">
+              <button onClick={() => setStep(1)} className="pm-back-btn">← Back</button>
               <button
                 onClick={handleSubmit}
-                disabled={!form.title || !form.location || !form.description || !form.goal || sending || needsEmail}
-                style={{
-                  flex: 2,
-                  background: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? 'var(--accent)' : 'var(--bg3)',
-                  border: 'none',
-                  color: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? '#fff' : 'var(--muted)',
-                  padding: '12px', borderRadius: 10, fontWeight: 700, fontSize: 15,
-                  cursor: (form.title && form.location && form.description && form.goal && !sending && !needsEmail) ? 'pointer' : 'not-allowed',
-                }}>
+                disabled={!isSubmitActive}
+                className={`pm-submit-btn${isSubmitActive ? ' pm-submit-btn--active' : ' pm-submit-btn--disabled'}`}
+              >
                 {sending ? 'Submitting...' : 'Submit for Review'}
               </button>
             </div>
             {submitError && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12,
-                background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)',
-                borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--accent)' }}>
+              <div className="pm-error">
                 <AlertCircle size={14} />
                 Submission failed - please try again. If the problem persists, email citeback@proton.me.
               </div>
@@ -277,6 +225,6 @@ export default function ProposeModal({ onClose, prefill = {} }) {
         )}
       </div>
     </div>
-    </>  
+    </>
   )
 }

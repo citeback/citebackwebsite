@@ -93,7 +93,9 @@ function PasskeyManager() {
 
       {adding && (
         <div style={{ marginBottom: 10 }}>
+          <label htmlFor="rp-device-name" className="rp-sr-label">Device name</label>
           <input
+            id="rp-device-name"
             placeholder="Device name (optional, e.g. MacBook Touch ID)"
             value={deviceName}
             onChange={e => setDeviceName(e.target.value)}
@@ -231,7 +233,8 @@ function EmailManager({ onEmailSaved }) {
           <p className="rp-muted-text">
             Confirm your password to change your recovery email.
           </p>
-          <input type="password" placeholder="Your password" value={reauthPw} onChange={e => setReauthPw(e.target.value)}
+          <label htmlFor="rp-reauth-pw" className="rp-sr-label">Password</label>
+          <input id="rp-reauth-pw" type="password" placeholder="Your password" value={reauthPw} onChange={e => setReauthPw(e.target.value)}
             className="rp-input-field"
             autoFocus />
           {err && <p className="rp-error-text">{err}</p>}
@@ -247,7 +250,8 @@ function EmailManager({ onEmailSaved }) {
       )}
       {editing && isReauthed() && (
         <form onSubmit={handleSave} className="rp-form-col">
-          <input type="email" placeholder="your@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)}
+          <label htmlFor="rp-recovery-email" className="rp-sr-label">Recovery email address</label>
+          <input id="rp-recovery-email" type="email" placeholder="your@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)}
             className="rp-input-field"
             autoFocus />
           <p className="rp-hint">
@@ -422,7 +426,8 @@ function PasswordManager() {
       </div>
       {open && (
         <form onSubmit={handleSubmit} className="rp-form-col">
-          <input type="password" className="rp-input-pw" placeholder="Current password" value={form.current}
+          <label htmlFor="rp-current-pw" className="rp-sr-label">Current password</label>
+          <input id="rp-current-pw" type="password" className="rp-input-pw" placeholder="Current password" value={form.current}
             onChange={e => set('current', e.target.value)} autoComplete="current-password" required />
           <div>
             <input type="password" className="rp-input-pw" style={{ marginBottom: 4 }} placeholder="New password" value={form.next}
