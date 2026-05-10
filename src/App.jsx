@@ -1,3 +1,4 @@
+import './App.css'
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CameraCountProvider } from './context/CameraCount'
 import ErrorBoundary from './components/ErrorBoundary'
