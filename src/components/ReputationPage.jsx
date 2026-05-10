@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Shield, Star, CheckCircle, Clock, XCircle, TrendingUp, Eye, ChevronRight, AlertCircle, Loader, Mail, Fingerprint, Trash2, Scale, Plus, LogOut, ShieldAlert } from 'lucide-react'
 import { startRegistration, browserSupportsWebAuthn } from '@simplewebauthn/browser'
 
 // Detect likely platform for a smarter default passkey name
@@ -284,8 +284,8 @@ const TIER_COLORS = ['#6b7280', '#e63946', '#f59e0b', '#10b981']
 const TIER_DESCRIPTIONS = [
   'Submit camera sightings to build your reputation score.',
   'Run campaigns up to $1,000. After 10 successful campaigns, cap rises to $7,500 — no legal entity required.',
-  'Unlock verification bounties + enhanced governance weight.',
-  'Full operator access + governance voting weight.',
+  'Unlock verification bounties. Vote on camera classification disputes — your reputation backs your call.',
+  'Full operator access. Vote on campaign disbursements with proof-of-donation weight (logarithmic, capped at 9.0).',
 ]
 
 const CAMERA_TYPE_LABELS = {
@@ -374,6 +374,59 @@ function SightingRow({ sighting }) {
           <div style={{ fontSize: 11, color: '#10b981', fontWeight: 700 }}>+{sighting.points} pts</div>
         )}
       </div>
+    </div>
+  )
+}
+
+function SessionManager() {
+  const { logout } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+  const [err, setErr] = useState(null)
+
+  const handleLogoutAll = useCallback(async () => {
+    if (!window.confirm('This will sign you out on all devices — including this one. Continue?')) return
+    setLoading(true); setErr(null)
+    try {
+      const res = await fetch(`${AI_URL}/account/logout-all`, { method: 'POST', credentials: 'include' })
+      if (!res.ok) throw new Error((await res.json()).error || 'Failed')
+      setDone(true)
+      setTimeout(logout, 1200)
+    } catch (e) {
+      setErr(e.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }, [logout])
+
+  return (
+    <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+        <ShieldAlert size={14} style={{ color: 'var(--muted)' }} />
+        <span style={{ fontSize: 13, fontWeight: 600 }}>Session Security</span>
+      </div>
+      <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5, marginBottom: 12 }}>
+        Sign out of all devices at once. Use this if you think your account may be compromised.
+        Changing your password has the same effect.
+      </p>
+      {done ? (
+        <div style={{ fontSize: 13, color: '#10b981', fontWeight: 600 }}>✓ All sessions invalidated. Signing you out…</div>
+      ) : (
+        <button
+          onClick={handleLogoutAll}
+          disabled={loading}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 7,
+            background: 'none', border: '1px solid rgba(230,57,70,0.4)', color: '#e63946',
+            borderRadius: 7, padding: '7px 14px', fontSize: 13, fontWeight: 600,
+            cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
+          }}
+        >
+          {loading ? <Loader size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <LogOut size={13} />}
+          {loading ? 'Signing out…' : 'Sign out all devices'}
+        </button>
+      )}
+      {err && <p style={{ fontSize: 12, color: '#e63946', marginTop: 8 }}>{err}</p>}
     </div>
   )
 }
@@ -572,6 +625,9 @@ export default function ReputationPage({ setTab }) {
 
       {/* Passkey management */}
       <PasskeyManager />
+
+      {/* Session security */}
+      <SessionManager />
 
       {/* CTA */}
       <button
