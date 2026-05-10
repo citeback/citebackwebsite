@@ -19,7 +19,13 @@
 ## Next Session To-Do (priority order)
 1. **Wyoming DAO LLC** — Scott must file at wyomingbusiness.gov ($100). Remind him. Blocks everything.
 2. **ToS page** — Live at /terms with draft disclaimer, proper last-updated date, ToS link in AccountModal. Attorney review still needed before removing DRAFT banners.
-3. **`unsafe-inline` style-src** — Big inline→CSS refactor mostly done (Footer, App shell, Nav, AI button, LazyFallback). Remaining: many component-level inline styles in ReputationPage, ClaimAccountPage, etc. See docs/internal/inline-styles-remaining.md
+3. **`unsafe-inline` style-src** — Phase 1 done (2026-05-09):
+   - ✅ All 14 embedded `<style>` tags stripped → all CSS in App.css
+   - ✅ All @keyframes centralized, `.spinning` class added (16 fixes)
+   - ✅ Key components converted: App shell, Footer, Nav, Hero, Stats, ScrollProgress
+   - ❌ 1585 `style={{}}` props remain in large components (dynamic values)
+   - ❌ `unsafe-inline` stays until all inline props removed
+   - Next: CampaignModal, ReputationPage, CameraMap (biggest offenders)
 4. **CARTO map tiles** — last third-party IP exposure, hard to proxy, noted in privacy policy
 5. **Forgot username flow** — no recovery path if user has no email and forgets username
 6. **Attorney pipeline** — FIXED: email column bug resolved, credentials:include fixed. Pipeline confirmed working.
