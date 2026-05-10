@@ -4,21 +4,16 @@ import { CheckCircle, AlertTriangle, Scale, FileText, Building, Shield, ChevronD
 function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div style={{
-      background: 'var(--bg2)', border: '1px solid var(--border)',
-      borderRadius: 0, overflow: 'hidden', marginBottom: 12,
-    }}>
-      <button onClick={() => setOpen(o => !o)} style={{
-        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-        padding: '18px 20px', background: 'none', border: 'none',
-        cursor: 'pointer', color: 'var(--text)', textAlign: 'left',
-      }}>
+    <div className="ops-accordion">
+      <button onClick={() => setOpen(o => !o)} className="ops-accordion-btn">
         {Icon && <Icon size={18} style={{ color, flexShrink: 0 }} />}
-        <span style={{ flex: 1, fontWeight: 600, fontSize: 15 }}>{title}</span>
-        {open ? <ChevronDown size={16} style={{ color: 'var(--muted)' }} /> : <ChevronRight size={16} style={{ color: 'var(--muted)' }} />}
+        <span className="ops-accordion-btn-label">{title}</span>
+        {open
+          ? <ChevronDown size={16} style={{ color: 'var(--muted)' }} />
+          : <ChevronRight size={16} style={{ color: 'var(--muted)' }} />}
       </button>
       {open && (
-        <div style={{ padding: '0 20px 20px', color: 'var(--muted)', lineHeight: 1.7, fontSize: 14 }}>
+        <div className="ops-accordion-body">
           {children}
         </div>
       )}
@@ -28,12 +23,12 @@ function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defau
 
 function Req({ ok, pending, children }) {
   return (
-    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+    <div className="ops-req-item">
       {pending
-        ? <Clock size={15} style={{ color: '#a78bfa', flexShrink: 0, marginTop: 2 }} />
+        ? <Clock size={15} className="ops-req-icon" style={{ color: '#a78bfa' }} />
         : ok
-          ? <CheckCircle size={15} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
-          : <AlertTriangle size={15} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />}
+          ? <CheckCircle size={15} className="ops-req-icon" style={{ color: '#6ee7b7' }} />
+          : <AlertTriangle size={15} className="ops-req-icon" style={{ color: '#f59e0b' }} />}
       <span style={{ fontSize: 14 }}>{children}</span>
     </div>
   )
@@ -58,20 +53,20 @@ const campaignTypes = [
 
 export default function Operators() {
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div className="ops-page">
 
       {/* Header */}
-      <div style={{ marginBottom: 40 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+      <div className="ops-header">
+        <div className="ops-header-icon-row">
           <Scale size={28} style={{ color: 'var(--accent)' }} />
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Run a Campaign</h1>
+          <h1>Run a Campaign</h1>
         </div>
-        <p style={{ color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 15 }}>
+        <p>
           Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
         </p>
 
         {/* How this works — honest model */}
-        <div style={{ marginTop: 16, color: 'var(--muted)', maxWidth: 600, lineHeight: 1.7, fontSize: 14, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 0, padding: '16px 20px' }}>
+        <div className="ops-how-box">
           <p style={{ margin: '0 0 10px' }}>
             <strong style={{ color: 'var(--text)' }}>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
           </p>
@@ -82,24 +77,19 @@ export default function Operators() {
       </div>
 
       {/* Quick Start path */}
-      <div style={{
-        background: 'rgba(230,57,70,0.04)', border: '1px solid rgba(230,57,70,0.2)',
-        borderRadius: 10, padding: '20px 24px', marginBottom: 32,
-      }}>
-        <p style={{ fontWeight: 700, fontSize: 12, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
-          ⚡ How to Become a Campaign Operator — 3 Steps
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="ops-quickstart">
+        <p className="ops-quickstart-label">⚡ How to Become a Campaign Operator — 3 Steps</p>
+        <div className="ops-steps">
           {[
             { n: '01', title: 'Report surveillance cameras', desc: 'Use Proofmode (free, iOS/Android) to take GPS-tagged photos of publicly visible surveillance cameras and submit them on the Report tab. Each verified C2PA photo earns you 1–2 reputation points.' },
             { n: '02', title: 'Reach 10 points → Tier 1 Operator', desc: 'Ten verified sightings unlock your Operator tier. At Tier 1 you can claim and run campaigns up to $1,000. No identity required — just a pseudonymous account and a track record.' },
             { n: '03', title: 'Claim or propose a campaign', desc: 'Browse unclaimed campaigns and claim one, or propose a new campaign with a specific target, cost breakdown, and milestones. Add your own XMR wallet — contributors send directly to you.' },
           ].map(s => (
-            <div key={s.n} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(230,57,70,0.1)', border: '1px solid rgba(230,57,70,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 11, color: 'var(--accent)', flexShrink: 0 }}>{s.n}</div>
+            <div key={s.n} className="ops-step">
+              <div className="ops-step-num">{s.n}</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>{s.title}</div>
-                <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>{s.desc}</div>
+                <div className="ops-step-title">{s.title}</div>
+                <div className="ops-step-desc">{s.desc}</div>
               </div>
             </div>
           ))}
@@ -107,34 +97,32 @@ export default function Operators() {
       </div>
 
       {/* Participant roles */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 32 }}>
+      <div className="ops-roles-grid">
         {[
           { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward operator access.', color: '#6ee7b7', anon: true },
           { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', color: '#6ee7b7', anon: true },
           { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', color: '#6ee7b7', anon: true },
           { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', color: '#f59e0b', anon: false },
         ].map(p => (
-          <div key={p.role} style={{ background: 'var(--bg2)', border: `1px solid ${p.anon ? 'rgba(110,231,183,0.2)' : 'rgba(245,158,11,0.3)'}`, borderRadius: 0, padding: '16px 18px' }}>
-            <p style={{ fontWeight: 700, fontSize: 13, color: p.color, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{p.role}</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>{p.req}</p>
+          <div
+            key={p.role}
+            className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}
+          >
+            <p className="ops-role-label" style={{ color: p.color }}>{p.role}</p>
+            <p className="ops-role-desc">{p.req}</p>
           </div>
         ))}
       </div>
 
       {/* Requirements */}
-      <div style={{
-        background: 'rgba(255,245,51,0.04)', border: '1px solid rgba(255,245,51,0.2)',
-        borderRadius: 0, padding: '20px 24px', marginBottom: 32,
-      }}>
-        <p style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 12, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          What Campaign Operators Need
-        </p>
+      <div className="ops-requirements">
+        <p className="ops-requirements-title">What Campaign Operators Need</p>
         <Req ok={true}>A pseudonymous account with verified camera sightings. Start at Tier 0 — submit cameras, build reputation, unlock campaign access.</Req>
         <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
         <Req ok={true}>Submit a cost breakdown with defined milestones. Every campaign needs a line-item budget and measurable deliverables.</Req>
         <Req ok={true}>Your campaign must target a government entity, government program, or government-contracted surveillance vendor — not a private individual.</Req>
         <Req pending={true}>Identity verification and OFAC screening — pending launch. Required before any campaign goes live. Process opens when the operator onboarding system launches.</Req>
-        <p style={{ marginTop: 12, fontSize: 13, color: 'var(--muted)' }}>
+        <p className="ops-req-note">
           Start by submitting camera sightings. Each verified sighting builds reputation toward your first campaign slot. The more you contribute to the map, the faster you unlock access.
         </p>
       </div>
@@ -166,10 +154,14 @@ export default function Operators() {
             { tier: 'Legal Entity', unlock: 'Registered LLC, nonprofit, or equivalent on file', cap: 'Up to $30,000' },
             { tier: 'Reviewed', unlock: 'Legal entity + DAO counsel review + $1M liability insurance', cap: 'Up to $125,000' },
           ].map((row, i, arr) => (
-            <div key={row.tier} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 8, padding: '8px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none', alignItems: 'start' }}>
-              <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{row.tier}</span>
-              <span style={{ color: 'var(--muted)' }}>{row.unlock}</span>
-              <span style={{ color: 'var(--text)' }}>{row.cap}</span>
+            <div
+              key={row.tier}
+              className="ops-tier-row"
+              style={{ borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none' }}
+            >
+              <span className="ops-tier-name">{row.tier}</span>
+              <span className="ops-tier-unlock">{row.unlock}</span>
+              <span className="ops-tier-cap">{row.cap}</span>
             </div>
           ))}
         </div>
@@ -183,17 +175,17 @@ export default function Operators() {
       </p>
 
       {campaignTypes.map((group, gi) => (
-        <div key={gi} style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: group.color, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+        <div key={gi} className="ops-campaign-group">
+          <p className="ops-campaign-group-label" style={{ color: group.color }}>
             {group.label}
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="ops-campaign-types-grid">
             {group.types.map(t => (
-              <div key={t.name} style={{
-                padding: '12px 16px', borderRadius: 0,
-                background: 'var(--bg2)', border: '1px solid var(--border)',
-                borderLeft: `3px solid ${group.color}`,
-              }}>
+              <div
+                key={t.name}
+                className="ops-campaign-type"
+                style={{ borderLeft: `3px solid ${group.color}` }}
+              >
                 <strong style={{ color: 'var(--text)', fontSize: 14 }}>{t.name}</strong>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--muted)' }}>{t.desc}</p>
               </div>
@@ -203,14 +195,11 @@ export default function Operators() {
       ))}
 
       {/* Disbursement */}
-      <div style={{
-        background: 'rgba(110,231,183,0.06)', border: '1px solid rgba(110,231,183,0.15)',
-        borderRadius: 0, padding: '20px 24px', margin: '32px 0',
-      }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-          <Coins size={18} style={{ color: '#6ee7b7', flexShrink: 0, marginTop: 2 }} />
+      <div className="ops-disbursement">
+        <div className="ops-disbursement-inner">
+          <Coins size={18} className="ops-disbursement-icon" style={{ color: '#6ee7b7' }} />
           <div>
-            <p style={{ fontWeight: 700, color: '#6ee7b7', marginBottom: 8 }}>How Disbursement Works</p>
+            <p className="ops-disbursement-title">How Disbursement Works</p>
             <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
               Operators hold their own XMR wallet. Contributors send directly to that wallet — Citeback never holds funds. Operators publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
             </p>
@@ -235,38 +224,29 @@ export default function Operators() {
       </Accordion>
 
       {/* CTA */}
-      <div style={{
-        background: 'var(--bg2)', border: '1px solid var(--border)',
-        borderRadius: 0, padding: '28px 24px', textAlign: 'center', marginTop: 32,
-      }}>
-        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Ready to Propose a Campaign?</h3>
-        <p style={{ color: 'var(--muted)', fontSize: 14, marginBottom: 20, maxWidth: 420, margin: '0 auto 20px' }}>
+      <div className="ops-cta-box">
+        <h3 className="ops-cta-title">Ready to Propose a Campaign?</h3>
+        <p className="ops-cta-desc">
           Submit your proposal now to be first in line. Strong campaigns get funded fast once operator onboarding opens.
         </p>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="ops-cta-btns">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('openPropose', { detail: {} }))}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '12px 24px', borderRadius: 0, fontSize: 14, fontWeight: 700,
-              background: 'var(--accent)', border: 'none',
-              color: '#fff', cursor: 'pointer', fontFamily: 'var(--font)',
-              letterSpacing: '0.04em',
-            }}
+            className="ops-cta-btn--primary"
           >
             Propose a Campaign
           </button>
-          <a href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '10px 20px', borderRadius: 0, fontSize: 14, fontWeight: 600,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)',
-            color: 'var(--text)', textDecoration: 'none',
-          }}>
+          <a
+            href="https://github.com/citeback/citebackwebsite/blob/main/GOVERNANCE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ops-cta-btn--secondary"
+          >
             <ExternalLink size={14} /> Read the Governance Doc
           </a>
         </div>
-        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 8 }}>
-          <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, margin: 0 }}>
+        <div className="ops-cta-footer">
+          <p>
             <strong style={{ color: 'var(--text)' }}>Operator onboarding opens at launch.</strong>{' '}
             In the meantime, start building reputation by submitting and verifying camera sightings — that's how operator access is earned.
           </p>

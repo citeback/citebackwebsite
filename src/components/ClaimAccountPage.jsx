@@ -65,23 +65,17 @@ export default function ClaimAccountPage({ setTab }) {
     }
   }
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-  }
-
   if (!userId || !token) {
     return (
-      <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 10, padding: '16px' }}>
+      <section className="cla-page">
+        <div className="cla-alert-box cla-alert-box--error">
           <AlertCircle size={18} style={{ color: '#e63946', flexShrink: 0, marginTop: 1 }} />
           <div>
-            <p style={{ fontWeight: 700, marginBottom: 4 }}>Invalid activation link</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>This link is missing required parameters. Check your approval email for the correct link.</p>
+            <p className="cla-alert-title">Invalid activation link</p>
+            <p className="cla-alert-text">This link is missing required parameters. Check your approval email for the correct link.</p>
           </div>
         </div>
-        <button onClick={() => setTab('home')} style={{ marginTop: 20, background: 'none', border: '1px solid var(--border)', color: 'var(--text)', padding: '10px 20px', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>
+        <button onClick={() => setTab('home')} className="cla-go-home-btn">
           Go home
         </button>
       </section>
@@ -90,17 +84,17 @@ export default function ClaimAccountPage({ setTab }) {
 
   if (done) {
     return (
-      <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '20px', marginBottom: 20 }}>
+      <section className="cla-page">
+        <div className="cla-alert-box cla-alert-box--success">
           <CheckCircle size={22} style={{ color: '#10b981', flexShrink: 0, marginTop: 1 }} />
           <div>
-            <p style={{ fontWeight: 700, marginBottom: 4 }}>Account activated!</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
+            <p className="cla-alert-title">Account activated!</p>
+            <p className="cla-alert-text">
               You're now logged in as <strong style={{ color: 'var(--text)' }}>@{claimedUsername}</strong> with your attorney verification badge. Head to your reputation dashboard to add a passkey and set a recovery email.
             </p>
           </div>
         </div>
-        <button onClick={() => setTab('reputation')} style={{ background: 'var(--accent)', border: 'none', color: '#fff', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
+        <button onClick={() => setTab('reputation')} className="cla-go-account-btn">
           Go to My Account →
         </button>
       </section>
@@ -108,25 +102,26 @@ export default function ClaimAccountPage({ setTab }) {
   }
 
   return (
-    <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 100, padding: '6px 14px', fontSize: 12, fontWeight: 700, color: '#6366f1', marginBottom: 16 }}>
+    <section className="cla-page">
+      <div className="cla-heading-section">
+        <div className="cla-badge">
           <Scale size={13} /> Attorney Account Activation
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 8 }}>Set up your account</h1>
-        <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>
+        <h1 className="cla-heading">Set up your account</h1>
+        <p className="cla-heading-desc">
           Choose a username and password for your verified attorney account. You'll get your attorney badge immediately.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit} className="cla-form">
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>Username</label>
-          <div style={{ position: 'relative' }}>
-            <User size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+          <label className="cla-label">Username</label>
+          <div className="cla-input-wrapper">
+            <User size={14} className="cla-input-icon" />
             <input
               type="text"
-              style={{ ...inputStyle, paddingLeft: 34, borderColor: username && !usernameValid ? '#e63946' : undefined }}
+              className="cla-input"
+              style={{ paddingLeft: 34, borderColor: username && !usernameValid ? '#e63946' : undefined }}
               placeholder="3–20 chars, letters/numbers/_"
               value={username}
               onChange={e => { setUsername(e.target.value); setError(null) }}
@@ -137,17 +132,18 @@ export default function ClaimAccountPage({ setTab }) {
             />
           </div>
           {username && !usernameValid && (
-            <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>3–20 characters, letters, numbers, and underscores only</p>
+            <p className="cla-username-error">3–20 characters, letters, numbers, and underscores only</p>
           )}
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>Password</label>
-          <div style={{ position: 'relative' }}>
-            <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+          <label className="cla-label">Password</label>
+          <div className="cla-input-wrapper">
+            <Lock size={14} className="cla-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              style={{ ...inputStyle, paddingLeft: 34, paddingRight: 40 }}
+              className="cla-input"
+              style={{ paddingLeft: 34, paddingRight: 40 }}
               placeholder="At least 8 characters"
               value={password}
               onChange={e => { setPassword(e.target.value); setError(null) }}
@@ -156,15 +152,15 @@ export default function ClaimAccountPage({ setTab }) {
             />
             <button type="button" onClick={() => setShowPw(p => !p)}
               aria-label={showPw ? "Hide password" : "Show password"}
-              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4 }}>
+              className="cla-pw-toggle">
               {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>
         </div>
 
         {password.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+          <div className="cla-strength-row">
+            <div className="cla-strength-track">
               <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
             </div>
             <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 44 }}>{strength.label}</span>
@@ -172,12 +168,13 @@ export default function ClaimAccountPage({ setTab }) {
         )}
 
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>Confirm Password</label>
-          <div style={{ position: 'relative' }}>
-            <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+          <label className="cla-label">Confirm Password</label>
+          <div className="cla-input-wrapper">
+            <Lock size={14} className="cla-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              style={{ ...inputStyle, paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+              className="cla-input"
+              style={{ paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
               placeholder="Re-enter password"
               value={confirmPassword}
               onChange={e => { setConfirmPassword(e.target.value); setError(null) }}
@@ -186,19 +183,26 @@ export default function ClaimAccountPage({ setTab }) {
             />
           </div>
           {confirmPassword && !passwordsMatch && (
-            <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don't match</p>
+            <p className="cla-pw-mismatch">Passwords don't match</p>
           )}
         </div>
 
         {error && (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#e63946' }}>
+          <div className="cla-error-box">
             <AlertCircle size={14} style={{ flexShrink: 0 }} />
             {error}
           </div>
         )}
 
         <button type="submit" disabled={!canSubmit}
-          style={{ background: canSubmit ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: canSubmit ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: canSubmit ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          style={{
+            background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
+            border: 'none',
+            color: canSubmit ? '#fff' : 'var(--muted)',
+            padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
+            cursor: canSubmit ? 'pointer' : 'not-allowed',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
           {loading ? <><Loader size={15} className="spinning" /> Activating…</> : 'Activate Account'}
         </button>
       </form>

@@ -64,136 +64,40 @@ export default function CampaignSelector({ setTab }) {
   const campaign = campaigns[active];
 
   return (
-    <section style={{ padding: '80px clamp(16px, 4vw, 24px)' }}>
-      <div
-        style={{
-          fontSize: '11px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--red)',
-          fontWeight: 500,
-          marginBottom: '40px',
-        }}
-      >
+    <section className="cs-section">
+      <div className="cs-eyebrow">
         Six Ways to Push Back
       </div>
 
-      <div className="campaign-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+      <div className="cs-grid">
         {/* Left: list */}
         <div>
           {campaigns.map((c, i) => (
             <button
               key={i}
               onClick={() => handleSelect(i)}
-              onMouseEnter={(e) => {
-                if (i !== active) {
-                  e.currentTarget.querySelector('.arrow').style.opacity = '1';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (i !== active) {
-                  e.currentTarget.querySelector('.arrow').style.opacity = '0';
-                }
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-                background: 'none',
-                border: 'none',
-                borderBottom: '1px solid var(--border)',
-                padding: '18px 0',
-                fontSize: '15px',
-                fontFamily: 'inherit',
-                color: i === active ? 'var(--fg)' : 'var(--gray)',
-                fontWeight: i === active ? 500 : 400,
-                cursor: 'pointer',
-                textAlign: 'left',
-              }}
+              className={`cs-campaign-btn${i === active ? ' cs-campaign-btn--active' : ''}`}
             >
               <span>{c.name}</span>
-              <span
-                className="arrow"
-                style={{
-                  color: 'var(--red)',
-                  opacity: i === active ? 1 : 0,
-                  transition: 'opacity 0.15s',
-                  fontSize: '15px',
-                }}
-              >
-                →
-              </span>
+              <span className="cs-arrow">→</span>
             </button>
           ))}
         </div>
 
         {/* Right: detail panel */}
-        <div
-          key={animKey}
-          style={{
-            animation: 'campaignFadeIn 0.28s ease both',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '26px',
-              fontWeight: 300,
-              color: 'var(--fg)',
-              marginBottom: '20px',
-              lineHeight: 1.2,
-            }}
-          >
-            {campaign.name}
-          </div>
-          <div
-            style={{
-              fontSize: '15px',
-              color: 'var(--gray)',
-              fontWeight: 300,
-              lineHeight: 1.65,
-              marginBottom: '28px',
-            }}
-          >
-            {campaign.description}
-          </div>
-          <div
-            style={{
-              borderLeft: '2px solid var(--red)',
-              paddingLeft: '16px',
-              fontSize: '13px',
-              color: 'var(--fg)',
-              lineHeight: 1.55,
-            }}
-          >
-            {campaign.highlight}
-          </div>
+        <div key={animKey} className="cs-detail-panel">
+          <div className="cs-detail-name">{campaign.name}</div>
+          <div className="cs-detail-desc">{campaign.description}</div>
+          <div className="cs-detail-highlight">{campaign.highlight}</div>
         </div>
       </div>
 
       {setTab && (
-        <div style={{ marginTop: 48, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setTab('campaigns')}
-            style={{
-              background: 'var(--fg)', color: 'var(--bg)', border: 'none',
-              padding: '12px 28px', fontSize: 13, fontWeight: 600,
-              letterSpacing: '0.05em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'var(--font)', minHeight: 44,
-            }}
-          >
+        <div className="cs-cta-row">
+          <button onClick={() => setTab('campaigns')} className="cs-btn-primary">
             Browse Active Campaigns →
           </button>
-          <button
-            onClick={() => setTab('operators')}
-            style={{
-              background: 'transparent', color: 'var(--fg)',
-              border: '1px solid var(--border)', padding: '12px 28px',
-              fontSize: 13, fontWeight: 500, letterSpacing: '0.05em',
-              textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'var(--font)', minHeight: 44,
-            }}
-          >
+          <button onClick={() => setTab('operators')} className="cs-btn-secondary">
             Run a Campaign →
           </button>
         </div>

@@ -58,23 +58,17 @@ export default function ResetPasswordPage({ setTab }) {
     }
   }
 
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid var(--border)',
-    color: 'var(--text)', padding: '11px 14px', borderRadius: 8, fontSize: 14,
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-  }
-
   if (!token || !tokenId) {
     return (
-      <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 10, padding: '16px' }}>
+      <section className="rp2-page">
+        <div className="rp2-alert-box rp2-alert-box--error">
           <AlertCircle size={18} style={{ color: '#e63946', flexShrink: 0, marginTop: 1 }} />
           <div>
-            <p style={{ fontWeight: 700, marginBottom: 4 }}>Invalid reset link</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>This link is missing required parameters. Request a new one from the login screen.</p>
+            <p className="rp2-alert-title">Invalid reset link</p>
+            <p className="rp2-alert-text">This link is missing required parameters. Request a new one from the login screen.</p>
           </div>
         </div>
-        <button onClick={() => setTab('home')} style={{ marginTop: 20, background: 'none', border: '1px solid var(--border)', color: 'var(--text)', padding: '10px 20px', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>
+        <button onClick={() => setTab('home')} className="rp2-go-home-btn">
           Go home
         </button>
       </section>
@@ -83,15 +77,15 @@ export default function ResetPasswordPage({ setTab }) {
 
   if (done) {
     return (
-      <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', background: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: 10, padding: '20px' }}>
+      <section className="rp2-page">
+        <div className="rp2-alert-box--success">
           <CheckCircle size={22} style={{ color: '#6ee7b7', flexShrink: 0 }} />
           <div>
-            <p style={{ fontWeight: 700, marginBottom: 4 }}>Password updated</p>
-            <p style={{ fontSize: 13, color: 'var(--muted)' }}>You can now log in with your new password.</p>
+            <p className="rp2-alert-title">Password updated</p>
+            <p className="rp2-alert-text">You can now log in with your new password.</p>
           </div>
         </div>
-        <button onClick={() => setTab('home')} style={{ marginTop: 20, background: 'var(--accent)', border: 'none', color: '#fff', padding: '12px 24px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 700 }}>
+        <button onClick={() => setTab('home')} className="rp2-go-home-btn-accent">
           Go to home
         </button>
       </section>
@@ -99,20 +93,21 @@ export default function ResetPasswordPage({ setTab }) {
   }
 
   return (
-    <section style={{ padding: 'clamp(48px, 8vw, 80px) 24px', maxWidth: 440, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 8 }}>Reset your password</h1>
-        <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>Choose a new password. Must be Good or stronger.</p>
+    <section className="rp2-page">
+      <div className="rp2-heading-section">
+        <h1 className="rp2-heading">Reset your password</h1>
+        <p className="rp2-heading-desc">Choose a new password. Must be Good or stronger.</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit} className="rp2-form">
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>New Password</label>
-          <div style={{ position: 'relative' }}>
-            <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+          <label className="rp2-label">New Password</label>
+          <div className="rp2-input-wrapper">
+            <Lock size={14} className="rp2-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              style={{ ...inputStyle, paddingLeft: 34, paddingRight: 40 }}
+              className="rp2-input"
+              style={{ paddingLeft: 34, paddingRight: 40 }}
               placeholder="At least 8 characters"
               value={password}
               onChange={e => { setPassword(e.target.value); setError(null) }}
@@ -122,15 +117,15 @@ export default function ResetPasswordPage({ setTab }) {
             />
             <button type="button" onClick={() => setShowPw(p => !p)}
               aria-label={showPw ? 'Hide password' : 'Show password'}
-              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 4 }}>
+              className="rp2-pw-toggle">
               {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>
         </div>
 
         {password.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ flex: 1, height: 3, background: 'var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+          <div className="rp2-strength-row">
+            <div className="rp2-strength-track">
               <div style={{ height: '100%', width: `${(strength.score/4)*100}%`, background: strength.color, borderRadius: 2, transition: 'width 0.2s, background 0.2s' }} />
             </div>
             <span style={{ fontSize: 11, color: strength.color, fontWeight: 600, minWidth: 44 }}>{strength.label}</span>
@@ -138,12 +133,13 @@ export default function ResetPasswordPage({ setTab }) {
         )}
 
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, letterSpacing: '0.04em' }}>Confirm New Password</label>
-          <div style={{ position: 'relative' }}>
-            <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', pointerEvents: 'none' }} />
+          <label className="rp2-label">Confirm New Password</label>
+          <div className="rp2-input-wrapper">
+            <Lock size={14} className="rp2-input-icon" />
             <input
               type={showPw ? 'text' : 'password'}
-              style={{ ...inputStyle, paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
+              className="rp2-input"
+              style={{ paddingLeft: 34, borderColor: confirmPassword && !passwordsMatch ? '#e63946' : undefined }}
               placeholder="Re-enter new password"
               value={confirmPassword}
               onChange={e => { setConfirmPassword(e.target.value); setError(null) }}
@@ -152,19 +148,26 @@ export default function ResetPasswordPage({ setTab }) {
             />
           </div>
           {confirmPassword && !passwordsMatch && (
-            <p style={{ fontSize: 11, color: '#e63946', marginTop: 4 }}>Passwords don't match</p>
+            <p className="rp2-pw-mismatch">Passwords don't match</p>
           )}
         </div>
 
         {error && (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'rgba(230,57,70,0.08)', border: '1px solid rgba(230,57,70,0.2)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#e63946' }}>
+          <div className="rp2-error-box">
             <AlertCircle size={14} style={{ flexShrink: 0 }} />
             {error}
           </div>
         )}
 
         <button type="submit" disabled={!canSubmit}
-          style={{ background: canSubmit ? 'var(--accent)' : 'var(--bg3)', border: 'none', color: canSubmit ? '#fff' : 'var(--muted)', padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: canSubmit ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          style={{
+            background: canSubmit ? 'var(--accent)' : 'var(--bg3)',
+            border: 'none',
+            color: canSubmit ? '#fff' : 'var(--muted)',
+            padding: '13px', borderRadius: 8, fontWeight: 700, fontSize: 14,
+            cursor: canSubmit ? 'pointer' : 'not-allowed',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
           {loading ? <><Loader size={15} className="spinning" /> Updating…</> : 'Set New Password'}
         </button>
       </form>
