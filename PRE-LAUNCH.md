@@ -67,10 +67,13 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - If a community voting interface is built before launch, update label
 - If not, current label is honest as-is
 
-### 9. Server-side API Proxying
-- CourtListener, Congress.gov, Senate LDA, Overpass, Nominatim all receive visitor IPs from client-side calls
-- Consider proxying through a Netlify serverless function to prevent IP leakage
-- Low priority pre-launch, important for credibility post-launch
+### 9. Server-side API Proxying — ✅ FIXED 2026-05-10
+- All 5 external APIs now proxied through `/netlify/functions/proxy.js`:
+  CourtListener, Congress.gov, Senate LDA, Overpass, OpenStates
+- User IPs are never exposed to third-party APIs
+- API keys injected server-side (Congress.gov, OpenStates)
+- Rate-limited at Netlify function level
+- Nominatim (geocode) is called server-side in server.js — also not client-exposed
 
 ### 11. Campaign #4 — Separate Attorney Sign-Off Required
 - Campaign #4 (NM ALPR Privacy Bill) is tagged in `campaigns.js` with an explicit ⚠️ requiring pre-launch attorney sign-off on LDA/FARA compliance
