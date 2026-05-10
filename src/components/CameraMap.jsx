@@ -1360,7 +1360,7 @@ export default function CameraMap() {
       {loading && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 12, color: 'var(--accent)' }}>
           <Loader size={13} className="spinning" />
-          Loading cameras in viewport from OpenStreetMap...
+          Loading cameras in viewport from OpenStreetMap…
 
         </div>
       )}
