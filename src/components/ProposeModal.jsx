@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { X, CheckCircle, AlertCircle, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import ReauthModal from './ReauthModal'
+import { API_BASE as AI_URL } from '../config.js'
 
 const types = [
   { id: 'billboard', label: '📋 Billboard', desc: 'Place a public awareness sign next to a surveillance camera' },
@@ -55,7 +56,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
     setSending(true)
     setSubmitError(false)
     try {
-      const res = await fetch('https://ai.citeback.com/submit', {
+      const res = await fetch(`${AI_URL}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: form.type, title: form.title, location: form.location, description: form.description, goal: form.goal }),
