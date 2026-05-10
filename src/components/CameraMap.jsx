@@ -371,6 +371,13 @@ function distanceM(lat1, lon1, lat2, lon2) {
 
 // ─── OSM Canvas Layer ─────────────────────────────────────────────────────────
 // ─── Popup HTML builders ────────────────────────────────────────────────────
+// Apply dynamic CSS properties via JS DOM API (CSP-safe — not HTML style= attributes)
+function applyPopupDynStyles(popupEl) {
+  popupEl.querySelectorAll('[data-lp-color]').forEach(el => { el.style.color = el.dataset.lpColor })
+  popupEl.querySelectorAll('[data-lp-border]').forEach(el => { el.style.border = el.dataset.lpBorder })
+  popupEl.querySelectorAll('[data-lp-border-color]').forEach(el => { el.style.borderColor = el.dataset.lpBorderColor })
+}
+
 function buildAlprPopupHTML(camera, map, isDual, sighting) {
   const osmUrl = `https://www.openstreetmap.org/node/${camera.id}`
   const googleUrl = `https://www.google.com/maps?q=${camera.lat},${camera.lon}`
@@ -379,33 +386,33 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
   const approved = photos.filter(p => p.status === 'approved')
   const pending = photos.filter(p => p.status === 'pending')
   const photoStrip = approved.length > 0
-    ? `<div style="margin:10px 0 6px"><div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:6px">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div><div style="display:flex;gap:4px;flex-wrap:wrap">${approved.map(p => `<img src="${p.dataUrl}" alt="Community submitted camera photo" style="width:80px;height:55px;object-fit:cover;border-radius:5px;border:1px solid #292524">`).join('')}</div></div>`
+    ? `<div class="lp-photo-strip"><div class="lp-photo-strip-title">📸 ${approved.length} community photo${approved.length > 1 ? 's' : ''}</div><div class="lp-photo-strip-imgs">${approved.map(p => `<img src="${p.dataUrl}" alt="Community submitted camera photo" class="lp-community-photo">`).join('')}</div></div>`
     : pending.length > 0
-      ? `<div style="font-size:11px;color:#f59e0b;margin:8px 0">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
+      ? `<div class="lp-pending">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
   const sightingStrip = sighting?.photoFilename
-    ? `<div style="margin-bottom:10px">
-        <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback verified photo" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px" />
-        <div style="font-size:10px;color:#f97316;font-weight:700;letter-spacing:0.05em">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
-        ${sighting.notes ? `<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.4">${sighting.notes}</div>` : ''}
+    ? `<div class="lp-sighting">
+        <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback verified photo" class="lp-sighting-photo" />
+        <div class="lp-c2pa-label">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
+        ${sighting.notes ? `<div class="lp-sighting-notes">${sighting.notes}</div>` : ''}
       </div>`
     : ''
   const verifiedBadge = isDual
-    ? `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.35);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#f97316;margin-bottom:8px;letter-spacing:0.05em">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
-    : `<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:#e63946;margin-bottom:8px;letter-spacing:0.05em">📡 OPENSTREETMAP</div>`
-  return `<div style="font-family:Inter,sans-serif;padding:4px">
+    ? `<div class="lp-badge lp-badge--dual">★ VERIFIED BY CITEBACK + OPENSTREETMAP</div>`
+    : `<div class="lp-badge lp-badge--osm">📡 OPENSTREETMAP</div>`
+  return `<div class="lp-root">
     ${sightingStrip}
     ${verifiedBadge}
-    <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:${isDual ? '#f97316' : '#e63946'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
-    ${camera.op ? `<div style="font-size:12px;margin-bottom:4px"><strong>Operator:</strong> ${camera.op}</div>` : ''}
-    <div style="font-size:11px;color:#888;margin-bottom:4px">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
-    <div style="font-size:11px;color:#888;margin-bottom:10px">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="color:#5dade2">#${camera.id} →</a></div>
+    <div class="lp-camera-name${isDual ? ' lp-camera-name--dual' : ' lp-camera-name--osm'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
+    ${camera.op ? `<div class="lp-operator"><strong>Operator:</strong> ${camera.op}</div>` : ''}
+    <div class="lp-coords">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
+    <div class="lp-osm-node">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" class="lp-osm-link">#${camera.id} →</a></div>
     ${photoStrip}
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
-      <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#5dade2;text-decoration:none">📡 View on OpenStreetMap →</a>
-      <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#e63946;text-decoration:none">🗺 Google Maps →</a>
-      <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#2ecc71;text-decoration:none">📷 Street View →</a>
-      <button data-photo-submit data-camera-id="${camera.id}" data-lat="${camera.lat}" data-lon="${camera.lon}" style="font-size:12px;font-weight:700;color:#000;background:#f59e0b;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;text-align:left;margin-top:2px">📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}</button>
+    <div class="lp-links">
+      <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" class="lp-link-osm">📡 View on OpenStreetMap →</a>
+      <a href="${googleUrl}" target="_blank" rel="noopener noreferrer" class="lp-link-gmaps">🗺 Google Maps →</a>
+      <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" class="lp-link-sv">📷 Street View →</a>
+      <button data-photo-submit data-camera-id="${camera.id}" data-lat="${camera.lat}" data-lon="${camera.lon}" class="lp-photo-btn">📸 Submit Photo${approved.length > 0 ? ' · Add Another' : ''}</button>
     </div>
   </div>`
 }
@@ -413,31 +420,31 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
 function buildAgencyPopupHTML(agency, layer) {
   const vendorProfile = getVendorProfile(agency.vendor)
   const vendorBlock = vendorProfile
-    ? `<div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-radius:6px;padding:8px 10px;margin-bottom:8px">
-        <div style="font-size:11px;font-weight:800;color:#ef4444;margin-bottom:3px">🚩 ${vendorProfile.name}</div>
-        <div style="font-size:11px;color:#888;margin-bottom:4px;line-height:1.4">${vendorProfile.tagline}</div>
-        <div style="font-size:10px;color:#666;line-height:1.5">${vendorProfile.controversies[0]}</div>
-        ${vendorProfile.url ? `<a href="${vendorProfile.url}" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:#ef4444;font-weight:600;display:block;margin-top:4px">Investigate ${vendorProfile.name} →</a>` : ''}
+    ? `<div class="lp-vendor-block">
+        <div class="lp-vendor-name">🚩 ${vendorProfile.name}</div>
+        <div class="lp-vendor-tagline">${vendorProfile.tagline}</div>
+        <div class="lp-vendor-controversies">${vendorProfile.controversies[0]}</div>
+        ${vendorProfile.url ? `<a href="${vendorProfile.url}" target="_blank" rel="noopener noreferrer" class="lp-vendor-link">Investigate ${vendorProfile.name} →</a>` : ''}
       </div>`
     : ''
   const terminatedBadge = agency.status === 'terminated'
-    ? `<div style="font-size:10px;font-weight:700;color:#2ecc71;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:4px;padding:2px 7px;margin-bottom:6px;display:inline-block;letter-spacing:0.08em">✓ PROGRAM TERMINATED</div>`
+    ? `<div class="lp-terminated">✓ PROGRAM TERMINATED</div>`
     : ''
-  return `<div style="font-family:Inter,sans-serif;min-width:260px;max-width:320px;padding:4px">
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-      <span style="font-size:16px">${layer.icon}</span>
-      <span style="font-weight:800;font-size:13px;color:${layer.color}">${layer.label.toUpperCase()}</span>
+  return `<div class="lp-root-wide">
+    <div class="lp-agency-header">
+      <span class="lp-layer-icon">${layer.icon}</span>
+      <span class="lp-layer-label" data-lp-color="${layer.color}">${layer.label.toUpperCase()}</span>
     </div>
     ${terminatedBadge}
-    <div style="font-weight:700;font-size:13px;margin-bottom:4px">${agency.name}</div>
-    <div style="font-size:12px;color:#666;margin-bottom:4px">📍 ${agency.city}, ${agency.state}</div>
-    ${agency.vendor ? `<div style="font-size:12px;color:#555;margin-bottom:4px"><strong>Vendor/System:</strong> ${agency.vendor}</div>` : ''}
+    <div class="lp-agency-name">${agency.name}</div>
+    <div class="lp-agency-city">📍 ${agency.city}, ${agency.state}</div>
+    ${agency.vendor ? `<div class="lp-agency-vendor"><strong>Vendor/System:</strong> ${agency.vendor}</div>` : ''}
     ${vendorBlock}
-    <div style="font-size:11px;font-weight:700;color:${agency.confirmed ? '#10b981' : '#f59e0b'};margin-bottom:6px">${agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}</div>
-    ${agency.notes ? `<div style="font-size:11px;color:#444;line-height:1.55;background:#f8f6f2;border:1px solid #e5e0d8;border-radius:6px;padding:6px 8px;margin-bottom:8px">ℹ️ ${agency.notes}</div>` : ''}
-    <div style="font-size:10px;color:#777;line-height:1.5;border-top:1px solid #eee;padding-top:6px;margin-bottom:8px"><strong>Source:</strong> ${agency.source}</div>
-    ${agency.url ? `<div style="margin-bottom:8px"><a href="${agency.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:600;color:${layer.color};text-decoration:none">View source →</a></div>` : ''}
-    <button data-propose data-agency="${agency.name.replace(/"/g, '&quot;')}" data-location="${(agency.city + ', ' + agency.state).replace(/"/g, '&quot;')}"" style="width:100%;padding:7px 10px;background:transparent;border:1px solid ${layer.color};border-radius:6px;color:${layer.color};font-size:11px;font-weight:700;cursor:pointer">📋 Propose FOIA →</button>
+    <div class="lp-status${agency.confirmed ? ' lp-status--confirmed' : ' lp-status--unconfirmed'}">${agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}</div>
+    ${agency.notes ? `<div class="lp-notes">ℹ️ ${agency.notes}</div>` : ''}
+    <div class="lp-source"><strong>Source:</strong> ${agency.source}</div>
+    ${agency.url ? `<div class="lp-source-link-wrap"><a href="${agency.url}" target="_blank" rel="noopener noreferrer" class="lp-source-link" data-lp-color="${layer.color}">View source →</a></div>` : ''}
+    <button data-propose data-agency="${agency.name.replace(/"/g, '&quot;')}" data-location="${(agency.city + ', ' + agency.state).replace(/"/g, '&quot;')}" class="lp-propose-btn" data-lp-color="${layer.color}" data-lp-border-color="${layer.color}">📋 Propose FOIA →</button>
   </div>`
 }
 
@@ -452,6 +459,7 @@ function openItemPopup(map, entry, latlng) {
 
   const popupEl = popup.getElement()
   if (popupEl) {
+    applyPopupDynStyles(popupEl)
     const photoBtn = popupEl.querySelector('[data-photo-submit]')
     if (photoBtn) {
       photoBtn.addEventListener('click', (e) => {
@@ -532,20 +540,20 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osm
 
       const listItems = nearby.map((entry, i) => {
         const distLabel = entry.dist < 1000 ? `${Math.round(entry.dist)}m` : `${(entry.dist / 1000).toFixed(1)}km`
-        return `<button data-disambig="${i}" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:transparent;border:1px solid ${entry.color}22;border-radius:8px;cursor:pointer;text-align:left;margin-bottom:6px">
-          <span style="font-size:16px">${entry.icon}</span>
-          <div style="flex:1">
-            <div style="font-size:12px;font-weight:700;color:${entry.color}">${entry.label}</div>
-            <div style="font-size:10px;color:#888">${distLabel} away</div>
+        return `<button data-disambig="${i}" data-lp-border="1px solid ${entry.color}22" class="lp-disambig-btn">
+          <span class="lp-disambig-icon">${entry.icon}</span>
+          <div class="lp-disambig-info">
+            <div class="lp-disambig-label" data-lp-color="${entry.color}">${entry.label}</div>
+            <div class="lp-disambig-dist">${distLabel} away</div>
           </div>
-          <span style="font-size:11px;color:#aaa">→</span>
+          <span class="lp-disambig-arrow">→</span>
         </button>`
       }).join('')
 
       const disambigPopup = L.popup({ maxWidth: 300 })
         .setLatLng([lat, lng])
-        .setContent(`<div style="font-family:Inter,sans-serif;padding:4px">
-          <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:10px;letter-spacing:0.05em">NEARBY — TAP TO SELECT</div>
+        .setContent(`<div class="lp-disambig-root">
+          <div class="lp-disambig-header">NEARBY — TAP TO SELECT</div>
           ${listItems}
         </div>`)
       disambigPopup.openOn(map)
@@ -553,6 +561,7 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osm
       // Attach real event listeners after popup is in the DOM (avoids CSP/inline-onclick issues)
       const popupEl = disambigPopup.getElement()
       if (popupEl) {
+        applyPopupDynStyles(popupEl)
         popupEl.querySelectorAll('[data-disambig]').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation()

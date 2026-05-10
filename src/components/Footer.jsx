@@ -50,6 +50,15 @@ export default function Footer({ setTab }) {
           >
             View on GitHub
           </a>
+          {' · '}
+          <a
+            href="https://discord.gg/citeback"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            Discord
+          </a>
         </div>
       </div>
 

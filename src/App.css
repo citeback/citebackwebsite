@@ -9137,3 +9137,66 @@ img {
 .ap-status-pending  { color: #f59e0b; }
 .ap-status-approved { color: #10b981; }
 .ap-status-rejected { color: #e63946; }
+
+/* ── Leaflet popup HTML classes (CSP-safe: no inline style= attrs) ── */
+/* Base containers */
+.lp-root       { font-family: Inter, sans-serif; padding: 4px; }
+.lp-root-wide  { font-family: Inter, sans-serif; min-width: 260px; max-width: 320px; padding: 4px; }
+/* Photo strip (community photos) */
+.lp-photo-strip       { margin: 10px 0 6px; }
+.lp-photo-strip-title { font-size: 11px; font-weight: 700; color: #10b981; margin-bottom: 6px; }
+.lp-photo-strip-imgs  { display: flex; gap: 4px; flex-wrap: wrap; }
+.lp-community-photo   { width: 80px; height: 55px; object-fit: cover; border-radius: 5px; border: 1px solid #292524; }
+.lp-pending           { font-size: 11px; color: #f59e0b; margin: 8px 0; }
+/* Sighting photo strip */
+.lp-sighting         { margin-bottom: 10px; }
+.lp-sighting-photo   { width: 100%; max-height: 140px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 6px; }
+.lp-c2pa-label       { font-size: 10px; color: #f97316; font-weight: 700; letter-spacing: 0.05em; }
+.lp-sighting-notes   { font-size: 11px; color: #888; margin-top: 3px; line-height: 1.4; }
+/* Verified badges */
+.lp-badge       { display: inline-flex; align-items: center; gap: 5px; border-radius: 5px; padding: 3px 8px; font-size: 10px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.05em; }
+.lp-badge--dual { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35); color: #f97316; }
+.lp-badge--osm  { background: rgba(230,57,70,0.1);   border: 1px solid rgba(230,57,70,0.3);   color: #e63946; }
+/* ALPR camera popup */
+.lp-camera-name       { font-weight: 800; font-size: 14px; margin-bottom: 6px; }
+.lp-camera-name--dual { color: #f97316; }
+.lp-camera-name--osm  { color: #e63946; }
+.lp-operator          { font-size: 12px; margin-bottom: 4px; }
+.lp-coords            { font-size: 11px; color: #888; margin-bottom: 4px; }
+.lp-osm-node          { font-size: 11px; color: #888; margin-bottom: 10px; }
+.lp-osm-link          { color: #5dade2; }
+.lp-links             { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.lp-link-osm          { font-size: 12px; font-weight: 600; color: #5dade2; text-decoration: none; }
+.lp-link-gmaps        { font-size: 12px; font-weight: 600; color: #e63946; text-decoration: none; }
+.lp-link-sv           { font-size: 12px; font-weight: 600; color: #2ecc71; text-decoration: none; }
+.lp-photo-btn         { font-size: 12px; font-weight: 700; color: #000; background: #f59e0b; border: none; border-radius: 6px; padding: 7px 10px; cursor: pointer; text-align: left; margin-top: 2px; }
+/* Agency popup */
+.lp-agency-header       { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.lp-layer-icon          { font-size: 16px; }
+.lp-layer-label         { font-weight: 800; font-size: 13px; }  /* color applied via JS */
+.lp-agency-name         { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.lp-agency-city         { font-size: 12px; color: #666; margin-bottom: 4px; }
+.lp-agency-vendor       { font-size: 12px; color: #555; margin-bottom: 4px; }
+.lp-vendor-block        { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; }
+.lp-vendor-name         { font-size: 11px; font-weight: 800; color: #ef4444; margin-bottom: 3px; }
+.lp-vendor-tagline      { font-size: 11px; color: #888; margin-bottom: 4px; line-height: 1.4; }
+.lp-vendor-controversies{ font-size: 10px; color: #666; line-height: 1.5; }
+.lp-vendor-link         { font-size: 10px; color: #ef4444; font-weight: 600; display: block; margin-top: 4px; }
+.lp-terminated          { font-size: 10px; font-weight: 700; color: #2ecc71; background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); border-radius: 4px; padding: 2px 7px; margin-bottom: 6px; display: inline-block; letter-spacing: 0.08em; }
+.lp-status              { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.lp-status--confirmed   { color: #10b981; }
+.lp-status--unconfirmed { color: #f59e0b; }
+.lp-notes               { font-size: 11px; color: #444; line-height: 1.55; background: #f8f6f2; border: 1px solid #e5e0d8; border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; }
+.lp-source              { font-size: 10px; color: #777; line-height: 1.5; border-top: 1px solid #eee; padding-top: 6px; margin-bottom: 8px; }
+.lp-source-link-wrap    { margin-bottom: 8px; }
+.lp-source-link         { font-size: 11px; font-weight: 600; text-decoration: none; display: block; } /* color via JS */
+.lp-propose-btn         { width: 100%; padding: 7px 10px; background: transparent; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; } /* color + border via JS */
+/* Disambiguation popup */
+.lp-disambig-root   { font-family: Inter, sans-serif; padding: 4px; }
+.lp-disambig-header { font-size: 11px; font-weight: 700; color: #666; margin-bottom: 10px; letter-spacing: 0.05em; }
+.lp-disambig-btn    { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: transparent; border-radius: 8px; cursor: pointer; text-align: left; margin-bottom: 6px; } /* border via JS */
+.lp-disambig-icon   { font-size: 16px; }
+.lp-disambig-info   { flex: 1; }
+.lp-disambig-label  { font-size: 12px; font-weight: 700; } /* color via JS */
+.lp-disambig-dist   { font-size: 10px; color: #888; }
+.lp-disambig-arrow  { font-size: 11px; color: #aaa; }
