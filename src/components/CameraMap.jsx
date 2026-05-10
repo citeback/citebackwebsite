@@ -371,6 +371,17 @@ function distanceM(lat1, lon1, lat2, lon2) {
 
 // ─── OSM Canvas Layer ─────────────────────────────────────────────────────────
 // ─── Popup HTML builders ────────────────────────────────────────────────────
+// HTML-escape helper — prevents XSS when inserting user data into Leaflet HTML strings
+function htmlEsc(str) {
+  if (!str) return ''
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // Apply dynamic CSS properties via JS DOM API (CSP-safe — not HTML style= attributes)
 function applyPopupDynStyles(popupEl) {
   popupEl.querySelectorAll('[data-lp-color]').forEach(el => { el.style.color = el.dataset.lpColor })
@@ -394,7 +405,7 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
     ? `<div class="lp-sighting">
         <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback verified photo" class="lp-sighting-photo" />
         <div class="lp-c2pa-label">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
-        ${sighting.notes ? `<div class="lp-sighting-notes">${sighting.notes}</div>` : ''}
+        ${sighting.notes ? `<div class="lp-sighting-notes">${htmlEsc(sighting.notes)}</div>` : ''}
       </div>`
     : ''
   const verifiedBadge = isDual

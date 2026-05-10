@@ -2249,10 +2249,10 @@ const server = http.createServer(async (req, res) => {
       // No path traversal possible: reject anything with '/' or '..'
       const raw = decodeURIComponent(req.url.slice('/photos/'.length))
       if (!raw || /[/\\]/.test(raw) || raw.includes('..') || !/^[\w.-]+$/.test(raw)) {
-        res.writeHead(400); return res.end('bad filename')
+        res.writeHead(400, { 'Content-Type': 'text/plain' }); return res.end('bad filename')
       }
       const filePath = path.join(PHOTOS_DIR, raw)
-      if (!fs.existsSync(filePath)) { res.writeHead(404); return res.end('not found') }
+      if (!fs.existsSync(filePath)) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('not found') }
       const ext = path.extname(raw).toLowerCase()
       const mimeMap = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.heic': 'image/heic' }
       const mime = mimeMap[ext] || 'application/octet-stream'
@@ -2264,7 +2264,7 @@ const server = http.createServer(async (req, res) => {
       fs.createReadStream(filePath).pipe(res)
       return
     } catch {
-      res.writeHead(500); return res.end('server error')
+      res.writeHead(500, { 'Content-Type': 'text/plain' }); return res.end('server error')
     }
   }
 
@@ -2736,7 +2736,7 @@ const server = http.createServer(async (req, res) => {
 
   // ── AI chat ────────────────────────────────────────────────────────────────
   if (req.method !== 'POST' || req.url !== '/api/chat') {
-    res.writeHead(404); return res.end('Not found')
+    res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found')
   }
 
   stats.total++
@@ -2765,7 +2765,7 @@ const server = http.createServer(async (req, res) => {
   req.on('end', () => {
     if (bodyBytes > MAX_CHAT_BODY) return // destroyed
     let parsed
-    try { parsed = JSON.parse(rawBody) } catch { res.writeHead(400); return res.end('Bad request') }
+    try { parsed = JSON.parse(rawBody) } catch { res.writeHead(400, { 'Content-Type': 'text/plain' }); return res.end('Bad request') }
     // Cap history to last 20 messages — prevents context-stuffing with huge histories
     const messages = (parsed.messages || []).slice(-20)
     const lastUser = [...messages].reverse().find(m => m.role === 'user')
