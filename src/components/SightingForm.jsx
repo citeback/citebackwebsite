@@ -31,17 +31,17 @@ export default function SightingForm({ setTab }) {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)          // null | 'c2pa' | 'no_gps' | 'generic'
   const [checklistOpen, setChecklistOpen] = useState(false)
-  const [draggingPhoto, setDraggingPhoto] = useState(false)
   const fileInputRef = useRef(null)
 
-  const processFile = async (file) => {
+  const handlePhoto = async (e) => {
+    const file = e.target.files?.[0]
     if (!file) return
     setPhotoFile(file)
     setPhotoGPS(null)
     setGpsStatus('reading')
     setError(null)
 
-    const isZip = file.type?.includes('zip') || file.name?.toLowerCase().endsWith('.zip')
+    const isZip = file.type.includes('zip') || file.name.toLowerCase().endsWith('.zip')
 
     if (isZip) {
       // Zip from Proofmode — show a generic icon, GPS will be extracted server-side from proof.json
@@ -72,27 +72,6 @@ export default function SightingForm({ setTab }) {
       setGpsStatus('none')
       setGpsSource(null)
     }
-  }
-
-  const handlePhoto = (e) => processFile(e.target.files?.[0])
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDraggingPhoto(false)
-    const file = e.dataTransfer.files?.[0]
-    if (file) processFile(file)
-  }
-
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDraggingPhoto(true)
-  }
-
-  const handleDragLeave = (e) => {
-    // Only clear if leaving the zone entirely (not a child element)
-    if (!e.currentTarget.contains(e.relatedTarget)) setDraggingPhoto(false)
   }
 
   const clearPhoto = () => {
@@ -332,21 +311,11 @@ export default function SightingForm({ setTab }) {
 
             {!photoFile ? (
               <>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => fileInputRef.current?.click()}
-                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
-                  onDragOver={handleDragOver}
-                  onDragEnter={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  className={`sf-photo-drop${draggingPhoto ? ' sf-photo-drop--dragging' : ''}`}
-                >
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="sf-photo-drop">
                   <Camera size={28} className="sf-drop-icon" />
-                  <span className="sf-drop-title">{draggingPhoto ? 'Drop to attach' : 'Tap or drop photo here'}</span>
+                  <span className="sf-drop-title">Tap to attach photo</span>
                   <span className="sf-drop-hint-text">Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
-                </div>
+                </button>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
                   className="sf-photo-hidden" onChange={handlePhoto} />
 
