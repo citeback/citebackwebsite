@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { CheckCircle, AlertTriangle, Scale, FileText, Building, Shield, ChevronDown, ChevronRight, ExternalLink, Coins, Globe, Clock } from 'lucide-react'
 
-function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defaultOpen = false }) {
+function Accordion({ title, icon: Icon, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div className="ops-accordion">
@@ -34,14 +34,14 @@ function Req({ ok, pending, children }) {
 }
 
 const campaignTypes = [
-  { label: 'Proven High Impact', color: '#6ee7b7', cls: 'proven', types: [
+  { label: 'Proven High Impact', cls: 'proven', types: [
     { name: 'FOIA Campaigns', desc: 'Public records requests to expose surveillance contracts, costs, and deployment data. Low cost, feeds every other campaign type.' },
     { name: 'Ordinance Campaigns', desc: 'City council campaigns to ban or regulate surveillance locally. Proven playbook across dozens of cities.' },
     { name: 'Public Records Litigation', desc: 'Force disclosure via FOIA litigation and injunctions when agencies refuse. Produces permanent citable records.' },
     { name: 'Counter-Database Projects', desc: 'Accountability mapping of surveillance infrastructure. Feeds litigation, journalism, and legislation.' },
     { name: 'Billboard Campaigns', desc: 'Place public awareness signs near surveillance infrastructure. Simple, visible, hard to ignore.' },
   ]},
-  { label: 'Specialized Actions', color: '#a78bfa', cls: 'specialized', types: [
+  { label: 'Specialized Actions', cls: 'specialized', types: [
     { name: 'Vendor Accountability', desc: 'Target Clearview, Flock Safety, Palantir by name. Anonymous funding is uniquely valuable here.' },
     { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment campaigns. Operators should consult an attorney before launching.' },
     { name: 'Legal Defense', desc: 'Civil and administrative challenges only. No criminal defense.' },
@@ -104,10 +104,10 @@ export default function Operators() {
       {/* Participant roles */}
       <div className="ops-roles-grid">
         {[
-          { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward operator access.', color: '#6ee7b7', anon: true },
-          { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', color: '#6ee7b7', anon: true },
-          { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', color: '#6ee7b7', anon: true },
-          { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', color: '#f59e0b', anon: false },
+          { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward operator access.', anon: true },
+          { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', anon: true },
+          { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', anon: true },
+          { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', anon: false },
         ].map(p => (
           <div key={p.role} className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}>
             <p className="ops-role-label">{p.role}</p>

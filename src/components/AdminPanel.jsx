@@ -13,12 +13,6 @@ const CAMERA_TYPE_LABELS = {
   unknown: 'Unknown',
 }
 
-const STATUS_COLORS = {
-  pending: '#f59e0b',
-  approved: '#10b981',
-  rejected: '#e63946',
-}
-
 const CAMPAIGN_STATUSES = ['unclaimed', 'claimed', 'active', 'funded']
 
 function shortWallet(addr) {

@@ -5,11 +5,11 @@ import { useSearchParams } from 'react-router-dom'
 import { API_BASE } from '../config.js'
 
 const typeConfig = {
-  attorney: { icon: <Scale size={20} />, color: '#5dade2', colorRaw: '93,173,226', label: 'Legal Researcher' },
-  billboard: { icon: <Megaphone size={20} />, color: '#ff6b6b', colorRaw: '255,107,107', label: 'Media Coordinator' },
-  foia: { icon: <FileSearch size={20} />, color: '#bb8fce', colorRaw: '187,143,206', label: 'FOIA Specialist' },
-  verifier: { icon: <Shield size={20} />, color: '#f39c12', colorRaw: '243,156,18', label: 'Camera Verifier' },
-  technical: { icon: <Cpu size={20} />, color: '#2ecc71', colorRaw: '46,204,113', label: 'Technical Contributor' },
+  attorney: { icon: <Scale size={20} />, label: 'Legal Researcher' },
+  billboard: { icon: <Megaphone size={20} />, label: 'Media Coordinator' },
+  foia: { icon: <FileSearch size={20} />, label: 'FOIA Specialist' },
+  verifier: { icon: <Shield size={20} />, label: 'Camera Verifier' },
+  technical: { icon: <Cpu size={20} />, label: 'Technical Contributor' },
 }
 
 const roles = [
