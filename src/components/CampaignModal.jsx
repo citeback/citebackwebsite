@@ -385,15 +385,17 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
 
               {[['Monero (XMR) wallet address', 'walletXmr', 'Your XMR address…'], ['Zano (ZANO) wallet address', 'walletZano', 'Your ZANO address…'], ['Your name or alias (public)', 'operatorName', 'e.g. Taos Privacy Coalition'], ['About you / this effort (public)', 'operatorBio', 'Brief background on who\'s running this campaign…']].map(([label, key, placeholder]) => (
                 <div key={key} className="cm-form-field">
-                  <label className="cm-form-label">{label}</label>
+                  <label htmlFor={`cm-field-${key}`} className="cm-form-label">{label}</label>
                   {key === 'operatorBio' ? (
                     <textarea
+                      id={`cm-field-${key}`}
                       value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
                       placeholder={placeholder} rows={3}
                       className="cm-form-textarea"
                     />
                   ) : (
                     <input
+                      id={`cm-field-${key}`}
                       value={operatorForm[key]} onChange={e => setOperatorForm(f => ({ ...f, [key]: e.target.value }))}
                       placeholder={placeholder}
                       className="cm-form-input"
