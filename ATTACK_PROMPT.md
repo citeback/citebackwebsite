@@ -279,7 +279,7 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | EXIF not stripped from uploaded photos | ✅ FIXED (stripJpegExif() added, strips GPS/camera info, preserves APP11/C2PA) |
 | 2026-05-10 | Magic bytes not validated on upload | ✅ FIXED (validateMagicBytes() added) |
 | 2026-05-10 | /claim-account returned 500 on empty body | ✅ FIXED (returns 400) |
-| 2026-05-10 | CameraMap.jsx 137 non-Leaflet inline styles | ⚠️ NEEDS DEDICATED SESSION — photo panel, layer control, legend all have convertible styles |
+| 2026-05-10 | CameraMap.jsx 137 non-Leaflet inline styles | ✅ FIXED — all converted to CSS classes + CSS custom properties via data attributes (applyPopupDynStyles JS DOM API for dynamic colors; zero style= anywhere in JSX) |}
 | 2026-05-10 | ReputationPage inputs missing labels | ✅ FIXED (added aria-accessible labels) |
 | 2026-05-10 | DEFLECT old brand name in server.js variable | ✅ FIXED (renamed to OFF_TOPIC) |
 | 2026-05-10 | 429 responses missing Content-Type header | ✅ FIXED (4 endpoints updated) |
