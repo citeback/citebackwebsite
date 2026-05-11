@@ -37,6 +37,30 @@ for = "/assets/*"
 Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
+for = "/fonts/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/sitemap.xml"
+
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+[[headers]]
+for = "/robots.txt"
+
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+[[headers]]
+for = "/.well-known/*"
+
+[headers.values]
+Cache-Control = "no-cache"
+
+[[headers]]
 for = "/*"
 
 [headers.values]
@@ -45,7 +69,7 @@ X-Frame-Options = "DENY"
 X-Content-Type-Options = "nosniff"
 Referrer-Policy = "no-referrer"
 Permissions-Policy = "camera=(), microphone=(), geolocation=(self), interest-cohort=()"
-Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net; img-src 'self' data: https:; connect-src 'self' https://ai.citeback.com https://overpass-api.de https://nominatim.openstreetmap.org https://www.courtlistener.com https://lda.senate.gov https://api.congress.gov https://www.usaspending.gov https://api.usaspending.gov https://v3.openstates.org https://*.basemaps.cartocdn.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob: https://ai.citeback.com https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; connect-src 'self' https://ai.citeback.com https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; worker-src blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
 [[redirects]]
