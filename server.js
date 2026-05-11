@@ -1645,7 +1645,10 @@ const server = http.createServer(async (req, res) => {
                 out.end()
                 out.on('finish', () => {
                   // Magic bytes validation — reject if Content-Type was spoofed
-                  if (headerBuf && !validateMagicBytes(headerBuf, declaredMime)) {
+                  // Use 'application/zip' when isZip was detected via filename but MIME came through empty
+                  // (Brave/Chrome drag-and-drop from Finder often sends empty MIME type for ZIPs)
+                  const effectiveMime = (!declaredMime && isZip) ? 'application/zip' : declaredMime
+                  if (headerBuf && !validateMagicBytes(headerBuf, effectiveMime)) {
                     fs.unlink(dest, () => {})
                     return rej(new Error('Invalid file type (magic bytes mismatch)'))
                   }
