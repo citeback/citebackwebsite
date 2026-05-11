@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (21:55 MDT keepalive 16)*
+*Last updated: 2026-05-10 (22:55 MDT keepalive 17)*
 
 ---
 
@@ -336,6 +336,7 @@ Track bugs found but not yet fixed here:
 | 2026-05-11 | 7 components missing unique page titles (HumanRegistry, FrontlineFunds, Operators, SurveillanceFeed, AdminPanel, ResetPasswordPage, ClaimAccountPage) | ✅ FIXED (Helmet title tags added, commit be5198b) |
 | 2026-05-11 | Git push blocked — osxkeychain has DoesGodPlayDice token, no push access to citeback org | ⚠️ PENDING (GitHub) — Netlify deployed directly via CLI (keepalive 14); Scott must run `git push` with correct token to sync GitHub |
 | 2026-05-11 | Netlify CLI deploy as workaround for blocked GitHub push | ✅ CONFIRMED WORKING — `netlify deploy --prod --dir=dist --site=43504ab6-a435-4f85-a691-8139e5f870d7` authenticated as citeback@proton.me |
+| 2026-05-11 | Netlify proxy.js error responses (405/429/400/502/504) missing Content-Type: application/json header | ✅ FIXED (JSON_CT const added, all error paths updated, commit 7f0da05) |
 | 2026-05-10 | CampaignModal operator form labels not linked to inputs via htmlFor/id | ✅ FIXED (htmlFor={`cm-field-${key}`}/id={`cm-field-${key}`} added, commit 82def2c) |
 | 2026-05-10 | alpr-us.json (30MB) served by Caddy with no cache headers — full file re-downloaded every request | ✅ FIXED (Cache-Control: public, max-age=3600, stale-while-revalidate=86400 added to Caddyfile; caddy reloaded) |
 | 2026-05-10 | ai.citeback.com missing Permissions-Policy header | ✅ FIXED (added to Caddyfile header block; caddy reloaded) |
