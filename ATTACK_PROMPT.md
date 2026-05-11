@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (20:50 MDT keepalive 15)*
+*Last updated: 2026-05-10 (21:55 MDT keepalive 16)*
 
 ---
 
@@ -233,7 +233,7 @@ ssh root@77.42.124.157 'curl -s http://localhost:11435/stats'
 7. First real campaign onboarding (operators need a known-good flow)
 
 ### 🟡 MEDIUM PRIORITY
-8. Change-password "forgot username if no email" edge case
+8. ~~Change-password "forgot username if no email" edge case~~ ✅ FIXED — contact link added to forgot-username UI
 9. BLM land overlay in HexOps (separate project)
 10. Mobile performance audit (bundle size, lazy loading audit)
 
@@ -337,6 +337,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-11 | Git push blocked — osxkeychain has DoesGodPlayDice token, no push access to citeback org | ⚠️ PENDING (GitHub) — Netlify deployed directly via CLI (keepalive 14); Scott must run `git push` with correct token to sync GitHub |
 | 2026-05-11 | Netlify CLI deploy as workaround for blocked GitHub push | ✅ CONFIRMED WORKING — `netlify deploy --prod --dir=dist --site=43504ab6-a435-4f85-a691-8139e5f870d7` authenticated as citeback@proton.me |
 | 2026-05-10 | CampaignModal operator form labels not linked to inputs via htmlFor/id | ✅ FIXED (htmlFor={`cm-field-${key}`}/id={`cm-field-${key}`} added, commit 82def2c) |
+| 2026-05-10 | alpr-us.json (30MB) served by Caddy with no cache headers — full file re-downloaded every request | ✅ FIXED (Cache-Control: public, max-age=3600, stale-while-revalidate=86400 added to Caddyfile; caddy reloaded) |
+| 2026-05-10 | ai.citeback.com missing Permissions-Policy header | ✅ FIXED (added to Caddyfile header block; caddy reloaded) |
+| 2026-05-11 | Forgot-username flow — users without recovery email locked out with no guidance | ✅ FIXED (added 'No recovery email set? Contact support' note with citeback@proton.me link, commit cac4fbd) |
 
 ---
 
