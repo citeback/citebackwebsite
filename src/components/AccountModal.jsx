@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { API_BASE as AI_URL } from '../config.js'
 
 export default function AccountModal({ onClose, initialTab = 'login', singleMode = false }) {
-  const { login, createAccount } = useAuth()
+  const { login, createAccount, refreshUser } = useAuth()
   const modalRef = useRef(null)
   const [tab, setTab] = useState(initialTab) // 'login' | 'create' | 'recover' | 'forgot-username'
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', email: '' })
@@ -72,6 +72,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
       })
       const verData = await verRes.json()
       if (!verRes.ok) throw new Error(verData.error || 'Passkey verification failed')
+      await refreshUser()
       setSuccess('Logged in!')
       setTimeout(onClose, 800)
     } catch (err) {
