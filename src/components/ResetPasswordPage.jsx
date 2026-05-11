@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, Loader } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
@@ -94,6 +95,9 @@ export default function ResetPasswordPage({ setTab }) {
 
   return (
     <section className="rp2-page">
+      <Helmet>
+        <title>Reset Password | Citeback</title>
+      </Helmet>
       <div className="rp2-heading-section">
         <h1 className="rp2-heading">Reset your password</h1>
         <p className="rp2-heading-desc">Choose a new password. Must be Good or stronger.</p>

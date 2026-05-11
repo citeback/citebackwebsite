@@ -1,3 +1,5 @@
+import { Helmet } from 'react-helmet-async'
+
 const funds = [
   {
     id: 1,
@@ -89,6 +91,10 @@ const tagSlug = {
 export default function FrontlineFunds() {
   return (
     <div className="ff-page">
+      <Helmet>
+        <title>Frontline Funds | Citeback — Active Surveillance Litigation</title>
+        <meta property="og:title" content="Frontline Funds | Citeback" />
+      </Helmet>
       <div className="ff-header">
         <p className="ff-eyebrow">Frontline Funds</p>
         <h1 className="ff-title">These fights are happening now.</h1>

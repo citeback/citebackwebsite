@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, Loader, User, Scale } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE as AI_URL } from '../config.js'
@@ -103,6 +104,9 @@ export default function ClaimAccountPage({ setTab }) {
 
   return (
     <section className="cla-page">
+      <Helmet>
+        <title>Claim Account | Citeback</title>
+      </Helmet>
       <div className="cla-heading-section">
         <div className="cla-badge">
           <Scale size={13} /> Attorney Account Activation

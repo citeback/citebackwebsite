@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet-async'
 
 // ── CourtListener public API — no key required ──────────────────────────────
 // Searches for recent opinions involving surveillance tech litigation
@@ -308,6 +309,10 @@ export default function SurveillanceFeed({ setTab }) {
 
   return (
     <section className="sf2-page">
+      <Helmet>
+        <title>Intelligence Feed | Citeback — Surveillance Tech News &amp; Litigation</title>
+        <meta property="og:title" content="Intelligence Feed | Citeback" />
+      </Helmet>
       <div className="sf2-inner">
 
         {/* Header */}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { CheckCircle, AlertTriangle, Scale, FileText, Building, Shield, ChevronDown, ChevronRight, ExternalLink, Coins, Globe, Clock } from 'lucide-react'
 
 function Accordion({ title, icon: Icon, color = 'var(--accent)', children, defaultOpen = false }) {
@@ -52,6 +53,10 @@ const campaignTypes = [
 export default function Operators() {
   return (
     <div className="ops-page">
+      <Helmet>
+        <title>Run a Campaign | Citeback — Partner with Civil Rights Organizations</title>
+        <meta property="og:title" content="Run a Campaign | Citeback" />
+      </Helmet>
 
       {/* Header */}
       <div className="ops-header">

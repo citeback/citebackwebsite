@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { Scale, Megaphone, FileSearch, Shield, Plus, CheckCircle, X, Cpu, AlertCircle, Search, Loader2 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -344,6 +345,10 @@ export default function HumanRegistry() {
 
   return (
     <section className="hre-page">
+      <Helmet>
+        <title>Expert Directory | Citeback — Attorneys, Researchers &amp; Advocates</title>
+        <meta property="og:title" content="Expert Directory | Citeback" />
+      </Helmet>
       {showApply && <ApplyModal onClose={() => setShowApply(false)} defaultRole={roleParam === 'attorney' || roleParam === 'researcher' ? 'attorney' : ''} />}
 
       <div className="hre-header">

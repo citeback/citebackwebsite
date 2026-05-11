@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { CheckCircle, XCircle, Clock, MapPin, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
@@ -533,6 +534,9 @@ export default function AdminPanel() {
 
   return (
     <div className="ap-page">
+      <Helmet>
+        <title>Admin | Citeback</title>
+      </Helmet>
       {/* Toast */}
       {toast && (
         <div className={`ap-toast ${toast.ok ? 'ap-toast--ok' : 'ap-toast--err'}`}>
