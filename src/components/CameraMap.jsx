@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from 'reac
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
 import './CameraMap.css'
+import { safeUrl } from '../utils/safeUrl'
 import L from 'leaflet'
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield, MapPin } from 'lucide-react'
@@ -383,11 +384,7 @@ function htmlEsc(str) {
     .replace(/'/g, '&#39;')
 }
 
-// Validate URLs to prevent javascript: injection in popup hrefs
-function safeUrl(url) {
-  if (!url) return ''
-  try { const u = new URL(url); return (u.protocol === 'https:' || u.protocol === 'http:') ? url : '' } catch { return '' }
-}
+// safeUrl imported from ../utils/safeUrl
 
 // Apply dynamic CSS properties via JS DOM API (CSP-safe — not HTML style= attributes)
 function applyPopupDynStyles(popupEl) {
@@ -1480,7 +1477,7 @@ export default function CameraMap() {
                     <div className="cmap-popup-agency-was"><strong>Was:</strong> {layer.label}</div>
                     {agency.vendor && <div className="cmap-popup-agency-vendor"><strong>Vendor:</strong> {agency.vendor}</div>}
                     {agency.notes && <div className="cmap-popup-victory-notes">{agency.notes}</div>}
-                    {agency.url && <a href={agency.url} target="_blank" rel="noopener noreferrer" className="cmap-popup-victory-link">View source →</a>}
+                    {safeUrl(agency.url) && <a href={safeUrl(agency.url)} target="_blank" rel="noopener noreferrer" className="cmap-popup-victory-link">View source →</a>}
                   </div>
                 </Popup>
               </CircleMarker>

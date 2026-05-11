@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { safeUrl } from '../utils/safeUrl'
 
 // ── CourtListener public API — no key required ──────────────────────────────
 // Searches for recent opinions involving surveillance tech litigation
@@ -424,7 +425,7 @@ export default function SurveillanceFeed({ setTab }) {
                 {bills.slice(0, 5).map((b, i) => (
                   <a
                     key={b.id}
-                    href={b.url}
+                    href={safeUrl(b.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="sf2-card"
@@ -499,7 +500,7 @@ export default function SurveillanceFeed({ setTab }) {
               {federalBills.slice(0, 4).map((b, i) => (
                 <a
                   key={b.id}
-                  href={b.url}
+                  href={safeUrl(b.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="sf2-card sf2-card--border-bottom"

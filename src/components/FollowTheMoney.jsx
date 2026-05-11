@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ExternalLink, DollarSign, AlertCircle, Briefcase, Loader } from 'lucide-react'
+import { safeUrl } from '../utils/safeUrl'
 
 // Static data pulled from USASpending.gov API (2025-10-01 to present, via keyword search)
 // Source: https://api.usaspending.gov — no auth required, public federal spending records
@@ -328,7 +329,7 @@ export default function FollowTheMoney() {
                     {/* LDA link for vendors with federal lobbying */}
                     {v.ldaSearchUrl && lda && !lda.error && (
                       <a
-                        href={v.ldaSearchUrl}
+                        href={safeUrl(v.ldaSearchUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
