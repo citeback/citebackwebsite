@@ -1,6 +1,7 @@
 import { MapPin, Clock, CheckCircle, Share2, Flame, Rocket, ExternalLink, Users } from 'lucide-react'
 import { typeColors } from '../data/campaigns'
 import { useState, useRef, useEffect } from 'react'
+import { safeUrl } from '../utils/safeUrl'
 
 function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
@@ -124,9 +125,9 @@ export default function CampaignCard({ campaign, onClick }) {
               : `${daysLeft} days left`}
           </span>
         </div>
-        {campaign.source && (
+        {safeUrl(campaign.source) && (
           <a
-            href={campaign.source}
+            href={safeUrl(campaign.source)}
             target="_blank"
             rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}

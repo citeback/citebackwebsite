@@ -4,6 +4,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { typeColors } from '../data/campaigns'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { safeUrl } from '../utils/safeUrl'
 
 function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24)))
@@ -177,8 +178,8 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
           </div>
           <h2 id={headingId} className="cm-title">{campaign.title}</h2>
           <p className="cm-description">{campaign.description}</p>
-          {campaign.source && (
-            <a href={campaign.source} target="_blank" rel="noopener noreferrer" className="cm-source-link">
+          {safeUrl(campaign.source) && (
+            <a href={safeUrl(campaign.source)} target="_blank" rel="noopener noreferrer" className="cm-source-link">
               <ExternalLink size={11} /> Source / public record
             </a>
           )}

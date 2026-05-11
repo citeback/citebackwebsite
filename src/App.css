@@ -3160,6 +3160,11 @@ img {
   border-color: var(--accent);
 }
 
+.sf-photo-drop--dragging {
+  border-color: var(--accent);
+  background: rgba(245,158,11,0.06);
+}
+
 .sf-photo-hint {
   margin-top: 10px;
   padding: 10px 14px;
