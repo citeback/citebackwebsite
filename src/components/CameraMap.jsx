@@ -383,6 +383,12 @@ function htmlEsc(str) {
     .replace(/'/g, '&#39;')
 }
 
+// Validate URLs to prevent javascript: injection in popup hrefs
+function safeUrl(url) {
+  if (!url) return ''
+  try { const u = new URL(url); return (u.protocol === 'https:' || u.protocol === 'http:') ? url : '' } catch { return '' }
+}
+
 // Apply dynamic CSS properties via JS DOM API (CSP-safe — not HTML style= attributes)
 function applyPopupDynStyles(popupEl) {
   popupEl.querySelectorAll('[data-lp-color]').forEach(el => { el.style.color = el.dataset.lpColor })
@@ -415,8 +421,8 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
   return `<div class="lp-root">
     ${sightingStrip}
     ${verifiedBadge}
-    <div class="lp-camera-name${isDual ? ' lp-camera-name--dual' : ' lp-camera-name--osm'}">${camera.st ? camera.st.toUpperCase() : 'ALPR Camera'}</div>
-    ${camera.op ? `<div class="lp-operator"><strong>Operator:</strong> ${camera.op}</div>` : ''}
+    <div class="lp-camera-name${isDual ? ' lp-camera-name--dual' : ' lp-camera-name--osm'}">${camera.st ? htmlEsc(camera.st).toUpperCase() : 'ALPR Camera'}</div>
+    ${camera.op ? `<div class="lp-operator"><strong>Operator:</strong> ${htmlEsc(camera.op)}</div>` : ''}
     <div class="lp-coords">📍 <strong>${camera.lat.toFixed(6)}, ${camera.lon.toFixed(6)}</strong></div>
     <div class="lp-osm-node">OSM Node: <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" class="lp-osm-link">#${camera.id} →</a></div>
     ${photoStrip}
@@ -433,10 +439,10 @@ function buildAgencyPopupHTML(agency, layer) {
   const vendorProfile = getVendorProfile(agency.vendor)
   const vendorBlock = vendorProfile
     ? `<div class="lp-vendor-block">
-        <div class="lp-vendor-name">🚩 ${vendorProfile.name}</div>
-        <div class="lp-vendor-tagline">${vendorProfile.tagline}</div>
-        <div class="lp-vendor-controversies">${vendorProfile.controversies[0]}</div>
-        ${vendorProfile.url ? `<a href="${vendorProfile.url}" target="_blank" rel="noopener noreferrer" class="lp-vendor-link">Investigate ${vendorProfile.name} →</a>` : ''}
+        <div class="lp-vendor-name">🚩 ${htmlEsc(vendorProfile.name)}</div>
+        <div class="lp-vendor-tagline">${htmlEsc(vendorProfile.tagline)}</div>
+        <div class="lp-vendor-controversies">${htmlEsc(vendorProfile.controversies[0])}</div>
+        ${safeUrl(vendorProfile.url) ? `<a href="${safeUrl(vendorProfile.url)}" target="_blank" rel="noopener noreferrer" class="lp-vendor-link">Investigate ${htmlEsc(vendorProfile.name)} →</a>` : ''}
       </div>`
     : ''
   const terminatedBadge = agency.status === 'terminated'
@@ -448,15 +454,15 @@ function buildAgencyPopupHTML(agency, layer) {
       <span class="lp-layer-label" data-lp-color="${layer.color}">${layer.label.toUpperCase()}</span>
     </div>
     ${terminatedBadge}
-    <div class="lp-agency-name">${agency.name}</div>
-    <div class="lp-agency-city">📍 ${agency.city}, ${agency.state}</div>
-    ${agency.vendor ? `<div class="lp-agency-vendor"><strong>Vendor/System:</strong> ${agency.vendor}</div>` : ''}
+    <div class="lp-agency-name">${htmlEsc(agency.name)}</div>
+    <div class="lp-agency-city">📍 ${htmlEsc(agency.city)}, ${htmlEsc(agency.state)}</div>
+    ${agency.vendor ? `<div class="lp-agency-vendor"><strong>Vendor/System:</strong> ${htmlEsc(agency.vendor)}</div>` : ''}
     ${vendorBlock}
     <div class="lp-status${agency.confirmed ? ' lp-status--confirmed' : ' lp-status--unconfirmed'}">${agency.confirmed ? '✓ Confirmed deployment' : '⚠ Reported deployment'}</div>
-    ${agency.notes ? `<div class="lp-notes">ℹ️ ${agency.notes}</div>` : ''}
-    <div class="lp-source"><strong>Source:</strong> ${agency.source}</div>
-    ${agency.url ? `<div class="lp-source-link-wrap"><a href="${agency.url}" target="_blank" rel="noopener noreferrer" class="lp-source-link" data-lp-color="${layer.color}">View source →</a></div>` : ''}
-    <button data-propose data-agency="${agency.name.replace(/"/g, '&quot;')}" data-location="${(agency.city + ', ' + agency.state).replace(/"/g, '&quot;')}" class="lp-propose-btn" data-lp-color="${layer.color}" data-lp-border-color="${layer.color}">📋 Propose FOIA →</button>
+    ${agency.notes ? `<div class="lp-notes">ℹ️ ${htmlEsc(agency.notes)}</div>` : ''}
+    <div class="lp-source"><strong>Source:</strong> ${htmlEsc(agency.source)}</div>
+    ${safeUrl(agency.url) ? `<div class="lp-source-link-wrap"><a href="${safeUrl(agency.url)}" target="_blank" rel="noopener noreferrer" class="lp-source-link" data-lp-color="${layer.color}">View source →</a></div>` : ''}
+    <button data-propose data-agency="${htmlEsc(agency.name)}" data-location="${htmlEsc(agency.city + ', ' + agency.state)}" class="lp-propose-btn" data-lp-color="${layer.color}" data-lp-border-color="${layer.color}">📋 Propose FOIA →</button>
   </div>`
 }
 
@@ -555,7 +561,7 @@ function OSMCanvasLayer({ cameras, effLayers, activeLayers, dualVerifiedIds, osm
         return `<button data-disambig="${i}" data-lp-border="1px solid ${entry.color}22" class="lp-disambig-btn">
           <span class="lp-disambig-icon">${entry.icon}</span>
           <div class="lp-disambig-info">
-            <div class="lp-disambig-label" data-lp-color="${entry.color}">${entry.label}</div>
+            <div class="lp-disambig-label" data-lp-color="${entry.color}">${htmlEsc(entry.label)}</div>
             <div class="lp-disambig-dist">${distLabel} away</div>
           </div>
           <span class="lp-disambig-arrow">→</span>
