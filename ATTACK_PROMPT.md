@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-11 (02:51 MDT keepalive 18)*
+*Last updated: 2026-05-11 (06:55 MDT keepalive 19)*
 
 ---
 
@@ -339,6 +339,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-11 | Netlify proxy.js error responses (405/429/400/502/504) missing Content-Type: application/json header | ✅ FIXED (JSON_CT const added, all error paths updated, commit 7f0da05) |
 | 2026-05-11 | index.html body tag had inline style= blocked by CSP (style-src 'self' no unsafe-inline) — silent browser violation, no user impact but console noise | ✅ FIXED (removed inline style; App.css handles body bg via var(--bg), commit 98c2fc8) |
 | 2026-05-11 | AccountModal create-account consent notice only linked ToS — no Privacy Policy link | ✅ FIXED (added Privacy Policy link alongside ToS in am-tos-note, commit 98c2fc8) |
+| 2026-05-11 | CameraMap Leaflet popup builders (buildAlprPopupHTML, buildAgencyPopupHTML, disambig) — 9 fields (camera.st, camera.op, agency.name/city/state/vendor/notes/source, entry.label) interpolated into innerHTML without htmlEsc() — XSS risk via alpr-us.json compromise or OSM data | ✅ FIXED (htmlEsc() on all text fields, commit 6cf2fae) |
+| 2026-05-11 | agency.url and vendorProfile.url used directly in href without validation — javascript: injection vector | ✅ FIXED (safeUrl() helper validates https:/http: only; commit 6cf2fae) |
 | 2026-05-10 | CampaignModal operator form labels not linked to inputs via htmlFor/id | ✅ FIXED (htmlFor={`cm-field-${key}`}/id={`cm-field-${key}`} added, commit 82def2c) |
 | 2026-05-10 | alpr-us.json (30MB) served by Caddy with no cache headers — full file re-downloaded every request | ✅ FIXED (Cache-Control: public, max-age=3600, stale-while-revalidate=86400 added to Caddyfile; caddy reloaded) |
 | 2026-05-10 | ai.citeback.com missing Permissions-Policy header | ✅ FIXED (added to Caddyfile header block; caddy reloaded) |
