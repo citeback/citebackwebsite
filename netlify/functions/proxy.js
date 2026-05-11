@@ -58,8 +58,10 @@ function checkRateLimit(ip) {
 
 // ── Handler ──────────────────────────────────────────────────────────────────
 export const handler = async (event) => {
+  const JSON_CT = { 'Content-Type': 'application/json' }
+
   if (event.httpMethod !== 'GET' && event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
+    return { statusCode: 405, headers: JSON_CT, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
   // Rate limit by IP
@@ -67,7 +69,7 @@ export const handler = async (event) => {
     || event.headers?.['x-forwarded-for']?.split(',')[0].trim()
     || 'unknown'
   if (!checkRateLimit(clientIp)) {
-    return { statusCode: 429, body: JSON.stringify({ error: 'Too many requests' }) }
+    return { statusCode: 429, headers: JSON_CT, body: JSON.stringify({ error: 'Too many requests' }) }
   }
 
   const params = event.queryStringParameters || {}
@@ -76,6 +78,7 @@ export const handler = async (event) => {
   if (!service || !SERVICES[service]) {
     return {
       statusCode: 400,
+      headers: JSON_CT,
       body: JSON.stringify({ error: 'Unknown service. Allowed: ' + Object.keys(SERVICES).join(', ') }),
     }
   }
@@ -112,7 +115,7 @@ export const handler = async (event) => {
     // Read with size guard
     const reader = upstream.body?.getReader()
     if (!reader) {
-      return { statusCode: 502, body: JSON.stringify({ error: 'Empty upstream response' }) }
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Empty upstream response' }) }
     }
     let bytesRead = 0
     const chunks = []
@@ -121,7 +124,7 @@ export const handler = async (event) => {
       if (done) break
       bytesRead += value.length
       if (bytesRead > MAX_RESPONSE_BYTES) {
-        return { statusCode: 502, body: JSON.stringify({ error: 'Upstream response too large' }) }
+        return { statusCode: 502, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Upstream response too large' }) }
       }
       chunks.push(value)
     }
@@ -142,6 +145,7 @@ export const handler = async (event) => {
     const timedOut = err.name === 'TimeoutError' || err.name === 'AbortError'
     return {
       statusCode: timedOut ? 504 : 502,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: timedOut ? 'Upstream timeout' : 'Upstream error' }),
     }
   }
