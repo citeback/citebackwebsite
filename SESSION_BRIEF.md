@@ -1,5 +1,5 @@
 # Citeback — Session Brief
-*Last updated: 2026-05-10 22:57 MDT (keepalive 12)*
+*Last updated: 2026-05-11 00:10 MDT (keepalive 13)*
 
 ## ⚠️ URGENT: ICANN domain verification - May 14, 2026
 Check citeback@proton.me OR scotthughes070@proton.me for ICANN verification email.
@@ -10,7 +10,9 @@ Must verify citeback.com/.net/.org before May 14 or domain risks suspension.
 **Local:** `/Users/scotthughes/.openclaw/workspace/deflect/`
 **VPS:** 77.42.124.157 (Hetzner CPX42, AI proxy at ai.citeback.com)
 **Status:** Site working, COLD dark theme, full CSS. Audit score ~9.95/10. Visual QA pass still needed from Scott.
-**Last keepalive (2026-05-10 22:57 MDT, keepalive 12):** Full audit pass. Found and fixed: (1) `/admin/campaigns` GET+PATCH, `/admin/proposals`, `/admin/registry`, `/admin/attorney-applications/review`, `/admin/sightings/moderate`, `/admin/sightings/approve-all` — all 7 missing `checkRateLimit` calls added as defense-in-depth (isAdmin is primary gatekeeper, RL is secondary); (2) `/health` GET missing rate limit — added; (3) `/passkey/register-options` — `checkPkRegRateLimit` was checked mid-handler after 2 DB reads, moved to top before any auth/DB work; (4) Full re-audit: all 51 endpoints now have rate limits (✅ confirmed by automated Python check). VPS healthy: 3 users, 7 campaigns, 95,315 cameras, disk 8%. fail2ban: 1 currently banned, 94 total. Commit: b9d3970.
+**Last keepalive (2026-05-11 00:10 MDT, keepalive 13):** Full audit pass. Found and fixed: (1) 7 components missing unique page titles — added Helmet `<title>` to HumanRegistry, FrontlineFunds, Operators, SurveillanceFeed, AdminPanel, ResetPasswordPage, ClaimAccountPage (commit be5198b — ⚠️ LOCAL ONLY, push blocked, see below); (2) Deep grep audit — all 51 endpoints confirmed rate-limited (specialized rate limiters for attorney/bar/forgot-username/passkey auth confirmed — not missed by 6-line lookahead); (3) All `target="_blank"` links confirmed have `rel="noopener noreferrer"` (multiline JSX verified via Python regex); (4) Netlify proxy function audited — SSRF protected, allowlist enforced, rate limited; (5) Attorney pipeline E2E smoke tests passed (401/400 expected responses); (6) VPS healthy: SHA 94a9f1dc, 3 users, 7 campaigns, 0 attorney_apps, disk 8%. fail2ban: 2 banned, 98 total. Crash at 21:53 UTC was from earlier agent deploying bad regex — resolved itself, current version clean.
+
+⚠️ **PUSH BLOCKED:** Commit be5198b is local only. osxkeychain has DoesGodPlayDice token which lacks push access to citeback org. Fix: `git remote set-url origin https://citeback:<CITEBACK_GHTOKEN>@github.com/citeback/citebackwebsite.git && git push origin main`
 
 ## What Broke This Morning (2026-05-10) + What Was Fixed
 

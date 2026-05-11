@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-10 (22:57 MDT keepalive 12)*
+*Last updated: 2026-05-11 (00:10 MDT keepalive 13)*
 
 ---
 
@@ -333,6 +333,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | normalizeInput zero-width Unicode filter missing LRM/RLM/line-sep/para-sep/invisible-math | ✅ FIXED (‎‏  ⁡-⁤ added; switched to ASCII \u escape sequences to prevent Node.js regex parse error) |
 | 2026-05-10 | /admin/campaigns GET missing rate limit (7 admin endpoints + /health missing RL) | ✅ FIXED — checkRateLimit added to: /health, /admin/campaigns GET+PATCH, /admin/proposals, /admin/registry, /admin/attorney-applications/review, /admin/sightings/moderate, /admin/sightings/approve-all (all 51 endpoints now covered) |
 | 2026-05-10 | /passkey/register-options rate limit checked mid-handler after auth+DB reads | ✅ FIXED (moved to top before verifyToken — pre-auth rate limiting) |
+| 2026-05-11 | 7 components missing unique page titles (HumanRegistry, FrontlineFunds, Operators, SurveillanceFeed, AdminPanel, ResetPasswordPage, ClaimAccountPage) | ✅ FIXED (Helmet title tags added, commit be5198b) |
+| 2026-05-11 | Git push blocked — osxkeychain has DoesGodPlayDice token, no push access to citeback org | ⚠️ PENDING — Scott must push manually or set correct token |
 
 ---
 
