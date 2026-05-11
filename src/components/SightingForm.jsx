@@ -78,8 +78,21 @@ export default function SightingForm({ setTab }) {
 
   const handleDrop = (e) => {
     e.preventDefault()
+    e.stopPropagation()
     setDraggingPhoto(false)
-    processFile(e.dataTransfer.files?.[0])
+    const file = e.dataTransfer.files?.[0]
+    if (file) processFile(file)
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDraggingPhoto(true)
+  }
+
+  const handleDragLeave = (e) => {
+    // Only clear if leaving the zone entirely (not a child element)
+    if (!e.currentTarget.contains(e.relatedTarget)) setDraggingPhoto(false)
   }
 
   const clearPhoto = () => {
@@ -319,19 +332,21 @@ export default function SightingForm({ setTab }) {
 
             {!photoFile ? (
               <>
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   onClick={() => fileInputRef.current?.click()}
-                  onDragOver={e => { e.preventDefault(); setDraggingPhoto(true) }}
-                  onDragEnter={e => { e.preventDefault(); setDraggingPhoto(true) }}
-                  onDragLeave={() => setDraggingPhoto(false)}
+                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragEnter={handleDragOver}
+                  onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   className={`sf-photo-drop${draggingPhoto ? ' sf-photo-drop--dragging' : ''}`}
                 >
                   <Camera size={28} className="sf-drop-icon" />
                   <span className="sf-drop-title">{draggingPhoto ? 'Drop to attach' : 'Tap or drop photo here'}</span>
                   <span className="sf-drop-hint-text">Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
-                </button>
+                </div>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
                   className="sf-photo-hidden" onChange={handlePhoto} />
 
