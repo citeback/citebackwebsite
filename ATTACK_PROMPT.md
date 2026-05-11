@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-11 (11:24 MDT keepalive 21)*
+*Last updated: 2026-05-11 (13:45 MDT keepalive 22)*
 
 ---
 
@@ -346,6 +346,9 @@ Track bugs found but not yet fixed here:
 | 2026-05-11 | FollowTheMoney.jsx: `href={v.ldaSearchUrl}` — LDA API URL used raw in href without safeUrl() | ✅ FIXED (safeUrl() applied, import added; commit bef6c5c) |
 | 2026-05-11 | SurveillanceFeed.jsx: `href={b.url}` (×2) — OpenStates/Congress API URLs used raw in href without safeUrl() | ✅ FIXED (safeUrl() applied on both; commit bef6c5c) |
 | 2026-05-11 | ai.citeback.com missing Content-Security-Policy header | ✅ FIXED (Content-Security-Policy: default-src 'none' added to Caddyfile; caddy reloaded) |
+| 2026-05-11 | Passkey login missing `await refreshUser()` after verify — user state not updated, appeared logged-out until page refresh | ✅ FIXED (refreshUser() added to AccountModal passkey flow, commit cb4d603) |
+| 2026-05-11 | SightingForm C2PA photo drop zone had no drag-and-drop support — users had to click browse only | ✅ FIXED (drag handlers + .sf-photo-drop--dragging CSS state added, commit ab63685) |
+| 2026-05-11 | campaign.source used raw in href= (CampaignCard, CampaignModal) without safeUrl() — admin-seeded but defense-in-depth | ✅ FIXED (safeUrl() applied, commit ab63685) |
 | 2026-05-10 | CampaignModal operator form labels not linked to inputs via htmlFor/id | ✅ FIXED (htmlFor={`cm-field-${key}`}/id={`cm-field-${key}`} added, commit 82def2c) |
 | 2026-05-10 | alpr-us.json (30MB) served by Caddy with no cache headers — full file re-downloaded every request | ✅ FIXED (Cache-Control: public, max-age=3600, stale-while-revalidate=86400 added to Caddyfile; caddy reloaded) |
 | 2026-05-10 | ai.citeback.com missing Permissions-Policy header | ✅ FIXED (added to Caddyfile header block; caddy reloaded) |
