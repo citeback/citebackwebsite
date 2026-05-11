@@ -243,6 +243,10 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 </button>
               </form>
             )}
+            <p className="am-recover-no-email">
+              No recovery email set?{' '}
+              <a href="mailto:citeback@proton.me" className="am-recover-link">Contact support</a>
+            </p>
           </div>
         )}
 
