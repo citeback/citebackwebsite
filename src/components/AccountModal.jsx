@@ -496,6 +496,16 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
                 >
                   Terms of Use
                 </a>
+                {' '}and{' '}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="am-tos-link"
+                  onClick={e => e.stopPropagation()}
+                >
+                  Privacy Policy
+                </a>
                 .
               </p>
             )}
