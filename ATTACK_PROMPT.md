@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-11 (17:18 MDT keepalive 25)*
+*Last updated: 2026-05-12 (04:15 UTC keepalive 27)*
 
 ---
 
@@ -347,6 +347,10 @@ Track bugs found but not yet fixed here:
 | 2026-05-11 | FollowTheMoney.jsx: `href={v.ldaSearchUrl}` — LDA API URL used raw in href without safeUrl() | ✅ FIXED (safeUrl() applied, import added; commit bef6c5c) |
 | 2026-05-11 | SurveillanceFeed.jsx: `href={b.url}` (×2) — OpenStates/Congress API URLs used raw in href without safeUrl() | ✅ FIXED (safeUrl() applied on both; commit bef6c5c) |
 | 2026-05-11 | ai.citeback.com missing Content-Security-Policy header | ✅ FIXED (Content-Security-Policy: default-src 'none' added to Caddyfile; caddy reloaded) |
+| 2026-05-12 | CameraMap.jsx `layer.sourceUrl` used raw in href= (layer data hardcoded but inconsistent with safeUrl pattern) | ✅ FIXED (safeUrl() applied, commit 60d6cf9) |
+| 2026-05-12 | FrontlineFunds.jsx `f.donateUrl` — donate URL array used raw in href= without safeUrl() | ✅ FIXED (safeUrl() applied, commit 60d6cf9) |
+| 2026-05-12 | AdminPanel.jsx `mapsUrl` — constructed from user-submitted lat/lng sighting data, used raw in href= | ✅ FIXED (safeUrl() applied; defense-in-depth against URL injection via DB data, commit 60d6cf9) |
+| 2026-05-12 | SurveillanceExplainer.jsx `link.url`, Transparency.jsx `src.url`, TrustFAQ.jsx `p.link`, CryptoPrimer.jsx `link.url` — hardcoded array URLs used raw in href= | ✅ FIXED (safeUrl() applied to all 4, commit 60d6cf9) |
 | 2026-05-11 | Passkey login missing `await refreshUser()` after verify — user state not updated, appeared logged-out until page refresh | ✅ FIXED (refreshUser() added to AccountModal passkey flow, commit cb4d603) |
 | 2026-05-11 | SightingForm drag-drop broke click upload (agent replaced button with div) | ✅ FIXED (processFile() extracted, drag handlers on existing button, commit 5daff9d) |
 | 2026-05-11 | campaign.source used raw in href= (CampaignCard, CampaignModal) without safeUrl() — admin-seeded but defense-in-depth | ✅ FIXED (safeUrl() applied, commit ab63685) |
