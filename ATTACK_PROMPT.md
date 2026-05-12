@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-12 (04:15 UTC keepalive 27)*
+*Last updated: 2026-05-12 (05:35 UTC keepalive 28)*
 
 ---
 
