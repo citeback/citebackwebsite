@@ -819,7 +819,7 @@ function LayerToggles({ activeLayers, setActiveLayers, showVictories, setShowVic
                   ℹ️ {blurb}
                 </div>
                 <a
-                  href={layer.sourceUrl}
+                  href={safeUrl(layer.sourceUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cmap-blurb-link"

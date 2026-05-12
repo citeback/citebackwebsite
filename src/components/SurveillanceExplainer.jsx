@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { safeUrl } from '../utils/safeUrl'
 
 const TYPES = [
   {
@@ -313,7 +314,7 @@ function AccordionCard({ item, defaultOpen = false }) {
               {item.links.map((link, i) => (
                 <a
                   key={i}
-                  href={link.url}
+                  href={safeUrl(link.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="svex-link"

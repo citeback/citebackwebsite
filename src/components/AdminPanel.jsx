@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { safeUrl } from '../utils/safeUrl'
 import { CheckCircle, XCircle, Clock, MapPin, RefreshCw, Lock, AlertCircle, CheckSquare, Scale, ShieldCheck, MessageSquare } from 'lucide-react'
 
 import { API_BASE as AI_URL } from '../config.js'
@@ -62,7 +63,7 @@ function SightingCard({ sighting, onModerate, loading }) {
           <span className="ap-tag ap-tag--accent">👤 Authenticated</span>
         )}
         {mapsUrl && (
-          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="ap-tag ap-tag--blue ap-tag--link">
+          <a href={safeUrl(mapsUrl)} target="_blank" rel="noopener noreferrer" className="ap-tag ap-tag--blue ap-tag--link">
             🗺 View on Maps
           </a>
         )}

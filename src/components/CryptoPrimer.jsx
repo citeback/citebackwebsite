@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { ShieldCheck, CreditCard, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { safeUrl } from '../utils/safeUrl'
 import './CryptoPrimer.css'
 
 const WHY = [
@@ -139,7 +140,7 @@ function CoinPanel({ coin }) {
                     {step.links.map((link, j) => (
                       <a
                         key={j}
-                        href={link.url}
+                        href={safeUrl(link.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cp-step-link"

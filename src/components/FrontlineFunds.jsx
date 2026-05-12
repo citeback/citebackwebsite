@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async'
+import { safeUrl } from '../utils/safeUrl'
 
 const funds = [
   {
@@ -131,7 +132,7 @@ export default function FrontlineFunds() {
 
               {/* CTA */}
               <a
-                href={f.donateUrl}
+                href={safeUrl(f.donateUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ff-donate-link"

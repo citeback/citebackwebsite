@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { safeUrl } from '../utils/safeUrl'
 import { ChevronDown, ChevronUp, Shield, Lock, Code, Coins, Users, AlertTriangle } from 'lucide-react'
 
 const sections = [
@@ -214,7 +215,7 @@ export default function TrustFAQ({ setTab }) {
         ].map((p, i) => (
           <a
             key={i}
-            href={p.link}
+            href={safeUrl(p.link)}
             target="_blank"
             rel="noopener noreferrer"
             className="faq-pillar-card"

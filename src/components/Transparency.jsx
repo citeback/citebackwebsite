@@ -1,4 +1,5 @@
 import { ExternalLink, Shield } from 'lucide-react'
+import { safeUrl } from '../utils/safeUrl'
 import { ThreatDisclosure } from './VerificationTiers'
 import FollowTheMoney from './FollowTheMoney'
 import { useCameraCount } from '../context/CameraCount'
@@ -64,7 +65,7 @@ export default function Transparency({ setTab }) {
             <div key={i} className="tran-card">
               <div className="tran-card-bar tran-card-bar--muted" />
               <h3 className="tran-card-title tran-card-title--sm">
-                <a href={src.url} target="_blank" rel="noopener noreferrer" className="tran-source-link">
+                <a href={safeUrl(src.url)} target="_blank" rel="noopener noreferrer" className="tran-source-link">
                   {src.name} <ExternalLink size={11} className="tran-ext-icon" />
                 </a>
               </h3>
