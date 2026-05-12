@@ -66,7 +66,7 @@ export default function LaunchTracker() {
 
       <div className="lt-footer">
         <Clock size={12} />
-        No wallet addresses will be published until all 10 prerequisites are met and publicly verifiable. No address means nowhere to send.
+        No wallet addresses will be published until all {total} prerequisites are met and publicly verifiable. No address means nowhere to send.
       </div>
     </div>
   )
