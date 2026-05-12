@@ -1,6 +1,6 @@
 # CITEBACK ATTACK PROMPT
 *The definitive session-start prompt for maximally fast, accurate, efficient Citeback work.*
-*Last updated: 2026-05-11 (14:50 MDT keepalive 23)*
+*Last updated: 2026-05-11 (17:18 MDT keepalive 25)*
 
 ---
 
@@ -335,6 +335,7 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | /passkey/register-options rate limit checked mid-handler after auth+DB reads | ✅ FIXED (moved to top before verifyToken — pre-auth rate limiting) |
 | 2026-05-11 | 7 components missing unique page titles (HumanRegistry, FrontlineFunds, Operators, SurveillanceFeed, AdminPanel, ResetPasswordPage, ClaimAccountPage) | ✅ FIXED (Helmet title tags added, commit be5198b) |
 | 2026-05-11 | Git push blocked — osxkeychain has DoesGodPlayDice token, no push access to citeback org | ⚠️ PENDING (GitHub) — Netlify deployed directly via CLI (keepalive 14); Scott must run `git push` with correct token to sync GitHub |
+| 2026-05-11 | LaunchTracker footer hardcoded "10 prerequisites" — stale (now 13 milestones) | ✅ FIXED (dynamic `{total}`, commit 2bd15f2) |
 | 2026-05-11 | Netlify CLI deploy as workaround for blocked GitHub push | ✅ CONFIRMED WORKING — `netlify deploy --prod --dir=dist --site=43504ab6-a435-4f85-a691-8139e5f870d7` authenticated as citeback@proton.me |
 | 2026-05-11 | Netlify proxy.js error responses (405/429/400/502/504) missing Content-Type: application/json header | ✅ FIXED (JSON_CT const added, all error paths updated, commit 7f0da05) |
 | 2026-05-11 | index.html body tag had inline style= blocked by CSP (style-src 'self' no unsafe-inline) — silent browser violation, no user impact but console noise | ✅ FIXED (removed inline style; App.css handles body bg via var(--bg), commit 98c2fc8) |
