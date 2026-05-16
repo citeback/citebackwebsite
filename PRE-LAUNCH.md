@@ -111,6 +111,14 @@ Last updated: 2026-05-05 (overnight planning session — expanded with new block
 - Anonymous crypto → fiat conversion without exposing campaign participants is unsolved
 - Requires legal + operational design. Document as Phase 2 priority, not launch blocker.
 
+### 24. CSP report-uri — Add Before Launch
+- Add a `report-uri` directive to the Citeback CSP header
+- Unlike dicenodes.com (static), Citeback has auth flows, user accounts, financial data, Stripe — CSP violation reporting matters here
+- Recommended: report-uri.com (free tier, 10k reports/month) or similar
+- Wire into netlify.toml CSP header: `report-uri https://yourname.report-uri.com/r/d/csp/enforce`
+- Modern addition: also add `Report-To` header for next-gen reporting API support
+- Added to list: 2026-05-15
+
 ### 17. Security Audit — Pre-Launch
 - View key monitoring code and operator onboarding system should be independently reviewed before wallets go live
 - Audit firm must be separate from any development contractor used
