@@ -241,7 +241,7 @@ ssh root@77.42.124.157 'curl -s http://localhost:11435/stats'
 11. Operator onboarding wizard (guided campaign creation)
 12. Campaign analytics dashboard (views, clicks, donations)
 13. Email notification system (campaign updates to supporters)
-14. WebAuthn: add "manage passkeys" UI to ReputationPage (delete passkeys)
+14. ~~WebAuthn: add "manage passkeys" UI to ReputationPage (delete passkeys)~~ ✅ DONE — PasskeyManager component in ReputationPage: list/add/delete passkeys fully implemented
 
 ---
 
