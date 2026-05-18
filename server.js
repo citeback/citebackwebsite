@@ -339,7 +339,8 @@ function parseCookies(req) {
   for (const part of header.split(';')) {
     const idx = part.indexOf('=')
     if (idx < 1) continue
-    cookies[part.slice(0, idx).trim()] = decodeURIComponent(part.slice(idx + 1).trim())
+    try { cookies[part.slice(0, idx).trim()] = decodeURIComponent(part.slice(idx + 1).trim()) }
+    catch { cookies[part.slice(0, idx).trim()] = part.slice(idx + 1).trim() } // URIError on malformed %XX
   }
   return cookies
 }
@@ -624,6 +625,7 @@ setInterval(() => {
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
   for (const [ip, e] of adminFailCounts){ if (e.lockedUntil && now > e.lockedUntil + 60000) adminFailCounts.delete(ip) }
   for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
+  for (const [k, until] of reauthSessions)       { if (until < now)                          reauthSessions.delete(k)          }
 }, 10 * 60 * 1000) // every 10 minutes
 
 let processing = false
