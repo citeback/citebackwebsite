@@ -716,6 +716,16 @@ function normalizeInput(text) {
     .replace(/[кК]/g, 'k')        // Cyrillic к/К → k (bypass "jailbreak" vector)
     .replace(/[уУ]/g, 'y')        // Cyrillic у/У → y (bypass "bypass your"/"hypothetically" vectors)
     .replace(/[хХ]/g, 'x')        // Cyrillic х/Х → x
+    // Greek homoglyphs (NFKC does not normalize these to Latin)
+    .replace(/[α]/g, 'a')        // Greek alpha α → a
+    .replace(/[ο]/g, 'o')        // Greek omicron ο → o
+    .replace(/[ε]/g, 'e')        // Greek epsilon ε → e
+    .replace(/[ρ]/g, 'p')        // Greek rho ρ → p (visual look-alike)
+    .replace(/[κ]/g, 'k')        // Greek kappa κ → k
+    .replace(/[τ]/g, 't')        // Greek tau τ → t
+    .replace(/[υ]/g, 'u')        // Greek upsilon υ → u
+    .replace(/[ν]/g, 'v')        // Greek nu ν → v
+    .replace(/[σΣ]/g, 's')     // Greek sigma σ/Σ → s
     .trim()
 }
 function isOnTopic(text) {
