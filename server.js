@@ -710,6 +710,12 @@ function normalizeInput(text) {
     .replace(/[оО]/g, 'o')        // Cyrillic o/О
     .replace(/[рР]/g, 'r')        // Cyrillic r/Р
     .replace(/[іІ]/g, 'i')        // Cyrillic і/І (Ukrainian)
+    .replace(/[сС]/g, 'c')        // Cyrillic с/С → c (bypass circumvent/act-as vectors)
+    .replace(/[вВ]/g, 'b')        // Cyrillic в/В → b (bypass "bypass your"/"pretend to be" vectors)
+    .replace(/[тТ]/g, 't')        // Cyrillic т/Т → t (bypass "without restrictions"/"output the following" vectors)
+    .replace(/[кК]/g, 'k')        // Cyrillic к/К → k (bypass "jailbreak" vector)
+    .replace(/[уУ]/g, 'y')        // Cyrillic у/У → y (bypass "bypass your"/"hypothetically" vectors)
+    .replace(/[хХ]/g, 'x')        // Cyrillic х/Х → x
     .trim()
 }
 function isOnTopic(text) {
