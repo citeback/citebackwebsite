@@ -1489,7 +1489,12 @@ const server = http.createServer(async (req, res) => {
       })
     } catch (e) {
       console.error('forgot-username error:', e.message)
-      // Response already sent — nothing to do
+      // Ensure response is always sent — parseBody failure (e.g. bad/empty JSON body)
+      // leaves res.end() uncalled; never reveal failure status to client
+      if (!res.headersSent) {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ ok: true, message: 'If that email has an account, your username has been sent.' }))
+      }
     }
     return
   }
