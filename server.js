@@ -705,11 +705,11 @@ function normalizeInput(text) {
     // Normalize multiple spaces/newlines to single space
     .replace(/\s+/g, ' ')
     // Normalize homoglyphs for common bypass chars (ɑ→a, ʙ→b, etc)
-    .replace(/[ɑа]/g, 'a')  // Latin alpha, Cyrillic a
-    .replace(/е/g, 'e')           // Cyrillic e
-    .replace(/о/g, 'o')           // Cyrillic o
-    .replace(/р/g, 'r')           // Cyrillic r
-    .replace(/і/g, 'i')           // Cyrillic i
+    .replace(/[ɑаА]/g, 'a')  // Latin alpha, Cyrillic a/А
+    .replace(/[еЕ]/g, 'e')        // Cyrillic e/Е
+    .replace(/[оО]/g, 'o')        // Cyrillic o/О
+    .replace(/[рР]/g, 'r')        // Cyrillic r/Р
+    .replace(/[іІ]/g, 'i')        // Cyrillic і/І (Ukrainian)
     .trim()
 }
 function isOnTopic(text) {
