@@ -698,10 +698,13 @@ const OFF_TOPIC_SIGNALS = [
 ]
 function normalizeInput(text) {
   return text
-    // Strip zero-width and invisible Unicode (common bypass vector)
+    // Strip zero-width, invisible, and BiDi formatting Unicode (common bypass vector)
     // Covers: ZWSP, ZWJ, ZWNJ, LRM, RLM, BOM, soft-hyphen, word-joiner,
-    // Mongolian vowel sep, line/para separators, invisible math ops
-    .replace(/[\u200b-\u200f\ufeff\u00ad\u2060\u180e\u2028\u2029\u2061-\u2064]/gu, '')
+    // Mongolian vowel sep, line/para separators, invisible math ops,
+    // BiDi embedding/override (\u202A-\u202E: LRE/RLE/PDF/LRO/RLO),
+    // BiDi isolate chars (\u2066-\u2069: LRI/RLI/FSI/PDI)
+    // These allow splitting "bypass" → "byp\u202Eass" to evade substring checks
+    .replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u00ad\u2060\u180e\u2028\u2029\u2061-\u2064]/gu, '')
     // Normalize multiple spaces/newlines to single space
     .replace(/\s+/g, ' ')
     // Normalize homoglyphs for common bypass chars (ɑ→a, ʙ→b, etc)
