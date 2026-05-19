@@ -1519,8 +1519,16 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(400, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: pwError }))
       }
-      const row = db.prepare('SELECT * FROM recovery_tokens WHERE id = ?').get(tokenId)
-      if (!row || row.used || new Date(row.expires_at) < new Date()) {
+      const row = db.prepare('SELECT * FROM recovery_tokens WHERE id = ? AND used = 0').get(tokenId)
+      if (!row || new Date(row.expires_at) < new Date()) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ error: 'Reset link is invalid or has expired' }))
+      }
+      // Atomic burn before bcrypt — closes TOCTOU race window between SELECT and UPDATE.
+      // Same pattern as claim_tokens: burn first so concurrent requests can't both win.
+      const burned = db.prepare('UPDATE recovery_tokens SET used = 1 WHERE id = ? AND used = 0').run(tokenId)
+      if (burned.changes === 0) {
+        // Lost the race — another request already consumed this token
         res.writeHead(400, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Reset link is invalid or has expired' }))
       }
@@ -1532,7 +1540,7 @@ const server = http.createServer(async (req, res) => {
       const newHash = await bcrypt.hash(password, 12)
       // Increment password_version — invalidates all existing JWTs for this user
       db.prepare('UPDATE users SET password_hash = ?, password_version = COALESCE(password_version, 0) + 1 WHERE id = ?').run(newHash, row.user_id)
-      db.prepare('UPDATE recovery_tokens SET used = 1 WHERE id = ?').run(tokenId)
+      // Token already burned atomically above — no second UPDATE needed
       // Clear any server-side reauth session for this user
       reauthSessions.delete(row.user_id)
       res.writeHead(200, { 'Content-Type': 'application/json' })
