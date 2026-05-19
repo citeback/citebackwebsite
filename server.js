@@ -717,9 +717,17 @@ function normalizeInput(text) {
     // Covers: ZWSP, ZWJ, ZWNJ, LRM, RLM, BOM, soft-hyphen, word-joiner,
     // Mongolian vowel sep, line/para separators, invisible math ops,
     // BiDi embedding/override (\u202A-\u202E: LRE/RLE/PDF/LRO/RLO),
-    // BiDi isolate chars (\u2066-\u2069: LRI/RLI/FSI/PDI)
-    // These allow splitting "bypass" → "byp\u202Eass" to evade substring checks
-    .replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u00ad\u2060\u180e\u2028\u2029\u2061-\u2064]/gu, '')
+    // BiDi isolate chars (\u2066-\u2069: LRI/RLI/FSI/PDI),
+    // Variation selectors (\uFE00-\uFE0F: VS-1..16 — invisible glyph variant marks),
+    // Arabic Letter Mark (\u061C — invisible directional mark),
+    // Interlinear Annotation (\uFFF9-\uFFFB — invisible structural marks),
+    // Hangul fillers (\u1160, \u3164, \uFFA0, \u115F — transparent spacing chars),
+    // Supplementary: Tag block (\u{E0000}-\u{E007F} — deprecated language tags),
+    //   Shorthand format controls (\u{1BCA0}-\u{1BCA3}),
+    //   High variation selectors (\u{E0100}-\u{E01EF})
+    // All allow splitting injection keywords like "bypass" → "byp<invisible>ass" to evade checks
+    .replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u00ad\u2060\u180e\u2028\u2029\u2061-\u2064\u061c\ufe00-\ufe0f\ufff9-\ufffb\u1160\u3164\uffa0\u115f]/gu, '')
+    .replace(/[\u{E0000}-\u{E007F}\u{1BCA0}-\u{1BCA3}\u{E0100}-\u{E01EF}]/gu, '')
     // Normalize multiple spaces/newlines to single space
     .replace(/\s+/g, ' ')
     // Normalize homoglyphs for common bypass chars (ɑ→a, ʙ→b, etc)
