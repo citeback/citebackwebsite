@@ -497,6 +497,20 @@ function checkBarRateLimit(ip) {
   entry.count++; return true
 }
 
+// ── Sighting rate limiter (authenticated users — 30/hour) ──────────────────
+// Prevents C2PA replay farming: attacker submits same photo repeatedly for +1 rep/submit.
+// Unauthenticated users already hit checkRateLimit (10/min); this caps authenticated users.
+const sightingRateCounts = new Map()
+function checkSightingRateLimit(ip) {
+  const now = Date.now()
+  const SIGHTING_WINDOW = 60 * 60 * 1000  // 1 hour
+  const SIGHTING_LIMIT = 30               // 30 sightings/hour max for authenticated users
+  const entry = sightingRateCounts.get(ip)
+  if (!entry || now - entry.start > SIGHTING_WINDOW) { sightingRateCounts.set(ip, { count: 1, start: now }); return true }
+  if (entry.count >= SIGHTING_LIMIT) return false
+  entry.count++; return true
+}
+
 // ── WebAuthn / Passkey config ────────────────────────────────────────────────
 const RP_NAME = 'Citeback'
 const RP_ID = 'citeback.com'
@@ -627,6 +641,7 @@ setInterval(() => {
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
   for (const [ip, e] of adminFailCounts){ if ((e.lockedUntil && now > e.lockedUntil + 60000) || (!e.lockedUntil && e.firstFail && now - e.firstFail > ADMIN_LOCKOUT_MS)) adminFailCounts.delete(ip) }
   for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
+  for (const [k, e] of sightingRateCounts)       { if (now - e.start > 60 * 60 * 1000) sightingRateCounts.delete(k)       }
   for (const [k, until] of reauthSessions)       { if (until < now)                          reauthSessions.delete(k)          }
 }, 10 * 60 * 1000) // every 10 minutes
 
@@ -1621,11 +1636,11 @@ const server = http.createServer(async (req, res) => {
 
     // ── Rate limit BEFORE any file I/O, disk writes, or C2PA CPU work ────────
     // JWT is in the cookie (request headers) — check auth without reading body.
-    // Unauthenticated IPs get the standard limit; authenticated get more headroom.
+    // Unauthenticated IPs get standard limit (10/min); authenticated get 30/hour.
     const preAuthClaims = verifyToken(req)
-    if (!preAuthClaims && !checkRateLimit(ip)) {
+    if (preAuthClaims ? !checkSightingRateLimit(ip) : !checkRateLimit(ip)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
-      return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait a minute.' }))
+      return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait before submitting again.' }))
     }
 
     const contentType = req.headers['content-type'] || ''
@@ -1763,12 +1778,15 @@ const server = http.createServer(async (req, res) => {
         fields = await parseBody(req)
       }
 
-      // Secondary rate limit gate for any slip-through (admin users bypass pre-auth check)
+      // Secondary rate limit gate (post-upload check; primarily catches admin bypass paths)
       const trusted = isAdmin(req, fields)
-      if (!trusted && !preAuthClaims && !checkRateLimit(ip)) {
-        if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
-        res.writeHead(429, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait a minute before submitting again.' }))
+      if (!trusted) {
+        const rlOk = preAuthClaims ? checkSightingRateLimit(ip) : checkRateLimit(ip)
+        if (!rlOk) {
+          if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+          res.writeHead(429, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait before submitting again.' }))
+        }
       }
       if (fields.honeypot) { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: true })) }
 
