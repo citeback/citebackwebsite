@@ -601,11 +601,13 @@ async function lookupCABar(rawBarNumber) {
   }
 }
 
-// Clean up expired recovery tokens every hour
+// Clean up expired/used tokens every hour (recovery_tokens + claim_tokens)
 setInterval(() => {
   try {
-    const deleted = db.prepare('DELETE FROM recovery_tokens WHERE expires_at < ? OR used = 1').run(new Date().toISOString())
+    const now = new Date().toISOString()
+    const deleted = db.prepare('DELETE FROM recovery_tokens WHERE expires_at < ? OR used = 1').run(now)
     if (deleted.changes > 0) console.log(`Cleaned ${deleted.changes} expired/used recovery tokens`)
+    db.prepare('DELETE FROM claim_tokens WHERE expires_at < ? OR used = 1').run(now)
   } catch (e) { console.error('Token cleanup error:', e.message) }
 }, 60 * 60 * 1000)
 
