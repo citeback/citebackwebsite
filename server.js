@@ -2317,6 +2317,7 @@ const server = http.createServer(async (req, res) => {
       const supplied = String(body.secret || '').trim()
       if (!supplied || !timingSafeCompare(supplied, ADMIN_SECRET)) {
         recordAdminFail(clientIp)
+        auditLog('admin_login_fail', null, null, clientIp)
         res.writeHead(401, { 'Content-Type': 'application/json' })
         return res.end(JSON.stringify({ error: 'Invalid secret' }))
       }
