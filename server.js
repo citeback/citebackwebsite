@@ -625,7 +625,7 @@ setInterval(() => {
   for (const [k, e] of barRateCounts)   { if (now - e.start > 60 * 1000)        barRateCounts.delete(k)   }
   for (const [k, e] of pkAuthRateCounts){ if (now - e.start > 60 * 1000)        pkAuthRateCounts.delete(k)}
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
-  for (const [ip, e] of adminFailCounts){ if (e.lockedUntil && now > e.lockedUntil + 60000) adminFailCounts.delete(ip) }
+  for (const [ip, e] of adminFailCounts){ if ((e.lockedUntil && now > e.lockedUntil + 60000) || (!e.lockedUntil && e.firstFail && now - e.firstFail > ADMIN_LOCKOUT_MS)) adminFailCounts.delete(ip) }
   for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
   for (const [k, until] of reauthSessions)       { if (until < now)                          reauthSessions.delete(k)          }
 }, 10 * 60 * 1000) // every 10 minutes
@@ -929,7 +929,8 @@ function checkAdminLockout(ip) {
   return true
 }
 function recordAdminFail(ip) {
-  const entry = adminFailCounts.get(ip) || { fails: 0 }
+  const entry = adminFailCounts.get(ip) || { fails: 0, firstFail: Date.now() }
+  if (!entry.firstFail) entry.firstFail = Date.now()
   entry.fails = (entry.fails || 0) + 1
   if (entry.fails >= ADMIN_MAX_FAILS) entry.lockedUntil = Date.now() + ADMIN_LOCKOUT_MS
   adminFailCounts.set(ip, entry)
