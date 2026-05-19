@@ -1718,8 +1718,13 @@ const server = http.createServer(async (req, res) => {
           req.pipe(bb)
         })
 
+        // Track whether upload was a ZIP (Proofmode bundle) — used for EXIF camera check exemption below.
+        // After extraction, photoFilename changes from .zip → .jpg; the original flag preserves the context.
+        let origWasZip = false
+
         // If zip uploaded (Proofmode bundle): extract JPEG + proof.json
         if (photoFilename && photoFilename.endsWith('.zip')) {
+          origWasZip = true
           try {
             const zipPath = path.join(PHOTOS_DIR, photoFilename)
             const zip = new AdmZip(zipPath)
@@ -1768,7 +1773,36 @@ const server = http.createServer(async (req, res) => {
           detectedC2PA = await verifyC2PA(path.join(PHOTOS_DIR, photoFilename))
         }
 
-        // Strip EXIF from JPEG after C2PA verification — protects user privacy.
+        // EXIF camera metadata check — real photos have camera make/model/ISO; AI images don't.
+        // MUST run BEFORE stripJpegExif: the strip removes APP1 (EXIF) so camera fields are gone after.
+        // Proofmode ZIPs are exempted via origWasZip (after extraction photoFilename is .jpg, not .zip,
+        // so we cannot use photoFilename.endsWith('.zip') here — origWasZip preserves the original state).
+        // Use isAdmin(req, {}) directly — `trusted` is declared in the outer block after isMultipart.
+        if (!isAdmin(req, {}) && photoFilename && !origWasZip) {
+          try {
+            const exifData = await Exifr.parse(path.join(PHOTOS_DIR, photoFilename), {
+              pick: ['Make', 'Model', 'ISO', 'ExposureTime', 'FNumber', 'DateTimeOriginal']
+            })
+            const hasCamera = exifData && (exifData.Make || exifData.Model || exifData.ISO || exifData.ExposureTime)
+            if (!hasCamera) {
+              fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+              res.writeHead(422, { 'Content-Type': 'application/json' })
+              return res.end(JSON.stringify({
+                error: 'Photo is missing camera metadata. AI-generated images and screenshots are not accepted.',
+                hint: 'Submit a real photo taken with your phone or camera. Shoot with Proofmode (iOS/Android) for strongest verification.',
+              }))
+            }
+          } catch (exifErr) {
+            // If EXIF parsing fails entirely, treat as no metadata
+            fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+            res.writeHead(422, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({
+              error: 'Could not read photo metadata. Please submit a real photograph taken with a camera or phone.',
+            }))
+          }
+        }
+
+        // Strip EXIF from JPEG after C2PA verification and camera metadata check — protects user privacy.
         // Removes GPS coordinates, camera model, timestamps, and other PII from EXIF.
         // APP11 (C2PA) is preserved; APP1/APP2/IPTC/XMP are stripped.
         if (photoFilename && photoFilename.match(/\.(jpg|jpeg)$/i)) {
@@ -1778,11 +1812,12 @@ const server = http.createServer(async (req, res) => {
         fields = await parseBody(req)
       }
 
-      // Secondary rate limit gate (post-upload check; primarily catches admin bypass paths)
+      // Secondary rate limit gate — only for unauthenticated non-admin users.
+      // Authenticated users (preAuthClaims set) were already checked pre-upload via checkSightingRateLimit;
+      // re-checking here would double-count their slots (halving the effective limit to 15/hr).
       const trusted = isAdmin(req, fields)
-      if (!trusted) {
-        const rlOk = preAuthClaims ? checkSightingRateLimit(ip) : checkRateLimit(ip)
-        if (!rlOk) {
+      if (!trusted && !preAuthClaims) {
+        if (!checkRateLimit(ip)) {
           if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
           res.writeHead(429, { 'Content-Type': 'application/json' })
           return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait before submitting again.' }))
@@ -1849,31 +1884,8 @@ const server = http.createServer(async (req, res) => {
         }))
       }
 
-      // EXIF camera metadata check — real photos have camera make/model/ISO; AI images don't
-      // Proofmode ZIPs are exempted (they embed GPS via proof.json, EXIF may be minimal)
-      if (!trusted && photoFilename && !photoFilename.endsWith('.zip')) {
-        try {
-          const exifData = await Exifr.parse(path.join(PHOTOS_DIR, photoFilename), {
-            pick: ['Make', 'Model', 'ISO', 'ExposureTime', 'FNumber', 'DateTimeOriginal']
-          })
-          const hasCamera = exifData && (exifData.Make || exifData.Model || exifData.ISO || exifData.ExposureTime)
-          if (!hasCamera) {
-            if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
-            res.writeHead(422, { 'Content-Type': 'application/json' })
-            return res.end(JSON.stringify({
-              error: 'Photo is missing camera metadata. AI-generated images and screenshots are not accepted.',
-              hint: 'Submit a real photo taken with your phone or camera. Shoot with Proofmode (iOS/Android) for strongest verification.',
-            }))
-          }
-        } catch (exifErr) {
-          // If EXIF parsing fails entirely, treat as no metadata
-          if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
-          res.writeHead(422, { 'Content-Type': 'application/json' })
-          return res.end(JSON.stringify({
-            error: 'Could not read photo metadata. Please submit a real photograph taken with a camera or phone.',
-          }))
-        }
-      }
+      // EXIF camera metadata check was moved to before stripJpegExif (above in the multipart block).
+      // Running it here would read from a stripped JPEG (APP1 removed), always returning null metadata.
 
       // GPS plausibility check — reject suspiciously round coordinates that suggest manual entry
       if (!trusted) {
