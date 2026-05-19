@@ -1452,7 +1452,8 @@ const server = http.createServer(async (req, res) => {
       })
     } catch (e) {
       console.error('recovery error:', e.message)
-      if (!res.headersSent) { res.writeHead(500, {"Content-Type": "application/json"}); res.end(JSON.stringify({error: "Server error"})); }
+      // Always 200 — never reveal whether user/email exists or that parsing failed
+      if (!res.headersSent) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ ok: true, message: 'If that account has a recovery email, a reset link has been sent.' })); }
     }
     return
   }
