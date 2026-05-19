@@ -361,6 +361,8 @@ Track bugs found but not yet fixed here:
 | 2026-05-10 | alpr-us.json (30MB) served by Caddy with no cache headers — full file re-downloaded every request | ✅ FIXED (Cache-Control: public, max-age=3600, stale-while-revalidate=86400 added to Caddyfile; caddy reloaded) |
 | 2026-05-10 | ai.citeback.com missing Permissions-Policy header | ✅ FIXED (added to Caddyfile header block; caddy reloaded) |
 | 2026-05-11 | Forgot-username flow — users without recovery email locked out with no guidance | ✅ FIXED (added 'No recovery email set? Contact support' note with citeback@proton.me link, commit cac4fbd) |
+| 2026-05-19 | `forgot-username` catch block missing `!res.headersSent` guard — `parseBody` throwing 'bad json' (empty/bad body) left connection hanging without response; confirmed via VPS logs | ✅ FIXED (added headersSent guard, always sends 200+ok, commit 53935e5) |
+| 2026-05-19 | `account/recover` catch block returned 500 when `parseBody` threw — inconsistent with 'always 200' security property | ✅ FIXED (returns 200 with standard message when !res.headersSent, commit 4153243) |
 
 ---
 
