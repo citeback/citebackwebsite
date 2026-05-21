@@ -2886,8 +2886,14 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify(BUSY))
     }, QUEUE_TIMEOUT)
-    // Forward sanitised capped messages — not the raw client body
-    const safeBody = JSON.stringify({ ...parsed, messages })
+    // Forward sanitised capped messages — not the raw client body.
+    // SECURITY: whitelist only model+messages+stream; discard all other client-supplied
+    // Ollama parameters (num_predict, num_ctx, temperature, options, etc.) which could
+    // cause resource exhaustion or model-switching to a heavier model.
+    const ALLOWED_MODELS = new Set(['llama3.2:latest', 'qwen2.5:7b', 'qwen2.5:14b'])
+    const model = (typeof parsed.model === 'string' && ALLOWED_MODELS.has(parsed.model))
+      ? parsed.model : 'llama3.2:latest'
+    const safeBody = JSON.stringify({ model, messages, stream: parsed.stream === true })
     queue.push({ body: safeBody, res, timer })
     processNext()
   })
