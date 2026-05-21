@@ -652,6 +652,15 @@ function processNext() {
   processing = true
   const { body, res, timer } = queue.shift()
   clearTimeout(timer)
+  // settle() is idempotent — ensures processing resets exactly once per queued item
+  // even if ollama 'end', ollama 'error', and res 'close' all fire for the same request
+  let settled = false
+  const settle = () => {
+    if (settled) return
+    settled = true
+    processing = false
+    processNext()
+  }
   const options = {
     hostname: OLLAMA_HOST, port: OLLAMA_PORT, path: '/api/chat', method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
@@ -659,11 +668,20 @@ function processNext() {
   const proxy = http.request(options, (ollama) => {
     res.writeHead(ollama.statusCode, { 'Content-Type': 'application/json' })
     ollama.pipe(res)
-    ollama.on('end', () => { processing = false; processNext() })
+    ollama.on('end', settle)
+    // Handle mid-stream Ollama errors — without this, unhandled 'error' on ollama stream
+    // would crash the process and leave processing=true, deadlocking the queue.
+    ollama.on('error', settle)
+    // If client disconnects mid-stream: destroy the Ollama response to avoid wasting
+    // compute completing a response nobody will receive, then reset the queue.
+    res.on('close', () => { ollama.destroy(); settle() })
   })
-  proxy.on('error', (e) => {
-    res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Ollama unavailable' }))
-    processing = false; processNext()
+  proxy.on('error', () => {
+    if (!res.headersSent) {
+      res.writeHead(502, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: 'Ollama unavailable' }))
+    }
+    settle()
   })
   proxy.write(body); proxy.end()
 }
