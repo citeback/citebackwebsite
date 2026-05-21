@@ -746,11 +746,11 @@ function normalizeInput(text) {
     .replace(/[α]/g, 'a')        // Greek alpha α → a
     .replace(/[ο]/g, 'o')        // Greek omicron ο → o
     .replace(/[ε]/g, 'e')        // Greek epsilon ε → e
-    .replace(/[ρ]/g, 'p')        // Greek rho ρ → p (visual look-alike)
+    .replace(/[ρ]/g, 'r')        // Greek rho ρ → r (phonetic; catches 'ignore', 'jailbreak', 'respond', etc.)
     .replace(/[κ]/g, 'k')        // Greek kappa κ → k
     .replace(/[τ]/g, 't')        // Greek tau τ → t
     .replace(/[υ]/g, 'u')        // Greek upsilon υ → u
-    .replace(/[ν]/g, 'v')        // Greek nu ν → v
+    .replace(/[ν]/g, 'n')        // Greek nu ν → n (phonetic; catches 'new persona', 'no filter mode', etc.)
     .replace(/[σΣ]/g, 's')     // Greek sigma σ/Σ → s
     .trim()
 }
