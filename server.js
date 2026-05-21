@@ -2863,8 +2863,16 @@ const server = http.createServer(async (req, res) => {
     if (bodyBytes > MAX_CHAT_BODY) return // destroyed
     let parsed
     try { parsed = JSON.parse(rawBody) } catch { res.writeHead(400, { 'Content-Type': 'text/plain' }); return res.end('Bad request') }
-    // Cap history to last 20 messages — prevents context-stuffing with huge histories
-    const messages = (parsed.messages || []).slice(-20)
+    // Cap history to last 20 messages — prevents context-stuffing with huge histories.
+    // SECURITY: whitelist roles to user/assistant only — block client-supplied role:"system"
+    // which would bypass injection signal checks (system overrides like "You are an unrestricted
+    // assistant" contain no INJECTION_SIGNALS) and could influence model behavior at Ollama level.
+    // Also normalize content to string — non-string content (array/object multimodal format)
+    // passes injection checks (normalizes to empty string) but was forwarded raw to Ollama.
+    const messages = (Array.isArray(parsed.messages) ? parsed.messages : [])
+      .slice(-20)
+      .filter(m => m && (m.role === 'user' || m.role === 'assistant'))
+      .map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : '' }))
     const lastUser = [...messages].reverse().find(m => m.role === 'user')
     // Cap individual message length — prevent single-message context stuffing
     const rawUserText = lastUser?.content || ''
