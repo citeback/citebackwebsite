@@ -2503,50 +2503,56 @@ const server = http.createServer(async (req, res) => {
   // GET /api/campaigns
   if (req.method === 'GET' && req.url === '/api/campaigns') {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
-    const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
-    const result = rows.map(c => ({
-      id: c.id, type: c.type, title: c.title, description: c.description,
-      winCondition: c.win_condition, location: c.location, goal: c.goal,
-      raised: c.raised, backers: c.backers, deadline: c.deadline,
-      tags: JSON.parse(c.tags || '[]'), source: c.source,
-      contractContext: c.contract_context,
-      verifyMeta: c.verify_meta ? JSON.parse(c.verify_meta) : null,
-      milestones: c.milestones ? JSON.parse(c.milestones) : null,
-      status: c.status, operatorId: c.operator_id,
-      operatorUsername: c.operator_username,
-      operatorName: c.operator_name, operatorBio: c.operator_bio,
-      walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
-      claimedAt: c.claimed_at, activatedAt: c.activated_at,
-      walletChangedAt: c.wallet_changed_at || null,
-    }))
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify(result))
+    try {
+      const safeJson = (s, fallback) => { try { return s ? JSON.parse(s) : fallback } catch { return fallback } }
+      const rows = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id ORDER BY c.id ASC').all()
+      const result = rows.map(c => ({
+        id: c.id, type: c.type, title: c.title, description: c.description,
+        winCondition: c.win_condition, location: c.location, goal: c.goal,
+        raised: c.raised, backers: c.backers, deadline: c.deadline,
+        tags: safeJson(c.tags, []), source: c.source,
+        contractContext: c.contract_context,
+        verifyMeta: safeJson(c.verify_meta, null),
+        milestones: safeJson(c.milestones, null),
+        status: c.status, operatorId: c.operator_id,
+        operatorUsername: c.operator_username,
+        operatorName: c.operator_name, operatorBio: c.operator_bio,
+        walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
+        claimedAt: c.claimed_at, activatedAt: c.activated_at,
+        walletChangedAt: c.wallet_changed_at || null,
+      }))
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify(result))
+    } catch { res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' })) }
   }
 
   // GET /api/campaigns/:id — single campaign (for deep links and reduced payload)
   if (req.method === 'GET' && /^\/api\/campaigns\/\d+$/.test(req.url)) {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
-    const id = parseInt(req.url.split('/')[3])
-    if (!Number.isFinite(id) || id < 1) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'invalid id' })) }
-    const c = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id WHERE c.id = ?').get(id)
-    if (!c) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
-    const result = {
-      id: c.id, type: c.type, title: c.title, description: c.description,
-      winCondition: c.win_condition, location: c.location, goal: c.goal,
-      raised: c.raised, backers: c.backers, deadline: c.deadline,
-      tags: JSON.parse(c.tags || '[]'), source: c.source,
-      contractContext: c.contract_context,
-      verifyMeta: c.verify_meta ? JSON.parse(c.verify_meta) : null,
-      milestones: c.milestones ? JSON.parse(c.milestones) : null,
-      status: c.status, operatorId: c.operator_id,
-      operatorUsername: c.operator_username,
-      operatorName: c.operator_name, operatorBio: c.operator_bio,
-      walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
-      claimedAt: c.claimed_at, activatedAt: c.activated_at,
-      walletChangedAt: c.wallet_changed_at || null,
-    }
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify(result))
+    try {
+      const safeJson = (s, fallback) => { try { return s ? JSON.parse(s) : fallback } catch { return fallback } }
+      const id = parseInt(req.url.split('/')[3])
+      if (!Number.isFinite(id) || id < 1) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'invalid id' })) }
+      const c = db.prepare('SELECT c.*, u.username as operator_username FROM campaigns c LEFT JOIN users u ON c.operator_id = u.id WHERE c.id = ?').get(id)
+      if (!c) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Campaign not found' })) }
+      const result = {
+        id: c.id, type: c.type, title: c.title, description: c.description,
+        winCondition: c.win_condition, location: c.location, goal: c.goal,
+        raised: c.raised, backers: c.backers, deadline: c.deadline,
+        tags: safeJson(c.tags, []), source: c.source,
+        contractContext: c.contract_context,
+        verifyMeta: safeJson(c.verify_meta, null),
+        milestones: safeJson(c.milestones, null),
+        status: c.status, operatorId: c.operator_id,
+        operatorUsername: c.operator_username,
+        operatorName: c.operator_name, operatorBio: c.operator_bio,
+        walletXMR: c.wallet_xmr, walletZANO: c.wallet_zano,
+        claimedAt: c.claimed_at, activatedAt: c.activated_at,
+        walletChangedAt: c.wallet_changed_at || null,
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify(result))
+    } catch { res.writeHead(500, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'server error' })) }
   }
 
   // POST /api/campaigns/:id/claim
