@@ -1706,11 +1706,11 @@ const server = http.createServer(async (req, res) => {
             fields: 20,                // max 20 form fields (sighting form has ~7; cap prevents 1000-field DoS)
             fieldSize: 4096,           // 4KB max per field value (generous for coords/notes/type/state)
           } })
-          // SECURITY: reject _proofLat/_proofLng as user-supplied form fields — these are
+          // SECURITY: reject _proofLat/_proofLng/_exifLat/_exifLng as user-supplied form fields — these are
           // server-only keys set during ZIP extraction from proof.json; if accepted from
           // user form data, an attacker with a valid C2PA JPEG (no GPS EXIF) could inject
           // arbitrary GPS coordinates for their sighting.
-          bb.on('field', (name, val) => { if (name !== '_proofLat' && name !== '_proofLng') fields[name] = val })
+          bb.on('field', (name, val) => { if (name !== '_proofLat' && name !== '_proofLng' && name !== '_exifLat' && name !== '_exifLng') fields[name] = val })
           bb.on('file', (name, stream, info) => {
             const isImage = !!ALLOWED_IMAGE_TYPES[info.mimeType]
             const isZip = ALLOWED_ZIP_TYPES.has(info.mimeType) || (info.filename || '').toLowerCase().endsWith('.zip')
@@ -1840,6 +1840,20 @@ const server = http.createServer(async (req, res) => {
           }
         }
 
+        // EXIF GPS: extract BEFORE stripJpegExif — the strip removes APP1 which contains GPS data.
+        // For non-ZIP JPEGs (ZIP uses proof.json GPS already stored in fields._proofLat/_proofLng),
+        // this pre-strips the coordinates so the GPS fallback below can use them even after EXIF is gone.
+        // Stored in fields._exifLat/_exifLng (server-internal, not user-injectable via form).
+        if (photoFilename && photoFilename.match(/\.(jpg|jpeg)$/i) && !origWasZip) {
+          try {
+            const preStripGps = await Exifr.gps(path.join(PHOTOS_DIR, photoFilename))
+            if (preStripGps?.latitude && preStripGps?.longitude) {
+              fields._exifLat = String(preStripGps.latitude)
+              fields._exifLng = String(preStripGps.longitude)
+            }
+          } catch {}
+        }
+
         // Strip EXIF from JPEG after C2PA verification and camera metadata check — protects user privacy.
         // Removes GPS coordinates, camera model, timestamps, and other PII from EXIF.
         // APP11 (C2PA) is preserved; APP1/APP2/IPTC/XMP are stripped.
@@ -1901,15 +1915,13 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      // Try EXIF GPS from JPEG as well (for non-zip uploads)
-      if ((!finalLat || !finalLng) && photoFilename) {
-        try {
-          const gps = await Exifr.gps(path.join(PHOTOS_DIR, photoFilename))
-          if (gps?.latitude && gps?.longitude) {
-            finalLat = String(gps.latitude)
-            finalLng = String(gps.longitude)
-          }
-        } catch {}
+      // EXIF GPS fallback — coordinates extracted pre-strip above (Exifr.gps after stripJpegExif
+      // always returns null because APP1/EXIF is removed; must use pre-strip cached value).
+      if (!finalLat || !finalLng) {
+        if (fields._exifLat && fields._exifLng) {
+          finalLat = fields._exifLat
+          finalLng = fields._exifLng
+        }
       }
 
       // No geocode fallback — GPS must come from photo or proof.json
