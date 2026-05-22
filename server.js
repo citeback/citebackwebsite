@@ -1940,6 +1940,15 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
+      // Normalize GPS to pure numeric strings — strips any non-numeric suffix (e.g. "35.123garbage")
+      // that parseFloat silently accepts during the bounds check above but would store as-is in JSONL.
+      // Applies to all GPS sources: user form field (.slice(0,20) permits non-numeric chars),
+      // EXIF (_exifLat/_exifLng are already String(float) but normalize for consistency),
+      // proof.json (_proofLat/_proofLng are already String(float), same).
+      // Defense-in-depth: ensures clean numeric data reaches isNewCamera(), reverseGeocode(), and storage.
+      finalLat = String(parseFloat(finalLat))
+      finalLng = String(parseFloat(finalLng))
+
       // GPS plausibility check — reject suspiciously round coordinates that suggest manual entry
       if (!trusted) {
         const latNum = parseFloat(finalLat)
