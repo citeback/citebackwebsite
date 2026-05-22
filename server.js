@@ -771,15 +771,27 @@ function normalizeInput(text) {
     .replace(/[уУ]/g, 'y')        // Cyrillic у/У → y (bypass "bypass your"/"hypothetically" vectors)
     .replace(/[хХ]/g, 'x')        // Cyrillic х/Х → x
     // Greek homoglyphs (NFKC does not normalize these to Latin)
-    .replace(/[α]/g, 'a')        // Greek alpha α → a
-    .replace(/[ο]/g, 'o')        // Greek omicron ο → o
-    .replace(/[ε]/g, 'e')        // Greek epsilon ε → e
-    .replace(/[ρ]/g, 'r')        // Greek rho ρ → r (phonetic; catches 'ignore', 'jailbreak', 'respond', etc.)
-    .replace(/[κ]/g, 'k')        // Greek kappa κ → k
-    .replace(/[τ]/g, 't')        // Greek tau τ → t
-    .replace(/[υ]/g, 'u')        // Greek upsilon υ → u
-    .replace(/[ν]/g, 'n')        // Greek nu ν → n (phonetic; catches 'new persona', 'no filter mode', etc.)
-    .replace(/[σΣ]/g, 's')     // Greek sigma σ/Σ → s
+    .replace(/[αΑ]/g, 'a')       // Greek alpha α/Α → a (both cases; NFKC does NOT lowercase Greek before this runs)
+    .replace(/[οΟ]/g, 'o')       // Greek omicron ο/Ο → o
+    .replace(/[εΕ]/g, 'e')       // Greek epsilon ε/Ε → e
+    .replace(/[ρΡ]/g, 'r')       // Greek rho ρ/Ρ → r (catches 'ignore', 'jailbreak', 'respond', etc.)
+    .replace(/[κΚ]/g, 'k')       // Greek kappa κ/Κ → k
+    .replace(/[τΤ]/g, 't')       // Greek tau τ/Τ → t
+    .replace(/[υΥ]/g, 'u')       // Greek upsilon υ/Υ → u
+    .replace(/[νΝ]/g, 'n')       // Greek nu ν/Ν → n (catches 'new persona', 'no filter mode', etc.)
+    .replace(/[σΣ]/g, 's')       // Greek sigma σ/Σ → s
+    // Greek letters missing from prior session (confirmed bypass vectors via Node.js harness):
+    // normalizeInput+NFKC pipeline does NOT map these to Latin — toLowerCase() after produces
+    // Greek lowercase (α/ι/β/η) which do NOT match ASCII ('a'/'i'/'b'/'h') in .includes() checks.
+    // Example bypasses: "ιgnore your" → stays "ιgnore your" → misses "ignore your";
+    // "βypass your" → stays "βypass your" → misses "bypass your";
+    // "withηout restrictions" → stays "withηout" → misses "without restrictions";
+    // "Ιgnore your" → after toLowerCase → "ιgnore your" → missed (capital Iota path).
+    // Note: η/Η (eta) maps to 'h' because ν/ɴ already cover 'n'; eta looks like 'H' (capital)
+    // and appears in bypass vectors for 'h'-containing signals ("without", "hypothetically").
+    .replace(/[ιΙ]/g, 'i')       // U+03B9 Greek iota ι / U+0399 capital Ι → i (bypass: "ignore your", "simulate a", "disregard", etc.)
+    .replace(/[βΒ]/g, 'b')       // U+03B2 Greek beta β / U+0392 capital Β → b (bypass: "bypass your", "jailbreak", etc.)
+    .replace(/[ηΗ]/g, 'h')       // U+03B7 Greek eta η / U+0397 capital Η → h (bypass: "without restrictions", "hypothetically you are", etc.)
     // IPA phonetic extension small capitals — NOT normalized by NFKC (confirmed bypass vectors).
     // These are visually identical to their Latin counterparts but are distinct Unicode codepoints
     // in the IPA Extensions (U+0250–U+02B8) and Phonetic Extensions (U+1D00–U+1D2B) blocks.
