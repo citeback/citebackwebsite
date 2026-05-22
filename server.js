@@ -1701,7 +1701,11 @@ const server = http.createServer(async (req, res) => {
       if (isMultipart) {
         await new Promise((resolve, reject) => {
           const bb = busboy({ headers: req.headers, limits: { fileSize: MAX_PHOTO_BYTES, files: 1 } })
-          bb.on('field', (name, val) => { fields[name] = val })
+          // SECURITY: reject _proofLat/_proofLng as user-supplied form fields — these are
+          // server-only keys set during ZIP extraction from proof.json; if accepted from
+          // user form data, an attacker with a valid C2PA JPEG (no GPS EXIF) could inject
+          // arbitrary GPS coordinates for their sighting.
+          bb.on('field', (name, val) => { if (name !== '_proofLat' && name !== '_proofLng') fields[name] = val })
           bb.on('file', (name, stream, info) => {
             const isImage = !!ALLOWED_IMAGE_TYPES[info.mimeType]
             const isZip = ALLOWED_ZIP_TYPES.has(info.mimeType) || (info.filename || '').toLowerCase().endsWith('.zip')
