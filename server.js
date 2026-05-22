@@ -780,6 +780,36 @@ function normalizeInput(text) {
     .replace(/[υ]/g, 'u')        // Greek upsilon υ → u
     .replace(/[ν]/g, 'n')        // Greek nu ν → n (phonetic; catches 'new persona', 'no filter mode', etc.)
     .replace(/[σΣ]/g, 's')     // Greek sigma σ/Σ → s
+    // IPA phonetic extension small capitals — NOT normalized by NFKC (confirmed bypass vectors).
+    // These are visually identical to their Latin counterparts but are distinct Unicode codepoints
+    // in the IPA Extensions (U+0250–U+02B8) and Phonetic Extensions (U+1D00–U+1D2B) blocks.
+    // Example bypass: "ᴊailbreak" (ᴊ=U+1D0A) → normalizeInput leaves it as "ᴊailbreak" → does NOT
+    // match "jailbreak"; "ɪgnore your" (ɪ=U+026A) → stays "ɪgnore your" → missed signal.
+    // All confirmed: NFKC + prior normalizeInput pipeline does NOT map these to ASCII equivalents.
+    .replace(/[ʙ]/g, 'b')        // U+0299 LATIN SMALL CAPITAL B
+    .replace(/[ᴄ]/g, 'c')        // U+1D04 LATIN SMALL CAPITAL C
+    .replace(/[ᴅ]/g, 'd')        // U+1D05 LATIN SMALL CAPITAL D
+    .replace(/[ᴇ]/g, 'e')        // U+1D07 LATIN SMALL CAPITAL E
+    .replace(/[ꜰ]/g, 'f')        // U+A730 LATIN SMALL CAPITAL F
+    .replace(/[ɢ]/g, 'g')        // U+0262 LATIN SMALL CAPITAL G
+    .replace(/[ʜ]/g, 'h')        // U+029C LATIN SMALL CAPITAL H
+    .replace(/[ɪ]/g, 'i')        // U+026A LATIN SMALL CAPITAL I
+    .replace(/[ᴊ]/g, 'j')        // U+1D0A LATIN SMALL CAPITAL J
+    .replace(/[ᴋ]/g, 'k')        // U+1D0B LATIN SMALL CAPITAL K
+    .replace(/[ʟ]/g, 'l')        // U+029F LATIN SMALL CAPITAL L
+    .replace(/[ᴍ]/g, 'm')        // U+1D0D LATIN SMALL CAPITAL M
+    .replace(/[ɴ]/g, 'n')        // U+0274 LATIN SMALL CAPITAL N
+    .replace(/[ᴀ]/g, 'a')        // U+1D00 LATIN SMALL CAPITAL A
+    .replace(/[ᴏ]/g, 'o')        // U+1D0F LATIN SMALL CAPITAL O
+    .replace(/[ᴘ]/g, 'p')        // U+1D18 LATIN SMALL CAPITAL P
+    .replace(/[ʀ]/g, 'r')        // U+0280 LATIN SMALL CAPITAL R
+    .replace(/[ꜱ]/g, 's')        // U+A731 LATIN SMALL CAPITAL S
+    .replace(/[ᴛ]/g, 't')        // U+1D1B LATIN SMALL CAPITAL T
+    .replace(/[ᴜ]/g, 'u')        // U+1D1C LATIN SMALL CAPITAL U
+    .replace(/[ᴠ]/g, 'v')        // U+1D20 LATIN SMALL CAPITAL V
+    .replace(/[ᴡ]/g, 'w')        // U+1D21 LATIN SMALL CAPITAL W
+    .replace(/[ʏ]/g, 'y')        // U+028F LATIN SMALL CAPITAL Y
+    .replace(/[ᴢ]/g, 'z')        // U+1D22 LATIN SMALL CAPITAL Z
     .trim()
 }
 function isOnTopic(text) {
