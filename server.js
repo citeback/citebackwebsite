@@ -1924,6 +1924,22 @@ const server = http.createServer(async (req, res) => {
       // EXIF camera metadata check was moved to before stripJpegExif (above in the multipart block).
       // Running it here would read from a stripped JPEG (APP1 removed), always returning null metadata.
 
+      // GPS bounds check — applies to all sources (user, EXIF, proof.json).
+      // Finite-and-in-range guard: prevents out-of-bounds values (e.g. lat=999.123456 from a crafted
+      // EXIF or malformed proof.json) from being stored in the sightings JSONL. The tooRound check below
+      // validates decimal precision but not range; this fills that gap.
+      {
+        const latNum = parseFloat(finalLat)
+        const lngNum = parseFloat(finalLng)
+        if (!isFinite(latNum) || !isFinite(lngNum) ||
+            latNum < -90 || latNum > 90 ||
+            lngNum < -180 || lngNum > 180) {
+          if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+          res.writeHead(422, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ error: 'GPS coordinates out of valid range.' }))
+        }
+      }
+
       // GPS plausibility check — reject suspiciously round coordinates that suggest manual entry
       if (!trusted) {
         const latNum = parseFloat(finalLat)
