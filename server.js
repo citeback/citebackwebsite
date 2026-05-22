@@ -908,7 +908,8 @@ async function checkPhotoContent(photoPath) {
         headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
       }, (apiRes) => {
         let data = ''
-        apiRes.on('data', chunk => data += chunk)
+        const MAX_GEMINI_BYTES = 64 * 1024  // 64KB cap — Gemini flash response is <5KB with maxOutputTokens:10
+        apiRes.on('data', chunk => { if (data.length < MAX_GEMINI_BYTES) data += chunk })
         apiRes.on('end', () => { try { resolve(JSON.parse(data)) } catch { reject(new Error('bad json')) } })
       })
       req.on('error', reject)
