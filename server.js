@@ -822,7 +822,7 @@ const parseBody = (req) => new Promise((resolve, reject) => {
   let body = ''
   req.on('data', chunk => {
     body += chunk
-    if (body.length > 20000) reject(new Error('too large'))
+    if (body.length > 20000) { req.destroy(); reject(new Error('too large')) }
   })
   req.on('end', () => { try { resolve(JSON.parse(body)) } catch { reject(new Error('bad json')) } })
   req.on('error', reject)
@@ -2955,6 +2955,13 @@ process.on('SIGTERM', () => {
   // Force exit after 10s if connections don't drain
   setTimeout(() => { console.error('[SIGTERM] Force exit'); process.exit(1) }, 10_000)
 })
+
+// SECURITY: protect against slow-read (Slowloris) attacks — a client that sends headers
+// but never completes the request body would hang parseBody/multipart handlers forever.
+// requestTimeout: Node auto-responds 408 if headers+body not received within 30s.
+// headersTimeout: Node auto-responds 408 if headers not received within 15s.
+server.requestTimeout = 30000
+server.headersTimeout = 15000
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Citeback proxy :${PORT} | queue:${MAX_QUEUE} | rate:${RATE_LIMIT}req/min | data:${DATA_DIR} | auth:enabled | admin:enabled`)
