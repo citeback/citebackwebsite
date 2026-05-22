@@ -1768,6 +1768,12 @@ const server = http.createServer(async (req, res) => {
             // C2PA on the JPEG is the authenticity gate; proof.json GPS is acceptable
             if (proofEntry) {
               try {
+                // SECURITY: zip bomb guard for proof.json — getData() decompresses the full entry into RAM.
+                // Real Proofmode proof.json is <2KB; 64KB is extremely generous. Without this check,
+                // a crafted ZIP with a small compressed proof.json that expands to hundreds of MB
+                // would exhaust server RAM (JPEG entry is already guarded; proof.json was not).
+                const MAX_PROOF_BYTES = 64 * 1024  // 64KB — real proof.json is <2KB
+                if (proofEntry.header.size > MAX_PROOF_BYTES) throw new Error('proof.json exceeds size limit')
                 const proof = JSON.parse(proofEntry.getData().toString('utf8'))
                 // Proofmode uses flat dot-notation keys: 'LOCATION.LATITUDE'
                 // Proofmode schema v1: 'Location.Latitude' / 'Location.Longitude'
