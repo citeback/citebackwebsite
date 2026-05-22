@@ -731,6 +731,16 @@ const OFF_TOPIC_SIGNALS = [
 ]
 function normalizeInput(text) {
   return text
+    // NFD decompose then strip ALL combining diacritical marks FIRST (bypass vector:
+    // inserting e.g. U+0300 combining grave INSIDE a keyword breaks substring match:
+    // "bypassÌ your" after NFKC stays "bypass̀ your" and does NOT match "bypass your";
+    // "jailbreâk" (U+00E2 via NFKC) stays "jailbreâk" and does NOT match "jailbreak".
+    // NFD decomposes precomposed chars (à→a+U+0300), then we strip the combining mark,
+    // leaving clean base chars before any homoglyph or signal matching.
+    // Ranges: U+0300-U+036F (main), U+1DC0-U+1DFF (supplement),
+    //         U+20D0-U+20FF (symbols), U+FE20-U+FE2F (half marks)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/gu, '')
     // Strip zero-width, invisible, and BiDi formatting Unicode (common bypass vector)
     // Covers: ZWSP, ZWJ, ZWNJ, LRM, RLM, BOM, soft-hyphen, word-joiner,
     // Mongolian vowel sep, line/para separators, invisible math ops,
