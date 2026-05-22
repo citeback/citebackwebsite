@@ -1700,7 +1700,12 @@ const server = http.createServer(async (req, res) => {
     try {
       if (isMultipart) {
         await new Promise((resolve, reject) => {
-          const bb = busboy({ headers: req.headers, limits: { fileSize: MAX_PHOTO_BYTES, files: 1 } })
+          const bb = busboy({ headers: req.headers, limits: {
+            fileSize: MAX_PHOTO_BYTES, // per-file size cap (12MB)
+            files: 1,                  // only one file per upload
+            fields: 20,                // max 20 form fields (sighting form has ~7; cap prevents 1000-field DoS)
+            fieldSize: 4096,           // 4KB max per field value (generous for coords/notes/type/state)
+          } })
           // SECURITY: reject _proofLat/_proofLng as user-supplied form fields — these are
           // server-only keys set during ZIP extraction from proof.json; if accepted from
           // user form data, an attacker with a valid C2PA JPEG (no GPS EXIF) could inject
@@ -1770,6 +1775,9 @@ const server = http.createServer(async (req, res) => {
               // contain '../' sequences that escape PHOTOS_DIR if written directly to disk.
               const jpegData = zip.readFile(jpegEntry)
               if (!jpegData) throw new Error('could not read JPEG from zip')
+              // SECURITY: zip bomb guard — compressed ZIP ≤12MB does not bound decompressed size.
+              // readFile() allocates the full decompressed content in RAM; reject before writing.
+              if (jpegData.length > MAX_PHOTO_BYTES) throw new Error('decompressed JPEG exceeds size limit')
               fs.writeFileSync(jpegDest, jpegData)
               // Delete the zip, keep only the JPEG
               fs.unlink(zipPath, () => {})
