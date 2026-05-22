@@ -828,40 +828,20 @@ const parseBody = (req) => new Promise((resolve, reject) => {
   req.on('error', reject)
 })
 
-// Geocode using Nominatim (1 req/sec limit — fine for rare sighting submissions)
-const geocode = (address, city, state) => new Promise((resolve) => {
-  const q = encodeURIComponent([address, city, state, 'USA'].filter(Boolean).join(', '))
-  const opts = {
-    hostname: 'nominatim.openstreetmap.org',
-    path: `/search?q=${q}&format=json&limit=1`,
-    headers: { 'User-Agent': 'citeback.com surveillance map' },
-  }
-  const req = https.get(opts, (res) => {
-    let body = ''
-    res.on('data', chunk => body += chunk)
-    res.on('end', () => {
-      try {
-        const results = JSON.parse(body)
-        if (results[0]) resolve({ lat: results[0].lat, lng: results[0].lon })
-        else resolve(null)
-      } catch { resolve(null) }
-    })
-  })
-  req.on('error', () => resolve(null))
-  req.setTimeout(8000, () => { req.destroy(); resolve(null) })
-})
-
-
 // Reverse geocode GPS coords to human-readable location using Nominatim
+// Response capped at 64KB — Nominatim /reverse JSON is typically <5KB; cap prevents unbounded RAM growth.
 const reverseGeocode = (lat, lng) => new Promise((resolve) => {
   const opts = {
     hostname: 'nominatim.openstreetmap.org',
     path: `/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&format=json&addressdetails=1`,
     headers: { 'User-Agent': 'citeback.com surveillance map' },
   }
+  const MAX_GEOCODE_BYTES = 64 * 1024  // 64KB cap — well above any real Nominatim response
   const req = https.get(opts, (res) => {
     let body = ''
-    res.on('data', chunk => body += chunk)
+    res.on('data', chunk => {
+      if (body.length < MAX_GEOCODE_BYTES) body += chunk
+    })
     res.on('end', () => {
       try {
         const result = JSON.parse(body)
