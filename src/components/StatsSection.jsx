@@ -68,7 +68,7 @@ export default function StatsSection() {
     {
       value: '10',
       isLive: false,
-      label: 'launch prerequisites before wallets activate',
+      label: 'community-verified camera sightings required before campaign wallets activate',
     },
     {
       value: 'XMR + ZANO',

@@ -7,7 +7,7 @@ const contributorSteps = [
   },
   {
     title: 'Send Monero or Zano',
-    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the operator\'s own wallet — Citeback never holds your funds. The platform monitors the balance via a read-only view key. If an operator withdraws before the campaign goal is met, they are permanently banned.',
+    desc: 'No account. No contributor identity collected. Monero (XMR) and Zano are privacy cryptocurrencies — there is no on-chain link between your wallet and the campaign address, even to us.\n\nSend directly to the campaign organizer\'s own wallet — Citeback never holds your funds. The platform monitors the balance via a read-only view key. If an organizer withdraws before the campaign goal is met, they are permanently banned.',
   },
   {
     title: 'Track It Publicly',
@@ -26,7 +26,7 @@ const operatorSteps = [
   },
   {
     title: 'Get Funded',
-    desc: 'Contributors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. Funds go directly to the operator\'s own wallet — Citeback never holds or touches them. The balance is publicly verifiable via a view key the operator publishes.',
+    desc: 'Contributors fund anonymously using Monero (XMR) or Zano — privacy cryptocurrencies with no traceable on-chain transaction history. No contributor identity collected. Funds go directly to the campaign organizer\'s own wallet — Citeback never holds or touches them. The balance is publicly verifiable via a view key the organizer publishes.',
   },
   {
     title: 'Execute and Document',
@@ -149,7 +149,7 @@ export default function HowItWorks({ setTab }) {
             {track === 'contributor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
           </button>
           <button onClick={() => setTab(track === 'contributor' ? 'trust' : 'operators')} className="hiw-cta-secondary">
-            {track === 'contributor' ? 'Full Trust FAQ →' : 'Operator Requirements →'}
+            {track === 'contributor' ? 'Full Trust FAQ →' : 'Campaign Organizer Requirements →'}
           </button>
         </div>
       )}

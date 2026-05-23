@@ -6,7 +6,6 @@ const stats = [
   { value: '7', label: 'Campaigns queued at launch' },
   { value: '$23,500', label: 'Total campaign funding goals' },
   { value: '$0', label: 'Raised to date — wallets not yet live' },
-  { value: '7/13', label: 'Launch prerequisites cleared' },
   { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
 ]
 
@@ -129,7 +128,19 @@ export default function Hero({ setTab }) {
               <button onClick={() => setTab('operators')} className="hero-btn-secondary">
                 Run a Campaign
               </button>
+              <button onClick={() => setTab('report')} className="hero-btn-secondary">
+                Report a Camera →
+              </button>
             </div>
+            <p className="hero-crypto-hint">
+              New to privacy coins?{' '}
+              <button
+                className="hero-crypto-hint-link"
+                onClick={() => document.getElementById('crypto-primer')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Takes about 10 minutes to get set up →
+              </button>
+            </p>
 
             <p className="hero-trust-line">
               Pre-launch — no wallets are active yet. 7 of 13 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are operator-held — balance publicly verifiable via view keys.

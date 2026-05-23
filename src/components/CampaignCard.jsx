@@ -51,7 +51,7 @@ export default function CampaignCard({ campaign, onClick }) {
           )}
           {unclaimed && (
             <span className="card-badge card-badge--operator">
-              <Users size={12} /> Seeking Operator
+              <Users size={12} /> Seeking Campaign Organizer
             </span>
           )}
           {claimed && !unclaimed && (
@@ -90,7 +90,7 @@ export default function CampaignCard({ campaign, onClick }) {
         <div className="card-progress-row">
           <span className={`card-raised-label${prelaunch ? ' card-raised-label--prelaunch' : ' card-raised-label--active'}`}>
             {unclaimed
-              ? 'Awaiting operator'
+              ? 'Seeking organizer'
               : claimed
               ? 'Wallet pending'
               : prelaunch

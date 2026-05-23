@@ -167,7 +167,7 @@ function CoinPanel({ coin }) {
 
 export default function CryptoPrimer() {
   return (
-    <section className="cp-section">
+    <section id="crypto-primer" className="cp-section">
       <div className="cp-inner">
 
         {/* Eyebrow */}

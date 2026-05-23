@@ -16,8 +16,6 @@ import HowItWorks from './components/HowItWorks'
 import BuildWithUs from './components/BuildWithUs'
 import CryptoPrimer from './components/CryptoPrimer'
 // HumanRegistry — lazy loaded below
-import ALPRExplainer from './components/ALPRExplainer'
-import SurveillanceExplainer from './components/SurveillanceExplainer'
 import Manifesto from './components/Manifesto'
 import GuaranteeSection from './components/GuaranteeSection'
 // Transparency — lazy loaded below
@@ -171,11 +169,8 @@ export default function App() {
               <div className="launch-tracker-section">
                 <LaunchTracker />
               </div>
-              <SurveillanceExplainer setTab={setTab} />
-              <ALPRExplainer setTab={setTab} />
               <Manifesto setTab={setTab} />
               <BuildWithUs setTab={setTab} />
-              <LiveFeed setTab={setTab} />
             </>
           } />
           <Route path="/campaigns/:id" element={<CampaignDeepLink setSelectedCampaign={setSelectedCampaign} setTab={setTab} />} />
