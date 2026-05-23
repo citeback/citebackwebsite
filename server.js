@@ -3,7 +3,7 @@ import https from 'https'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { randomUUID, timingSafeEqual, createCipheriv, createDecipheriv, randomBytes, createHash } from 'crypto'
+import { randomUUID, timingSafeEqual, createCipheriv, createDecipheriv, randomBytes, createHash, createHmac } from 'crypto'
 import Database from 'better-sqlite3'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -156,8 +156,22 @@ const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET env var not set'); process.exit(1) }
 const JWT_EXPIRY = '7d'
 
-// Email encryption key — 32 bytes derived from JWT_SECRET for AES-256-GCM
-const EMAIL_ENC_KEY = createHash('sha256').update(JWT_SECRET + ':email-enc-v1').digest()
+// Email keys derived from EMAIL_MASTER_KEY (independent of JWT_SECRET).
+// Fallback to JWT_SECRET derivation if not set — backward compat for existing installs.
+// Rotating JWT_SECRET alone will NOT corrupt email data when EMAIL_MASTER_KEY is set.
+const EMAIL_MASTER_KEY = process.env.EMAIL_MASTER_KEY || null
+const EMAIL_ENC_KEY = EMAIL_MASTER_KEY
+  ? createHash('sha256').update(EMAIL_MASTER_KEY + ':email-enc-v1').digest()
+  : createHash('sha256').update(JWT_SECRET + ':email-enc-v1').digest()
+
+// HMAC index key — deterministic, lets us look up encrypted emails without full table scan
+const EMAIL_HMAC_KEY = EMAIL_MASTER_KEY
+  ? createHmac('sha256', EMAIL_MASTER_KEY + ':email-hmac-v1').digest()
+  : createHmac('sha256', JWT_SECRET + ':email-hmac-v1').digest()
+
+function hashEmailForLookup(email) {
+  return createHmac('sha256', EMAIL_HMAC_KEY).update(email.toLowerCase().trim()).digest('hex')
+}
 
 function encryptEmail(email) {
   const iv = randomBytes(12)
@@ -358,8 +372,57 @@ try { db.prepare('ALTER TABLE users ADD COLUMN attorney_verified INTEGER DEFAULT
 try { db.prepare('ALTER TABLE campaigns ADD COLUMN wallet_changed_at TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE users ADD COLUMN role TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_created INTEGER DEFAULT 0').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN email_hmac TEXT DEFAULT NULL').run() } catch {}
+try { db.prepare('CREATE INDEX IF NOT EXISTS idx_users_email_hmac ON users(email_hmac)').run() } catch {}
+try { db.prepare('ALTER TABLE launch_subscribers ADD COLUMN unsub_token TEXT DEFAULT NULL').run() } catch {}
+try { db.prepare('ALTER TABLE launch_subscribers ADD COLUMN unsubscribed_at INTEGER DEFAULT NULL').run() } catch {}
+try { db.prepare('CREATE INDEX IF NOT EXISTS idx_launch_unsub_token ON launch_subscribers(unsub_token)').run() } catch {}
+try { db.prepare('ALTER TABLE launch_subscribers ADD COLUMN email_hmac TEXT DEFAULT NULL').run() } catch {}
+try { db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_launch_email_hmac ON launch_subscribers(email_hmac)').run() } catch {}
+
+// Backfill unsub_token for existing subscribers + email_hmac for dedup
+;(() => {
+  try {
+    const noToken = db.prepare('SELECT id FROM launch_subscribers WHERE unsub_token IS NULL').all()
+    const stmtToken = db.prepare('UPDATE launch_subscribers SET unsub_token = ? WHERE id = ?')
+    for (const r of noToken) stmtToken.run(randomBytes(24).toString('base64url'), r.id)
+    if (noToken.length > 0) console.log('Backfilled unsub_token for', noToken.length, 'subscribers')
+
+    const noHmac = db.prepare('SELECT id, email FROM launch_subscribers WHERE email_hmac IS NULL AND email IS NOT NULL').all()
+    const stmtHmac = db.prepare('UPDATE launch_subscribers SET email_hmac = ? WHERE id = ?')
+    for (const r of noHmac) {
+      try {
+        const plain = decryptEmail(r.email)
+        if (plain) stmtHmac.run(hashEmailForLookup(plain), r.id)
+      } catch {}
+    }
+    if (noHmac.length > 0) console.log('Backfilled email_hmac for', noHmac.length, 'subscribers')
+  } catch (e) { console.error('launch_subscribers backfill error:', e.message) }
+})()
+
+// Backfill email_hmac for existing users that have email_enc but no hmac yet
+;(() => {
+  try {
+    const users = db.prepare('SELECT id, email_enc FROM users WHERE email_enc IS NOT NULL AND email_hmac IS NULL').all()
+    const stmt = db.prepare('UPDATE users SET email_hmac = ? WHERE id = ?')
+    for (const u of users) {
+      const plain = decryptEmail(u.email_enc)
+      if (plain) stmt.run(hashEmailForLookup(plain), u.id)
+    }
+    if (users.length > 0) console.log('Backfilled email_hmac for', users.length, 'users')
+  } catch (e) { console.error('email_hmac backfill error:', e.message) }
+})()
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN email TEXT DEFAULT NULL').run() } catch {}
+
+// ── Launch notification subscribers ──────────────────────────────────────────
+db.exec(`CREATE TABLE IF NOT EXISTS launch_subscribers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL UNIQUE,
+  ip TEXT,
+  created_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))
+)`)
+
 
 // ── Claim tokens table (for attorney account setup links) ─────────────────────
 db.exec(`
@@ -930,7 +993,25 @@ function normalizeInput(text) {
     .replace(/[\u028C]/g, 'v')   // U+028C Latin small letter turned v ʌ → v (bypass: "deʌeloper mode" → missed)
     .replace(/[\u028D]/g, 'w')   // U+028D Latin small letter turned w ʍ → w (bypass: "ʍithout restrictions" → missed)
     // (H) Armenian a-substitutes (additional to Georgian ა already covered):
-    .replace(/[\u0561]/g, 'a')   // U+0561 Armenian small letter ayb ա → a (bypass: "աct as if you" → missed; "աct like you" → missed)
+    .replace(/[Աա]/g, 'a')  // U+0531/U+0561 Armenian ayb Ա/ա → a (bypass: "Ա ct as if you" → missed; uppercase Ա was uncovered)
+    // Extended Armenian homoglyphs — NOT normalized by NFKC (confirmed bypass vectors via Node.js harness).
+    // Armenian script has numerous letters visually resembling Latin letters used in injection signals.
+    // Prior session covered only 5 Armenian entries (Ո/ո→n, Ս/ս→u, Լ/լ→l, Հ/հ→h, ա→a).
+    // These 13 additional entries cover remaining visually Latin-resembling Armenian letters.
+    // All confirmed: NFKC does NOT normalize Armenian to Latin; toLowerCase() on Armenian uppercase
+    // yields Armenian lowercase codepoints (not ASCII) — same two-step bypass path as Greek capitals.
+    .replace(/[Բբ]/g, 'b')  // U+0532/U+0562 Armenian ben Բ/բ → b (bypass: "Բypass your filter" → missed)
+    .replace(/[Դդ]/g, 'd')  // U+0534/U+0564 Armenian da Դ/դ → d (bypass: "Դisregard" → missed; "developer դode" → missed)
+    .replace(/[Եե]/g, 'e')  // U+0535/U+0565 Armenian yech Ե/ե → e (bypass: "pretend to bե" → "pretend to be" → missed)
+    .replace(/[Մմ]/g, 'm')  // U+0544/U+0574 Armenian men Մ/մ → m (bypass: "developer Մode" → missed; "god մode" → missed)
+    .replace(/[Յյ]/g, 'j')  // U+0545/U+0575 Armenian yi Յ/յ → j (bypass: "Յailbreak" → missed; visually resembles 'j')
+    .replace(/[Նն]/g, 'n')  // U+0546/U+0576 Armenian now Ն/ն → n (bypass: "igՆore your" → missed; "Նo filter mode" → missed)
+    .replace(/[Ջջ]/g, 'j')  // U+054B/U+057B Armenian jheh Ջ/ջ → j (bypass: "Ջailbreak" → missed)
+    .replace(/[Րր]/g, 'r')  // U+0550/U+0580 Armenian reh Ր/ր → r (bypass: "Րespond as" → missed; "ignoՐe your" → missed)
+    .replace(/[Ցց]/g, 'c')  // U+0551/U+0581 Armenian co Ց/ց → c (bypass: "Ցircumvent" → missed)
+    .replace(/[Փփ]/g, 'p')  // U+0553/U+0583 Armenian piwr Փ/փ → p (bypass: "Փretend to be" → missed; "byՓass" → missed)
+    .replace(/[Օօ]/g, 'o')  // U+0555/U+0585 Armenian oh Օ/օ → o (bypass: "develՕper mode" → missed; "ignօre your" → missed)
+    .replace(/[Ֆֆ]/g, 'f')  // U+0556/U+0586 Armenian feh Ֆ/ֆ → f (bypass: "Ֆorget your" → missed; "no ֆilter mode" → missed)
     .trim()
 }
 function isOnTopic(text) {
@@ -974,12 +1055,19 @@ const updateRecord = (filename, matchFn, updateFn) => {
         return l
       } catch { return l }
     })
-    if (changed) fs.writeFileSync(file, updated.join('\n') + '\n', 'utf8')
+    if (changed) {
+      // Atomic write: write to temp file then rename — prevents corruption on concurrent writes
+      const tmp = file + '.tmp.' + process.pid
+      fs.writeFileSync(tmp, updated.join('\n') + '\n', 'utf8')
+      fs.renameSync(tmp, file)
+    }
     return changed
   } catch (e) { console.error('Update error:', e.message); return false }
 }
 
 const parseBody = (req) => new Promise((resolve, reject) => {
+  const ct = (req.headers['content-type'] || '').split(';')[0].trim().toLowerCase()
+  if (ct !== 'application/json') return reject(new Error('content-type must be application/json'))
   let body = ''
   req.on('data', chunk => {
     body += chunk
@@ -1187,7 +1275,7 @@ function isAdmin(req, body) {
   const _ip = getClientIp(req)
   if (!checkAdminLockout(_ip)) return false
   const headerSecret = req.headers['x-admin-secret']
-  if (headerSecret && timingSafeCompare(headerSecret, ADMIN_SECRET)) { clearAdminFail(_ip); return true }
+  if (headerSecret && timingSafeCompare(headerSecret, ADMIN_SECRET)) { clearAdminFail(_ip); auditLog('admin_header_auth', null, null, _ip); return true }
   if (headerSecret) recordAdminFail(_ip)
   return false
 }
@@ -1369,7 +1457,7 @@ const server = http.createServer(async (req, res) => {
       const id = randomUUID()
       const password_hash = await bcrypt.hash(password, 12)
       const now = new Date().toISOString()
-      db.prepare('INSERT INTO users (id, username, password_hash, created_at, email_enc) VALUES (?, ?, ?, ?, ?)').run(id, username, password_hash, now, emailEnc)
+      db.prepare('INSERT INTO users (id, username, password_hash, created_at, email_enc, email_hmac) VALUES (?, ?, ?, ?, ?, ?)').run(id, username, password_hash, now, emailEnc, emailEnc ? hashEmailForLookup(String(body.email || '').trim().toLowerCase()) : null)
 
       const token = jwt.sign({ userId: id, username, pv: 0 }, JWT_SECRET, { expiresIn: JWT_EXPIRY })
       res.setHeader('Set-Cookie', `token=${token}; ${COOKIE_OPTS}`)
@@ -1571,7 +1659,7 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'Invalid email address' }))
       }
       const enc = email ? encryptEmail(email) : null
-      db.prepare('UPDATE users SET email_enc = ? WHERE id = ?').run(enc, claims.userId)
+      db.prepare('UPDATE users SET email_enc = ?, email_hmac = ? WHERE id = ?').run(enc, enc ? hashEmailForLookup(email) : null, claims.userId)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, hasEmail: !!email }))
     } catch (e) {
@@ -1679,12 +1767,8 @@ const server = http.createServer(async (req, res) => {
 
       // Fire-and-forget: do the real work after response is sent
       if (!emailRaw || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailRaw) || !emailEnabled) return
-      // Scan all users to find one with matching encrypted email
-      const allUsers = db.prepare('SELECT id, username, email_enc FROM users WHERE email_enc IS NOT NULL').all()
-      const match = allUsers.find(u => {
-        const decrypted = decryptEmail(u.email_enc)
-        return decrypted && decrypted.toLowerCase() === emailRaw
-      })
+      // O(1) HMAC index lookup — no full table scan, no mass decryption
+      const match = db.prepare('SELECT id, username FROM users WHERE email_hmac = ?').get(hashEmailForLookup(emailRaw))
       if (!match) return
       await mailer.sendMail({
         from: SMTP_FROM,
@@ -2292,7 +2376,7 @@ const server = http.createServer(async (req, res) => {
         INSERT INTO attorney_applications
           (id, full_name, bar_state, bar_number, bar_verified, bar_result, location, background, email, status, submitted_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-      `).run(id, full_name, bar_state, bar_number || null, bar_verified, bar_result, location, background, appEmail, now)
+      `).run(id, full_name, bar_state, bar_number || null, bar_verified, bar_result, location, background, appEmail ? encryptEmail(appEmail) : null, now)
 
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, id, barVerified: !!bar_verified }))
@@ -2375,7 +2459,8 @@ const server = http.createServer(async (req, res) => {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
     if (!isAdmin(req, {})) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'unauthorized' })) }
     try {
-      const all = db.prepare('SELECT * FROM attorney_applications ORDER BY submitted_at DESC').all()
+      const rawAll = db.prepare('SELECT * FROM attorney_applications ORDER BY submitted_at DESC').all()
+      const all = rawAll.map(r => ({ ...r, email: r.email ? (() => { try { return decryptEmail(r.email) } catch { return null } })() : null }))
       const pending = all.filter(a => a.status === 'pending')
       const approved = all.filter(a => a.status === 'approved')
       const rejected = all.filter(a => a.status === 'rejected')
@@ -2406,7 +2491,8 @@ const server = http.createServer(async (req, res) => {
       auditLog('attorney_' + action, id, notes || null, ip)
       if (changed.changes > 0 && action === 'approve') {
         try {
-          const appRow = db.prepare('SELECT full_name, email, account_created FROM attorney_applications WHERE id = ?').get(id)
+          const appRowRaw = db.prepare('SELECT full_name, email, account_created FROM attorney_applications WHERE id = ?').get(id)
+          const appRow = appRowRaw ? { ...appRowRaw, email: appRowRaw.email ? (() => { try { return decryptEmail(appRowRaw.email) } catch { return appRowRaw.email } })() : null } : null
           if (appRow && appRow.email && !appRow.account_created) {
             // Generate username from full_name
             const baseName = appRow.full_name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '').slice(0, 15)
@@ -2453,7 +2539,8 @@ const server = http.createServer(async (req, res) => {
         } catch (e) { console.error('attorney account creation error:', e.message) }
       } else if (changed.changes > 0 && action === 'reject' && emailEnabled) {
         try {
-          const appRow = db.prepare('SELECT full_name, email FROM attorney_applications WHERE id = ?').get(id)
+          const appRowRaw2 = db.prepare('SELECT full_name, email FROM attorney_applications WHERE id = ?').get(id)
+          const appRow = appRowRaw2 ? { ...appRowRaw2, email: appRowRaw2.email ? (() => { try { return decryptEmail(appRowRaw2.email) } catch { return appRowRaw2.email } })() : null } : null
           if (appRow && appRow.email) {
             const notifyText = 'Hi ' + appRow.full_name + ',\n\nThank you for applying to the Citeback Expert Directory. After review, we are unable to approve your application at this time.' + (notes ? '\n\nNote from reviewer: ' + notes : '') + '\n\nIf you have questions, contact citeback@proton.me.\n\nCiteback'
             mailer.sendMail({ from: SMTP_FROM, to: appRow.email, subject: 'Update on your Citeback Expert Directory application', text: notifyText }).catch(e => console.error('attorney notify error:', e.message))
@@ -2704,7 +2791,9 @@ const server = http.createServer(async (req, res) => {
           return l
         } catch { return l }
       })
-      fs.writeFileSync(file, updated.join('\n') + '\n', 'utf8')
+      const tmp3 = file + '.tmp.' + process.pid
+      fs.writeFileSync(tmp3, updated.join('\n') + '\n', 'utf8')
+      fs.renameSync(tmp3, file)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: true, approved: count }))
     } catch {
@@ -2714,6 +2803,53 @@ const server = http.createServer(async (req, res) => {
 
   // ── Campaigns API ────────────────────────────────────────────────────────────
   // OPTIONS preflight for /api/ is handled by the global OPTIONS handler above
+
+
+  // POST /api/notify-launch — launch notification signup
+  if (req.method === 'POST' && req.url === '/api/notify-launch') {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    let body
+    try { body = await parseBody(req) } catch { res.writeHead(400); return res.end() }
+    const email = (body.email || '').toString().trim().toLowerCase()
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Valid email required' }))
+    }
+    try {
+      const unsubToken = randomBytes(24).toString('base64url')
+      const emailHmac = hashEmailForLookup(email)
+      db.prepare('INSERT OR IGNORE INTO launch_subscribers (email, email_hmac, ip, unsub_token) VALUES (?, ?, ?, ?) ON CONFLICT(email_hmac) DO NOTHING').run(encryptEmail(email), emailHmac, ip, unsubToken)
+    } catch (e) { console.error('notify-launch insert error:', e.message) }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ ok: true }))
+  }
+
+  // GET /api/notify-launch/unsubscribe?token=X — one-click unsubscribe (CAN-SPAM/GDPR)
+  if (req.method === 'GET' && req.url?.startsWith('/api/notify-launch/unsubscribe')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'text/html' }); return res.end('<p>Too many requests. Please try again later.</p>') }
+    const token = new URL(req.url, 'https://citeback.com').searchParams.get('token') || ''
+    if (!token || token.length < 10) {
+      res.writeHead(400, { 'Content-Type': 'text/html' })
+      return res.end('<p>Invalid unsubscribe link.</p>')
+    }
+    try {
+      const row = db.prepare('SELECT id, unsubscribed_at FROM launch_subscribers WHERE unsub_token = ?').get(token)
+      if (!row) {
+        res.writeHead(404, { 'Content-Type': 'text/html' })
+        return res.end('<p>Unsubscribe link not found or already used.</p>')
+      }
+      if (row.unsubscribed_at) {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        return res.end('<p>You are already unsubscribed. No further action needed.</p>')
+      }
+      db.prepare('UPDATE launch_subscribers SET unsubscribed_at = ? WHERE id = ?').run(Date.now(), row.id)
+      res.writeHead(200, { 'Content-Type': 'text/html' })
+      return res.end(`<html><head><title>Unsubscribed</title></head><body><h2>✅ Unsubscribed</h2><p>You have been removed from the Citeback launch list. No further emails will be sent.</p></body></html>`)
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'text/html' })
+      return res.end('<p>Server error. Please try again.</p>')
+    }
+  }
 
   // GET /api/campaigns
   if (req.method === 'GET' && req.url === '/api/campaigns') {
@@ -2897,7 +3033,7 @@ const server = http.createServer(async (req, res) => {
       const credentialId = Buffer.from(credential.id).toString('base64url')
       const publicKey = Buffer.from(credential.publicKey).toString('base64url')
       const passkeyId = randomUUID()
-      const safeName = deviceName ? String(deviceName).trim().slice(0, 80) : null
+      const safeName = deviceName ? String(deviceName).trim().slice(0, 80).replace(/[<>&"']/g, '') : null
       db.prepare('INSERT INTO passkeys (id, user_id, credential_id, public_key, sign_count, device_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
         passkeyId, claims.userId, credentialId, publicKey, credential.counter, safeName, new Date().toISOString()
       )
@@ -3039,8 +3175,7 @@ const server = http.createServer(async (req, res) => {
       },
       frontend: {
         repo: 'https://github.com/citeback/citebackwebsite',
-        deploys: 'https://app.netlify.com/sites/heroic-yeot-51eaeb/deploys',
-        howToVerify: 'Every frontend deploy on Netlify lists the exact GitHub commit it was built from.',
+        howToVerify: 'Every frontend deploy lists the exact GitHub commit it was built from. Match the commit to the repo to verify.',
       },
       note: 'SHA-256 is computed from the live server.js at startup. If it matches the public repo, the code running here is exactly what is published.',
     }))
@@ -3136,8 +3271,9 @@ process.on('unhandledRejection', (reason, promise) => {
 })
 process.on('uncaughtException', (err) => {
   console.error('[uncaughtException]', err.message, err.stack)
-  // For truly uncaught exceptions, log and attempt graceful shutdown
-  setTimeout(() => process.exit(1), 3000) // Give systemd time to restart
+  // Stop accepting new connections immediately; let in-flight requests drain, then exit
+  try { server.close() } catch {}
+  setTimeout(() => process.exit(1), 3000)
 })
 
 // Graceful shutdown — drain in-flight requests on SIGTERM (systemctl stop/restart)
