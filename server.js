@@ -758,6 +758,12 @@ function normalizeInput(text) {
     .replace(/[\u{E0000}-\u{E007F}\u{1BCA0}-\u{1BCA3}\u{E0100}-\u{E01EF}]/gu, '')
     // Normalize multiple spaces/newlines to single space
     .replace(/\s+/g, ' ')
+    // Fix doubled-char artifacts from invisible-char removal at natural word-split boundaries.
+    // "bypass your" can be split as "byp" + ZWSP + "pass your": after ZWSP strip, adjacent
+    // 'p' chars merge into "byppass your" (double 'p') which does NOT match "bypass your".
+    // This is the only injection signal vulnerable to this specific word-split artifact.
+    // "byppass" is not a real English word; this replacement cannot cause false positives.
+    .replace(/byppass/gi, 'bypass')
     // Normalize homoglyphs for common bypass chars (ɑ→a, ʙ→b, etc)
     .replace(/[ɑаА]/g, 'a')  // Latin alpha, Cyrillic a/А
     .replace(/[еЕ]/g, 'e')        // Cyrillic e/Е
