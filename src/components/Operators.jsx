@@ -141,7 +141,7 @@ export default function Operators() {
 
       <Accordion title="Funded by lawful activity only" icon={CheckCircle}>
         <p>Criminal defense funding is prohibited. Campaigns involving illegal activity are prohibited. Camera tampering is prohibited — these are governance immutables and cannot be voted away.</p>
-        <p className="ops-body-p-spaced">Billboard campaigns require an operator attestation of factual accuracy — you certify your claims are verifiable. The platform does not verify content, but you are legally responsible for it.</p>
+        <p className="ops-body-p-spaced">Billboard campaigns require an organizer attestation of factual accuracy — you certify your claims are verifiable. The platform does not verify content, but you are legally responsible for it.</p>
       </Accordion>
 
       <Accordion title="Has a realistic cost breakdown with milestones" icon={FileText}>

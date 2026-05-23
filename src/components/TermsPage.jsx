@@ -7,16 +7,16 @@ export default function TermsPage() {
     <>
     <Helmet>
       <title>Terms of Use | Citeback</title>
-      <meta name="description" content="Citeback terms of use: platform rules, operator obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
+      <meta name="description" content="Citeback terms of use: platform rules, organizer obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
       <meta property="og:title" content="Terms of Use | Citeback" />
-      <meta property="og:description" content="Citeback terms of use: platform rules, operator obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
+      <meta property="og:description" content="Citeback terms of use: platform rules, organizer obligations, contributor rights, and legal framework for anonymous surveillance resistance crowdfunding." />
     </Helmet>
     <section className="legal-page-section">
       {/* Draft disclaimer — top of page, prominent */}
       <div className="legal-draft-notice">
         <strong className="legal-draft-notice-title">⚠ These terms are in draft form pending legal review.</strong>
         They are published for community transparency. They have <em>not</em> been reviewed by legal counsel and are subject to change before platform launch.
-        No funds go live until attorney review is complete. Full draft with OFAC disclosures, operator obligations, and §230 notice:{' '}
+        No funds go live until attorney review is complete. Full draft with OFAC disclosures, organizer obligations, and §230 notice:{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
           className="legal-draft-notice-link">TERMS.md on GitHub</a>.
       </div>
@@ -53,15 +53,15 @@ Citeback is not a charitable organization. Contributions are not tax-deductible.
           body: `When campaign wallets activate:
 
 • All contributions are final and non-refundable. Monero's privacy model makes identifying senders technically infeasible; Citeback will not ask contributors to deanonymize themselves to facilitate refunds.
-• If a campaign does not reach its goal by the deadline, funds redirect to the highest-priority active campaign in the same category. Operators or community members may request an extension vote. After two extensions, redirect is automatic.
+• If a campaign does not reach its goal by the deadline, funds redirect to the highest-priority active campaign in the same category. Campaign organizers or community members may request an extension vote. After two extensions, redirect is automatic.
 • Contributions are not tax-deductible. Citeback is a Wyoming DAO LLC, not a 501(c)(3) exempt organization.
-• Citeback takes no platform fee from campaign contributions. Zero percent is deducted. All campaign funds go directly to the campaign operator\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
+• Citeback takes no platform fee from campaign contributions. Zero percent is deducted. All campaign funds go directly to the campaign organizer\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
         },
         {
           title: '5. OFAC Compliance',
           body: `Contributions from individuals or entities on the U.S. Treasury OFAC Specially Designated Nationals (SDN) list are strictly prohibited. By sending funds to any campaign wallet, you represent that you are not a Specially Designated National or otherwise subject to U.S. sanctions.
 
-OFAC gap disclosure: Because Monero and Zano transactions are private at the protocol level, the platform has no technical ability to screen anonymous contributors against the OFAC SDN list. This structural limitation is documented in GOVERNANCE.md §9.3. The Terms prohibition is a binding legal condition; on-chain enforcement is not possible on the contributor side. Campaign disbursement recipients (operators) are separately screened against the OFAC SDN list before onboarding and at every disbursement event.
+OFAC gap disclosure: Because Monero and Zano transactions are private at the protocol level, the platform has no technical ability to screen anonymous contributors against the OFAC SDN list. This structural limitation is documented in GOVERNANCE.md §9.3. The Terms prohibition is a binding legal condition; on-chain enforcement is not possible on the contributor side. Campaign disbursement recipients (campaign organizers) are separately screened against the OFAC SDN list before onboarding and at every disbursement event.
 
 No campaign wallets go live until written attorney guidance on this gap is received.`,
         },
@@ -77,21 +77,21 @@ No campaign wallets go live until written attorney guidance on this gap is recei
 
 You may not use this Site to:
 • Submit false, fraudulent, or malicious camera locations or campaign proposals
-• Attempt to identify contributors, operators, or other participants
+• Attempt to identify contributors, campaign organizers, or other participants
 • Interfere with the wallet system or governance mechanisms
 • Use the platform to fund activities that are unlawful in the relevant jurisdiction
 • Violate OFAC sanctions or any applicable financial sanctions regime`,
         },
         {
-          title: '7. Campaign Operator Obligations',
-          body: `Campaign operators are subject to separate operator agreements. Operators must:
+          title: '7. Campaign Organizer Obligations',
+          body: `Campaign organizers are subject to separate organizer agreements. Organizers must:
 • Verify identity with the Citeback legal entity (identity is held privately and not published)
 • Pass OFAC SDN screening at onboarding and at each disbursement
 • Submit verified proof of campaign completion before disbursement is released
 • Comply with applicable local, state, and federal law in executing campaigns
 • Disclose any lobbying-adjacent activities to the platform and register as required by applicable law
 
-Fraudulent proof submissions result in permanent misconduct flags and forfeiture of all campaign funds. Campaign operators are solely responsible for the lawfulness of their campaigns in their jurisdiction.`,
+Fraudulent proof submissions result in permanent misconduct flags and forfeiture of all campaign funds. Campaign organizers are solely responsible for the lawfulness of their campaigns in their jurisdiction.`,
         },
         {
           title: '8. No Legal Advice',

@@ -28,13 +28,13 @@ Contribution privacy is handled at the cryptocurrency protocol level (Monero XMR
         {
           title: '2. Data We Do Not Collect',
           body: `We do not:
-• Require account creation to browse or contribute (accounts are optional — operators need them, contributors do not)
+• Require account creation to browse or contribute (accounts are optional — campaign organizers need them, contributors do not)
 • Collect names, email addresses, or identifiers from visitors who do not create accounts
 • Use cookies, tracking pixels, or analytics scripts
 • Use Google Analytics, Facebook Pixel, or any behavioral tracking
 • Sell or share visitor data with third parties for marketing
 
-There is no newsletter. Anonymous browsing and financial contributions to campaigns require no account of any kind. Campaign operators require an account.`,
+There is no newsletter. Anonymous browsing and financial contributions to campaigns require no account of any kind. Campaign organizers require an account.`,
         },
         {
           title: '3. Infrastructure Data (Third-Party Processors)',
@@ -57,16 +57,16 @@ These contain information about surveillance systems — not about you. A sighti
 \u25b8 Expert Directory applications
 Role type, geographic location, and professional background. No name, email, or contact information is collected or required. Stored on our own server with IP logging disabled.
 
-\u25b8 Accounts (operators and community members)
-Citeback has an optional account system. If you create an account, we store: username, bcrypt-hashed password (never plaintext), optional recovery email (AES-256-GCM encrypted at rest, used only for password reset, never for marketing), reputation points, and a JWT session token. Operators are additionally required to provide identity verification, held privately and used only for OFAC screening and platform accountability.
+\u25b8 Accounts (campaign organizers and community members)
+Citeback has an optional account system. If you create an account, we store: username, bcrypt-hashed password (never plaintext), optional recovery email (AES-256-GCM encrypted at rest, used only for password reset, never for marketing), reputation points, and a JWT session token. Campaign organizers are additionally required to provide identity verification, held privately and used only for OFAC screening and platform accountability.
 
 What we do not collect in any form: your name, your email address, cookies, device fingerprint, or IP address from any form submission on this site.`,
         },
         {
-          title: '5. Campaign Operator Data',
-          body: `Campaign operators (individuals who run funded campaigns) are required to verify their real identity with the Citeback legal entity before onboarding. This identity information is held by the operator-facing entity and is not published publicly. Operators are subject to OFAC SDN list screening at onboarding and at every disbursement.
+          title: '5. Campaign Organizer Data',
+          body: `Campaign organizers (individuals who run funded campaigns) are required to verify their real identity with the Citeback legal entity before onboarding. This identity information is held by the organizer-facing entity and is not published publicly. Campaign organizers are subject to OFAC SDN list screening at onboarding and at every disbursement.
 
-Operator identity information may be subject to legal process. The privacy protections described in this policy do not apply to operator identity data collected for legal compliance purposes.`,
+Campaign organizer identity information may be subject to legal process. The privacy protections described in this policy do not apply to organizer identity data collected for legal compliance purposes.`,
         },
         {
           title: '6. Privacy When Contributing',
