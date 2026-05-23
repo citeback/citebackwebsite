@@ -66,7 +66,7 @@ export default function Footer({ setTab }) {
       <div className="footer-legal">
         Contributions to Citeback campaigns are <strong>not tax-deductible</strong>. Citeback is a Wyoming DAO LLC (in formation), not a 501(c)(3) charitable organization.
         All contributions are final and non-refundable. Content on this site is for educational purposes only and does not constitute legal advice.{' '}
-        Questions, press inquiries, or operator applications: <a href="mailto:citeback@proton.me" className="footer-link">citeback@proton.me</a>
+        Questions, press inquiries, or organizer applications: <a href="mailto:citeback@proton.me" className="footer-link">citeback@proton.me</a>
       </div>
 
       {/* Tip section */}

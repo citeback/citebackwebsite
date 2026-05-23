@@ -4,7 +4,7 @@ const tracks = [
     label: 'Legal',
     tag: 'Legal Researchers · Paralegals · Researchers',
     description:
-      'Help campaigns move from funded to filed. Review proposed actions for legal viability, draft demand letters, advise on FOIA strategy, or connect operators with counsel. Engagement is fully on your terms.',
+      'Help campaigns move from funded to filed. Review proposed actions for legal viability, draft demand letters, advise on FOIA strategy, or connect organizers with counsel. Engagement is fully on your terms.',
     details: [
       'Review campaign proposals before they go live',
       'Provide jurisdiction-specific viability assessments',
@@ -23,7 +23,7 @@ const tracks = [
     details: [
       'Build FOIA scraping, OCR, and document automation tools for campaigns',
       'Camera database enrichment and surveillance mapping',
-      'Technical infrastructure for funded campaign operators',
+      'Technical infrastructure for funded campaign organizers',
       'Privacy tooling — paid in XMR or ZANO directly to your wallet',
     ],
     cta: 'Contribute Pseudonymously',
@@ -31,17 +31,17 @@ const tracks = [
   },
   {
     id: 'operator',
-    label: 'Operator',
+    label: 'Campaign Organizer',
     tag: 'Organizers · Advocates · Community Leads',
     description:
-      'Run a campaign on behalf of your community. Operators propose actions, manage public documentation, and coordinate with funded parties — all without exposing contributor identities.',
+      'Run a campaign on behalf of your community. Campaign organizers propose actions, manage public documentation, and coordinate with funded parties — all without exposing contributor identities.',
     details: [
       'Propose campaigns for community review',
       'Manage public-facing documentation',
       'Coordinate funded actions with legal partners',
       'Keep contributors informed via on-chain transparent updates',
     ],
-    cta: 'Become an Operator',
+    cta: 'Become a Campaign Organizer',
     accent: 'var(--muted)',
   },
 ]

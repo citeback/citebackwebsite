@@ -81,8 +81,8 @@ export default function CampaignList({ full, setSelectedCampaign, setTab }) {
           </h2>
           <p className="campaign-list-desc">
             At launch, each campaign will have its own Monero (XMR) and Zano (ZANO) wallet address.
-            Contributions go directly to the operator — Citeback never holds funds.
-            Balance verified via operator-provided view key. Fully public audit trail.
+            Contributions go directly to the campaign organizer — Citeback never holds funds.
+            Balance verified via organizer-provided view key. Fully public audit trail.
           </p>
         </div>
         <button onClick={() => setProposing(true)} className="campaign-propose-btn">

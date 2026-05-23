@@ -203,7 +203,7 @@ export default function CryptoPrimer() {
 
         {/* Footer note */}
         <p className="cp-footer-note">
-          Both coins are legal to buy and use in the United States. Citeback never holds or touches contributor funds — your XMR or ZANO goes directly to the operator's wallet. A view-only key lets the platform verify balances without spending authority.
+          Both coins are legal to buy and use in the United States. Citeback never holds or touches contributor funds — your XMR or ZANO goes directly to the organizer's wallet. A view-only key lets the platform verify balances without spending authority.
         </p>
 
       </div>

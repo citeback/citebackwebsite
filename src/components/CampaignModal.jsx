@@ -190,7 +190,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
           <div className="cm-progress-row">
             <div>
               <div className="cm-progress-raised">
-                {unclaimed ? 'Seeking Operator' : prelaunch ? 'Pre-Launch' : `$${campaign.raised.toLocaleString()}`}
+                {unclaimed ? 'Seeking Campaign Organizer' : prelaunch ? 'Pre-Launch' : `$${campaign.raised.toLocaleString()}`}
               </div>
               <div className="cm-progress-label">
                 {unclaimed ? 'Campaign available to claim' : prelaunch ? 'Wallet pending — being set up' : `of $${campaign.goal.toLocaleString()} goal`}
@@ -332,26 +332,26 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             <div className="cm-flex-col-16">
               <div className="cm-unclaimed-banner">
                 <div className="cm-banner-header">
-                  <Users size={16} className="cm-icon-purple" /> This Campaign Needs an Operator
+                  <Users size={16} className="cm-icon-purple" /> This Campaign Needs a Campaign Organizer
                 </div>
                 <p className="cm-muted-text">
-                  This is a suggested campaign — fully researched and ready to run. An Operator claims it, adds their own
-                  XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the operator's wallet.
+                  This is a suggested campaign — fully researched and ready to run. A campaign organizer claims it, adds their own
+                  XMR and ZANO wallet addresses, and runs the campaign. All contributions go directly to the organizer's wallet.
                   Citeback never holds funds.
                 </p>
                 {campaign.operatorName && (
-                  <p className="cm-operator-name">Operator: <strong className="cm-strong-text">{campaign.operatorName}</strong></p>
+                  <p className="cm-operator-name">Campaign Organizer: <strong className="cm-strong-text">{campaign.operatorName}</strong></p>
                 )}
               </div>
 
               {!isLoggedIn ? (
                 <div className="cm-info-box">
                   <strong className="cm-strong-text">Log in to claim this campaign.</strong><br />
-                  You need an Operator account (10+ reputation points).
+                  You need a Campaign Organizer account (10+ reputation points).
                 </div>
               ) : !canClaim ? (
                 <div className="cm-info-box">
-                  <strong className="cm-strong-text">Operator tier required.</strong><br />
+                  <strong className="cm-strong-text">Campaign Organizer tier required.</strong><br />
                   Earn 10+ reputation points by submitting verified camera sightings. You have {user?.reputation || 0} pts ({10 - (user?.reputation || 0)} more needed).
                 </div>
               ) : (
@@ -377,7 +377,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
             <div className="cm-flex-col-14">
               <div className="cm-unclaimed-banner">
                 <div className="cm-banner-header">
-                  <Wallet size={16} className="cm-icon-purple" /> You're the Operator — Add Your Wallets
+                  <Wallet size={16} className="cm-icon-purple" /> You're the Campaign Organizer — Add Your Wallets
                 </div>
                 <p className="cm-muted-text">
                   Add your XMR and ZANO wallet addresses to activate this campaign. Contributors will send funds directly to your wallets — Citeback never holds funds.
@@ -425,7 +425,7 @@ export default function CampaignModal({ campaign: initialCampaign, onClose }) {
                   <Rocket size={16} className="cm-icon-accent" /> Pre-Launch Campaign
                 </div>
                 <p className="cm-muted-text">
-                  This campaign has been claimed and is being prepared for launch. The operator is setting up their wallet addresses. Check back soon.
+                  This campaign has been claimed and is being prepared for launch. The campaign organizer is setting up their wallet addresses. Check back soon.
                 </p>
               </div>
 

@@ -1,20 +1,21 @@
 import { CheckCircle, Circle, Clock } from 'lucide-react'
 import { useCameraCount } from '../context/CameraCount'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { API_BASE } from '../config.js'
 
 const milestonesBase = [
   { done: true,    label: 'Governance framework published' },
   { done: true,    label: 'CAMERA_COUNT_PLACEHOLDER' },
   { done: true,    label: 'Expert directory launched — attorney, FOIA, and technical contributor applications open' },
   { done: true,    label: 'Campaign proposals published publicly (GitHub repo is public)' },
-  { done: true,    label: 'Account system live — passkeys, reputation tiers, operator access' },
+  { done: true,    label: 'Account system live — passkeys, reputation tiers, organizer access' },
   { done: true,    label: 'Attorney credential verification live — CA State Bar auto-lookup, all other states manual review' },
   { done: true,    label: 'Security audit complete — rate limits, CSP headers, passkeys, encrypted email at rest, fail2ban, VPS hardened' },
   { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
-  { done: false,   label: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
+  { done: false,   label: 'Campaign organizer wallet framework live — organizers self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
   { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection' },
-  { done: false,   label: 'OFAC attorney guidance obtained; operator pre-screening framework operational' },
+  { done: false,   label: 'OFAC attorney guidance obtained; organizer pre-screening framework operational' },
   { done: false,   label: 'First campaign wallet activated' },
 ]
 
@@ -68,6 +69,72 @@ export default function LaunchTracker() {
         <Clock size={12} />
         No wallet addresses will be published until all {total} prerequisites are met and publicly verifiable. No address means nowhere to send.
       </div>
+
+      <LaunchNotify />
+    </div>
+  )
+}
+
+function LaunchNotify() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState('idle') // idle | loading | done | error
+  const [errMsg, setErrMsg] = useState('')
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (status === 'done') return
+    setStatus('loading')
+    setErrMsg('')
+    try {
+      const res = await fetch(`${API_BASE}/api/notify-launch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+      const data = await res.json()
+      if (data.ok) {
+        setStatus('done')
+      } else {
+        setErrMsg(data.error || 'Something went wrong.')
+        setStatus('error')
+      }
+    } catch {
+      setErrMsg('Network error — please try again.')
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div className="lt-notify">
+      <div className="lt-notify-label">Get notified when wallets go live</div>
+      {status === 'done' ? (
+        <div className="lt-notify-success">
+          <CheckCircle size={14} className="lt-notify-check" />
+          You&rsquo;re on the list. One email at launch, nothing else.
+        </div>
+      ) : (
+        <form onSubmit={submit} className="lt-notify-form">
+          <input
+            type="email"
+            value={email}
+            onChange={e => { setEmail(e.target.value); setStatus('idle'); setErrMsg('') }}
+            placeholder="your@email.com"
+            required
+            disabled={status === 'loading'}
+            className="lt-notify-input"
+            aria-label="Email address for launch notification"
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading' || !email.trim()}
+            className="lt-notify-btn"
+          >
+            {status === 'loading' ? 'Sending…' : 'Notify me'}
+          </button>
+        </form>
+      )}
+      {errMsg && <div className="lt-notify-error">{errMsg}</div>}
+      <div className="lt-notify-fine">One email at launch. No marketing. Unsubscribe anytime by replying.</div>
     </div>
   )
 }

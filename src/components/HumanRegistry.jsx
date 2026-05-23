@@ -176,7 +176,7 @@ function ApplyModal({ onClose, defaultRole = '' }) {
                 <ol className="hre-success-next-list">
                   <li>Your application is saved to the review queue.</li>
                   <li>At launch, the team verifies your credentials (bar lookup for attorneys, peer vouches for others).</li>
-                  <li>Once verified, you receive a badge visible to campaign operators seeking legal help.</li>
+                  <li>Once verified, you receive a badge visible to campaign organizers seeking legal help.</li>
                   <li>You'll be matched with funded campaigns in your jurisdiction and practice area.</li>
                 </ol>
                 <p className="hr-followup-note">
@@ -355,7 +355,7 @@ export default function HumanRegistry() {
         <div>
           <h2 className="hre-title">Expert Directory</h2>
           <p className="hre-subtitle">
-            Vetted operators who execute funded campaigns — legal researchers, media coordinators, FOIA specialists,
+            Vetted campaign organizers who execute funded campaigns — legal researchers, media coordinators, FOIA specialists,
             and technical contributors. Real-world executors verify identity and vendor access privately with the platform — never published.
             Technical contributors register pseudonymously by XMR or ZANO address only. No public identity required for anyone.
           </p>
@@ -373,10 +373,10 @@ export default function HumanRegistry() {
             Citeback connects funded campaigns with licensed legal counsel. Attorney verification is live — California attorneys auto-verify via State Bar lookup; all other states go to manual review. No ID uploaded.
           </p>
           <p className="hr-banner-p-lg">
-            <strong className="hr-strong-text">How attorneys could help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded operators.
+            <strong className="hr-strong-text">How attorneys could help:</strong> Review campaign proposals for legal viability, assess jurisdiction-specific risk, draft demand letters, advise on FOIA strategy, or take cases directly from funded campaign organizers.
           </p>
           <p className="hr-banner-p-italic">
-            Apply below to join the registry. Verified attorneys receive a badge visible to campaign operators looking for legal help.
+            Apply below to join the registry. Verified attorneys receive a badge visible to campaign organizers looking for legal help.
           </p>
           <button onClick={() => setShowApply(true)} className="hre-banner-attorney-btn">
             Apply for Attorney Verification
@@ -403,10 +403,10 @@ export default function HumanRegistry() {
             <strong className="hr-strong-text">Registry listing requires peer vouching only — no public identity.</strong>{' '}
             Verified badge = 3 or more community vouches from people who've worked with them. No ID documents required to list.
             Funds are released only after campaign completion and receipt submission.
-            Operators work under their own LLC or as independent contractors — Citeback never employs anyone.
+            Campaign organizers work under their own LLC or as independent contractors — Citeback never employs anyone.
           </p>
           <div className="hre-verify-note">
-            <p className="hr-verify-note-p">Note: operators who run campaigns undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
+            <p className="hr-verify-note-p">Note: campaign organizers undergo private OFAC/sanctions screening with real-name identity data held by the DAO legal entity (never published). KYC requirements scale with campaign tier per the governance spec.</p>
             <p className="hr-verify-note-p-last">Technical Contributors are exempt from real-name KYC — registration by XMR or ZANO address only. Privacy is respected for builder-track contributors.</p>
           </div>
         </div>
@@ -428,7 +428,7 @@ export default function HumanRegistry() {
                 </div>
               ) : (
                 <div className="hre-card-desc">
-                  No verified operators yet. Be the first.
+                  No verified campaign organizers yet. Be the first.
                 </div>
               )}
             </div>

@@ -43,7 +43,7 @@ const campaignTypes = [
   ]},
   { label: 'Specialized Actions', cls: 'specialized', types: [
     { name: 'Vendor Accountability', desc: 'Target Clearview, Flock Safety, Palantir by name. Anonymous funding is uniquely valuable here.' },
-    { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment campaigns. Operators should consult an attorney before launching.' },
+    { name: 'Legislative Advocacy', desc: 'Testimony, model bills, public comment campaigns. Campaign organizers should consult an attorney before launching.' },
     { name: 'Legal Defense', desc: 'Civil and administrative challenges only. No criminal defense.' },
     { name: 'Journalist Partnerships', desc: 'Fund investigative reporting on specific surveillance deployments.' },
     { name: 'Procurement Intervention', desc: 'Legal challenges to government RFPs and sole-source surveillance contracts.' },
@@ -65,16 +65,16 @@ export default function Operators() {
           <h1>Run a Campaign</h1>
         </div>
         <p>
-          Operators are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
+          Campaign organizers are the people who make campaigns happen — lawyers who file the FOIA, activists who organize the ordinance vote, researchers who build the counter-database. If you have a specific surveillance accountability target and can execute, this is for you.
         </p>
 
         {/* How this works — honest model */}
         <div className="ops-how-box">
           <p className="ops-how-p">
-            <strong>How this works:</strong> Operators hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the operator's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining operator reputation scores.
+            <strong>How this works:</strong> Campaign organizers hold their own XMR wallet and publish a view key so anyone can verify the balance in real time. Contributors send directly to the organizer's wallet — Citeback never holds or touches campaign funds. Citeback's role is verification and accountability: reviewing campaign proposals, verifying milestones, and maintaining organizer reputation scores.
           </p>
           <p className="ops-how-p--last">
-            Campaigns are funded milestone by milestone. Operators define deliverables upfront (FOIA filed, billboard live, legal action taken). Each milestone is verified before the next tranche of funding is promoted. Operators start with small campaign caps and earn access to larger amounts through track record.
+            Campaigns are funded milestone by milestone. Campaign organizers define deliverables upfront (FOIA filed, billboard live, legal action taken). Each milestone is verified before the next tranche of funding is promoted. Organizers start with small campaign caps and earn access to larger amounts through track record.
           </p>
         </div>
       </div>
@@ -82,12 +82,12 @@ export default function Operators() {
       {/* Quick Start path */}
       <div className="ops-quickstart">
         <p className="ops-quickstart-label">
-          ⚡ How to Become a Campaign Operator — 3 Steps
+          ⚡ How to Become a Campaign Organizer — 3 Steps
         </p>
         <div className="ops-steps">
           {[
             { n: '01', title: 'Report surveillance cameras', desc: 'Use Proofmode (free, iOS/Android) to take GPS-tagged photos of publicly visible surveillance cameras and submit them on the Report tab. Each verified C2PA photo earns you 1–2 reputation points.' },
-            { n: '02', title: 'Reach 10 points → Tier 1 Operator', desc: 'Ten verified sightings unlock your Operator tier. At Tier 1 you can claim and run campaigns up to $1,000. No identity required — just a pseudonymous account and a track record.' },
+            { n: '02', title: 'Reach 10 points → Tier 1 Organizer', desc: 'Ten verified sightings unlock your Organizer tier. At Tier 1 you can claim and run campaigns up to $1,000. No identity required — just a pseudonymous account and a track record.' },
             { n: '03', title: 'Claim or propose a campaign', desc: 'Browse unclaimed campaigns and claim one, or propose a new campaign with a specific target, cost breakdown, and milestones. Add your own XMR wallet — contributors send directly to you.' },
           ].map(s => (
             <div key={s.n} className="ops-step">
@@ -104,10 +104,10 @@ export default function Operators() {
       {/* Participant roles */}
       <div className="ops-roles-grid">
         {[
-          { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward operator access.', anon: true },
-          { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to an operator\'s campaign wallet. Wallets activate at platform launch.', anon: true },
+          { role: 'Camera Verifier', req: 'No account. No identity. Submit a sighting on the map — that\'s it. Verified sightings build reputation toward organizer access.', anon: true },
+          { role: 'Contributor', req: 'No account. No identity. Send XMR or ZANO directly to a campaign organizer\'s wallet. Wallets activate at platform launch.', anon: true },
           { role: 'Independent Actor', req: 'No account. No identity. Use our research to buy your own billboard, print signs, file your own FOIA — no platform interaction required.', anon: true },
-          { role: 'Campaign Operator', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', anon: false },
+          { role: 'Campaign Organizer', req: 'Pseudonymous account + reputation required. You hold your own campaign wallet — accountability is built through track record, not identity alone.', anon: false },
         ].map(p => (
           <div key={p.role} className={`ops-role-card ${p.anon ? 'ops-role-card--anon' : 'ops-role-card--operator'}`}>
             <p className="ops-role-label">{p.role}</p>
@@ -119,13 +119,13 @@ export default function Operators() {
       {/* Requirements */}
       <div className="ops-requirements">
         <p className="ops-requirements-title">
-          What Campaign Operators Need
+          What Campaign Organizers Need
         </p>
         <Req ok={true}>A pseudonymous account with verified camera sightings. Start at Tier 0 — submit cameras, build reputation, unlock campaign access.</Req>
         <Req ok={true}>Have a specific, verifiable target. A real program, agency, vendor, or jurisdiction — not a vague cause.</Req>
         <Req ok={true}>Submit a cost breakdown with defined milestones. Every campaign needs a line-item budget and measurable deliverables.</Req>
         <Req ok={true}>Your campaign must target a government entity, government program, or government-contracted surveillance vendor — not a private individual.</Req>
-        <Req pending={true}>Identity verification and OFAC screening — pending launch. Required before any campaign goes live. Process opens when the operator onboarding system launches.</Req>
+        <Req pending={true}>Identity verification and OFAC screening — pending launch. Required before any campaign goes live. Process opens when the organizer onboarding system launches.</Req>
         <p className="ops-req-note">
           Start by submitting camera sightings. Each verified sighting builds reputation toward your first campaign slot. The more you contribute to the map, the faster you unlock access.
         </p>
@@ -149,11 +149,11 @@ export default function Operators() {
         <p className="ops-body-p-spaced">Vague goals ("raise $50k for legal costs") won't be approved. Specific proposals ("file FOIA with Bernalillo County Sheriff — $800 attorney fee — verified by MuckRock URL") are what the platform is built for.</p>
       </Accordion>
 
-      <Accordion title="Operator reputation and campaign caps" icon={Building}>
+      <Accordion title="Organizer reputation and campaign caps" icon={Building}>
         <p>Campaign access scales with your track record on the platform — not with your application. Start small, deliver, build reputation, earn access to larger campaigns.</p>
         <div className="ops-tier-wrap">
           {[
-            { tier: 'New Operator', unlock: '10 verified camera sightings (Tier 1 reputation)', cap: 'Up to $1,000 per campaign' },
+            { tier: 'New Organizer', unlock: '10 verified camera sightings (Tier 1 reputation)', cap: 'Up to $1,000 per campaign' },
             { tier: '10 Campaigns', unlock: '10 successfully completed campaigns', cap: 'Up to $7,500 — no legal entity required' },
             { tier: 'Legal Entity', unlock: 'Registered LLC, nonprofit, or equivalent on file', cap: 'Up to $30,000' },
             { tier: 'Reviewed', unlock: 'Legal entity + DAO counsel review + $1M liability insurance', cap: 'Up to $125,000' },
@@ -197,10 +197,10 @@ export default function Operators() {
           <div>
             <p className="ops-disbursement-title">How Disbursement Works</p>
             <p className="ops-disbursement-text">
-              Operators hold their own XMR wallet. Contributors send directly to that wallet — Citeback never holds funds. Operators publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
+              Campaign organizers hold their own XMR wallet. Contributors send directly to that wallet — Citeback never holds funds. Organizers publish a view key so the balance is publicly verifiable in real time. When the campaign goal is reached, the site marks it funded.
             </p>
             <p className="ops-disbursement-text--spaced">
-              For Tier 2+ campaigns, funding is released milestone by milestone. Each milestone has a defined deliverable verified by Citeback (C2PA photo, MuckRock FOIA URL, court filing number) before the next tranche is promoted. Converting XMR to fiat for vendor payments is the operator's responsibility.
+              For Tier 2+ campaigns, funding is released milestone by milestone. Each milestone has a defined deliverable verified by Citeback (C2PA photo, MuckRock FOIA URL, court filing number) before the next tranche is promoted. Converting XMR to fiat for vendor payments is the organizer's responsibility.
             </p>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function Operators() {
 
       <Accordion title="What happens after you submit a proposal" icon={FileText}>
         <ol className="ops-accordion-list">
-          <li>Proposal saved to the queue — reviewed when operator onboarding launches</li>
+          <li>Proposal saved to the queue — reviewed when organizer onboarding launches</li>
           <li>Reputation and identity verified through the platform's onboarding system</li>
           <li>Tier assigned based on your reputation score and campaign scope</li>
           <li>Milestone plan reviewed and approved before campaign opens</li>
@@ -216,14 +216,14 @@ export default function Operators() {
           <li>Funds disburse milestone-by-milestone as verified deliverables are submitted</li>
           <li>Campaign closes with a public outcome record</li>
         </ol>
-        <p className="ops-accordion-final">All contributions are final and non-refundable. Campaign wallets are operator-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
+        <p className="ops-accordion-final">All contributions are final and non-refundable. Campaign wallets are organizer-held — if a campaign isn't funded within its deadline, any funds received are handled per the campaign's stated terms set before launch.</p>
       </Accordion>
 
       {/* CTA */}
       <div className="ops-cta-box">
         <h3 className="ops-cta-title">Ready to Propose a Campaign?</h3>
         <p className="ops-cta-desc">
-          Submit your proposal now to be first in line. Strong campaigns get funded fast once operator onboarding opens.
+          Submit your proposal now to be first in line. Strong campaigns get funded fast once organizer onboarding opens.
         </p>
         <div className="ops-cta-btns">
           <button
@@ -238,8 +238,8 @@ export default function Operators() {
         </div>
         <div className="ops-cta-footer">
           <p>
-            <strong>Operator onboarding opens at launch.</strong>{' '}
-            In the meantime, start building reputation by submitting and verifying camera sightings — that's how operator access is earned.
+            <strong>Campaign organizer onboarding opens at launch.</strong>{' '}
+            In the meantime, start building reputation by submitting and verifying camera sightings — that's how organizer access is earned.
           </p>
         </div>
       </div>

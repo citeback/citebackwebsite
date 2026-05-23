@@ -214,7 +214,7 @@ function EmailManager({ onEmailSaved }) {
             </p>
             <p className="rp-email-warning-desc">
               Without a recovery email, a forgotten password means permanent loss of your account and reputation.
-              A recovery email is also <strong className="rp-color-fg">required before you can propose or accept campaign contributions</strong> - to prevent operators from claiming a lost account after receiving funds.
+              A recovery email is also <strong className="rp-color-fg">required before you can propose or accept campaign contributions</strong> - to prevent organizers from claiming a lost account after receiving funds.
               A disposable email address is fine.
             </p>
             <button
@@ -270,14 +270,14 @@ function EmailManager({ onEmailSaved }) {
   )
 }
 
-const TIER_NAMES = ['Scout', 'Operator', 'Verifier', 'Guardian']
+const TIER_NAMES = ['Scout', 'Organizer', 'Verifier', 'Guardian']
 const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_COLORS = ['#6b7280', '#e63946', '#f59e0b', '#10b981']
 const TIER_DESCRIPTIONS = [
   'Submit camera sightings to build your reputation score.',
   'Run campaigns up to $1,000. After 10 successful campaigns, cap rises to $7,500 - no legal entity required.',
   'Unlock verification bounties. Vote on camera classification disputes - your reputation backs your call.',
-  'Full operator access. Vote on campaign disbursements with proof-of-donation weight (logarithmic, capped at 9.0).',
+  'Full organizer access. Vote on campaign disbursements with proof-of-donation weight (logarithmic, capped at 9.0).',
 ]
 
 const CAMERA_TYPE_LABELS = {

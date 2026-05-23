@@ -15,7 +15,7 @@ const contributorSteps = [
   },
   {
     title: 'Watch It Win',
-    desc: 'Operators submit verified proof of outcomes — court filings, ordinance text, database takedowns. Every campaign closes with a public receipt.',
+    desc: 'Campaign organizers submit verified proof of outcomes — court filings, ordinance text, database takedowns. Every campaign closes with a public receipt.',
   },
 ]
 

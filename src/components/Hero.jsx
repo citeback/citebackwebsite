@@ -118,7 +118,7 @@ export default function Hero({ setTab }) {
             )}
 
             <p className="hero-desc">
-              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — funded with Monero (XMR) or Zano, privacy cryptocurrencies that leave no on-chain link between sender and recipient. Contributors need no account and no ID — your contribution is private at the protocol level. Operators who run campaigns create a free account to ensure accountability.
+              Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns — funded with Monero (XMR) or Zano, privacy cryptocurrencies that leave no on-chain link between sender and recipient. Contributors need no account and no ID — your contribution is private at the protocol level. Campaign organizers create a free account to ensure accountability.
             </p>
 
             <div className="hero-cta-row">
@@ -143,7 +143,7 @@ export default function Hero({ setTab }) {
             </p>
 
             <p className="hero-trust-line">
-              Pre-launch — no wallets are active yet. 7 of 13 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are operator-held — balance publicly verifiable via view keys.
+              Pre-launch — no wallets are active yet. 7 of 13 prerequisites cleared. Wallets activate only when every prerequisite is publicly verified. At launch, the wallet architecture is published and independently verifiable. All campaign wallets are organizer-held — balance publicly verifiable via view keys.
             </p>
           </div>
 
