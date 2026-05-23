@@ -1012,6 +1012,51 @@ function normalizeInput(text) {
     .replace(/[Փփ]/g, 'p')  // U+0553/U+0583 Armenian piwr Փ/փ → p (bypass: "Փretend to be" → missed; "byՓass" → missed)
     .replace(/[Օօ]/g, 'o')  // U+0555/U+0585 Armenian oh Օ/օ → o (bypass: "develՕper mode" → missed; "ignօre your" → missed)
     .replace(/[Ֆֆ]/g, 'f')  // U+0556/U+0586 Armenian feh Ֆ/ֆ → f (bypass: "Ֆorget your" → missed; "no ֆilter mode" → missed)
+    // Phonetic Extensions Supplement (U+1D80–U+1DBF) — NOT normalized by NFKC (confirmed bypass vectors).
+    // These are Latin letters with palatal/retroflex hooks that are visually almost identical to their base letter.
+    // NFKC does NOT map them to ASCII (they are separate IPA-related letters, not compatibility equivalents).
+    // Example bypass: "ᶀypass your" (ᶀ=U+1D80 b+palatal) → "ᶀypass your" → misses "bypass your".
+    .replace(/[ᶀ]/g, 'b')   // U+1D80 ᶀ Latin b with palatal hook → b
+    .replace(/[ᶁᶑ]/g, 'd')  // U+1D81 ᶁ d+palatal, U+1D91 ᶑ d+hook+tail → d
+    .replace(/[ᶂ]/g, 'f')   // U+1D82 ᶂ f with palatal hook → f
+    .replace(/[ᶃ]/g, 'g')   // U+1D83 ᶃ g with palatal hook → g
+    .replace(/[ᶄ]/g, 'k')   // U+1D84 ᶄ k with palatal hook → k
+    .replace(/[ᶅ]/g, 'l')   // U+1D85 ᶅ l with palatal hook → l
+    .replace(/[ᶆ]/g, 'm')   // U+1D86 ᶆ m with palatal hook → m
+    .replace(/[ᶇ]/g, 'n')   // U+1D87 ᶇ n with palatal hook → n
+    .replace(/[ᶈ]/g, 'p')   // U+1D88 ᶈ p with palatal hook → p
+    .replace(/[ᶉ]/g, 'r')   // U+1D89 ᶉ r with retroflex hook → r
+    .replace(/[ᶊ]/g, 's')   // U+1D8A ᶊ s with palatal hook → s
+    .replace(/[ᶌ]/g, 'v')   // U+1D8C ᶌ v with palatal hook → v
+    .replace(/[ᶎ]/g, 'z')   // U+1D8E ᶎ z with retroflex hook → z
+    .replace(/[ᶏ]/g, 'a')   // U+1D8F ᶏ a with retroflex hook → a
+    .replace(/[ᶖ]/g, 'i')   // U+1D96 ᶖ i with retroflex hook → i
+    .replace(/[ᶙ]/g, 'u')   // U+1D99 ᶙ u with retroflex hook → u
+    // Tifinagh script (U+2D30–U+2D7F) — NOT normalized by NFKC (confirmed bypass vectors).
+    // Tifinagh is the script used by Berber/Amazigh peoples of North Africa. Several Tifinagh letters
+    // are visually similar to Latin letters (e.g. ⵉ looks like 'i', ⵏ looks like 'n', ⵜ looks like 't').
+    // All confirmed: NFKC does NOT normalize any Tifinagh chars to Latin equivalents.
+    // Example: "ⵉgnore your" → after pipeline stays "ⵉgnore your" → misses "ignore your".
+    .replace(/[ⴰⵄ]/g, 'a')  // U+2D30 ⴰ YA → a; U+2D44 ⵄ YAAAH → a
+    .replace(/[ⴵ]/g, 'b')   // U+2D35 ⴵ BERBER YABER → b
+    .replace(/[ⴷ]/g, 'd')   // U+2D37 ⴷ YAD → d
+    .replace(/[ⴻ]/g, 'e')   // U+2D3B ⴻ YEY → e
+    .replace(/[ⴼ]/g, 'f')   // U+2D3C ⴼ YAF → f
+    .replace(/[ⴳ]/g, 'g')   // U+2D33 ⴳ YAG → g
+    .replace(/[ⵀⵃ]/g, 'h')  // U+2D40 ⵀ YAH → h; U+2D43 ⵃ YAHH → h
+    .replace(/[ⵉ]/g, 'i')   // U+2D49 ⵉ TIYOUT → i (looks like 'i')
+    .replace(/[ⴶⵊⵌ]/g, 'j')  // U+2D36 ⴶ YAJ → j; U+2D4A ⵊ YAZH → j; U+2D4C ⵌ TUAREG YAJ → j
+    .replace(/[ⴽ]/g, 'k')   // U+2D3D ⴽ YAK → k
+    .replace(/[ⵍ]/g, 'l')   // U+2D4D ⵍ YAL → l
+    .replace(/[ⵎ]/g, 'm')   // U+2D4E ⵎ YAM → m
+    .replace(/[ⵏ]/g, 'n')   // U+2D4F ⵏ TINE → n (looks like 'n')
+    .replace(/[ⵔ]/g, 'r')   // U+2D54 ⵔ YAR → r
+    .replace(/[ⵙ]/g, 's')   // U+2D59 ⵙ TASA → s
+    .replace(/[ⵜⵟ]/g, 't')  // U+2D5C ⵜ TITE → t; U+2D5F ⵟ YATH → t
+    .replace(/[ⵓ]/g, 'u')   // U+2D53 ⵓ TU → u
+    .replace(/[ⵡ]/g, 'w')   // U+2D61 ⵡ YAW → w
+    .replace(/[ⵢ]/g, 'y')   // U+2D62 ⵢ YAY → y
+    .replace(/[ⵣⵥ]/g, 'z')  // U+2D63 ⵣ YAZ → z; U+2D65 ⵥ TAZARAST → z
     .trim()
 }
 function isOnTopic(text) {
