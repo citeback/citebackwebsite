@@ -10,7 +10,7 @@ const milestonesBase = [
   { done: true,    label: 'Account system live — passkeys, reputation tiers, operator access' },
   { done: true,    label: 'Attorney credential verification live — CA State Bar auto-lookup, all other states manual review' },
   { done: true,    label: 'Security audit complete — rate limits, CSP headers, passkeys, encrypted email at rest, fail2ban, VPS hardened' },
-  { done: false,   label: 'Wyoming DAO LLC incorporated — filing at wyomingbusiness.gov ($100)' },
+  { done: false,   label: 'Wyoming DAO LLC incorporated' },
   { done: false,   label: 'FinCEN MSB compliance opinion obtained from attorney' },
   { done: false,   label: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
   { done: false,   label: 'View-key balance verification live — read-only wallet monitoring and drain detection' },

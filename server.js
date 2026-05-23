@@ -902,6 +902,29 @@ function normalizeInput(text) {
     // E.g. "𐌹gnore your" (𐌹=U+10339) → missed "ignore your".
     .replace(/[\u{10339}]/gu, 'i')  // U+10339 Old Italic 𐌹 → i
     .replace(/[\u{10330}]/gu, 'a')  // U+10330 Old Italic 𐌰 → a
+    // Additional Latin Extended-B, IPA Extensions, and other Unicode homoglyphs —
+    // NOT normalized by NFKC (confirmed via Node.js harness). Each bypasses at least one
+    // INJECTION_SIGNAL when substituted for the visually similar Latin letter.
+    // (A) j-substitutes:
+    .replace(/[\u03F3]/g, 'j')   // U+03F3 Greek letter yot ϳ → j (bypass: "ϳailbreak" → "jailbreak" missed)
+    .replace(/[\u0237]/g, 'j')   // U+0237 Latin small letter dotless j ȷ → j (bypass: "ȷailbreak" → missed)
+    // (B) g-substitutes:
+    .replace(/[\u0261]/g, 'g')   // U+0261 Latin small letter script g ɡ → g (bypass: "ɡod mode" → missed; "disreɡard" → missed)
+    // (C) f-substitutes:
+    .replace(/[\u0192]/g, 'f')   // U+0192 Latin small letter f with hook ƒ → f (bypass: "ƒorget your" → missed; "no ƒilter mode" → missed; "preƒend to be" → missed; "hyƒothetically you are" → missed)
+    // (D) i-substitutes (distinct from ɪ U+026A LATIN SMALL CAPITAL I, already covered above):
+    .replace(/[\u0269]/g, 'i')   // U+0269 Latin small letter iota ɩ → i (bypass: "ɩgnore your" → missed; "ɩmagine you are" → missed)
+    // (E) b-substitutes:
+    .replace(/[\u0180]/g, 'b')   // U+0180 Latin small letter b with stroke ƀ → b (bypass: "ƀypass your" → missed)
+    .replace(/[\uA7B5]/g, 'b')   // U+A7B5 Latin small letter beta ꞵ → b (bypass: "ꞵypass your" → missed)
+    // (F) Additional Cyrillic — Cyrillic small letter dze:
+    .replace(/[\u0455]/g, 's')   // U+0455 Cyrillic dze ѕ → s (bypass: "ѕimulate a" → missed)
+    // (G) v/w-substitutes:
+    .replace(/[\u028B]/g, 'v')   // U+028B Latin small letter v with hook ʋ → v (bypass: "reʋeal your" → missed)
+    .replace(/[\u028C]/g, 'v')   // U+028C Latin small letter turned v ʌ → v (bypass: "deʌeloper mode" → missed)
+    .replace(/[\u028D]/g, 'w')   // U+028D Latin small letter turned w ʍ → w (bypass: "ʍithout restrictions" → missed)
+    // (H) Armenian a-substitutes (additional to Georgian ა already covered):
+    .replace(/[\u0561]/g, 'a')   // U+0561 Armenian small letter ayb ա → a (bypass: "աct as if you" → missed; "աct like you" → missed)
     .trim()
 }
 function isOnTopic(text) {
