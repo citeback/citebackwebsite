@@ -852,6 +852,56 @@ function normalizeInput(text) {
     .replace(/[\u054D\u057D]/g, 'u')  // U+054D/U+057D Armenian seh Ս/ս → u (looks like 'u')
     .replace(/[\u053C\u056C]/g, 'l')  // U+053C/U+056C Armenian liwn Լ/լ → l (looks like 'l')
     .replace(/[\u0540\u0570]/g, 'h')  // U+0540/U+0570 Armenian ho Հ/հ → h (looks like 'h')
+    // Additional Cyrillic homoglyphs not covered in prior sessions — confirmed bypass vectors.
+    // NFKC does NOT normalize any of these to their Latin equivalents.
+    // Bypass examples (Node.js harness confirmed):
+    //   "igнore your" (н=U+043D Cyrillic en, looks like 'n') → missed "ignore your"
+    //   "witНout restrictions" (Н=U+041D looks like capital 'H') → missed "without"
+    //   "igиore your" (и=U+0438 looks like italic 'n'/'u') → missed "ignore your"
+    //   "бypass your" (б=U+0431 looks like 'b'/'6') → missed "bypass your"
+    .replace(/[н]/g, 'n')        // U+043D Cyrillic en (lowercase) → n
+    .replace(/[Н]/g, 'h')        // U+041D Cyrillic EN (uppercase Н) → h (looks like capital 'H')
+    .replace(/[иИ]/g, 'n')       // U+0438/U+0418 Cyrillic i (и/И) → n (и looks like 'n'/'u'; И looks like backwards 'N')
+    .replace(/[бБ]/g, 'b')       // U+0431/U+0411 Cyrillic be (б/Б) → b
+    // Lisu script homoglyphs (U+A4D0–U+A4EE) — NOT normalized by NFKC (confirmed bypass vectors).
+    // Lisu is a script used in China/SE Asia. Many Lisu letters are visually similar to Latin capitals.
+    // All confirmed via Node.js harness — e.g. "ꓐypass your" (ꓐ=U+A4D0) → missed "bypass your".
+    .replace(/[\uA4D0]/g, 'b')   // U+A4D0 Lisu ꓐ → b
+    .replace(/[\uA4D1]/g, 'p')   // U+A4D1 Lisu ꓑ → p
+    .replace(/[\uA4D3]/g, 'd')   // U+A4D3 Lisu ꓓ → d
+    .replace(/[\uA4D7]/g, 'k')   // U+A4D7 Lisu ꓗ → k
+    .replace(/[\uA4D9]/g, 'j')   // U+A4D9 Lisu ꓙ → j
+    .replace(/[\uA4DA]/g, 'c')   // U+A4DA Lisu ꓚ → c
+    .replace(/[\uA4DF]/g, 'm')   // U+A4DF Lisu ꓟ → m
+    .replace(/[\uA4E0]/g, 'n')   // U+A4E0 Lisu ꓠ → n
+    .replace(/[\uA4E1]/g, 'l')   // U+A4E1 Lisu ꓡ → l
+    .replace(/[\uA4E7]/g, 'h')   // U+A4E7 Lisu ꓧ → h
+    .replace(/[\uA4EA]/g, 'u')   // U+A4EA Lisu ꓪ → u
+    .replace(/[\uA4EE]/g, 'a')   // U+A4EE Lisu ꓮ → a
+    // Cherokee script homoglyphs (U+13A0–U+13FF) — NOT normalized by NFKC (confirmed bypass vectors).
+    // Several Cherokee syllabary letters are visually similar to Latin uppercase letters.
+    // E.g. "Ꭲgnore your" (Ꭲ=U+13A2, looks like 'I') → missed "ignore your";
+    //      "witᎫout restrictions" (Ꮋ=U+13AB, looks like 'H') → missed "without restrictions".
+    .replace(/[\u13A0]/g, 'd')   // U+13A0 Cherokee Ꭰ → d
+    .replace(/[\u13A1]/g, 'e')   // U+13A1 Cherokee Ꭱ → e
+    .replace(/[\u13A2]/g, 'i')   // U+13A2 Cherokee Ꭲ → i
+    .replace(/[\u13A3]/g, 'w')   // U+13A3 Cherokee Ꮃ → w
+    .replace(/[\u13AB]/g, 'h')   // U+13AB Cherokee Ꮋ → h
+    .replace(/[\u13B3]/g, 'p')   // U+13B3 Cherokee → p
+    .replace(/[\u13DF]/g, 's')   // U+13DF Cherokee Ꮟ → s
+    // Runic script homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
+    .replace(/[\u16C1]/g, 'i')   // U+16C1 Runic ᛁ → i (looks like 'I')
+    .replace(/[\u16D2]/g, 'b')   // U+16D2 Runic ᛒ → b (looks like 'B')
+    // Georgian script homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
+    // E.g. "იgnore your" (ი=U+10D8, looks like italic 'i') → missed "ignore your".
+    .replace(/[\u10D8]/g, 'i')   // U+10D8 Georgian ი → i
+    .replace(/[\u10D0]/g, 'a')   // U+10D0 Georgian ა → a
+    .replace(/[\u10DC]/g, 'n')   // U+10DC Georgian ნ → n
+    .replace(/[\u10DE]/g, 'p')   // U+10DE Georgian პ → p
+    // Old Italic / Gothic script homoglyphs (supplementary plane) — NOT normalized by NFKC.
+    // E.g. "𐌹gnore your" (𐌹=U+10339) → missed "ignore your".
+    .replace(/[\u{10339}]/gu, 'i')  // U+10339 Old Italic 𐌹 → i
+    .replace(/[\u{10330}]/gu, 'a')  // U+10330 Old Italic 𐌰 → a
     .trim()
 }
 function isOnTopic(text) {
