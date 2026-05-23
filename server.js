@@ -801,6 +801,7 @@ function normalizeInput(text) {
     .replace(/[μΜмМ]/g, 'm')     // U+03BC/U+039C Greek mu + U+043C/U+041C Cyrillic em → m (bypass: "simulate a", "imagine you are")
     .replace(/[φΦфФ]/g, 'f')     // U+03C6/U+03A6 Greek phi + U+0444/U+0424 Cyrillic ef → f (bypass: "forget your", "no filter mode")
     .replace(/[ωΩ]/g, 'o')       // U+03C9/U+03A9 Greek omega → o (bypass: "you are now a", "with no restrictions", "without restrictions"; distinct from omicron ο/Ο already covered)
+    .replace(/[θΘ]/g, 't')       // U+03B8/U+0398 Greek theta → t (bypass: "without restrictions", "turn off your", "system prompt", "unrestricted mode", "pretend"; distinct from tau τ/Τ already covered)
     // IPA phonetic extension small capitals — NOT normalized by NFKC (confirmed bypass vectors).
     // These are visually identical to their Latin counterparts but are distinct Unicode codepoints
     // in the IPA Extensions (U+0250–U+02B8) and Phonetic Extensions (U+1D00–U+1D2B) blocks.
