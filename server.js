@@ -832,6 +832,26 @@ function normalizeInput(text) {
     .replace(/[ᴡ]/g, 'w')        // U+1D21 LATIN SMALL CAPITAL W
     .replace(/[ʏ]/g, 'y')        // U+028F LATIN SMALL CAPITAL Y
     .replace(/[ᴢ]/g, 'z')        // U+1D22 LATIN SMALL CAPITAL Z
+    // Coptic homoglyphs (U+2C80–U+2CFF) — NOT normalized by NFKC (confirmed bypass vectors).
+    // Coptic script derives from Greek, with many letters visually identical to Latin equivalents.
+    // Example bypass: "bypⲁss your" (ⲁ=U+2C81 Coptic alfa) → normalizeInput leaves unchanged
+    //   → "bypass your" NOT matched → injection signal missed.
+    // Both upper (Ⲁ) and lower (ⲁ) included; .toLowerCase() cannot map Coptic to Latin ('a').
+    .replace(/[\u2C80\u2C81]/g, 'a')  // U+2C80/U+2C81 Coptic alfa Ⲁ/ⲁ → a
+    .replace(/[\u2C88\u2C89]/g, 'e')  // U+2C88/U+2C89 Coptic ei Ⲉ/ⲉ → e
+    .replace(/[\u2C9A\u2C9B]/g, 'n')  // U+2C9A/U+2C9B Coptic ni Ⲛ/ⲛ → n
+    .replace(/[\u2C9E\u2C9F]/g, 'o')  // U+2C9E/U+2C9F Coptic o Ⲟ/ⲟ → o
+    .replace(/[\u2CA2\u2CA3]/g, 'r')  // U+2CA2/U+2CA3 Coptic ro Ⲣ/ⲣ → r
+    .replace(/[\u2CA4\u2CA5]/g, 's')  // U+2CA4/U+2CA5 Coptic sima Ⲥ/ⲥ → s (equiv to Greek sigma → s)
+    .replace(/[\u2CA6\u2CA7]/g, 't')  // U+2CA6/U+2CA7 Coptic tau Ⲧ/ⲧ → t (equiv to Greek tau → t)
+    .replace(/[\u2CA8\u2CA9]/g, 'u')  // U+2CA8/U+2CA9 Coptic ua Ⲩ/ⲩ → u (equiv to Greek upsilon → u)
+    // Armenian homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
+    // Armenian letters that visually resemble Latin lowercase letters used in injection signals.
+    // Example bypass: "igոore your" (ո=U+0578 Armenian vo) → looks like 'n' → NOT matched.
+    .replace(/[\u0548\u0578]/g, 'n')  // U+0548/U+0578 Armenian vo Ո/ո → n (looks like 'n')
+    .replace(/[\u054D\u057D]/g, 'u')  // U+054D/U+057D Armenian seh Ս/ս → u (looks like 'u')
+    .replace(/[\u053C\u056C]/g, 'l')  // U+053C/U+056C Armenian liwn Լ/լ → l (looks like 'l')
+    .replace(/[\u0540\u0570]/g, 'h')  // U+0540/U+0570 Armenian ho Հ/հ → h (looks like 'h')
     .trim()
 }
 function isOnTopic(text) {
