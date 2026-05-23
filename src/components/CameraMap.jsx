@@ -1404,15 +1404,39 @@ export default function CameraMap() {
               <CircleMarker
                 key={`${layer.id}-${i}`}
                 center={[agency.lat, agency.lng]}
-                radius={agency.status === 'terminated' ? 8 : 7}
+                radius={7}
                 pathOptions={{
-                  fillColor: agency.status === 'terminated' ? '#2ecc71' : layer.color,
-                  fillOpacity: agency.status === 'terminated' ? 0.9 : 0.75,
-                  color: agency.status === 'terminated' ? '#27ae60' : layer.color,
-                  weight: agency.status === 'terminated' ? 2 : 1.5,
-                  opacity: agency.status === 'terminated' ? 0.9 : 0.6,
+                  fillColor: layer.color,
+                  fillOpacity: 0.75,
+                  color: layer.color,
+                  weight: 1.5,
+                  opacity: 0.6,
                 }}
               />
+            ))
+          )}
+
+          {/* Community Victories — INSIDE MapContainer so Leaflet can render them */}
+          {showVictories && EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data).map(layer =>
+            layer.data.filter(a => a.status === 'terminated').map((agency, i) => (
+              <CircleMarker
+                key={`victory-${layer.id}-${i}`}
+                center={[agency.lat, agency.lng]}
+                radius={9}
+                pathOptions={{ fillColor: '#2ecc71', fillOpacity: 0.92, color: '#27ae60', weight: 2, opacity: 1 }}
+              >
+                <Popup>
+                  <div className="cmap-popup-victory-wrap">
+                    <div className="cmap-badge-victory">✊ COMMUNITY VICTORY</div>
+                    <div className="cmap-popup-agency-name">{agency.name}</div>
+                    <div className="cmap-popup-agency-city">📍 {agency.city}, {agency.state}</div>
+                    <div className="cmap-popup-agency-was"><strong>Was:</strong> {layer.label}</div>
+                    {agency.vendor && <div className="cmap-popup-agency-vendor"><strong>Vendor:</strong> {agency.vendor}</div>}
+                    {agency.notes && <div className="cmap-popup-victory-notes">{agency.notes}</div>}
+                    {safeUrl(agency.url) && <a href={safeUrl(agency.url)} target="_blank" rel="noopener noreferrer" className="cmap-popup-victory-link">View source →</a>}
+                  </div>
+                </Popup>
+              </CircleMarker>
             ))
           )}
         </MapContainer>
@@ -1459,30 +1483,6 @@ export default function CameraMap() {
             </div>
           )}
         </div>
-
-          {/* Community Victories overlay — shown only when toggled on */}
-          {showVictories && EFF_LAYERS.filter(l => l.id !== 'alpr' && l.data).map(layer =>
-            layer.data.filter(a => a.status === 'terminated').map((agency, i) => (
-              <CircleMarker
-                key={`victory-${layer.id}-${i}`}
-                center={[agency.lat, agency.lng]}
-                radius={9}
-                pathOptions={{ fillColor: '#2ecc71', fillOpacity: 0.92, color: '#27ae60', weight: 2, opacity: 1 }}
-              >
-                <Popup>
-                  <div className="cmap-popup-victory-wrap">
-                    <div className="cmap-badge-victory">✊ COMMUNITY VICTORY</div>
-                    <div className="cmap-popup-agency-name">{agency.name}</div>
-                    <div className="cmap-popup-agency-city">📍 {agency.city}, {agency.state}</div>
-                    <div className="cmap-popup-agency-was"><strong>Was:</strong> {layer.label}</div>
-                    {agency.vendor && <div className="cmap-popup-agency-vendor"><strong>Vendor:</strong> {agency.vendor}</div>}
-                    {agency.notes && <div className="cmap-popup-victory-notes">{agency.notes}</div>}
-                    {safeUrl(agency.url) && <a href={safeUrl(agency.url)} target="_blank" rel="noopener noreferrer" className="cmap-popup-victory-link">View source →</a>}
-                  </div>
-                </Popup>
-              </CircleMarker>
-            ))
-          )}
 
         {/* Map attribution bar */}
         <div className="cmap-attribution">

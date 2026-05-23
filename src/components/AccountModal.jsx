@@ -14,6 +14,7 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
   const [recoverSent, setRecoverSent] = useState(false)
   const [forgotUsernameEmail, setForgotUsernameEmail] = useState('')
   const [forgotUsernameSent, setForgotUsernameSent] = useState(false)
+  const [showPasskeyInfo, setShowPasskeyInfo] = useState(false)
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -314,6 +315,22 @@ export default function AccountModal({ onClose, initialTab = 'login', singleMode
               <p className="am-passkey-hint">
                 No passkey yet? Log in with password below, then add one from your account dashboard.
               </p>
+              <button
+                type="button"
+                onClick={() => setShowPasskeyInfo(v => !v)}
+                className="am-passkey-info-toggle"
+                aria-expanded={showPasskeyInfo}
+              >
+                {showPasskeyInfo ? '▾' : '▸'} What's a passkey? How is my data stored?
+              </button>
+              {showPasskeyInfo && (
+                <div className="am-passkey-info">
+                  <p>🔑 <strong>Your passkey lives on your device</strong> — in your OS keychain (iCloud Keychain, Google Password Manager, or Windows Hello). Citeback never sees or stores your private key.</p>
+                  <p>📡 <strong>What Citeback stores:</strong> only a public key identifier — mathematically useless without your device's private half. No passwords, no central login.</p>
+                  <p>🚫 <strong>Not a digital ID.</strong> It's a device-based login method, not a government credential or online account. No one can use it to track or identify you.</p>
+                  <p>⚠️ <strong>Losing your device:</strong> if you lose access without a backup, you lose access to this account. Apple/Google sync passkeys across your devices automatically — Citeback has no part in that sync.</p>
+                </div>
+              )}
               <div className="am-or-divider">
                 <div className="am-or-line" />
                 <span className="am-or-text">or sign in with password</span>
