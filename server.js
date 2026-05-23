@@ -792,6 +792,15 @@ function normalizeInput(text) {
     .replace(/[ιΙ]/g, 'i')       // U+03B9 Greek iota ι / U+0399 capital Ι → i (bypass: "ignore your", "simulate a", "disregard", etc.)
     .replace(/[βΒ]/g, 'b')       // U+03B2 Greek beta β / U+0392 capital Β → b (bypass: "bypass your", "jailbreak", etc.)
     .replace(/[ηΗ]/g, 'h')       // U+03B7 Greek eta η / U+0397 capital Η → h (bypass: "without restrictions", "hypothetically you are", etc.)
+    // Additional Greek letters not covered in prior sessions (NFKC does NOT normalize these to Latin).
+    // Confirmed bypass vectors via Node.js harness (each bypasses at least one INJECTION_SIGNAL):
+    .replace(/[γΓгГ]/g, 'g')     // U+03B3/U+0393 Greek gamma + U+0433/U+0413 Cyrillic ge → g (bypass: "god mode", "disregard", "ignore your", "imagine you are")
+    .replace(/[δΔдД]/g, 'd')     // U+03B4/U+0394 Greek delta + U+0434/U+0414 Cyrillic de → d (bypass: "disable your", "disregard", "developer mode", "dan mode")
+    .replace(/[πΠпП]/g, 'p')     // U+03C0/U+03A0 Greek pi + U+043F/U+041F Cyrillic pe → p (bypass: "pretend to be", "bypass your", "print your", "speak as")
+    .replace(/[λΛлЛ]/g, 'l')     // U+03BB/U+039B Greek lambda + U+043B/U+041B Cyrillic el → l (bypass: "roleplay as", "simulate a")
+    .replace(/[μΜмМ]/g, 'm')     // U+03BC/U+039C Greek mu + U+043C/U+041C Cyrillic em → m (bypass: "simulate a", "imagine you are")
+    .replace(/[φΦфФ]/g, 'f')     // U+03C6/U+03A6 Greek phi + U+0444/U+0424 Cyrillic ef → f (bypass: "forget your", "no filter mode")
+    .replace(/[ωΩ]/g, 'o')       // U+03C9/U+03A9 Greek omega → o (bypass: "you are now a", "with no restrictions", "without restrictions"; distinct from omicron ο/Ο already covered)
     // IPA phonetic extension small capitals — NOT normalized by NFKC (confirmed bypass vectors).
     // These are visually identical to their Latin counterparts but are distinct Unicode codepoints
     // in the IPA Extensions (U+0250–U+02B8) and Phonetic Extensions (U+1D00–U+1D2B) blocks.
