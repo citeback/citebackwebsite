@@ -389,14 +389,26 @@ try { db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_launch_email_hmac ON lau
     if (noToken.length > 0) console.log('Backfilled unsub_token for', noToken.length, 'subscribers')
 
     const noHmac = db.prepare('SELECT id, email FROM launch_subscribers WHERE email_hmac IS NULL AND email IS NOT NULL').all()
-    const stmtHmac = db.prepare('UPDATE launch_subscribers SET email_hmac = ? WHERE id = ?')
+    const stmtHmac = db.prepare('UPDATE launch_subscribers SET email_hmac = ?, email = ? WHERE id = ?')
+    let hmacFixed = 0
     for (const r of noHmac) {
       try {
+        // Try to decrypt as AES-256-GCM (new format: iv:tag:enc hex)
         const plain = decryptEmail(r.email)
-        if (plain) stmtHmac.run(hashEmailForLookup(plain), r.id)
+        if (plain) {
+          stmtHmac.run(hashEmailForLookup(plain), r.email, r.id)
+          hmacFixed++
+        } else if (r.email.includes('@') && !r.email.includes(':')) {
+          // PRIVACY FIX: pre-encryption era — plaintext email stored in DB.
+          // Re-encrypt it now so it matches the current security model.
+          // Detect plaintext by presence of '@' and absence of ':' separator (AES format uses ':').
+          const enc = encryptEmail(r.email)
+          stmtHmac.run(hashEmailForLookup(r.email.toLowerCase().trim()), enc, r.id)
+          hmacFixed++
+        }
       } catch {}
     }
-    if (noHmac.length > 0) console.log('Backfilled email_hmac for', noHmac.length, 'subscribers')
+    if (hmacFixed > 0) console.log('Backfilled email_hmac for', hmacFixed, 'subscribers (plaintext emails re-encrypted)')
   } catch (e) { console.error('launch_subscribers backfill error:', e.message) }
 })()
 
@@ -405,11 +417,23 @@ try { db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_launch_email_hmac ON lau
   try {
     const users = db.prepare('SELECT id, email_enc FROM users WHERE email_enc IS NOT NULL AND email_hmac IS NULL').all()
     const stmt = db.prepare('UPDATE users SET email_hmac = ? WHERE id = ?')
+    const stmtClear = db.prepare('UPDATE users SET email_enc = NULL, email_hmac = NULL WHERE id = ?')
+    let userFixed = 0, userCleared = 0
     for (const u of users) {
       const plain = decryptEmail(u.email_enc)
-      if (plain) stmt.run(hashEmailForLookup(plain), u.id)
+      if (plain) {
+        stmt.run(hashEmailForLookup(plain), u.id)
+        userFixed++
+      } else {
+        // email_enc is unreadable (key rotation or corruption) — clear it so user can re-add.
+        // Retaining unreadable ciphertext provides no security benefit and causes log noise.
+        stmtClear.run(u.id)
+        userCleared++
+        console.log('Cleared unreadable email_enc for user', u.id, '— user should re-enter recovery email')
+      }
     }
-    if (users.length > 0) console.log('Backfilled email_hmac for', users.length, 'users')
+    if (userFixed > 0) console.log('Backfilled email_hmac for', userFixed, 'users')
+    if (userCleared > 0) console.log('Cleared', userCleared, 'unreadable email_enc entries (key rotation)')
   } catch (e) { console.error('email_hmac backfill error:', e.message) }
 })()
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
