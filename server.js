@@ -1660,6 +1660,11 @@ const server = http.createServer(async (req, res) => {
   // ── Account: logout ────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/account/logout') {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    // SECURITY: clear step-up reauth window on logout — the 5-min window should not
+    // outlive the session. If the token is valid, delete the reauth entry; if expired/absent,
+    // no entry exists anyway. Defense-in-depth for the /account/email step-up gate.
+    const logoutClaims = verifyToken(req)
+    if (logoutClaims) reauthSessions.delete(logoutClaims.userId)
     res.setHeader('Set-Cookie', COOKIE_CLEAR)
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true }))
