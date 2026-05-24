@@ -1,18 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
+import { API_BASE } from '../config.js'
 
 const isTouchDevice = typeof window !== 'undefined' && 'ontouchstart' in window
 
-const stats = [
-  { value: '7', label: 'Campaigns queued at launch' },
-  { value: '$23,500', label: 'Total campaign funding goals' },
-  { value: '$0', label: 'Raised to date — wallets not yet live' },
-  { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
-]
+const fmt$ = n => n >= 1000 ? `$${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : `$${n}`
 
 export default function Hero({ setTab }) {
   const sectionRef = useRef(null)
   const redactedRefs = useRef([])
   const [hintVisible, setHintVisible] = useState(true)
+  const [liveStats, setLiveStats] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API_BASE}/stats`)
+      .then(r => r.json())
+      .then(d => setLiveStats(d))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const section = sectionRef.current
@@ -156,7 +160,12 @@ export default function Hero({ setTab }) {
             </div>
             <div className="hero-stats-block">
               <div className="hero-stats-label">Platform Stats</div>
-              {stats.map((s, i) => (
+              {[
+                { value: liveStats ? String(liveStats.campaignCount) : '7', label: 'Campaigns queued at launch' },
+                { value: liveStats ? fmt$(liveStats.totalGoal) : '$23,500', label: 'Total campaign funding goals' },
+                { value: liveStats ? fmt$(liveStats.totalRaised) : '$0', label: 'Raised to date' },
+                { value: 'XMR + ZANO', label: 'No account or ID required to contribute.' },
+              ].map((s, i) => (
                 <div key={i} className="hero-stat-row">
                   <span className="hero-stat-label">{s.label}</span>
                   <span className="hero-stat-value">{s.value}</span>

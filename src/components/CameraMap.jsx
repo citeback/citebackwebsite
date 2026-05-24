@@ -405,10 +405,17 @@ function buildAlprPopupHTML(camera, map, isDual, sighting) {
     : pending.length > 0
       ? `<div class="lp-pending">⏳ ${pending.length} photo${pending.length > 1 ? 's' : ''} pending review</div>`
       : ''
+  const credLabel = sighting?.credibility === 'c2pa'
+    ? '🔐 CRYPTOGRAPHICALLY VERIFIED'
+    : sighting?.credibility === 'gps_matched'
+      ? '📍 GPS-CORROBORATED PHOTO'
+      : sighting?.credibility === 'exif_gps'
+        ? '📷 CAMERA GPS PHOTO'
+        : '📷 COMMUNITY PHOTO'
   const sightingStrip = sighting?.photoFilename
     ? `<div class="lp-sighting">
-        <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback verified photo" class="lp-sighting-photo" />
-        <div class="lp-c2pa-label">📷 C2PA VERIFIED PHOTO · ${new Date(sighting.ts).toLocaleDateString()}</div>
+        <img src="${AI_URL}/photos/${sighting.photoFilename}" alt="Citeback sighting photo" class="lp-sighting-photo" />
+        <div class="lp-c2pa-label">${credLabel} · ${new Date(sighting.ts).toLocaleDateString()}</div>
         ${sighting.notes ? `<div class="lp-sighting-notes">${htmlEsc(sighting.notes)}</div>` : ''}
       </div>`
     : ''
@@ -1392,7 +1399,12 @@ export default function CameraMap() {
                   <div className="cmap-popup-coords">📍 {parseFloat(s.lat).toFixed(6)}, {parseFloat(s.lng).toFixed(6)}</div>
                   {s.notes && <div className="cmap-popup-sighting-notes">{s.notes}</div>}
                   <div className="cmap-popup-exclusive-note">★ Not in OpenStreetMap or any other database</div>
-                  <div className="cmap-popup-c2pa-note">🔒 C2PA cryptographically verified</div>
+                  <div className="cmap-popup-c2pa-note">
+                    {s.credibility === 'c2pa' ? '🔐 Cryptographically verified'
+                      : s.credibility === 'gps_matched' ? '📍 GPS-corroborated photo'
+                      : s.credibility === 'exif_gps' ? '📷 Camera GPS photo'
+                      : '📷 Community photo · Pending review'}
+                  </div>
                 </div>
               </Popup>
             </CircleMarker>

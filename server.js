@@ -779,6 +779,12 @@ const INJECTION_SIGNALS = [
   'repeat after me', 'say the following', 'output the following',
   'print your', 'show your', 'reveal your', 'tell me your',
   'what are your rules', 'what are you not allowed',
+  // Model-specific chat-template tokens (Qwen 2.5 + LLaMA 3.x + LLaMA 2) — defense-in-depth.
+  // Raw template delimiters in user messages could inject a synthetic system/role block
+  // at the Ollama tokenizer level, potentially overriding the server-side system prompt.
+  '<|im_start|>', '<|im_end|>', '<|system|>', '<|user|>', '<|assistant|>',
+  '<|start_header_id|>', '<|end_header_id|>', '<|eot_id|>', '<|begin_of_text|>',
+  '[inst]', '[/inst]', '<<sys>>', '<</sys>>',
 ]
 const OFF_TOPIC_SIGNALS = [
   'alternator', 'carburetor', 'transmission fluid', 'oil change', 'tire rotation',
@@ -1069,6 +1075,25 @@ function normalizeInput(text) {
     .replace(/[ᲄᲅ]/g, 't') // U+1C84 TALL TE → t; U+1C85 THREE-LEGGED TE → t
     .replace(/[ᲆᲇ]/g, 'b') // U+1C86 TALL HARD SIGN → b; U+1C87 TALL YAT → b
     .replace(/[ᲈ]/g, 'u')   // U+1C88 CYRILLIC SMALL LETTER UNBLENDED UK → u
+    // Bamum script (U+A6A0–U+A6E5) — NOT normalized by NFKC.
+    // Unicode confusables.txt lists ꛟ (U+A6DF BAMUM LETTER KO) as visually identical to
+    // Latin capital letter V. This is a confirmed bypass vector for 'v'-containing injection
+    // signals: "re\u{A6DF}eal your" (ꛟ looks like 'V') → misses "reveal your";
+    // "de\u{A6DF}eloper mode" → misses "developer mode".
+    .replace(/[\uA6DF]/g, 'v')  // U+A6DF Bamum ꛟ → v (Unicode confusables: ꛟ ≡ V)
+    // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
+    // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
+    // non-ASCII character is either:
+    //   (a) An unknown foreign-script character used as a bypass by inserting it between letters
+    //       of a keyword (e.g. "byp[Bamum]ass" → strip → "bypass" → detected ✓)
+    //   (b) A character with no visual Latin resemblance, inserted to break substring matching
+    //       (strip prevents keyword reassembly attacks across non-ASCII boundaries)
+    // Accented Latin chars are already reduced to ASCII by NFD + combining-mark strip above,
+    // so this catch-all has zero false positives for normal surveillance/camera text.
+    .replace(/[^\x00-\x7F]/g, '')
+    // Re-normalize spaces after catch-all strip (inserted non-ASCII chars may have been
+    // flanked by spaces, or the strip may create adjacent spaces)
+    .replace(/\s+/g, ' ')
     .trim()
 }
 function isOnTopic(text) {
@@ -1377,16 +1402,49 @@ const server = http.createServer(async (req, res) => {
   // ── Stats ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/stats') {
     if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    // Live platform stats — computed fresh from DB + JSONL on each request.
     // Omit operational details (rateLimited, uptime, queueDepth, processing) that
     // would help an attacker profile server load or time requests around restarts.
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    return res.end(JSON.stringify({
-      thumbsUp: stats.thumbsUp,
-      thumbsDown: stats.thumbsDown,
-      total: stats.total,
-      since: stats.since,
-      cameraCount: osmCameras.length,
-    }))
+    try {
+      const campaignRows = db.prepare('SELECT status, COUNT(*) as cnt, SUM(goal) as totalGoal, SUM(raised) as totalRaised FROM campaigns GROUP BY status').all()
+      let campaignCount = 0, totalGoal = 0, totalRaised = 0
+      for (const r of campaignRows) {
+        campaignCount += r.cnt
+        totalGoal += r.totalGoal || 0
+        totalRaised += r.totalRaised || 0
+      }
+      // Active launch subscribers (exclude unsubscribed)
+      const activeSubscriberCount = db.prepare('SELECT COUNT(*) as cnt FROM launch_subscribers WHERE unsubscribed_at IS NULL').get()?.cnt || 0
+
+      // Count approved sightings and unique states from JSONL
+      let sightingCount = 0, stateSet = new Set()
+      try {
+        const sFile = path.join(DATA_DIR, 'sightings.jsonl')
+        if (fs.existsSync(sFile)) {
+          for (const line of fs.readFileSync(sFile, 'utf8').split('\n').filter(Boolean)) {
+            try { const s = JSON.parse(line); if (s.status === 'approved') { sightingCount++; if (s.state) stateSet.add(s.state) } } catch {}
+          }
+        }
+      } catch {}
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({
+        cameraCount: osmCameras.length,
+        sightingCount,
+        stateCount: stateSet.size,
+        campaignCount,
+        totalGoal,
+        totalRaised,
+        activeSubscriberCount,
+        thumbsUp: stats.thumbsUp,
+        thumbsDown: stats.thumbsDown,
+        total: stats.total,
+        since: stats.since,
+      }))
+    } catch (e) {
+      console.error('stats error:', e.message)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ cameraCount: osmCameras.length }))
+    }
   }
 
   // ── Campaign interest counter ──────────────────────────────────────────────
@@ -1592,6 +1650,11 @@ const server = http.createServer(async (req, res) => {
     const claims = verifyToken(req)
     if (!claims) { res.writeHead(401, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Authentication required' })) }
     db.prepare('UPDATE users SET password_version = COALESCE(password_version, 0) + 1 WHERE id = ?').run(claims.userId)
+    // SECURITY FIX: also revoke all registered passkeys — an attacker who registered a passkey
+    // can bypass logout-all by re-authenticating via passkey and getting a fresh JWT with the
+    // new password_version. Deleting all passkeys ensures logout-all fully terminates access.
+    db.prepare('DELETE FROM passkeys WHERE user_id = ?').run(claims.userId)
+    reauthSessions.delete(claims.userId) // clear step-up reauth window on full logout
     res.setHeader('Set-Cookie', COOKIE_CLEAR)
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true }))
@@ -2194,14 +2257,12 @@ const server = http.createServer(async (req, res) => {
       const hasC2PA = detectedC2PA
       const hasPhoto = !!photoFilename
 
-      // ── Non-C2PA = rejected. Photo deleted. Not stored. ──────────────────────
-      if (!trusted && (!hasPhoto || !hasC2PA)) {
-        if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+      // ── Photo required — C2PA no longer mandatory for submission ─────────────
+      // C2PA/Proofmode = instant approval (cryptographically verified)
+      // Regular photo = pending admin review with credibility tier
+      if (!trusted && !hasPhoto) {
         res.writeHead(422, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({
-          error: 'C2PA-verified photo required.',
-          hint: 'Shoot with Proofmode (iOS/Android), Samsung Galaxy S24+, or Google Pixel 10.',
-        }))
+        return res.end(JSON.stringify({ error: 'A photo is required to submit a sighting.' }))
       }
 
       const allowedTypes = ['alpr', 'shotspotter', 'facial', 'cctv', 'drone', 'unknown']
@@ -2217,6 +2278,10 @@ const server = http.createServer(async (req, res) => {
 
       const claims = verifyToken(req)
       const userId = claims?.userId || null
+
+      // Save user-submitted pin coordinates before GPS resolution for cross-validation
+      const userPinLat = lat
+      const userPinLng = lng
 
       let finalLat = lat, finalLng = lng
 
@@ -2297,6 +2362,39 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
+      // ── GPS cross-validation ─────────────────────────────────────────────────
+      // Compare EXIF/proof GPS (camera-embedded) vs user map pin (user-submitted).
+      // c2pa: cryptographic proof   gps_matched: EXIF corroborates pin within 2km
+      // exif_gps: GPS from camera only (no user pin)   basic: user pin only
+      let gpsCredibility = 'basic'
+      let gpsMatchDistance = null
+      if (!trusted) {
+        const exifSrcLat = fields._exifLat || fields._proofLat
+        const exifSrcLng = fields._exifLng || fields._proofLng
+        if (exifSrcLat && exifSrcLng) {
+          if (userPinLat && userPinLng) {
+            gpsMatchDistance = haversine(
+              parseFloat(userPinLat), parseFloat(userPinLng),
+              parseFloat(exifSrcLat), parseFloat(exifSrcLng)
+            )
+            if (gpsMatchDistance > 5) {
+              if (photoFilename) fs.unlink(path.join(PHOTOS_DIR, photoFilename), () => {})
+              res.writeHead(422, { 'Content-Type': 'application/json' })
+              return res.end(JSON.stringify({
+                error: 'GPS mismatch: photo was taken too far from your map pin. Make sure the photo was taken at the camera location.',
+                hint: `Photo GPS is ${Math.round(gpsMatchDistance)}km from your map pin.`,
+              }))
+            } else if (gpsMatchDistance <= 2) {
+              gpsCredibility = 'gps_matched'
+            }
+            // 2–5km: borderline, stays 'basic', admin decides
+          } else {
+            gpsCredibility = 'exif_gps' // GPS entirely from camera, not user-overridden
+          }
+        }
+      }
+      const credibility = hasC2PA ? 'c2pa' : gpsCredibility
+
       // Vision content check — confirm photo actually shows a camera/ALPR/billboard
       if (!trusted) {
         const isCamera = await checkPhotoContent(path.join(PHOTOS_DIR, photoFilename))
@@ -2328,11 +2426,13 @@ const server = http.createServer(async (req, res) => {
           }
         } catch {} // non-fatal, proceed with empty address
       }
+      const sightingStatus = (trusted || hasC2PA) ? 'approved' : 'pending'
       appendRecord('sightings.jsonl', {
         id, cameraType, address: finalAddress, city: finalCity, state: finalState,
         lat: finalLat, lng: finalLng, notes,
         hasPhoto: true, photoFilename,
-        hasC2PA: true, status: 'approved', newCamera,
+        hasC2PA, credibility, status: sightingStatus, newCamera,
+        ...(gpsMatchDistance !== null ? { gpsMatchKm: Math.round(gpsMatchDistance * 10) / 10 } : {}),
         userId: userId || null,
         reputationPoints,
       })
@@ -2344,8 +2444,12 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({
-        ok: true, id, newCamera,
-        liveonmap: true,
+        ok: true, id, newCamera, credibility,
+        liveonmap: sightingStatus === 'approved',
+        pending: sightingStatus === 'pending',
+        ...(sightingStatus === 'pending' ? {
+          message: 'Your sighting has been submitted for review and will appear on the map once approved.',
+        } : {}),
         ...(repResult ? {
           reputationAwarded: reputationPoints,
           newReputation: repResult.newRep,
@@ -2747,7 +2851,7 @@ const server = http.createServer(async (req, res) => {
       const sightings = lines
         .map(l => { try { return JSON.parse(l) } catch { return null } })
         .filter(s => s && s.lat && s.lng && s.status === 'approved')
-        .map(s => ({ id: s.id, cameraType: s.cameraType, address: s.address, city: s.city, state: s.state, lat: s.lat, lng: s.lng, notes: s.notes, ts: s.ts, newCamera: s.newCamera, hasC2PA: s.hasC2PA, photoFilename: s.photoFilename }))
+        .map(s => ({ id: s.id, cameraType: s.cameraType, address: s.address, city: s.city, state: s.state, lat: s.lat, lng: s.lng, notes: s.notes, ts: s.ts, newCamera: s.newCamera, hasC2PA: s.hasC2PA, credibility: s.credibility || (s.hasC2PA ? 'c2pa' : 'basic'), photoFilename: s.photoFilename || null }))
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ sightings }))
     } catch {
@@ -2843,7 +2947,35 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'id and action (approve|reject) required' }))
       }
       const newStatus = action === 'approve' ? 'approved' : 'rejected'
+      // SECURITY FIX: read sighting before update to enable reputation revocation on rejection.
+      // awardReputation is called at submission time (auto-approved via C2PA); if an admin later
+      // rejects a sighting, the awarded points must be clawed back to preserve leaderboard integrity.
+      let sightingRec = null
+      try {
+        const sightingFile = path.join(DATA_DIR, 'sightings.jsonl')
+        if (fs.existsSync(sightingFile)) {
+          const sLines = fs.readFileSync(sightingFile, 'utf8').split('\n').filter(Boolean)
+          for (const sl of sLines) {
+            try { const sr = JSON.parse(sl); if (sr.id === id) { sightingRec = sr; break } } catch {}
+          }
+        }
+      } catch {}
       const changed = updateRecord('sightings.jsonl', s => s.id === id, s => ({ ...s, status: newStatus, moderatedAt: new Date().toISOString() }))
+      // Clawback reputation if rejecting a sighting that previously awarded points
+      if (action === 'reject' && sightingRec && sightingRec.userId && sightingRec.reputationPoints > 0) {
+        try {
+          const pts = sightingRec.reputationPoints
+          const revNow = new Date().toISOString()
+          db.prepare('INSERT INTO reputation_events (user_id, sighting_id, event_type, points, created_at) VALUES (?, ?, ?, ?, ?)')
+            .run(sightingRec.userId, id, 'sighting_rejected', -pts, revNow)
+          const userRow = db.prepare('SELECT reputation FROM users WHERE id = ?').get(sightingRec.userId)
+          if (userRow) {
+            const newRep = Math.max(0, (userRow.reputation || 0) - pts)
+            const newTierVal = getTierFromRep(newRep)
+            db.prepare('UPDATE users SET reputation = ?, tier = ? WHERE id = ?').run(newRep, newTierVal, sightingRec.userId)
+          }
+        } catch (repErr) { console.error('reputation revocation error:', repErr.message) }
+      }
       res.writeHead(200, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ ok: changed, id, status: newStatus }))
     } catch {
