@@ -563,15 +563,33 @@ function checkBarRateLimit(ip) {
 // ── Sighting rate limiter (authenticated users — 30/hour) ──────────────────
 // Prevents C2PA replay farming: attacker submits same photo repeatedly for +1 rep/submit.
 // Unauthenticated users already hit checkRateLimit (10/min); this caps authenticated users.
+// SECURITY FIX (audit5-A5-H2): dual-key rate limit — IP *and* userId.
+// IP-only rate limiting is bypassable by rotating Tor exits or VPN endpoints.
+// A single authenticated account can submit unlimited fake sightings from changing IPs.
+// Checking both dimensions means an attacker needs both a new IP AND a new account to bypass.
 const sightingRateCounts = new Map()
-function checkSightingRateLimit(ip) {
+const sightingUserRateCounts = new Map()  // userId-keyed, enforced independently
+function checkSightingRateLimit(ip, userId) {
   const now = Date.now()
   const SIGHTING_WINDOW = 60 * 60 * 1000  // 1 hour
   const SIGHTING_LIMIT = 30               // 30 sightings/hour max for authenticated users
-  const entry = sightingRateCounts.get(ip)
-  if (!entry || now - entry.start > SIGHTING_WINDOW) { sightingRateCounts.set(ip, { count: 1, start: now }); return true }
-  if (entry.count >= SIGHTING_LIMIT) return false
-  entry.count++; return true
+  // Check IP dimension
+  const ipEntry = sightingRateCounts.get(ip)
+  if (!ipEntry || now - ipEntry.start > SIGHTING_WINDOW) { sightingRateCounts.set(ip, { count: 1, start: now }) }
+  else {
+    if (ipEntry.count >= SIGHTING_LIMIT) return false
+    ipEntry.count++
+  }
+  // Check userId dimension (if authenticated)
+  if (userId) {
+    const userEntry = sightingUserRateCounts.get(userId)
+    if (!userEntry || now - userEntry.start > SIGHTING_WINDOW) { sightingUserRateCounts.set(userId, { count: 1, start: now }) }
+    else {
+      if (userEntry.count >= SIGHTING_LIMIT) return false
+      userEntry.count++
+    }
+  }
+  return true
 }
 
 // ── WebAuthn / Passkey config ────────────────────────────────────────────────
@@ -704,7 +722,8 @@ setInterval(() => {
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
   for (const [ip, e] of adminFailCounts){ if ((e.lockedUntil && now > e.lockedUntil + 60000) || (!e.lockedUntil && e.firstFail && now - e.firstFail > ADMIN_LOCKOUT_MS)) adminFailCounts.delete(ip) }
   for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
-  for (const [k, e] of sightingRateCounts)       { if (now - e.start > 60 * 60 * 1000) sightingRateCounts.delete(k)       }
+  for (const [k, e] of sightingRateCounts)        { if (now - e.start > 60 * 60 * 1000) sightingRateCounts.delete(k)        }
+  for (const [k, e] of sightingUserRateCounts)    { if (now - e.start > 60 * 60 * 1000) sightingUserRateCounts.delete(k)    }
   for (const [k, until] of reauthSessions)       { if (until < now)                          reauthSessions.delete(k)          }
 }, 10 * 60 * 1000) // every 10 minutes
 
@@ -1165,7 +1184,9 @@ const reverseGeocode = (lat, lng) => new Promise((resolve) => {
   const opts = {
     hostname: 'nominatim.openstreetmap.org',
     path: `/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&format=json&addressdetails=1`,
-    headers: { 'User-Agent': 'citeback.com surveillance map' },
+    // SECURITY (audit5-A5-M2): non-identifying User-Agent — Nominatim logs see every sighting
+    // GPS coordinate. Using the platform name as UA makes these requests trivially attributable.
+    headers: { 'User-Agent': 'geo-lookup-service/1.0 (contact: admin@citeback.com)' },
   }
   const MAX_GEOCODE_BYTES = 64 * 1024  // 64KB cap — well above any real Nominatim response
   const req = https.get(opts, (res) => {
@@ -2010,7 +2031,8 @@ const server = http.createServer(async (req, res) => {
     // JWT is in the cookie (request headers) — check auth without reading body.
     // Unauthenticated IPs get standard limit (10/min); authenticated get 30/hour.
     const preAuthClaims = verifyToken(req)
-    if (preAuthClaims ? !checkSightingRateLimit(ip) : !checkRateLimit(ip)) {
+    // SECURITY (audit5-A5-H2): pass userId to enforce per-account limit alongside per-IP limit
+    if (preAuthClaims ? !checkSightingRateLimit(ip, preAuthClaims.userId) : !checkRateLimit(ip)) {
       res.writeHead(429, { 'Content-Type': 'application/json' })
       return res.end(JSON.stringify({ error: 'Rate limit exceeded. Please wait before submitting again.' }))
     }
@@ -2389,7 +2411,16 @@ const server = http.createServer(async (req, res) => {
             }
             // 2–5km: borderline, stays 'basic', admin decides
           } else {
-            gpsCredibility = 'exif_gps' // GPS entirely from camera, not user-overridden
+            // SECURITY (audit5-A5-M3): downgraded from 'exif_gps' to 'basic'.
+            // EXIF GPS is trivially writable with tools like ExifTool — it provides ZERO
+            // additional authenticity vs a user-typed pin. Only C2PA cryptographically binds
+            // GPS to image content. Granting a higher credibility tier based solely on EXIF
+            // GPS enables systematic location spoofing: attacker photographs a real camera,
+            // injects GPS coords for any location they want, submits with no user pin,
+            // and gets 'exif_gps' tier as if location were verified. Treating this as 'basic'
+            // correctly routes all non-C2PA submissions through admin review regardless of
+            // whether GPS came from EXIF or user input.
+            gpsCredibility = 'basic' // was 'exif_gps' — EXIF GPS is not cryptographically bound
           }
         }
       }
@@ -3031,7 +3062,10 @@ const server = http.createServer(async (req, res) => {
     try {
       const unsubToken = randomBytes(24).toString('base64url')
       const emailHmac = hashEmailForLookup(email)
-      db.prepare('INSERT OR IGNORE INTO launch_subscribers (email, email_hmac, ip, unsub_token) VALUES (?, ?, ?, ?) ON CONFLICT(email_hmac) DO NOTHING').run(encryptEmail(email), emailHmac, ip, unsubToken)
+      // SECURITY FIX (audit5-A5-H1): do NOT store subscriber IP. IP is PII that can
+      // deanonymize activists if the DB is subpoenaed or breached. Email is encrypted;
+      // storing IP in plaintext next to it undermines that protection entirely.
+      db.prepare('INSERT OR IGNORE INTO launch_subscribers (email, email_hmac, ip, unsub_token) VALUES (?, ?, NULL, ?) ON CONFLICT(email_hmac) DO NOTHING').run(encryptEmail(email), emailHmac, unsubToken)
     } catch (e) { console.error('notify-launch insert error:', e.message) }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     return res.end(JSON.stringify({ ok: true }))
@@ -3164,7 +3198,19 @@ const server = http.createServer(async (req, res) => {
       if (!Object.keys(fields).length) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'No valid fields' })) }
       const updXmr = fields.wallet_xmr !== undefined ? fields.wallet_xmr : campaign.wallet_xmr
       const updZano = fields.wallet_zano !== undefined ? fields.wallet_zano : campaign.wallet_zano
-      if (updXmr && updZano && campaign.status !== 'active') { fields.status = 'active'; fields.activated_at = new Date().toISOString() }
+      if (updXmr && updZano && campaign.status !== 'active') {
+        // SECURITY FIX (audit5-A5-H3): re-read tier from DB at activation time, not just at claim time.
+        // Attack: bot reaches Tier 1, claims campaign, admin rejects bot sightings (reputation clawback
+        // brings tier to 0), but bot had already set wallets — auto-activation fires with attacker wallets.
+        // Fix: re-verify tier is still >= 1 at the moment of activation. If clawback happened before
+        // the PATCH, the campaign silently stays in 'claimed' status without activating.
+        const freshUser = db.prepare('SELECT tier, reputation FROM users WHERE id = ?').get(claims.userId)
+        if (freshUser && freshUser.tier >= 1) {
+          fields.status = 'active'
+          fields.activated_at = new Date().toISOString()
+        }
+        // If tier < 1, wallets are saved but activation is withheld until tier is restored or admin promotes
+      }
       // Audit trail: log wallet changes on active campaigns (important for donor trust)
       const walletChanged = (fields.wallet_xmr !== undefined || fields.wallet_zano !== undefined)
       if (walletChanged) {
