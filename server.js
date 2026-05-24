@@ -1007,6 +1007,52 @@ function normalizeInput(text) {
     .replace(/[\u13AB]/g, 'h')   // U+13AB Cherokee Ꮋ → h
     .replace(/[\u13B3]/g, 'p')   // U+13B3 Cherokee → p
     .replace(/[\u13DF]/g, 's')   // U+13DF Cherokee Ꮟ → s
+    // Cherokee extended confusables (Unicode confusables.txt, keepalive 162).
+    // 25 new entries: all remaining Cherokee chars confirmed as Latin look-alikes in confusables.txt.
+    // NOT normalized by NFKC. Prior 7 entries (keepalive 146) covered first subset.
+    .replace(/[\u13A4]/g, 'o')   // U+13A4 Ꭴ → o (confusables: O)
+    .replace(/[\u13A5]/g, 'i')   // U+13A5 Ꭵ → i (confusables: i)
+    .replace(/[\u13A9]/g, 'y')   // U+13A9 Ꭹ → y (confusables: Y)
+    .replace(/[\u13AA]/g, 'a')   // U+13AA Ꭺ → a (confusables: A; bypass: "disregᎪrd")
+    .replace(/[\u13AC]/g, 'e')   // U+13AC Ꭼ → e (confusables: E; bypass: "pretend to bᎬ")
+    .replace(/[\u13B7]/g, 'm')   // U+13B7 Ꮇ → m (confusables: M; bypass: "developer Ꮇode")
+    .replace(/[\u13BB]/g, 'h')   // U+13BB Ꮋ → h (confusables: H; bypass: "witᎻout restrictions")
+    .replace(/[\u13BE]/g, 'o')   // U+13BE Ꮎ → o (confusables: O)
+    .replace(/[\u13C0]/g, 'g')   // U+13C0 Ꮐ → g (confusables: G; bypass: "Ꮐod mode")
+    .replace(/[\u13C2]/g, 'h')   // U+13C2 Ꮒ → h (confusables: h; bypass: "witᏂout")
+    .replace(/[\u13CC]/g, 'u')   // U+13CC Ꮜ → u (confusables: U; bypass: "bypass yoᏌr")
+    .replace(/[\u13D2]/g, 'r')   // U+13D2 Ꮢ → r (confusables: R; bypass: "Ꮢeveal your")
+    .replace(/[\u13D4]/g, 'w')   // U+13D4 Ꮤ → w (confusables: W; bypass: "Ꮤithout restrictions")
+    .replace(/[\u13D5\u13DA]/g, 's') // Ꮥ/Ꮪ → s (confusables: S; bypass: "Ꮥimulate a")
+    .replace(/[\u13D9]/g, 'v')   // U+13D9 Ꮩ → v (confusables: V; bypass: "reᏙeal your")
+    .replace(/[\u13DE]/g, 'l')   // U+13DE Ꮮ → l (confusables: L; bypass: "jaiᏞbreak")
+    .replace(/[\u13E2]/g, 'p')   // U+13E2 Ꮲ → p (confusables: P; bypass: "Ꮲretend to be")
+    .replace(/[\u13E6]/g, 'k')   // U+13E6 Ꮶ → k (confusables: K; bypass: "jailbreaᏦ")
+    .replace(/[\u13E7]/g, 'd')   // U+13E7 Ꮷ → d (confusables: d; bypass: "Ꮷisregard")
+    .replace(/[\u13EB]/g, 'o')   // U+13EB Ꮻ → o (confusables: O)
+    .replace(/[\u13F2\u13F3]/g, 'h') // Ᏺ/Ᏻ → h (confusables: h/G)
+    .replace(/[\u13F4]/g, 'b')   // U+13F4 Ᏼ → b (confusables: B; bypass: "Ᏼypass your")
+    // UCAS (Unified Canadian Aboriginal Syllabics, U+1400–U+167F) — 29 confirmed confusables.
+    // Unicode confusables.txt documents these chars as visually similar to Latin. NOT normalized by NFKC.
+    .replace(/[\u1472\u1473\u147F\u1481\u1488\u15AF\u15F7]/g, 'b') // ᑲᑳᑿᒁᒈᖯᗷ → b
+    .replace(/[\u146F\u147B\u1487\u15DE\u15EA]/g, 'd')               // ᑯᑻᒇᗞᗪ → d
+    .replace(/[\u15B4]/g, 'f')   // U+15B4 ᖴ → f (confusables: F; bypass: "ᖴorget your")
+    .replace(/[\u157C]/g, 'h')   // U+157C ᕼ → h (confusables: H; bypass: "witᕼout")
+    .replace(/[\u148D\u1499]/g, 'j')  // ᒍᒙ → j (confusables: J; bypass: "ᒍailbreak")
+    .replace(/[\u14AA\u14B7]/g, 'l')  // ᒪᒷ → l (confusables: L/l; bypass: "jaiᒪbreak")
+    .replace(/[\u15F0]/g, 'm')   // U+15F0 ᗰ → m (confusables: M; bypass: "developer ᗰode")
+    .replace(/[\u146D\u1477\u1486]/g, 'p') // ᑭᑷᒆ → p (confusables: P/p; bypass: "ᑭypass your")
+    .replace(/[\u1587]/g, 'r')   // U+1587 ᖇ → r (confusables: R; bypass: "ᖇeveal your")
+    .replace(/[\u144C\u1458\u1467]/g, 'u') // ᑌᑘᑧ → u (confusables: U)
+    .replace(/[\u142F\u143B]/g, 'v')  // ᐯᐻ → v (confusables: V; bypass: "reᐯeal your")
+    .replace(/[\u15C5]/g, 'a')   // U+15C5 ᗅ → a (confusables: A)
+    // N'Ko (U+07C0–U+07FA), Myanmar (U+1000–U+105F), Ethiopic (U+12D0) —
+    // confirmed Unicode confusables with Latin letters. NOT normalized by NFKC.
+    .replace(/[\u07CA]/g, 'l')   // U+07CA N'Ko ߊ → l (confusables: l; bypass: "jaiߊbreak")
+    .replace(/[\u07C0]/g, 'o')   // U+07C0 N'Ko digit zero ߀ → o (confusables: O)
+    .replace(/[\u1004\u105A]/g, 'c')  // Myanmar င/ၚ → c (confusables: c)
+    .replace(/[\u101D\u1040\u1010]/g, 'o') // Myanmar ဝ/၀/တ → o (confusables: o/O)
+    .replace(/[\u12D0]/g, 'o')   // U+12D0 Ethiopic ዐ → o (confusables: O)
     // Runic script homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
     .replace(/[\u16C1]/g, 'i')   // U+16C1 Runic ᛁ → i (looks like 'I')
     .replace(/[\u16D2]/g, 'b')   // U+16D2 Runic ᛒ → b (looks like 'B')
