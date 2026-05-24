@@ -843,15 +843,27 @@ const OFF_TOPIC_SIGNALS = [
 ]
 function normalizeInput(text) {
   return text
-    // NFD decompose then strip ALL combining diacritical marks FIRST (bypass vector:
-    // inserting e.g. U+0300 combining grave INSIDE a keyword breaks substring match:
-    // "bypassÌ your" after NFKC stays "bypass̀ your" and does NOT match "bypass your";
-    // "jailbreâk" (U+00E2 via NFKC) stays "jailbreâk" and does NOT match "jailbreak".
-    // NFD decomposes precomposed chars (à→a+U+0300), then we strip the combining mark,
-    // leaving clean base chars before any homoglyph or signal matching.
-    // Ranges: U+0300-U+036F (main), U+1DC0-U+1DFF (supplement),
+    // NFKD decompose then strip ALL combining diacritical marks FIRST.
+    // NFKD = NFD + compatibility decomposition — handles two bypass classes:
+    // (1) Combining/accented Latin: à (U+00E0) → a+U+0300 combining grave → strip → 'a'.
+    //     Before fix (NFD): worked correctly.
+    //     After fix (NFKD): same behavior, no regression.
+    // (2) NEW — Compatibility-equivalent chars that NFD does NOT decompose:
+    //     Mathematical Alphanumeric Symbols (U+1D400-U+1D7FF): 𝗯𝘆𝗽𝗮𝘀𝘀→bypass,
+    //       𝒃𝒚𝒑𝒂𝒔𝒔→bypass, 𝐢𝐠𝐧𝐨𝐫𝐞→ignore, etc.
+    //     Enclosed Alphanumerics (U+24B6-U+24E9): Ⓑⓨⓟⓐⓢⓢ→Bypass→bypass.
+    //     Modifier Letter superscripts (U+02B0-U+02FF, U+1D43-U+1D78): ᵇʸᵖᵃˢˢ→bypass.
+    //     Fullwidth Latin (U+FF21-U+FF5A): ａ→a, etc. (already rare in practice).
+    //     Fractions/superdigits: ² → 2, ½ → 1/2 (no injection signal impact).
+    // Attack path (pre-fix): attacker sends "𝗯𝘆𝗽𝗮𝘀𝘀 your filter" — NFD leaves
+    //   math bold chars unchanged; catch-all strips them → "your filter" → injection
+    //   signal "bypass your" NOT detected; LLM trained on Unicode still reads 𝗯𝘆𝗽𝗮𝘀𝘀
+    //   as 'bypass' semantically. NFKD maps 𝗯→b, 𝘆→y, 𝗽→p, 𝗮→a, 𝘀→s, 𝘀→s first.
+    // Zero false positives: compatibility-to-ASCII maps are strictly one-to-one;
+    //   standard ASCII text is unchanged by NFKD; emoji unaffected.
+    // Ranges: U+0300-U+036F (main combining), U+1DC0-U+1DFF (supplement),
     //         U+20D0-U+20FF (symbols), U+FE20-U+FE2F (half marks)
-    .normalize('NFD')
+    .normalize('NFKD')
     .replace(/[\u0300-\u036f\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/gu, '')
     // Strip ASCII control characters (null byte and other non-printable controls) — bypass vectors.
     // Attack path: attacker sends "bypass\x00 your filter" via JSON {"message":"bypass\u0000 your"}
