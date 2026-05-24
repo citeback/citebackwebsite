@@ -1124,6 +1124,26 @@ function normalizeInput(text) {
     // signals: "re\u{A6DF}eal your" (ꛟ looks like 'V') → misses "reveal your";
     // "de\u{A6DF}eloper mode" → misses "developer mode".
     .replace(/[\uA6DF]/g, 'v')  // U+A6DF Bamum ꛟ → v (Unicode confusables: ꛟ ≡ V)
+    // Greek small capital phonetic forms (U+1D26–U+1D29) — NOT normalized by NFKC.
+    // These appear in the Phonetic Extensions block alongside the Latin small capitals added above,
+    // but represent Greek (not Latin) small capital forms. They are visually similar to their
+    // full-size Greek counterparts (already mapped above) but are separate codepoints.
+    // Bypass examples: "igᴨore your" (ᴨ=U+1D28 pi SC, looks like 'n') → misses "ignore your";
+    //   "ᴩretend to be" (ᴩ=U+1D29 rho SC, looks like 'p'/'r') → misses "pretend to be";
+    //   "disreᴦard" (ᴦ=U+1D26 gamma SC) → misses "disregard".
+    .replace(/[ᴦ]/g, 'g')   // U+1D26 GREEK SMALL CAPITAL LETTER GAMMA → g (relates to γ/Γ already mapped)
+    .replace(/[ᴧ]/g, 'l')   // U+1D27 GREEK SMALL CAPITAL LETTER LAMDA → l (relates to λ/Λ already mapped)
+    .replace(/[ᴨ]/g, 'p')   // U+1D28 GREEK SMALL CAPITAL LETTER PI → p (looks like Π/n shape; relates to π/Π already mapped)
+    .replace(/[ᴩ]/g, 'r')   // U+1D29 GREEK SMALL CAPITAL LETTER RHO → r (looks like ρ/p; relates to ρ/Ρ already mapped)
+    // Latin Extended-B and Phonetic Extensions p-variants — NOT normalized by NFKC.
+    // These 'p'-shaped letter variants visually resemble Latin 'p' and survive the full pipeline.
+    // Bypass examples: "byƥass your" (ƥ=U+01A5) → stripped → "byass" → misses "bypass your";
+    //   "byᵽass your" (ᵽ=U+1D7D) → same; LLM may still recognize them as 'p' from training context.
+    .replace(/[ƥ]/g, 'p')   // U+01A5 LATIN SMALL LETTER P WITH HOOK → p
+    .replace(/[ᵽ]/g, 'p')   // U+1D7D LATIN SMALL LETTER P WITH STROKE → p
+    // U+0278 LATIN SMALL LETTER PHI (ɸ) → f; visually similar to φ/Φ (already mapped above),
+    // but is a distinct Latin-block codepoint. Bypass: "ɸorget your" → stripped → "orget your" → missed.
+    .replace(/[ɸ]/g, 'f')   // U+0278 LATIN SMALL LETTER PHI → f
     // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
     // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
     // non-ASCII character is either:

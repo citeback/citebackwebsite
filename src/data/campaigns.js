@@ -66,8 +66,8 @@ export const _campaignsSeedRef = [
   {
     id: 2,
     type: 'billboard',
-    title: 'Billboard — Taos Plaza, 18 Cameras Since 2023',
-    description: 'Public records confirm 18 Flock cameras installed near Taos Plaza and along residential streets since 2023 — without a public disclosure process or community notification. A billboard at the plaza\'s main entrance will change that — directly notifying thousands of tourists and locals that their plates are being scanned and stored.',
+    title: 'Billboard — Taos Plaza, 18+ Cameras Since 2023',
+    description: 'Public records confirm at least 18 Flock cameras installed near Taos Plaza and along residential streets since 2023 — and the actual number on the ground appears to be significantly higher. All of this without a public disclosure process or community notification. A billboard at the plaza\'s main entrance will change that — directly notifying thousands of tourists and locals that their plates are being scanned and stored.',
     winCondition: 'Physical billboard installed at Taos Plaza main entrance — permanent public notice reaching thousands of visitors and residents every week',
     location: 'Taos, NM',
     goal: 4500,
