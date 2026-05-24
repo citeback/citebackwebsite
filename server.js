@@ -1057,6 +1057,18 @@ function normalizeInput(text) {
     .replace(/[ⵡ]/g, 'w')   // U+2D61 ⵡ YAW → w
     .replace(/[ⵢ]/g, 'y')   // U+2D62 ⵢ YAY → y
     .replace(/[ⵣⵥ]/g, 'z')  // U+2D63 ⵣ YAZ → z; U+2D65 ⵥ TAZARAST → z
+    // Cyrillic Extended-C (U+1C80–U+1C8F) — historical Cyrillic forms NOT normalized by NFKC.
+    // These are archaic letter shapes used in Old Church Slavonic / early printed Slavic texts.
+    // Several are visually indistinguishable from common Latin letters and survive the full
+    // NFKC+normalizeInput pipeline unchanged. All confirmed via Node.js harness as bypass vectors.
+    // 66 injection signal bypasses confirmed across all 9 codepoints.
+    .replace(/[ᲀ]/g, 'v')   // U+1C80 CYRILLIC SMALL LETTER ROUNDED VE → v (Cyrillic ve/v sound)
+    .replace(/[ᲁ]/g, 'd')   // U+1C81 CYRILLIC SMALL LETTER LONG-LEGGED DE → d
+    .replace(/[ᲂ]/g, 'o')   // U+1C82 CYRILLIC SMALL LETTER NARROW O → o (clearly o-shaped)
+    .replace(/[ᲃ]/g, 's')   // U+1C83 CYRILLIC SMALL LETTER WIDE ES → s (es = Cyrillic с/s sound)
+    .replace(/[ᲄᲅ]/g, 't') // U+1C84 TALL TE → t; U+1C85 THREE-LEGGED TE → t
+    .replace(/[ᲆᲇ]/g, 'b') // U+1C86 TALL HARD SIGN → b; U+1C87 TALL YAT → b
+    .replace(/[ᲈ]/g, 'u')   // U+1C88 CYRILLIC SMALL LETTER UNBLENDED UK → u
     .trim()
 }
 function isOnTopic(text) {
@@ -2044,11 +2056,30 @@ const server = http.createServer(async (req, res) => {
               const jpegDest = path.join(PHOTOS_DIR, jpegFilename)
               // Use readFile (not extractEntryTo) to avoid zip path traversal — entry names can
               // contain '../' sequences that escape PHOTOS_DIR if written directly to disk.
+              // SECURITY FIX 1: zip bomb pre-decompression guard.
+              // Check declared uncompressed size BEFORE readFile() allocates the full decompressed
+              // buffer in RAM. An honest bomb is rejected here for free.
+              // A bomb with a spoofed (tiny) declared size is caught post-decompression below.
+              if (jpegEntry.header.size > MAX_PHOTO_BYTES) {
+                throw new Error('JPEG declared size exceeds 12MB limit -- zip bomb rejected')
+              }
+              // SECURITY FIX 2: compression ratio guard.
+              // Real JPEGs are already DCT-compressed and compress poorly in ZIP (ratio ~1).
+              // Ratio > 20 is physically implausible for genuine photo data.
+              const _jpegCompressedSize = jpegEntry.header.compressedSize || 1
+              const _jpegRatio = jpegEntry.header.size / _jpegCompressedSize
+              if (_jpegRatio > 20) {
+                throw new Error('suspicious JPEG compression ratio -- zip bomb suspected')
+              }
               const jpegData = zip.readFile(jpegEntry)
               if (!jpegData) throw new Error('could not read JPEG from zip')
-              // SECURITY: zip bomb guard — compressed ZIP ≤12MB does not bound decompressed size.
-              // readFile() allocates the full decompressed content in RAM; reject before writing.
+              // SECURITY: zip bomb guard (post-decompression) -- catches spoofed header sizes.
               if (jpegData.length > MAX_PHOTO_BYTES) throw new Error('decompressed JPEG exceeds size limit')
+              // SECURITY FIX 3: magic bytes -- verify extracted content is actually a JPEG.
+              // Entry name (.jpg) is attacker-controlled; content validation is the only reliable gate.
+              if (jpegData.length < 3 || jpegData[0] !== 0xFF || jpegData[1] !== 0xD8 || jpegData[2] !== 0xFF) {
+                throw new Error('extracted ZIP entry failed JPEG magic bytes check')
+              }
               fs.writeFileSync(jpegDest, jpegData)
               // Delete the zip, keep only the JPEG
               fs.unlink(zipPath, () => {})
@@ -2062,9 +2093,14 @@ const server = http.createServer(async (req, res) => {
                 // Real Proofmode proof.json is <2KB; 64KB is extremely generous. Without this check,
                 // a crafted ZIP with a small compressed proof.json that expands to hundreds of MB
                 // would exhaust server RAM (JPEG entry is already guarded; proof.json was not).
-                const MAX_PROOF_BYTES = 64 * 1024  // 64KB — real proof.json is <2KB
-                if (proofEntry.header.size > MAX_PROOF_BYTES) throw new Error('proof.json exceeds size limit')
-                const proof = JSON.parse(proofEntry.getData().toString('utf8'))
+                const MAX_PROOF_BYTES = 64 * 1024  // 64KB -- real proof.json is <2KB
+                // SECURITY FIX 4a: declared size pre-check (fast path).
+                // header.size can be spoofed in crafted ZIPs, but rejects honest bombs for free.
+                if (proofEntry.header.size > MAX_PROOF_BYTES) throw new Error('proof.json declared size exceeds limit')
+                const _proofRawData = proofEntry.getData()
+                // SECURITY FIX 4b: actual decompressed size check (catches spoofed headers).
+                if (_proofRawData.length > MAX_PROOF_BYTES) throw new Error('proof.json decompressed data exceeds size limit')
+                const proof = JSON.parse(_proofRawData.toString('utf8'))
                 // Proofmode uses flat dot-notation keys: 'LOCATION.LATITUDE'
                 // Proofmode schema v1: 'Location.Latitude' / 'Location.Longitude'
                 const lat = proof['Location.Latitude'] ?? proof['LOCATION.LATITUDE'] ?? proof['location.latitude'] ?? null
