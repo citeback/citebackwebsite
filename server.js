@@ -853,6 +853,13 @@ function normalizeInput(text) {
     //         U+20D0-U+20FF (symbols), U+FE20-U+FE2F (half marks)
     .normalize('NFD')
     .replace(/[\u0300-\u036f\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/gu, '')
+    // Strip ASCII control characters (null byte and other non-printable controls) — bypass vectors.
+    // Attack path: attacker sends "bypass\x00 your filter" via JSON {"message":"bypass\u0000 your"}
+    // → \x00 passes through catch-all (it's in \x00-\x7F range) → "bypass\x00 your"
+    // → .includes("bypass your") = false → injection signal missed; LLM still sees the phrase.
+    // Strips \x00-\x08, \x0E-\x1F, \x7F (preserves \t/\n/\v/\f/\r for \s+ normalization).
+    // No false positives: legitimate chat text never contains raw ASCII control characters.
+    .replace(/[\x00-\x08\x0e-\x1f\x7f]/g, '')
     // Strip zero-width, invisible, and BiDi formatting Unicode (common bypass vector)
     // Covers: ZWSP, ZWJ, ZWNJ, LRM, RLM, BOM, soft-hyphen, word-joiner,
     // Mongolian vowel sep, line/para separators, invisible math ops,
