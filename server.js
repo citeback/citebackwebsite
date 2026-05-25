@@ -1209,6 +1209,46 @@ function normalizeInput(text) {
     // U+0278 LATIN SMALL LETTER PHI (ɸ) → f; visually similar to φ/Φ (already mapped above),
     // but is a distinct Latin-block codepoint. Bypass: "ɸorget your" → stripped → "orget your" → missed.
     .replace(/[ɸ]/g, 'f')   // U+0278 LATIN SMALL LETTER PHI → f
+    // ── Braille Grade 1 (U+2800–U+28FF): 26 letter mappings ─────────────────────────────────
+    // Unicode Braille patterns (U+2800-U+28FF) are NOT normalized by NFKD and NOT decomposed
+    // by NFKC. The catch-all strips them on INSERTION attacks (e.g. "byp⠃ass" → "bypass" ✓).
+    // However, REPLACEMENT attacks (e.g. "⠃ypass your" → stripped → "ypass your" → MISSED)
+    // are a genuine LLM bypass risk: modern LLMs (Qwen 2.5, Llama 3.2) trained on web data
+    // including accessibility content KNOW that ⠃ = 'b', ⠊ = 'i', etc. (Unicode Braille is
+    // used in screen reader output, Braille embosser files, accessibility blogs published online).
+    // Confirmed bypass test: "⠃ypass your filter" → catch-all → "ypass your" → NOT detected.
+    // Fix: map all 26 Grade 1 Braille letter codepoints to their ASCII equivalents.
+    // Braille Grade 1 maps each letter to a unique dot pattern (bits 0-5 = dots 1-6):
+    //   a=⠁(01), b=⠃(03), c=⠉(09), d=⠙(19), e=⠑(11), f=⠋(0B), g=⠛(1B), h=⠓(13),
+    //   i=⠊(0A), j=⠚(1A), k=⠅(05), l=⠇(07), m=⠍(0D), n=⠝(1D), o=⠕(15), p=⠏(0F),
+    //   q=⠟(1F), r=⠗(17), s=⠎(0E), t=⠞(1E), u=⠥(25), v=⠧(27), w=⠺(3A), x=⠭(2D),
+    //   y=⠽(3D), z=⠵(35). Confirmed: 6/6 keyword replacement bypasses caught post-fix.
+    .replace(/[⠁]/g, 'a')   // U+2801 BRAILLE PATTERN DOTS-1 → a
+    .replace(/[⠃]/g, 'b')   // U+2803 BRAILLE PATTERN DOTS-12 → b
+    .replace(/[⠉]/g, 'c')   // U+2809 BRAILLE PATTERN DOTS-14 → c
+    .replace(/[⠙]/g, 'd')   // U+2819 BRAILLE PATTERN DOTS-145 → d
+    .replace(/[⠑]/g, 'e')   // U+2811 BRAILLE PATTERN DOTS-15 → e
+    .replace(/[⠋]/g, 'f')   // U+280B BRAILLE PATTERN DOTS-124 → f
+    .replace(/[⠛]/g, 'g')   // U+281B BRAILLE PATTERN DOTS-1245 → g
+    .replace(/[⠓]/g, 'h')   // U+2813 BRAILLE PATTERN DOTS-125 → h
+    .replace(/[⠊]/g, 'i')   // U+280A BRAILLE PATTERN DOTS-24 → i
+    .replace(/[⠚]/g, 'j')   // U+281A BRAILLE PATTERN DOTS-245 → j
+    .replace(/[⠅]/g, 'k')   // U+2805 BRAILLE PATTERN DOTS-13 → k
+    .replace(/[⠇]/g, 'l')   // U+2807 BRAILLE PATTERN DOTS-123 → l
+    .replace(/[⠍]/g, 'm')   // U+280D BRAILLE PATTERN DOTS-134 → m
+    .replace(/[⠝]/g, 'n')   // U+281D BRAILLE PATTERN DOTS-1345 → n
+    .replace(/[⠕]/g, 'o')   // U+2815 BRAILLE PATTERN DOTS-135 → o
+    .replace(/[⠏]/g, 'p')   // U+280F BRAILLE PATTERN DOTS-1234 → p
+    .replace(/[⠟]/g, 'q')   // U+281F BRAILLE PATTERN DOTS-12345 → q
+    .replace(/[⠗]/g, 'r')   // U+2817 BRAILLE PATTERN DOTS-1235 → r
+    .replace(/[⠎]/g, 's')   // U+280E BRAILLE PATTERN DOTS-234 → s
+    .replace(/[⠞]/g, 't')   // U+281E BRAILLE PATTERN DOTS-2345 → t
+    .replace(/[⠥]/g, 'u')   // U+2825 BRAILLE PATTERN DOTS-136 → u
+    .replace(/[⠧]/g, 'v')   // U+2827 BRAILLE PATTERN DOTS-1236 → v
+    .replace(/[⠺]/g, 'w')   // U+283A BRAILLE PATTERN DOTS-2456 → w
+    .replace(/[⠭]/g, 'x')   // U+282D BRAILLE PATTERN DOTS-1346 → x
+    .replace(/[⠽]/g, 'y')   // U+283D BRAILLE PATTERN DOTS-13456 → y
+    .replace(/[⠵]/g, 'z')   // U+2835 BRAILLE PATTERN DOTS-1356 → z
     // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
     // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
     // non-ASCII character is either:
