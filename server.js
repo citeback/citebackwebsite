@@ -1291,6 +1291,10 @@ function normalizeInput(text) {
     .replace(/[ɯ]/g, 'w')   // U+026F LATIN SMALL LETTER TURNED M → w (turned M resembles 'w')
     .replace(/[ɵ]/g, 'o')   // U+0275 LATIN SMALL LETTER BARRED O → o
     .replace(/[ʐʑ]/g, 'z')  // U+0290 z+retroflex + U+0291 z+curl → z
+    .replace(/[ɣ]/g, 'g')   // U+0263 LATIN SMALL LETTER GAMMA → g (IPA voiced velar fricative;
+                             //   looks like γ/g; 'ɣod mode'/'disreɣard' bypass confirmed)
+    .replace(/[ɐ]/g, 'a')   // U+0250 LATIN SMALL LETTER TURNED A → a ('ɐct as if'/'ɐnswer as' bypass)
+    .replace(/[ʎ]/g, 'y')   // U+028E LATIN SMALL LETTER TURNED Y → y ('bʎpass your' bypass)
     // Phonetic Extensions (U+1D6C–U+1D7F): i/u variants not covered in prior passes.
     // These middle-stroke forms are visually identical to their base letters.
     .replace(/[ᵻᵼ]/g, 'i')  // U+1D7B SC-I+stroke + U+1D7C iota+stroke → i
