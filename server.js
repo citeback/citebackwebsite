@@ -1295,10 +1295,60 @@ function normalizeInput(text) {
                              //   looks like γ/g; 'ɣod mode'/'disreɣard' bypass confirmed)
     .replace(/[ɐ]/g, 'a')   // U+0250 LATIN SMALL LETTER TURNED A → a ('ɐct as if'/'ɐnswer as' bypass)
     .replace(/[ʎ]/g, 'y')   // U+028E LATIN SMALL LETTER TURNED Y → y ('bʎpass your' bypass)
-    // Phonetic Extensions (U+1D6C–U+1D7F): i/u variants not covered in prior passes.
-    // These middle-stroke forms are visually identical to their base letters.
+    // ── IPA Extensions (U+0250–U+02AF): remaining bypass vectors not covered above ──────────
+    // These IPA chars are stripped by the catch-all rather than mapped, breaking keywords.
+    // All confirmed bypass vectors via Node.js harness before fix.
+    // r-variants (R with hooks/tails/retroflexion — all recognizable as 'r' to IPA-trained LLMs):
+    .replace(/[ɺɻɼɿʁ]/g, 'r') // U+027A lateral flap + U+027B retroflex r + U+027C r+longleg +
+                               // U+027F reversed fishhook r + U+0281 inverted small cap R
+                               // Bypasses: 'ɺeveal your'/'ɻeveal your'/'ɼeveal your'/'ɿeveal your'/'ʁeveal your'
+    // s-variants (integral-sign shaped esh = IPA /ʃ/ as in 'ship'):
+    .replace(/[ʃ]/g, 's')   // U+0283 LATIN SMALL LETTER ESH → s ('ʃimulate a' → missed; LLMs know /ʃ/=sh/s)
+    // j-variants (j with hooks used in IPA for implosives/fricatives):
+    .replace(/[ʄʝ]/g, 'j')  // U+0284 dotless j+hook + U+029D j+curl → j ('ʄailbreak'/'ʝailbreak' bypass)
+    // e-variants (rotated/mirrored e forms used in phonetics):
+    .replace(/[əɚɜʚ]/g, 'e') // U+0259 schwa (VERY common) + U+025A r-colored schwa + U+025C reversed epsilon
+                              // + U+029A closed epsilon → e ('prətend to be' etc.)
+    // o-variants (rounded/open back vowels resembling 'o'):
+    .replace(/[ɒɞɤ]/g, 'o') // U+0252 turned alpha + U+025E closed rev-epsilon + U+0264 ram's-horns gamma
+                             // → o ('gɒd mode', 'god mɞde', 'gɤd mode' bypasses)
+    // c-variants (c-shaped phonetic forms):
+    .replace(/[ɕʗ]/g, 'c')  // U+0255 c+curl (retroflex affricate) + U+0297 stretched c (click)
+                             // → c ('ɕircumvent'/'ʗircumvent' bypass)
+    // l-variants (l with diacritics used in Welsh/IPA):
+    .replace(/[ɬɮ]/g, 'l')  // U+026C belted l (Welsh Ll) + U+026E lezh (l+z lateral fricative)
+                             // → l ('jaiɬbreak'/'jaiɮbreak' bypass)
+    // h-variants (turned/hooked h forms used in French/Swedish IPA):
+    .replace(/[ɥɧ]/g, 'h')  // U+0265 turned h (French ɥ as in 'nuit') + U+0267 h+retroflex
+                             // → h ('witɥout'/'witɧout' bypass)
+    // m/w-variants (turned m = velar approximant, resembles 'w' from training data):
+    .replace(/[ɰ]/g, 'w')   // U+0270 LATIN SMALL LETTER TURNED M WITH LONG LEG → w ('ɰithout' bypass)
+    // t-variants (turned t = retroflex/dental symbols):
+    .replace(/[ʇ]/g, 't')   // U+0287 LATIN SMALL LETTER TURNED T → t ('preʇend' bypass)
+    // g-variants (hooked capital G forms):
+    .replace(/[ʛ]/g, 'g')   // U+029B LATIN LETTER SMALL CAPITAL G WITH HOOK → g ('disreʛard' bypass)
+    // k-variants (turned k, deprecated IPA click symbol):
+    .replace(/[ʞ]/g, 'k')   // U+029E LATIN SMALL LETTER TURNED K → k ('jailbreaʞ' bypass)
+    // Phonetic Extensions (U+1D6C–U+1D7F + U+1D00-1D09 fragments): remaining bypass vectors.
+    // These are base-letter forms with middle strokes/hooks; visually identical to their base.
     .replace(/[ᵻᵼ]/g, 'i')  // U+1D7B SC-I+stroke + U+1D7C iota+stroke → i
     .replace(/[ᵾ]/g, 'u')   // U+1D7E SC-U+stroke → u
+    // U+1D00-U+1D09 uncovered forms:
+    .replace(/[ᴃᵬ]/g, 'b')  // U+1D03 small-cap barred B + U+1D6C b+middle-tilde → b
+    .replace(/[ᴆᵭ]/g, 'd')  // U+1D06 small-cap ETH + U+1D6D d+middle-tilde → d
+    .replace(/[ᴈ]/g, 'e')   // U+1D08 small epsilon → e
+    .replace(/[ᴉ]/g, 'i')   // U+1D09 reversed small i → i
+    // U+1D6E-U+1D7F forms with middle strokes (b/d/f/g/m/n/p/r/s/t/u/z with tilde):
+    .replace(/[ᵮ]/g, 'f')   // U+1D6E f+middle-tilde → f
+    .replace(/[ᵯ]/g, 'm')   // U+1D6F m+middle-tilde → m
+    .replace(/[ᵰ]/g, 'n')   // U+1D70 n+long-stroke → n
+    .replace(/[ᵱ]/g, 'p')   // U+1D71 p+stroke → p
+    .replace(/[ᵲᵳ]/g, 'r') // U+1D72 r+fishhook + U+1D73 r+fishhook+cross → r
+    .replace(/[ᵴ]/g, 's')   // U+1D74 s+middle-stroke → s
+    .replace(/[ᵵᵺ]/g, 't') // U+1D75 t+middle-stroke + U+1D7A th-digraph → t
+    .replace(/[ᵶ]/g, 'z')   // U+1D76 z+middle-stroke → z
+    .replace(/[ᵷᵹ]/g, 'g') // U+1D77 turned g + U+1D79 insular g → g
+    .replace(/[ᵿ]/g, 'u')   // U+1D7F upsilon+stroke → u
     // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
     // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
     // non-ASCII character is either:
