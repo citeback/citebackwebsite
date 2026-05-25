@@ -1263,6 +1263,38 @@ function normalizeInput(text) {
     .replace(/[⠭]/g, 'x')   // U+282D BRAILLE PATTERN DOTS-1346 → x
     .replace(/[⠽]/g, 'y')   // U+283D BRAILLE PATTERN DOTS-13456 → y
     .replace(/[⠵]/g, 'z')   // U+2835 BRAILLE PATTERN DOTS-1356 → z
+    // ── IPA Extensions (U+0250–U+02AF): high-risk LLM bypass vectors ────────────────────────
+    // These IPA-derived characters appear as ACTUAL LETTERS in multilingual writing systems:
+    // West African languages (Hausa, Igbo, Fula, Akan, Ewe, Yoruba, Bambara) use ɛ/ɔ/ɓ/ɗ/ɖ/ɲ
+    // as distinct phonemes in official orthographies.  LLMs trained on multilingual web data
+    // (including Wikipedia articles in these languages, news sites, NLP corpora) RECOGNIZE
+    // these chars as their base letter variants — ɓ as 'b', ɛ as 'e', ɔ as 'o', etc.
+    // NFKD does NOT decompose any of these (confirmed via Node.js harness).
+    // Attack path: "ɓypass your filter" → pipeline strips ɓ (catch-all) → "ypass your" →
+    //   injection signal "bypass your" NOT detected; LLM reads ɓ as 'b' from multilingual training.
+    // All 25 confirmed bypass vectors verified via Node.js harness before fix.
+    .replace(/[ɛ]/g, 'e')   // U+025B LATIN SMALL LETTER OPEN E → e (Igbo/Ewe/Akan orthography)
+    .replace(/[ɔ]/g, 'o')   // U+0254 LATIN SMALL LETTER OPEN O → o (Akan/Ewe/Yoruba orthography)
+    .replace(/[ɓ]/g, 'b')   // U+0253 LATIN SMALL LETTER B WITH HOOK → b (Hausa/Fula/Yoruba)
+    .replace(/[ɖɗ]/g, 'd')  // U+0256 d+tail + U+0257 d+hook → d (Fula/Hausa/various)
+    .replace(/[ɨ]/g, 'i')   // U+0268 LATIN SMALL LETTER I WITH STROKE → i
+    .replace(/[ɦ]/g, 'h')   // U+0266 LATIN SMALL LETTER H WITH HOOK → h
+    .replace(/[ɫɭ]/g, 'l')  // U+026B l+middle-tilde + U+026D l+retroflex → l
+    .replace(/[ɱ]/g, 'm')   // U+0271 LATIN SMALL LETTER M WITH HOOK → m
+    .replace(/[ɲɳ]/g, 'n')  // U+0272 n+left-hook + U+0273 n+retroflex → n (Bambara/African langs)
+    .replace(/[ɽɾ]/g, 'r')  // U+027D r+tail + U+027E r+fishhook → r (ɾ very common in IPA text)
+    .replace(/[ʂ]/g, 's')   // U+0282 LATIN SMALL LETTER S WITH HOOK → s
+    .replace(/[ʈ]/g, 't')   // U+0288 LATIN SMALL LETTER T WITH RETROFLEX HOOK → t
+    .replace(/[ʉʊ]/g, 'u')  // U+0289 u+bar + U+028A upsilon → u
+    .replace(/[ɟ]/g, 'j')   // U+025F LATIN SMALL LETTER DOTLESS J WITH STROKE → j
+    .replace(/[ɠ]/g, 'g')   // U+0260 LATIN SMALL LETTER G WITH HOOK → g
+    .replace(/[ɯ]/g, 'w')   // U+026F LATIN SMALL LETTER TURNED M → w (turned M resembles 'w')
+    .replace(/[ɵ]/g, 'o')   // U+0275 LATIN SMALL LETTER BARRED O → o
+    .replace(/[ʐʑ]/g, 'z')  // U+0290 z+retroflex + U+0291 z+curl → z
+    // Phonetic Extensions (U+1D6C–U+1D7F): i/u variants not covered in prior passes.
+    // These middle-stroke forms are visually identical to their base letters.
+    .replace(/[ᵻᵼ]/g, 'i')  // U+1D7B SC-I+stroke + U+1D7C iota+stroke → i
+    .replace(/[ᵾ]/g, 'u')   // U+1D7E SC-U+stroke → u
     // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
     // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
     // non-ASCII character is either:
