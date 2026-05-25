@@ -969,6 +969,20 @@ function normalizeInput(text) {
     .replace(/[ᴡ]/g, 'w')        // U+1D21 LATIN SMALL CAPITAL W
     .replace(/[ʏ]/g, 'y')        // U+028F LATIN SMALL CAPITAL Y
     .replace(/[ᴢ]/g, 'z')        // U+1D22 LATIN SMALL CAPITAL Z
+    // Additional Latin Phonetic Extension variants missed in prior pass — NOT NFKD-normalized.
+    // All 6 confirmed genuine bypass vectors via Node.js harness (keepalive 167):
+    //   ᴌ: "jaiᴌbreak" → stripped → "jaibreak" → missed "jailbreak" (LLM reads ᴌ as 'l')
+    //   ᴎ: "ᴎo filter mode" → stripped → "o filter mode" → missed; "imagiᴎe you are" → missed
+    //   ᴐ: "ignᴐre your" → stripped → "ignre your" → missed; "ᴐutput the following" → missed
+    //   ᴑ: sibling of ᴐ (U+1D10 open O → U+1D11 sideways O); same 'o' substitute usage
+    //   ᴙ: "disᴙegard" → stripped → "disegard" → missed; "ᴙeveal your" → missed
+    //   ᴚ: "ᴚespond as" → stripped → "espond as" → missed; sibling of ᴙ (turned R)
+    .replace(/[ᴌ]/g, 'l')        // U+1D0C LATIN LETTER SMALL CAPITAL L WITH STROKE → l (extends ʟ→l coverage; distinct codepoint)
+    .replace(/[ᴎ]/g, 'n')        // U+1D0E LATIN LETTER SMALL CAPITAL REVERSED N → n (extends ɴ→n coverage; distinct codepoint)
+    .replace(/[ᴐ]/g, 'o')        // U+1D10 LATIN SMALL LETTER OPEN O → o (extends ᴏ→o coverage; open vowel variant)
+    .replace(/[ᴑ]/g, 'o')        // U+1D11 LATIN SMALL LETTER SIDEWAYS O → o (sideways O variant; visually 'o'-like)
+    .replace(/[ᴙ]/g, 'r')        // U+1D19 LATIN LETTER SMALL CAPITAL REVERSED R → r (extends ʀ→r coverage; reversed R)
+    .replace(/[ᴚ]/g, 'r')        // U+1D1A LATIN LETTER SMALL CAPITAL TURNED R → r (turned R variant; extends ʀ/ᴙ coverage)
     // Coptic homoglyphs (U+2C80–U+2CFF) — NOT normalized by NFKC (confirmed bypass vectors).
     // Coptic script derives from Greek, with many letters visually identical to Latin equivalents.
     // Example bypass: "bypⲁss your" (ⲁ=U+2C81 Coptic alfa) → normalizeInput leaves unchanged
