@@ -28,7 +28,7 @@ const funds = [
     id: 3,
     org: 'MacArthur Justice Center + Loevy & Loevy',
     title: 'Williams v. City of Chicago — ShotSpotter Class Action',
-    what: 'Chicago PD used ShotSpotter/SoundThinking acoustic gunfire detection to justify stops, searches, and prosecutions without adequate evidence. In March 2026, the City settled with lead plaintiff Michael Williams individually for $500,000 — a direct acknowledgment of ShotSpotter\'s role in his wrongful murder charge. The broader class action on behalf of Daniel Ortiz and all others subjected to unconstitutional ShotSpotter stops continues in federal court.',
+    what: 'Chicago PD used ShotSpotter/SoundThinking acoustic gunfire detection to justify stops, searches, and prosecutions without adequate evidence. In March 2026, the City settled with lead plaintiff Michael Williams individually for $500,000 — a direct acknowledgment of ShotSpotter\'s role in his wrongful murder charge. The broader class action on behalf of Dennis Ortiz and all others subjected to unconstitutional ShotSpotter stops continues in federal court.',
     why: 'The most significant ShotSpotter legal challenge in the country. If it succeeds, it forces disclosure of the algorithm and establishes that acoustic surveillance alone can\'t justify a stop or prosecution.',
     donateUrl: 'https://secure.everyaction.com/WIw5_qbl9USz1BZMdtqujQ2',
     donateLabel: 'Support MacArthur Justice Center',
