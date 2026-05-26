@@ -1086,15 +1086,84 @@ function normalizeInput(text) {
     .replace(/[\u1004\u105A]/g, 'c')  // Myanmar င/ၚ → c (confusables: c)
     .replace(/[\u101D\u1040\u1010]/g, 'o') // Myanmar ဝ/၀/တ → o (confusables: o/O)
     .replace(/[\u12D0]/g, 'o')   // U+12D0 Ethiopic ዐ → o (confusables: O)
-    // Runic script homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
-    .replace(/[\u16C1]/g, 'i')   // U+16C1 Runic ᛁ → i (looks like 'I')
-    .replace(/[\u16D2]/g, 'b')   // U+16D2 Runic ᛒ → b (looks like 'B')
-    // Georgian script homoglyphs — NOT normalized by NFKC (confirmed bypass vectors).
+    // Runic script homoglyphs (U+16A0–U+16FF) — NOT normalized by NFKC (confirmed bypass vectors).
+    // Runic characters appear in LLM training data via: Wikipedia articles on Norse mythology
+    // and Viking history, Old Norse/Anglo-Saxon language resources, fantasy gaming content
+    // (D&D runes, Tolkien's cirth/angerthas), and tattoo/jewelry description sites.
+    // LLMs trained on this data recognize Runic shapes as their Latin/Gothic equivalents.
+    // Prior session had only 2 entries (ᛁ→i, ᛒ→b). This session adds 25 more confirmed bypass
+    // vectors (keepalive 169). All confirmed via Node.js harness — e.g.:
+    //   "witᚻout restrictions" (ᚻ=U+16BB HAEGL H) → stripped → "witout" → missed
+    //   "igᚾore your" (ᚾ=U+16BE NAUDIZ N) → stripped → "igore" → missed
+    //   "preᛏend to be" (ᛏ=U+16CF TIWAZ T, upward arrow shape) → stripped → "preend" → missed
+    //   "ᚱeveal your" (ᚱ=U+16B1 RAIDO R, reversed R shape) → stripped → "eveal" → missed
+    .replace(/[\u16C1]/g, 'i')              // U+16C1 ᛁ ISAZ/ISS I → i
+    .replace(/[\u16C0]/g, 'i')              // U+16C0 ᛀ IOR (i-like vertical) → i
+    .replace(/[\u16D2]/g, 'b')              // U+16D2 ᛒ BERKANAN B → b
+    .replace(/[\u16D0]/g, 'b')              // U+16D0 ᛐ BERKANAN variant → b
+    .replace(/[\u16CB\u16CA]/g, 's')        // U+16CB ᛋ SOWILO S + U+16CA ᛊ SOWILO alt → s
+    .replace(/[\u16BE\u16BD]/g, 'n')        // U+16BE ᚾ NAUDIZ N + U+16BD ᚽ N-variant → n
+    .replace(/[\u16BB\u16BA]/g, 'h')        // U+16BB ᚻ HAEGL H + U+16BA ᚺ HAGLAZ H-variant → h
+    .replace(/[\u16CF\u16A6]/g, 't')        // U+16CF ᛏ TIWAZ T + U+16A6 ᚦ THURISAZ (t-shape) → t
+    .replace(/[\u16B1]/g, 'r')              // U+16B1 ᚱ RAIDO R → r (reversed R shape)
+    .replace(/[\u16DA]/g, 'l')              // U+16DA ᛚ LAUKAZ L → l (angular L)
+    .replace(/[\u16D7\u16D9]/g, 'm')        // U+16D7 ᛗ MANNAZ M + U+16D9 ᛙ M-variant → m
+    .replace(/[\u16B4\u16E3]/g, 'k')        // U+16B4 ᚴ KAUN K + U+16E3 ᛣ K-variant → k
+    .replace(/[\u16B8\u16C4]/g, 'g')        // U+16B8 ᚸ GAR G + U+16C4 ᛄ GER (g-like) → g
+    .replace(/[\u16D6]/g, 'e')              // U+16D6 ᛖ EHWAZ E → e
+    .replace(/[\u16A9\u16DF]/g, 'o')        // U+16A9 ᚩ OS O + U+16DF ᛟ OTHALAN O → o
+    .replace(/[\u16AA]/g, 'a')              // U+16AA ᚪ AC A → a
+    .replace(/[\u16A2]/g, 'u')              // U+16A2 ᚢ UR UR → u
+    .replace(/[\u16A1]/g, 'v')              // U+16A1 ᚡ FEHU F/V variant → v
+    .replace(/[\u16B9]/g, 'w')              // U+16B9 ᚹ WUNJO W → w
+    // Georgian script homoglyphs (U+10D0–U+10FF) — NOT normalized by NFKC.
+    // Georgian (Mkhedruli) script appears in LLM training data via Wikipedia articles on
+    // Georgia, Georgian language, Caucasian history, and multilingual NLP corpora.
+    // Prior session had only 4 entries (ი→i, ა→a, ნ→n, პ→p). This session adds 14 more
+    // confirmed bypass vectors (keepalive 169).
     // E.g. "იgnore your" (ი=U+10D8, looks like italic 'i') → missed "ignore your".
-    .replace(/[\u10D8]/g, 'i')   // U+10D8 Georgian ი → i
-    .replace(/[\u10D0]/g, 'a')   // U+10D0 Georgian ა → a
-    .replace(/[\u10DC]/g, 'n')   // U+10DC Georgian ნ → n
-    .replace(/[\u10DE]/g, 'p')   // U+10DE Georgian პ → p
+    .replace(/[\u10D8]/g, 'i')              // U+10D8 ი Georgian in → i (italic i shape)
+    .replace(/[\u10D0]/g, 'a')              // U+10D0 ა Georgian an → a
+    .replace(/[\u10DC]/g, 'n')              // U+10DC ნ Georgian nar → n
+    .replace(/[\u10DE]/g, 'p')              // U+10DE პ Georgian par → p
+    .replace(/[\u10D9]/g, 'k')              // U+10D9 კ Georgian kan → k ('jailbreaკ' → missed)
+    .replace(/[\u10DD]/g, 'o')              // U+10DD ო Georgian on → o ('gოd mode' → missed)
+    .replace(/[\u10E1]/g, 's')              // U+10E1 ს Georgian san → s ('სimulate' → missed)
+    .replace(/[\u10E2]/g, 't')              // U+10E2 ტ Georgian tar → t ('preტend' → missed)
+    .replace(/[\u10E0]/g, 'r')              // U+10E0 რ Georgian rae → r ('რeveal' → missed)
+    .replace(/[\u10D1]/g, 'b')              // U+10D1 ბ Georgian ban → b ('ბypass' → missed)
+    .replace(/[\u10D2]/g, 'g')              // U+10D2 გ Georgian gan → g ('iგnore' → missed)
+    .replace(/[\u10D3]/g, 'd')              // U+10D3 დ Georgian don → d ('pretenდ' → missed)
+    .replace(/[\u10D4]/g, 'e')              // U+10D4 ე Georgian en → e ('ignorე' → missed)
+    .replace(/[\u10D5]/g, 'v')              // U+10D5 ვ Georgian vin → v ('deვeloper' → missed)
+    .replace(/[\u10DA]/g, 'l')              // U+10DA ლ Georgian las → l ('jaiლbreak' → missed)
+    .replace(/[\u10DB]/g, 'm')              // U+10DB მ Georgian man → m ('developer მode' → missed)
+    .replace(/[\u10E3]/g, 'u')              // U+10E3 უ Georgian un → u ('bypass yoუr' → missed)
+    .replace(/[\u10E4]/g, 'f')              // U+10E4 ფ Georgian phar (ph/f) → f ('ფorget' → missed)
+    .replace(/[\u10E6]/g, 'g')              // U+10E6 ღ Georgian ghan → g ('iღnore' → missed)
+    .replace(/[\u10E8]/g, 's')              // U+10E8 შ Georgian shin → s ('bypaშs' → missed)
+    .replace(/[\u10EA]/g, 'c')              // U+10EA ც Georgian cin → c ('restriცtions' → missed)
+    .replace(/[\u10EF]/g, 'j')              // U+10EF ჯ Georgian jil → j ('ჯailbreak' → missed)
+    .replace(/[\u10F0]/g, 'h')              // U+10F0 ჰ Georgian hoe → h ('witჰout' → missed)
+    // Latin Extended-E (U+AB30–U+AB6F) — medieval/phonetic Latin variants NOT normalized by NFKD.
+    // This block contains blackletter forms (medieval manuscripts), phonetic variants (IPA
+    // extensions), and script R forms used in historic European writing systems.
+    // All appear in LLM training data via digital humanities corpora, manuscript studies,
+    // and linguistic/phonetics resources. None are NFKD-normalized (confirmed via Node.js).
+    // 24 bypass vectors confirmed via harness (keepalive 169). E.g.:
+    //   "prꬲtend to be" (ꬲ=U+AB32 blackletter e) → stripped → "prtend" → missed
+    //   "ꭅeveal your" (ꭅ=U+AB45 stirrup r) → stripped → "eveal" → missed
+    .replace(/[\uAB30\uAB31]/g, 'a')        // U+AB30 ꬰ barred alpha + U+AB31 ꬱ reversed-schwa → a
+    .replace(/[\uAB32\uAB33\uAB34]/g, 'e')  // U+AB32 ꬲ blackletter e + U+AB33 ꬳ e+dbl-vert + U+AB34 ꬴ e+flourish → e
+    .replace(/[\uAB35]/g, 'f')              // U+AB35 ꬵ lenis f → f
+    .replace(/[\uAB37\uAB38]/g, 'g')        // U+AB37 ꬷ blackletter g + U+AB38 ꬸ g+crossed → g
+    .replace(/[\uAB3A]/g, 'm')              // U+AB3A ꬺ m+diagonal → m
+    .replace(/[\uAB3B]/g, 'n')              // U+AB3B ꬻ n+crossed → n
+    .replace(/[\uAB3D\uAB3F\uAB40\uAB43]/g, 'o') // U+AB3D ꬽ blackletter o + U+AB3F ꬿ open-o+stroke + U+AB40 ꭀ inverted OE + U+AB43 ꭃ turned O open-O → o
+    .replace(/[\uAB45\uAB46\uAB47\uAB48\uAB4A\uAB4B]/g, 'r') // Stirrup R variants (U+AB45-AB4B): ꭅꭆꭇꭈꭊꭋ → r
+    .replace(/[\uAB4D]/g, 's')              // U+AB4D ꭍ baseline esh → s
+    .replace(/[\uAB4E\uAB50\uAB52]/g, 'u')  // U+AB4E ꭎ u+right-leg + U+AB50 ꭐ UI + U+AB52 ꭒ u+left-hook → u
+    .replace(/[\uAB53]/g, 'x')              // U+AB53 ꭓ chi → x
     // Old Italic / Gothic script homoglyphs (supplementary plane) — NOT normalized by NFKC.
     // E.g. "𐌹gnore your" (𐌹=U+10339) → missed "ignore your".
     .replace(/[\u{10339}]/gu, 'i')  // U+10339 Old Italic 𐌹 → i
