@@ -1078,6 +1078,31 @@ function normalizeInput(text) {
     .replace(/[\u13EB]/g, 'o')   // U+13EB Ꮻ → o (confusables: O)
     .replace(/[\u13F2\u13F3]/g, 'h') // Ᏺ/Ᏻ → h (confusables: h/G)
     .replace(/[\u13F4]/g, 'b')   // U+13F4 Ᏼ → b (confusables: B; bypass: "Ᏼypass your")
+    // Cherokee Supplement (U+AB70–U+ABBF) + Cherokee (U+13F8–U+13FD) — lowercase forms.
+    // Unicode 8.0 (2015) added lowercase Cherokee letters (U+AB70–U+ABBF) as lowercase counterparts
+    // to uppercase U+13A0–U+13F4. Unicode 9.0 added U+13F8–U+13FD (lowercase of U+13F0–U+13F5).
+    // These lowercase forms carry the same Latin visual confusables as their uppercase counterparts
+    // (documented in Unicode confusables.txt) and are confirmed bypass vectors: the catch-all strips
+    // them without normalizing, breaking keyword detection. 31 new entries — one-to-one lowercase
+    // equivalents of all 31 uppercase Cherokee chars already mapped above.
+    .replace(/[\uAB7A]/g, 'a')             // ꭺ U+AB7A (lowercase Ꭺ U+13AA) → a; 'ꭺvoid your'
+    .replace(/[\u13FC]/g, 'b')             // ᏼ U+13FC (lowercase Ᏼ U+13F4) → b; 'ᏼypass your'
+    .replace(/[\uAB70\uABB7]/g, 'd')       // ꭰ U+AB70 + ꮷ U+ABB7 → d; 'ꭰeveloper'/'ꮷisregard'
+    .replace(/[\uAB71\uAB7C]/g, 'e')       // ꭱ U+AB71 + ꭼ U+AB7C → e; 'ꭱscape'/'pretenꭼ'
+    .replace(/[\uAB90]/g, 'g')             // ꮐ U+AB90 (lowercase Ꮐ U+13C0) → g; 'ꮐod mode'
+    .replace(/[\uAB7B\uAB8B\uAB92\u13FA\u13FB]/g, 'h') // ꭻꮋꮒᏺᏻ → h; 'ꭻypothetically'
+    .replace(/[\uAB72\uAB75]/g, 'i')       // ꭲ U+AB72 + ꭵ U+AB75 → i; 'ꭲgnore your'
+    .replace(/[\uABB6]/g, 'k')             // ꮶ U+ABB6 (lowercase Ꮶ U+13E6) → k; 'jailbreaꮶ'
+    .replace(/[\uABAE]/g, 'l')             // ꮮ U+ABAE (lowercase Ꮮ U+13DE) → l; 'jaiꮮbreak'
+    .replace(/[\uAB87]/g, 'm')             // ꮇ U+AB87 (lowercase Ꮇ U+13B7) → m; 'ꮇode'
+    .replace(/[\uAB74\uAB8E\uABBB]/g, 'o') // ꭴꮎꮻ → o; 'ꭴnrestricted'/'ignore yꮎur'
+    .replace(/[\uAB83\uABB2]/g, 'p')       // ꮃ U+AB83 + ꮲ U+ABB2 → p; 'ꮲretend to be'
+    .replace(/[\uABA2]/g, 'r')             // ꮢ U+ABA2 (lowercase Ꮢ U+13D2) → r; 'ꮢeveal your'
+    .replace(/[\uABA5\uABAA\uABAF]/g, 's') // ꮥꮪꮯ → s; 'ꮥimulate a'/'ꮯimulate'
+    .replace(/[\uAB9C]/g, 'u')             // ꮜ U+AB9C (lowercase Ꮜ U+13CC) → u; 'bypass yoꮜr'
+    .replace(/[\uABA9]/g, 'v')             // ꮩ U+ABA9 (lowercase Ꮩ U+13D9) → v; 'reꮩeal your'
+    .replace(/[\uAB73\uABA4]/g, 'w')       // ꭳ U+AB73 + ꮤ U+ABA4 → w; 'ꮤithout restrictions'
+    .replace(/[\uAB79]/g, 'y')             // ꭹ U+AB79 (lowercase Ꭹ U+13A9) → y; 'your filters'
     // UCAS (Unified Canadian Aboriginal Syllabics, U+1400–U+167F) — 29 confirmed confusables.
     // Unicode confusables.txt documents these chars as visually similar to Latin. NOT normalized by NFKC.
     .replace(/[\u1472\u1473\u147F\u1481\u1488\u15AF\u15F7]/g, 'b') // ᑲᑳᑿᒁᒈᖯᗷ → b
