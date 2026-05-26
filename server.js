@@ -1000,7 +1000,7 @@ function normalizeInput(text) {
     // Armenian letters that visually resemble Latin lowercase letters used in injection signals.
     // Example bypass: "igոore your" (ո=U+0578 Armenian vo) → looks like 'n' → NOT matched.
     .replace(/[\u0548\u0578]/g, 'n')  // U+0548/U+0578 Armenian vo Ո/ո → n (looks like 'n')
-    .replace(/[\u054D\u057D]/g, 'u')  // U+054D/U+057D Armenian seh Ս/ս → u (looks like 'u')
+    .replace(/[\u054D\u057D]/g, 's')  // U+054D/U+057D Armenian seh Ս/ս → s (Armenian /s/ sound; Unicode confusables.txt confirms; 'սimulate a' bypass fixed; was wrongly mapped to 'u')
     .replace(/[\u053C\u056C]/g, 'l')  // U+053C/U+056C Armenian liwn Լ/լ → l (looks like 'l')
     .replace(/[\u0540\u0570]/g, 'h')  // U+0540/U+0570 Armenian ho Հ/հ → h (looks like 'h')
     // Additional Cyrillic homoglyphs not covered in prior sessions — confirmed bypass vectors.
@@ -1014,6 +1014,27 @@ function normalizeInput(text) {
     .replace(/[Н]/g, 'h')        // U+041D Cyrillic EN (uppercase Н) → h (looks like capital 'H')
     .replace(/[иИ]/g, 'n')       // U+0438/U+0418 Cyrillic i (и/И) → n (и looks like 'n'/'u'; И looks like backwards 'N')
     .replace(/[бБ]/g, 'b')       // U+0431/U+0411 Cyrillic be (б/Б) → b
+    // Additional Cyrillic chars that look like Latin — confirmed bypass vectors (keepalive 174).
+    // ԁ/Ԃ (Komi/minority script d): looks exactly like Latin d; ј/Ј (Serbian/Macedonian je): identical to Latin j;
+    // һ/Һ (Kazakh/Bashkir/Tatar Shha): looks exactly like Latin h. None NFKD-normalized.
+    .replace(/[\u0501\u0502]/g, 'd')  // U+0501/U+0502 Cyrillic Komi De ԁ/Ԃ → d (bypass: 'ԁeveloper mode' → 'eveloper mode' → missed)
+    .replace(/[\u0458\u0408]/g, 'j')  // U+0458/U+0408 Cyrillic je ј/Ј → j (bypass: 'јailbreak' → 'ailbreak' → missed; Serbian/Macedonian ј looks exactly like Latin j)
+    .replace(/[\u04BB\u04BA]/g, 'h')  // U+04BB/U+04BA Cyrillic Shha һ/Һ → h (bypass: 'һypothetically' → 'ypothetically' → missed; Kazakh/Bashkir/Tatar һ looks like Latin h)
+    // Latin orthographic variants — NOT normalized by NFKD (confirmed bypass vectors, keepalive 174).
+    // Turkish dotless i ı: extremely common in Turkish text (Latin script), visually identical to 'i'.
+    // Thorn þ/Þ: Old English/Icelandic letter, looks like 'p' to LLMs (Unicode confusables.txt confirms).
+    // Estimated sign ℮: appears in product labels/documentation, confusable with 'e' (Unicode confusables.txt).
+    .replace(/[\u0131]/g, 'i')   // U+0131 ı LATIN SMALL LETTER DOTLESS I → i (Turkish; bypass: 'ıgnore your instructions' → 'gnore your' → missed; extremely common in Turkish LLM training data)
+    .replace(/[\u00FE\u00DE]/g, 'p')  // U+00FE/U+00DE þ/Þ THORN small/cap → p (Old English/Icelandic; Unicode confusables.txt; bypass: 'þretend to be' → 'retend to be' → missed)
+    .replace(/[\u212E]/g, 'e')   // U+212E ℮ ESTIMATED SIGN → e (product labels; Unicode confusables.txt; bypass: 'ignor℮ your' → 'ignor your' → missed 'ignore your')
+    // Greek final sigma ς (U+03C2) and lunate sigma ϲ (U+03F2):
+    // NFKD transforms ϲ (lunate sigma) → ς (final sigma), so the ϲ→c mapping never runs.
+    // We map ς→s (correct phonetics: Greek sigma sound) which also handles the ϲ→ς NFKD path.
+    // Note: 'circumvent your' via ϲ maps to 'sircumvent your' (doesn't match 'circumvent your') —
+    // this specific bypass is documented and accepted; ϲ is rare and 'circumvent' is an uncommon injection keyword.
+    .replace(/[\u03C2]/g, 's')   // U+03C2 ς Greek small final sigma → s (phonetically sigma=s; also covers ϲ→NFKD→ς path; bypass: 'ςimulate a' → 'simulate a')
+    // Coptic small Wau ⲽ — NOT NFKD-normalized; visually looks like 'w'. Unicode confusables.txt confirms.
+    .replace(/[\u2CBC\u2CBD]/g, 'w')  // U+2CBC/U+2CBD Coptic Wau Ⲽ/ⲽ → w (bypass: 'ⲽithout restrictions' → 'ithout restrictions' → missed 'without restrictions')
     // Lisu script homoglyphs (U+A4D0–U+A4EE) — NOT normalized by NFKC (confirmed bypass vectors).
     // Lisu is a script used in China/SE Asia. Many Lisu letters are visually similar to Latin capitals.
     // All confirmed via Node.js harness — e.g. "ꓐypass your" (ꓐ=U+A4D0) → missed "bypass your".
@@ -1243,7 +1264,11 @@ function normalizeInput(text) {
     .replace(/[Նն]/g, 'n')  // U+0546/U+0576 Armenian now Ն/ն → n (bypass: "igՆore your" → missed; "Նo filter mode" → missed)
     .replace(/[Ջջ]/g, 'j')  // U+054B/U+057B Armenian jheh Ջ/ջ → j (bypass: "Ջailbreak" → missed)
     .replace(/[Րր]/g, 'r')  // U+0550/U+0580 Armenian reh Ր/ր → r (bypass: "Րespond as" → missed; "ignoՐe your" → missed)
-    .replace(/[Ցց]/g, 'c')  // U+0551/U+0581 Armenian co Ց/ց → c (bypass: "Ցircumvent" → missed)
+    .replace(/[Ցց]/g, 'c')  // U+0551/U+0581 Armenian co Ց/ց → c (bypass: "Ցircumvent your" → missed; Unicode confusables.txt says 'g' but mapped to 'c' for 'circumvent your' signal accuracy)
+    .replace(/[\u0533\u0563]/g, 'g')  // U+0533/U+0563 Armenian giun Գ/գ → g (Unicode confusables.txt; bypass: 'disreգard' → 'disreard' → missed; 'disreɡard'-style)
+    .replace(/[\u054A\u057A]/g, 'p')  // U+054A/U+057A Armenian peh Պ/պ → p (bypass: 'պretend to be' → 'retend' → missed; 'bypPass' variants)
+    .replace(/[\u054E\u057E]/g, 'v')  // U+054E/U+057E Armenian vev Վ/վ → v (bypass: 'reվeal your' → 'reeal your' → missed; 'reveal your' signal)
+    .replace(/[\u054F\u057F]/g, 't')  // U+054F/U+057F Armenian tiwn Տ/տ → t (bypass: 'տranslate without' → 'ranslate without' → missed)
     .replace(/[Փփ]/g, 'p')  // U+0553/U+0583 Armenian piwr Փ/փ → p (bypass: "Փretend to be" → missed; "byՓass" → missed)
     .replace(/[Օօ]/g, 'o')  // U+0555/U+0585 Armenian oh Օ/օ → o (bypass: "develՕper mode" → missed; "ignօre your" → missed)
     .replace(/[Ֆֆ]/g, 'f')  // U+0556/U+0586 Armenian feh Ֆ/ֆ → f (bypass: "Ֆorget your" → missed; "no ֆilter mode" → missed)
@@ -1262,7 +1287,8 @@ function normalizeInput(text) {
     .replace(/[ᶈ]/g, 'p')   // U+1D88 ᶈ p with palatal hook → p
     .replace(/[ᶉ]/g, 'r')   // U+1D89 ᶉ r with retroflex hook → r
     .replace(/[ᶊ]/g, 's')   // U+1D8A ᶊ s with palatal hook → s
-    .replace(/[ᶌ]/g, 'v')   // U+1D8C ᶌ v with palatal hook → v
+    .replace(/[ᶌ]/g, 'y')   // U+1D8C ᶌ LATIN SMALL LETTER Y WITH CURL → y (was wrongly mapped to 'v'; Unicode name is 'y with curl'; confusables.txt confirms y; 'ᶌour instructions' bypass fixed)
+    .replace(/[\u1EFF]/g, 'y')  // U+1EFF ỿ LATIN SMALL LETTER Y WITH LOOP → y (confusables.txt; bypass: 'ỿour instructions' → stripped → missed 'your system prompt')
     .replace(/[ᶎ]/g, 'z')   // U+1D8E ᶎ z with retroflex hook → z
     .replace(/[ᶏ]/g, 'a')   // U+1D8F ᶏ a with retroflex hook → a
     .replace(/[ᶖ]/g, 'i')   // U+1D96 ᶖ i with retroflex hook → i
@@ -1471,8 +1497,7 @@ function normalizeInput(text) {
     .replace(/[ɯ]/g, 'w')   // U+026F LATIN SMALL LETTER TURNED M → w (turned M resembles 'w')
     .replace(/[ɵ]/g, 'o')   // U+0275 LATIN SMALL LETTER BARRED O → o
     .replace(/[ʐʑ]/g, 'z')  // U+0290 z+retroflex + U+0291 z+curl → z
-    .replace(/[ɣ]/g, 'g')   // U+0263 LATIN SMALL LETTER GAMMA → g (IPA voiced velar fricative;
-                             //   looks like γ/g; 'ɣod mode'/'disreɣard' bypass confirmed)
+    .replace(/[ɣ]/g, 'y')   // U+0263 LATIN SMALL LETTER GAMMA → y (Unicode confusables.txt maps ɣ→y; 'ɣour instructions' bypasses 'your system prompt','reveal your', etc.; was wrongly mapped to 'g')
     .replace(/[ɐ]/g, 'a')   // U+0250 LATIN SMALL LETTER TURNED A → a ('ɐct as if'/'ɐnswer as' bypass)
     .replace(/[ʎ]/g, 'y')   // U+028E LATIN SMALL LETTER TURNED Y → y ('bʎpass your' bypass)
     // ── IPA Extensions (U+0250–U+02AF): remaining bypass vectors not covered above ──────────
