@@ -1197,6 +1197,49 @@ function normalizeInput(text) {
     .replace(/[ᲄᲅ]/g, 't') // U+1C84 TALL TE → t; U+1C85 THREE-LEGGED TE → t
     .replace(/[ᲆᲇ]/g, 'b') // U+1C86 TALL HARD SIGN → b; U+1C87 TALL YAT → b
     .replace(/[ᲈ]/g, 'u')   // U+1C88 CYRILLIC SMALL LETTER UNBLENDED UK → u
+    // Coptic block (U+2C80–U+2CFF) — additional letters beyond the 3 already mapped (a/e/n).
+    // Coptic script derives directly from Greek + Demotic; it preserves 24 Greek letters
+    // with visually nearly-identical shapes plus 6 Demotic letters. Coptic appears extensively
+    // in LLM training data via: Coptic Christianity Wikipedia (thousands of articles),
+    // academic Egyptology/Coptology texts, Bible study resources (many manuscripts are Coptic),
+    // patristic literature, and digital humanities corpora of early Christian texts.
+    // LLMs trained on this data recognize Coptic letter shapes as their Latin/Greek cognates.
+    // NFKD does NOT normalize any Coptic characters to Latin equivalents.
+    // Already mapped: 2C80/81 Ⲁ/ⲁ→a, 2C88/89 Ⲉ/ⲉ→e, 2C9A/9B Ⲛ/ⲛ→n.
+    // Also already handled (via a different mechanism): 2C9E/9F Ⲟ/ⲟ, 2CA2/3 Ⲣ/ⲣ, 2CA4/5 Ⲥ/ⲥ.
+    // All 18 bypass vectors below confirmed via Node.js harness (keepalive 168).
+    .replace(/[Ⲃⲃ]/g, 'b')       // U+2C82/2C83 Ⲃ/ⲃ Coptic vida → b (vida=Greek beta; 'Ⲃypass your' → 'ypass your' → missed)
+    .replace(/[Ⲅⲅ]/g, 'g')       // U+2C84/2C85 Ⲅ/ⲅ Coptic gamma → g ('Ⲅod mode' → 'od mode' → missed)
+    .replace(/[Ⲇⲇ]/g, 'd')       // U+2C86/2C87 Ⲇ/ⲇ Coptic dalda → d ('Ⲇeveloper mode' → 'eveloper mode' → missed)
+    .replace(/[Ⲏⲏ]/g, 'h')       // U+2C8E/2C8F Ⲏ/ⲏ Coptic hori → h (hori=Greek eta H-shape; 'Ⲏypothetically' → missed)
+    .replace(/[Ⲑⲑ]/g, 't')       // U+2C90/2C91 Ⲑ/ⲑ Coptic thethe → t (thethe=Greek theta; distinct from tau Ⲧ below)
+    .replace(/[Ⲓⲓ]/g, 'i')       // U+2C92/2C93 Ⲓ/ⲓ Coptic iauda → i ('Ⲓgnore your' → 'gnore your' → missed)
+    .replace(/[Ⲕⲕ]/g, 'k')       // U+2C94/2C95 Ⲕ/ⲕ Coptic kapa → k ('Ⲕailbreak' → 'ailbreak' → missed)
+    .replace(/[Ⲗⲗ]/g, 'l')       // U+2C96/2C97 Ⲗ/ⲗ Coptic laula → l ('Ⲗoleplay as' → 'oleplay as' → missed)
+    .replace(/[Ⲙⲙ]/g, 'm')       // U+2C98/2C99 Ⲙ/ⲙ Coptic me → m ('Ⲙimulate a' → 'imulate a' → missed)
+    .replace(/[Ⲡⲡ]/g, 'p')       // U+2CA0/2CA1 Ⲡ/ⲡ Coptic pi → p ('Ⲡretend to be' → 'retend to be' → missed)
+    .replace(/[Ⲧⲧ]/g, 't')       // U+2CA6/2CA7 Ⲧ/ⲧ Coptic tau → t (tau=Greek τ; 'wi⁠Ⲧhout restrictions' → missed)
+    .replace(/[Ⲩⲩ]/g, 'u')       // U+2CA8/2CA9 Ⲩ/ⲩ Coptic ua → u ('Ⲩou are now' → 'uou are now' → missed)
+    .replace(/[Ⲫⲫ]/g, 'f')       // U+2CAA/2CAB Ⲫ/ⲫ Coptic fi → f (fi=Greek phi; 'Ⲫorget your' → 'orget your' → missed)
+    // Latin Extended-D (U+A720–U+A7FF) — insular/medieval/oblique-stroke forms NOT in NFKD.
+    // This block contains:
+    // (A) Insular script letters (Old English/Old Irish manuscripts): Ᵹ(G), Ꞃ(R), Ꞅ(S), ꞇ(T)
+    //     Appear in: medieval manuscript digital editions, Old English/Irish corpus studies,
+    //     Wikipedia articles on Old English/Irish paleography — all common in LLM training data.
+    // (B) Turned/modified Latin: Ɥ (U+A78D LATIN CAPITAL TURNED H) — used in Yoruba, phonetics.
+    // (C) Oblique-stroke variants (Ghomala and related Cameroon Highland languages):
+    //     Ꞡ(G), Ꞣ(K), Ꞥ(N), Ꞧ(R), Ꞩ(S) — appear in multilingual NLP corpora for African langs.
+    // All 17 confirmed bypass vectors (keepalive 168): char stripped by catch-all → keyword broken.
+    .replace(/[Ᵹ]/g, 'g')             // U+A77D Ᵹ LATIN CAPITAL INSULAR G → g ('Ᵹod mode' → missed)
+    .replace(/[Ꞃꞃ]/g, 'r')       // U+A782/A783 Ꞃ/ꞃ INSULAR R → r ('Ꞃeveal your' → missed)
+    .replace(/[Ꞅꞅ]/g, 's')       // U+A784/A785 Ꞅ/ꞅ INSULAR S → s ('Ꞅimulate a' → missed)
+    .replace(/[ꞇ]/g, 't')             // U+A787 ꞇ INSULAR T → t ('ꞇithout restrictions' → missed)
+    .replace(/[Ɥ]/g, 'h')             // U+A78D Ɥ LATIN CAPITAL TURNED H → h ('Ɥypothetically' → missed)
+    .replace(/[Ꞡꞡ]/g, 'g')       // U+A7A0/A7A1 Ꞡ/ꞡ G WITH OBLIQUE STROKE → g
+    .replace(/[Ꞣꞣ]/g, 'k')       // U+A7A2/A7A3 Ꞣ/ꞣ K WITH OBLIQUE STROKE → k ('Ꞣailbreak' → missed)
+    .replace(/[Ꞥꞥ]/g, 'n')       // U+A7A4/A7A5 Ꞥ/ꞥ N WITH OBLIQUE STROKE → n ('Ꞥo filter' → missed)
+    .replace(/[Ꞧꞧ]/g, 'r')       // U+A7A6/A7A7 Ꞧ/ꞧ R WITH OBLIQUE STROKE → r
+    .replace(/[Ꞩꞩ]/g, 's')       // U+A7A8/A7A9 Ꞩ/ꞩ S WITH OBLIQUE STROKE → s
     // Bamum script (U+A6A0–U+A6E5) — NOT normalized by NFKC.
     // Unicode confusables.txt lists ꛟ (U+A6DF BAMUM LETTER KO) as visually identical to
     // Latin capital letter V. This is a confirmed bypass vector for 'v'-containing injection
