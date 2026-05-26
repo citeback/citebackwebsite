@@ -1029,6 +1029,19 @@ function normalizeInput(text) {
     .replace(/[\uA4E7]/g, 'h')   // U+A4E7 Lisu ꓧ → h
     .replace(/[\uA4EA]/g, 'u')   // U+A4EA Lisu ꓪ → u
     .replace(/[\uA4EE]/g, 'a')   // U+A4EE Lisu ꓮ → a
+    // Lisu additional confusables (U+A4D6–U+A4F7) — NOT normalized by NFKC.
+    // Lisu was designed with Latin-capital visual forms; these 9 letters extend prior 12-entry
+    // coverage to all documented Lisu-Latin confusables in Unicode confusables.txt.
+    // All confirmed bypass vectors via Node.js harness (keepalive 170).
+    .replace(/[\uA4D6]/g, 'g')   // U+A4D6 ꓖ LISU LETTER GA → g (bypass: "ꓖod mode" → missed)
+    .replace(/[\uA4DC]/g, 'b')   // U+A4DC ꓜ LISU LETTER BA → b (bypass: "ꓜypass your" → missed)
+    .replace(/[\uA4E2]/g, 's')   // U+A4E2 ꓢ LISU LETTER SA → s (bypass: "ꓢimulate a" → missed)
+    .replace(/[\uA4E4]/g, 'n')   // U+A4E4 ꓤ LISU LETTER NGA → n (bypass: "ꓤo filter mode" → missed)
+    .replace(/[\uA4E5]/g, 'r')   // U+A4E5 ꓥ LISU LETTER RA → r (bypass: "ꓥeveal your" → missed)
+    .replace(/[\uA4E9]/g, 'j')   // U+A4E9 ꓩ LISU LETTER JA → j (bypass: "ꓩailbreak" → missed)
+    .replace(/[\uA4F1]/g, 'f')   // U+A4F1 ꓱ LISU LETTER FA → f (bypass: "ꓱorget your" → missed)
+    .replace(/[\uA4F2]/g, 'i')   // U+A4F2 ꓲ LISU LETTER ZHAN → i (bypass: "ꓲgnore your" → missed)
+    .replace(/[\uA4F7]/g, 'd')   // U+A4F7 ꓷ LISU LETTER DZA → d (bypass: "ꓷeveloper mode" → missed)
     // Cherokee script homoglyphs (U+13A0–U+13FF) — NOT normalized by NFKC (confirmed bypass vectors).
     // Several Cherokee syllabary letters are visually similar to Latin uppercase letters.
     // E.g. "Ꭲgnore your" (Ꭲ=U+13A2, looks like 'I') → missed "ignore your";
@@ -1315,6 +1328,36 @@ function normalizeInput(text) {
     // signals: "re\u{A6DF}eal your" (ꛟ looks like 'V') → misses "reveal your";
     // "de\u{A6DF}eloper mode" → misses "developer mode".
     .replace(/[\uA6DF]/g, 'v')  // U+A6DF Bamum ꛟ → v (Unicode confusables: ꛟ ≡ V)
+    // Vai script homoglyphs (U+A500–U+A63F) — NOT normalized by NFKC.
+    // Vai is a syllabary from West Africa (Liberia/Sierra Leone, ~130K speakers) whose characters
+    // are documented in Unicode confusables.txt as visually similar to Latin letters.
+    // Vai appears in LLM training data via: Unicode documentation/tutorials, Wikipedia articles
+    // on Vai people and language, multilingual NLP/African language corpora, Unicode Standard
+    // Annex #39 (Security Mechanisms) where Vai confusables are explicitly documented.
+    // Key risk: Vai digits (U+A620-A629) look just like Latin letters (W, y, B, C, D, F, G, J, K, L)
+    // and occur in Vai text alongside numerals — LLMs trained on Vai or Unicode documentation
+    // may recognize the visual similarity. All 22 bypass vectors confirmed via Node.js harness.
+    // Grouped by target Latin letter for readability.
+    .replace(/[\uA52A\uA56A\uA622]/g, 'b')   // ꔪ(A52A) ꕪ(A56A) ꘢(A622) → b (bypass: "bypass your")
+    .replace(/[\uA623]/g, 'c')                // ꘣(A623) → c (bypass: "circumvent")
+    .replace(/[\uA52C\uA56C\uA5D0\uA624]/g, 'd') // ꔬ(A52C) ꕬ(A56C) ꗐ(A5D0) ꘤(A624) → d (bypass: "developer mode")
+    .replace(/[\uA625]/g, 'f')                // ꘥(A625) → f (bypass: "forget your")
+    .replace(/[\uA56F\uA626]/g, 'g')          // ꕯ(A56F) ꘦(A626) → g (bypass: "god mode")
+    .replace(/[\uA532\uA582\uA627]/g, 'j')    // ꔲ(A532) ꖂ(A582) ꘧(A627) → j (bypass: "jailbreak")
+    .replace(/[\uA58A\uA5E9\uA62B]/g, 'n')    // ꖊ(A58A) ꗩ(A5E9) ꘫ(A62B) → n (bypass: "no filter mode")
+    .replace(/[\uA577]/g, 'p')                // ꕷ(A577) → p (bypass: "pretend to be")
+    .replace(/[\uA579]/g, 'r')                // ꕹ(A579) → r (bypass: "reveal your")
+    .replace(/[\uA57B]/g, 's')                // ꕻ(A57B) → s (bypass: "simulate a")
+    .replace(/[\uA57E\uA620]/g, 'w')          // ꕾ(A57E) ꘠(A620) → w (bypass: "without restrictions")
+    // Cyrillic Extended-B (U+A640–U+A69F) — historical Cyrillic forms NOT normalized by NFKC.
+    // Cyrillic Iota (U+A646/A647) derives from Greek iota and looks like Latin 'I'/'i'.
+    // Appears in LLM training data via: Unicode documentation, Old Church Slavonic texts,
+    // historical Slavic linguistics corpora, and paleographic resources.
+    .replace(/[\uA646\uA647]/g, 'i')  // U+A646 Ꙇ / U+A647 ꙇ CYRILLIC IOTA → i (bypass: "ignore your")
+    // Latin Extended-C (U+2C60–U+2C7F) — W-with-hook variants NOT normalized by NFKD.
+    // Ⱳ/ⱳ (W with hook) visually identical to W; used in phonetics and proposed African scripts.
+    // Appears in Unicode documentation and linguistic/phonetics resources.
+    .replace(/[\u2C72\u2C73]/g, 'w')  // U+2C72 Ⱳ / U+2C73 ⱳ LATIN W WITH HOOK → w (bypass: "without restrictions")
     // Greek small capital phonetic forms (U+1D26–U+1D29) — NOT normalized by NFKC.
     // These appear in the Phonetic Extensions block alongside the Latin small capitals added above,
     // but represent Greek (not Latin) small capital forms. They are visually similar to their
