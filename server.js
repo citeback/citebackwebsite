@@ -1579,6 +1579,64 @@ function normalizeInput(text) {
     .replace(/[Ʈ]/g, 't')       // U+01AE LATIN CAPITAL LETTER T WITH RETROFLEX HOOK → t (uppercase of ʈ U+0288)
     .replace(/[Ʊ]/g, 'u')       // U+01B1 LATIN CAPITAL LETTER UPSILON → u (uppercase of ʊ U+028A)
     .replace(/[Ʋ]/g, 'v')       // U+01B2 LATIN CAPITAL LETTER V WITH HOOK → v (uppercase of ʋ U+028B; West African)
+    // ── Tifinagh (U+2D30–U+2D7F) — North African/Berber script missing from prior pass ──────
+    // Tifinagh is official script of Amazigh/Berber languages (Morocco, Algeria, Tunisia, Libya,
+    // Tuareg), taught in Moroccan schools since 2003. Wikipedia has thousands of articles using
+    // Tifinagh. LLMs trained on multilingual web data recognise these letters as their Latin
+    // equivalents. Keepalives 169-170 added g/d/f/h/n/a/l/m/u/r/s/sh/t mappings. This adds the
+    // 3 remaining confirmed bypass vectors that were still stripped (not mapped).
+    .replace(/[ⴱ]/g, 'b')      // U+2D31 TIFINAGH LETTER YAB → b ('ⴱypass your filter' → missed)
+    .replace(/[ⴾ]/g, 'k')      // U+2D3E TIFINAGH LETTER YAK → k ('ⴾailbreak' → missed)
+    .replace(/[ⵛ]/g, 's')      // U+2D5B TIFINAGH LETTER YASH → s ('ⵛimulate a' → missed; YASH = /ʃ/ sound, s-target)
+    // ── Gothic (U+10330–U+1034A) — Wulfila's 4th-century Gothic Bible alphabet ────────────────
+    // Gothic appears in LLM training data via: Wikipedia's 'Gothic alphabet' / 'Ulfilas' articles,
+    // academic papers on Proto-Germanic/Old High German, digital humanities corpora, and fantasy
+    // gaming content (Gothic script used for Norse-themed games). The Gothic alphabet was designed
+    // by bishop Wulfila as a Latin-inspired writing system; many letters directly correspond to
+    // their Latin sources. LLMs trained on academic or multilingual web data recognise Gothic
+    // letters in injection context. Confirmed bypass: '𐌱ypass your filter' → stripped → missed.
+    // 19 main Gothic letter → Latin mappings (skipping numerals, ambiguous digraphs):
+    .replace(/[\u{10330}]/gu, 'a')   // U+10330 𐌰 AHSA → a
+    .replace(/[\u{10331}]/gu, 'b')   // U+10331 𐌱 BAIRKAN → b ('𐌱ypass your' → bypass)
+    .replace(/[\u{10332}]/gu, 'g')   // U+10332 𐌲 GIBA → g ('𐌲od mode' → god mode)
+    .replace(/[\u{10333}]/gu, 'd')   // U+10333 𐌳 DAGS → d ('𐌳eveloper mode' → missed)
+    .replace(/[\u{10334}]/gu, 'e')   // U+10334 𐌴 AIHVUS → e ('pr𐌴tend to be' → missed)
+    .replace(/[\u{10337}]/gu, 'h')   // U+10337 𐌷 HAGL → h ('𐌷ypothetically' → missed)
+    .replace(/[\u{10339}]/gu, 'i')   // U+10339 𐌹 EIS → i ('𐌹gnore your' → missed)
+    .replace(/[\u{1033A}]/gu, 'k')   // U+1033A 𐌺 KUSMA → k ('𐌺ailbreak' → missed)
+    .replace(/[\u{1033B}]/gu, 'l')   // U+1033B 𐌻 LAGA → l ('𐌻oleplay as' → missed)
+    .replace(/[\u{1033C}]/gu, 'm')   // U+1033C 𐌼 MANNA → m ('𐌼ode' → missed)
+    .replace(/[\u{1033D}]/gu, 'n')   // U+1033D 𐌽 NAUDIZ → n ('𐌽o filter mode' → missed)
+    .replace(/[\u{1033E}]/gu, 'j')   // U+1033E 𐌾 JER → j ('𐌾ailbreak' → missed)
+    .replace(/[\u{1033F}]/gu, 'u')   // U+1033F 𐌿 URAZ → u ('with𐌿ut restrictions' → missed)
+    .replace(/[\u{10340}]/gu, 'p')   // U+10340 𐍀 PAIRTHRA → p ('𐍀retend to be' → missed)
+    .replace(/[\u{10342}]/gu, 'r')   // U+10342 𐍂 RAIDA → r ('𐍂eveal your' → missed)
+    .replace(/[\u{10343}]/gu, 's')   // U+10343 𐍃 SOWILO → s ('𐍃imulate a' → missed)
+    .replace(/[\u{10344}]/gu, 't')   // U+10344 𐍄 TEIWS → t ('𐍄ranslate without' → missed)
+    .replace(/[\u{10345}]/gu, 'w')   // U+10345 𐍅 WINJA → w ('𐍅ithout restrictions' → missed)
+    .replace(/[\u{10346}]/gu, 'f')   // U+10346 𐍆 FAIHU → f ('𐍆orget your' → missed)
+    .replace(/[\u{10349}]/gu, 'o')   // U+10349 𐍉 OTHAL → o ('𐍉od mode' → missed)
+    // ── Old Italic (U+10300–U+1031F) — Etruscan and related ancient Italian scripts ──────────
+    // Old Italic script is ancestral to the Latin alphabet; many letter shapes are nearly
+    // identical to Latin. Appears in LLM training data via: Wikipedia 'Etruscan alphabet' /
+    // 'Old Italic script' articles, classics and ancient history corpora, digital humanities
+    // projects (Etruscan inscriptions are extensively digitised). LLMs trained on academic text
+    // will recognise Old Italic letters as their Latin equivalents in injection context.
+    // 14 main Old Italic letter → Latin mappings:
+    .replace(/[\u{10300}]/gu, 'a')   // U+10300 𐌀 OLD ITALIC LETTER A → a
+    .replace(/[\u{10301}]/gu, 'b')   // U+10301 𐌁 OLD ITALIC LETTER BE → b ('𐌁ypass your' → missed)
+    .replace(/[\u{10303}]/gu, 'd')   // U+10303 𐌃 OLD ITALIC LETTER DE → d
+    .replace(/[\u{10304}]/gu, 'e')   // U+10304 𐌄 OLD ITALIC LETTER E → e
+    .replace(/[\u{10307}]/gu, 'h')   // U+10307 𐌇 OLD ITALIC LETTER HE → h
+    .replace(/[\u{10308}]/gu, 'i')   // U+10308 𐌈 OLD ITALIC LETTER I → i ('𐌈gnore your' → missed)
+    .replace(/[\u{1030A}]/gu, 'l')   // U+1030A 𐌊 OLD ITALIC LETTER EL → l
+    .replace(/[\u{1030B}]/gu, 'm')   // U+1030B 𐌋 OLD ITALIC LETTER EM → m
+    .replace(/[\u{1030C}]/gu, 'n')   // U+1030C 𐌌 OLD ITALIC LETTER EN → n
+    .replace(/[\u{1030D}]/gu, 'o')   // U+1030D 𐌍 OLD ITALIC LETTER O → o ('𐌍od mode' → missed)
+    .replace(/[\u{1030F}]/gu, 's')   // U+1030F 𐌏 OLD ITALIC LETTER ESH → s ('𐌏imulate a' → missed)
+    .replace(/[\u{10311}]/gu, 'u')   // U+10311 𐌑 OLD ITALIC LETTER U → u
+    .replace(/[\u{10318}]/gu, 'r')   // U+10318 𐌘 OLD ITALIC LETTER ER → r ('𐌘eveal your' → missed)
+    .replace(/[\u{10319}]/gu, 's')   // U+10319 𐌙 OLD ITALIC LETTER ES → s
     // ── Catch-all: strip any remaining non-ASCII after all specific homoglyph mappings ──────
     // After NFD + combining-mark strip (step 1) and all specific mappings above, any remaining
     // non-ASCII character is either:
