@@ -1,6 +1,6 @@
 # Citeback - Terms of Service
 > **DRAFT - Requires attorney review before publication**
-> Draft version: 0.1 | Prepared: 2026-05-05
+> Draft version: 0.2 | Prepared: 2026-05-05 | Revised: 2026-07-02 (individual-operator model; DAO/governance-vote framing removed)
 > Contact: citeback@proton.me
 > ⚠️ THIS DOCUMENT IS A DRAFT. It has NOT been reviewed by an attorney. It MUST NOT be published on the live site until a qualified attorney has reviewed and approved it. Specific items marked [ATTORNEY REVIEW REQUIRED] need particular attention before publication.
 
@@ -9,9 +9,9 @@
 ## Terms of Service - Citeback
 
 **Effective Date:** [DATE - to be set on attorney-approved publication]
-**Operator:** Wyoming DAO LLC [ENTITY CONFIRMATION REQUIRED]
+**Operator:** Scott Hughes, individual operator [ATTORNEY REVIEW REQUIRED - whether/what business entity to form before accepting funds]
 **Contact:** citeback@proton.me
-**Governing Law:** Wyoming, United States
+**Governing Law:** [ATTORNEY REVIEW REQUIRED - previously drafted as Wyoming under a DAO LLC plan; operator is an individual resident of New Mexico]
 
 ---
 
@@ -19,7 +19,7 @@
 
 By accessing or using the Citeback platform at citeback.com (the "Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Platform.
 
-These Terms constitute a binding agreement between you and Wyoming DAO LLC (the "Platform Operator," "we," "us," or "our").
+These Terms constitute a binding agreement between you and the Platform Operator, Scott Hughes ("Platform Operator," "we," "us," or "our").
 
 ---
 
@@ -34,7 +34,7 @@ Citeback is a surveillance accountability crowdfunding platform that enables ano
 - **Wallet addresses displayed on the Platform as "null" or "not yet assigned" reflect the Platform's pre-launch status** - they are not errors.
 - The Platform Operator will publish a notice when the Platform transitions to operational status.
 
-The Platform's governance framework, including voting mechanics, disbursement rules, and operator requirements, is published at [GOVERNANCE_URL] and on GitHub at github.com/citeback/citebackwebsite.
+The Platform's rules — including disbursement rules and organizer requirements — are published in plain language on GitHub at github.com/citeback/citebackwebsite (GOVERNANCE.md). Material rule changes are announced publicly at least 7 days before taking effect.
 
 ---
 
@@ -112,7 +112,7 @@ By contributing to any campaign wallet, you acknowledge and accept this no-refun
 
 **No platform fee.** The Platform charges no fee on campaign funds. 100% of donated funds are disbursed directly to the campaign operator. No percentage is deducted at disbursement.
 
-**Platform funding:** Infrastructure costs are covered by the founding operator via capital contributions to the Wyoming DAO LLC and by voluntary tips from users who support the platform. Tips are entirely separate from campaign contributions, are not required, and have no effect on campaign funds or governance weight.
+**Platform funding:** Infrastructure costs are covered personally by the Platform Operator and by voluntary tips from users who support the platform. Tips are entirely separate from campaign contributions, are not required, and have no effect on campaign funds or platform decisions.
 
 **Campaign goals include a transaction buffer:** Published campaign goals include a 2% buffer for Monero network transaction fee variance. This buffer is disclosed transparently on each campaign card. Any unused buffer amount is disbursed to the operator at campaign close alongside campaign funds.
 
@@ -188,9 +188,7 @@ Platform review of campaign proposals is limited to eligibility determination (c
 
 ### 12. Governing Law and Dispute Resolution
 
-These Terms are governed by the laws of the State of Wyoming, without regard to conflicts of law principles.
-
-[ATTORNEY REVIEW REQUIRED - Wyoming DAO LLC governing law. Consider: mandatory arbitration clause? Class action waiver? Venue? Wyoming courts have not extensively addressed DAO LLC disputes. Attorney should advise on appropriate dispute resolution mechanism.]
+[ATTORNEY REVIEW REQUIRED - governing law and dispute resolution. Prior draft specified Wyoming under a DAO LLC plan that is no longer current; the Platform Operator is an individual resident of New Mexico. Attorney should advise on governing law, venue, mandatory arbitration, and class action waiver.]
 
 ---
 
@@ -222,18 +220,16 @@ If you believe campaign content contains a materially false statement of fact, c
 
 ### 15. Immutable Platform Rules
 
-Certain Platform rules cannot be modified by any community governance vote and can only be changed by a fork of the Platform software. These include:
+Certain Platform rules cannot be modified by ordinary rule updates and can only be changed by a fork of the Platform software. These include:
 
 - Platform never holds wallet private keys (direct wallet model — operators hold their own keys)
 - Criminal defense funding prohibition
 - Illegal activity funding prohibition
 - Camera tampering or interference prohibition
 - No individual distribution of operations wallet surplus
-- Founder governance ceiling permanence
 - Minimum contribution threshold floor
-- Founder address registry permanence
 
-These rules are encoded in the Platform's governance documentation and cannot be overridden by the Platform Operator, community governance, or any other mechanism short of a platform fork.
+These rules are published in the Platform's rules on GitHub and cannot be overridden by the Platform Operator or any other mechanism short of a platform fork.
 
 ---
 
@@ -242,54 +238,52 @@ These rules are encoded in the Platform's governance documentation and cannot be
 If a campaign reaches its deadline without achieving its funding goal, all contributions are redirected to the highest-priority active campaign in the same category. This redirect:
 
 - Is logged publicly in the Platform's append-only action log
-- Is governed by the unfundedRedirect rules defined in the Platform's published governance code
+- Is governed by the unfunded-redirect rules defined in the Platform's published rules
 - Does not require contributor consent, because by contributing to any campaign you accept this redirect policy under these Terms
 
 There are no refunds in any circumstance. See §6.
 
 ---
 
-### 17. Operator Onboarding and Vetting
+### 17. Organizer Onboarding and Vetting
 
-Operators must complete an identity verification and OFAC pre-screening process administered by the Platform Operator before any campaign wallet is created. This process:
+Campaign organizers must be verified professionals — attorneys, registered nonprofits, licensed healthcare professionals, or university/government staff. Verification is performed against public registries (state bar records, IRS/EIN records, the CMS NPI registry) or via institutional (.edu/.gov) email confirmation, plus OFAC pre-screening, before any campaign wallet is created. This process:
 
-- Requires real identity documentation from the operator
+- Requires real identity/credential documentation from the organizer
 - Includes OFAC SDN list screening by the Platform Operator
 - Is a condition precedent to any campaign wallet being activated
 
-Operator identity records are held privately by the Platform Operator. Passing operator pre-screening does not constitute a legal representation by the Platform that the operator's campaign activities are lawful. Operators are solely responsible for their own legal compliance.
+Organizer identity records are held privately by the Platform Operator and are never published; only a credential badge (e.g., "Verified Attorney — NM") is shown publicly. Passing pre-screening does not constitute a legal representation by the Platform that the organizer's campaign activities are lawful. Organizers are solely responsible for their own legal compliance.
 
 ---
 
 ### 18. Modifications to Terms
 
-The Platform Operator may modify these Terms at any time. If material changes are made, notice will be provided via the Platform website and the Platform's governance announcement channel. Continued use of the Platform after modification constitutes acceptance of the modified Terms.
-
-[ATTORNEY REVIEW REQUIRED - Wyoming DAO LLC consent mechanism. Consider whether governance changes to Terms require a vote under GOVERNANCE.md.]
+The Platform Operator may modify these Terms. Material changes will be announced publicly on the Platform website at least 7 days before taking effect. Continued use of the Platform after a change takes effect constitutes acceptance of the modified Terms.
 
 ---
 
 ### 19. Termination
 
-The Platform Operator may suspend or terminate access to the Platform for any user or operator who violates these Terms. Operators whose campaigns are rejected or who are suspended retain any reputational record in the Platform's public governance log.
+The Platform Operator may suspend or terminate access to the Platform for any user or organizer who violates these Terms. Organizers whose campaigns are rejected or who are suspended retain any record in the Platform's public action log.
 
-The Platform may be discontinued. In the event of Platform discontinuation, outstanding campaign funds will be handled per the governance-defined wind-down procedures (see GOVERNANCE.md §12).
+The Platform may be discontinued. In the event of Platform discontinuation, outstanding campaign funds will be handled per the wind-down procedures in the published platform rules.
 
 ---
 
 ### 20. Contact
 
-**Platform Operator:** Wyoming DAO LLC
+**Platform Operator:** Scott Hughes
 **Contact:** citeback@proton.me
 **Repository:** github.com/citeback/citebackwebsite
 
-For legal service of process: Contact citeback@proton.me to obtain the Wyoming DAO LLC's registered agent information.
+For legal service of process: contact citeback@proton.me. [ATTORNEY REVIEW REQUIRED - service-of-process address / registered agent once entity decision is made]
 
 ---
 
 ### 21. Entire Agreement
 
-These Terms, together with the Platform's published Governance Framework (GOVERNANCE.md) and Operator Agreement (if applicable), constitute the entire agreement between you and the Platform Operator regarding your use of the Platform.
+These Terms, together with the Platform's published Platform Rules (GOVERNANCE.md) and Organizer Agreement (if applicable), constitute the entire agreement between you and the Platform Operator regarding your use of the Platform.
 
 ---
 
@@ -303,20 +297,20 @@ The following items require specific attorney attention before this ToS is publi
 
 3. **§8 - FARA/LDA shift:** Confirm that ToS language adequately shifts legislative advocacy compliance responsibility to operators.
 
-4. **§10 - Limitation of Liability:** Jurisdiction-specific drafting needed. Wyoming DAO LLC liability shield scope. Cap amounts?
+4. **§10 - Limitation of Liability:** Jurisdiction-specific drafting needed. Operator is currently an individual (no entity liability shield) — advise on entity formation. Cap amounts?
 
 5. **§11 - §230 posture:** Revise to reflect attorney's analysis of the Roommates.com material contribution standard as applied to this platform's review-and-fund model.
 
-6. **§12 - Dispute Resolution:** Wyoming governing law. Arbitration? Class action waiver? Venue selection?
+6. **§12 - Dispute Resolution:** Governing law TBD (operator is a New Mexico resident; prior Wyoming choice was tied to abandoned DAO LLC plan). Arbitration? Class action waiver? Venue selection?
 
-7. **§17 - Operator pre-screening:** Confirm this creates the documented compliance process OFAC analysis requires.
+7. **§17 - Organizer pre-screening:** Confirm credential-registry verification + OFAC screening creates the documented compliance process OFAC analysis requires.
 
 8. **Pre-launch to operational transition:** How does the ToS update when Platform goes live? Consider a clearly versioned system.
 
-9. **International users:** Wyoming law governs but international users may have GDPR or other rights. Consider whether EU users need additional disclosure.
+9. **International users:** international users may have GDPR or other rights. Consider whether EU users need additional disclosure.
 
-10. **"Wyoming DAO LLC" entity confirmation:** Confirm entity name, formation date, and registered agent before publishing.
+10. **Entity decision:** Operator currently operates as an individual. Advise whether to form an LLC (and where) before any funds are accepted; update Operator, governing law, liability, and service-of-process sections accordingly.
 
 ---
 
-*DRAFT v0.1 - Prepared 2026-05-05 | NOT APPROVED FOR PUBLICATION | Requires attorney review before any live use*
+*DRAFT v0.2 - Prepared 2026-05-05, revised 2026-07-02 | NOT APPROVED FOR PUBLICATION | Requires attorney review before any live use*
