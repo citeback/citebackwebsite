@@ -128,11 +128,11 @@ export default function ProposeModal({ onClose, prefill = {} }) {
             <CheckCircle size={48} color="var(--green)" className="pm-success-icon" />
             <h3 className="pm-success-title">Proposal Submitted</h3>
             <p className="pm-success-desc">
-              Your proposal is saved. Operator onboarding and campaign review open at platform launch — submitted proposals are first in line.
+              Your proposal is saved. Lawyer onboarding and campaign review open at platform launch — submitted proposals are first in line.
             </p>
             <div className="pm-success-note">
               <div className="pm-success-note-text">
-                <strong className="pm-success-strong">Pending launch:</strong> Operator identity verification, campaign approval, and wallet activation are part of the platform's launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
+                <strong className="pm-success-strong">Pending launch:</strong> Lawyer identity verification, campaign approval, and wallet activation are part of the platform's launch sequence. Proposals submitted now are queued and will be reviewed when that system goes live.
               </div>
             </div>
             <button onClick={onClose} className="pm-done-btn">Done</button>
@@ -200,7 +200,7 @@ export default function ProposeModal({ onClose, prefill = {} }) {
                 <Mail size={15} className="pm-email-icon" />
                 <div className="pm-email-gate-body">
                   <strong className="pm-email-gate-title">Recovery email required to propose campaigns</strong>
-                  Operators must have a recovery email on file — not for identity, but so you can't lose access to an active campaign.
+                  Lawyers must have a recovery email on file — not for identity, but so you can't lose access to an active campaign.
                   A disposable address is fine.{' '}
                   <a href="/reputation" onClick={onClose} className="pm-email-gate-link">
                     Add one in your account settings →
