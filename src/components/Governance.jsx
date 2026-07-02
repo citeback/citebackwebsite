@@ -235,7 +235,7 @@ export default function Governance({ setTab }) {
         <p>Citeback uses a <strong className="gov-fg">direct wallet model</strong>: operators hold their own XMR and ZANO wallets. Contributions flow directly from contributors to the operator's wallet — Citeback never holds, pools, or touches campaign funds.</p>
         <div className="gov-highlight">
           <strong className="gov-accent">How accountability works without custody:</strong>
-          <p className="gov-highlight-body-14">Operators publish a view key (read-only) so anyone can verify the wallet balance in real time. Citeback monitors via the same view key. Early drain before campaign completion triggers an immediate permanent ban and public misconduct record. Operators are pre-screened (OFAC + identity verification) before any campaign goes live. The architecture specification is published on GitHub for community review before any funds are accepted.</p>
+          <p className="gov-highlight-body-14">Lawyers publish a view key (read-only) so anyone can verify the wallet balance in real time. Citeback monitors via the same view key. Early drain before campaign completion triggers an immediate permanent ban and public misconduct record. Lawyers are pre-screened (OFAC + identity verification) before any campaign goes live. The architecture specification is published on GitHub for community review before any funds are accepted.</p>
         </div>
       </Section>
 
@@ -301,9 +301,9 @@ export default function Governance({ setTab }) {
             { done: true,  text: 'Campaign proposals published publicly (GitHub repo public) — complete ✅' },
             { done: false, text: 'Wyoming DAO LLC incorporated with registered agent' },
             { done: false, text: 'FinCEN MSB compliance opinion obtained from attorney' },
-            { done: false, text: 'Operator wallet framework live — operators self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
+            { done: false, text: 'Lawyer wallet framework live — lawyers self-custody campaign funds via their own XMR/ZANO wallets; Citeback never holds funds' },
             { done: false, text: 'View-key balance verification live — read-only wallet monitoring and drain detection active for all campaigns' },
-            { done: false, text: 'OFAC attorney guidance obtained; operator pre-screening framework operational before first wallet activates' },
+            { done: false, text: 'OFAC attorney guidance obtained; lawyer pre-screening framework operational before first wallet activates' },
             { done: false, text: 'First campaign wallet activated' },
           ].map((item, i) => (
             <div key={i} className="gov-check-item">
