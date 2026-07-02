@@ -98,7 +98,7 @@ const ROUTE_TITLES = {
   '/expert-directory': 'Expert Directory | Citeback',
   '/transparency': 'Transparency | Citeback',
   '/how-it-works': 'How It Works | Citeback',
-  '/governance': 'Governance | Citeback',
+  '/governance': 'Platform Rules | Citeback',
   '/run-a-campaign': 'Run a Campaign | Citeback',
   '/frontline-funds': 'Frontline Funds | Citeback',
   '/intelligence-feed': 'Intelligence Feed | Citeback',

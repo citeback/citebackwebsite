@@ -275,9 +275,9 @@ const TIER_THRESHOLDS = [0, 10, 50, 200]
 const TIER_COLORS = ['#6b7280', '#e63946', '#f59e0b', '#10b981']
 const TIER_DESCRIPTIONS = [
   'Submit camera sightings to build your reputation score.',
-  'Run campaigns up to $1,000. After 10 successful campaigns, cap rises to $7,500 - no legal entity required.',
-  'Unlock verification bounties. Vote on camera classification disputes - your reputation backs your call.',
-  'Full organizer access. Vote on campaign disbursements with proof-of-donation weight (logarithmic, capped at 9.0).',
+  'Established contributor — your verified sightings strengthen the map and your public profile.',
+  'Unlock verification bounties. Weigh in on camera classification disputes — your reputation backs your call.',
+  'Top contributor recognition. Guardians anchor the community map and the contributor leaderboard.',
 ]
 
 const CAMERA_TYPE_LABELS = {
@@ -524,10 +524,10 @@ export default function ReputationPage({ setTab }) {
             <Shield size={11} /> Community Reputation
           </div>
           <h1 className="rp-hero-title">
-            Earn Trust. Unlock Access.
+            Earn Trust. Build Reputation.
           </h1>
           <p className="rp-hero-desc">
-            Submit surveillance sightings to build your reputation score. Reach Tier 1 to access campaigns and verification bounties.
+            Submit surveillance sightings to build your reputation score. Every verified contribution is tracked to your public profile and the contributor leaderboard.
           </p>
         </div>
 

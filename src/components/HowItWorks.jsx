@@ -22,7 +22,7 @@ const contributorSteps = [
 const operatorSteps = [
   {
     title: 'Propose a Campaign',
-    desc: 'Identify a specific government agency, surveillance vendor, or jurisdiction and submit a concrete cost breakdown. A real FOIA target, a vendor contract to challenge, a city ordinance to pass — not a vague cause. Anyone can propose. Once governance is live, the community votes.',
+    desc: 'Identify a specific government agency, surveillance vendor, or jurisdiction and submit a concrete cost breakdown. A real FOIA target, a vendor contract to challenge, a city ordinance to pass — not a vague cause. Verified professionals — attorneys, nonprofits, licensed professionals, university or government employees — can propose and run campaigns immediately after instant credential verification.',
   },
   {
     title: 'Get Funded',
@@ -30,7 +30,7 @@ const operatorSteps = [
   },
   {
     title: 'Execute and Document',
-    desc: 'Submit milestone proof as work happens — court filing numbers, signed retainers, GPS-tagged photos. Funds release after a 48-hour community review window.',
+    desc: 'Submit milestone proof as work happens — court filing numbers, signed retainers, GPS-tagged photos. Each milestone is verified and publicly logged before the next tranche is promoted.',
   },
   {
     title: 'Close with Receipts',
@@ -145,8 +145,8 @@ export default function HowItWorks({ setTab }) {
 
       {setTab && (
         <div className="hiw-cta-row">
-          <button onClick={() => setTab('campaigns')} className="hiw-cta-primary">
-            {track === 'contributor' ? 'Browse Campaigns →' : 'Apply to Run a Campaign →'}
+          <button onClick={() => setTab(track === 'contributor' ? 'campaigns' : 'operators')} className="hiw-cta-primary">
+            {track === 'contributor' ? 'Browse Campaigns →' : 'Get Verified → Run a Campaign'}
           </button>
           <button onClick={() => setTab(track === 'contributor' ? 'trust' : 'operators')} className="hiw-cta-secondary">
             {track === 'contributor' ? 'Full Trust FAQ →' : 'Campaign Organizer Requirements →'}

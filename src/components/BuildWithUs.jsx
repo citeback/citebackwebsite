@@ -4,7 +4,7 @@ const tracks = [
     label: 'Legal',
     tag: 'Legal Researchers · Paralegals · Researchers',
     description:
-      'Help campaigns move from funded to filed. Review proposed actions for legal viability, draft demand letters, advise on FOIA strategy, or connect organizers with counsel. Engagement is fully on your terms.',
+      'Support the people running campaigns — you review and advise, they execute. Assess proposed actions for legal viability, draft demand letters, advise on FOIA strategy, or connect campaign organizers with counsel. Engagement is fully on your terms.',
     details: [
       'Review campaign proposals before they go live',
       'Provide jurisdiction-specific viability assessments',
@@ -31,17 +31,17 @@ const tracks = [
   },
   {
     id: 'operator',
-    label: 'Campaign Organizer',
-    tag: 'Organizers · Advocates · Community Leads',
+    label: 'Run a Campaign',
+    tag: 'Verified Attorneys · Nonprofits · Licensed Professionals',
     description:
-      'Run a campaign on behalf of your community. Campaign organizers propose actions, manage public documentation, and coordinate with funded parties — all without exposing contributor identities.',
+      'Run a campaign on behalf of your community. Attorneys, nonprofits, licensed professionals, and university or government employees verify a credential and can propose campaigns immediately — your real name stays private; only your verified badge is public.',
     details: [
-      'Propose campaigns for community review',
-      'Manage public-facing documentation',
-      'Coordinate funded actions with legal partners',
-      'Keep contributors informed via on-chain transparent updates',
+      'Verify instantly with a bar number, EIN, NPI, or .edu/.gov email',
+      'Propose campaigns with a specific target and milestones',
+      'Receive funds directly to your own wallet — Citeback never holds them',
+      'Keep contributors informed via transparent public updates',
     ],
-    cta: 'Become a Campaign Organizer',
+    cta: 'Get Verified → Run a Campaign',
     accent: 'var(--muted)',
   },
 ]
@@ -106,8 +106,7 @@ export default function BuildWithUs({ setTab }) {
                     if (track.id === 'operator') setTab('operators')
                     else if (track.id === 'technical') setTab('registry')
                   }}
-                  className="bwu-btn-secondary"
-                  className="bwu-btn-secondary-mt"
+                  className="bwu-btn-secondary bwu-btn-secondary-mt"
                 >
                   {track.cta}
                 </button>

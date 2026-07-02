@@ -20,6 +20,7 @@ export default function SightingForm({ setTab }) {
   const { user, isLoggedIn } = useAuth()
   const [repEarned, setRepEarned] = useState(null)
   const [showClaimModal, setShowClaimModal] = useState(false)
+  const [nudgeDismissed, setNudgeDismissed] = useState(false)
   const [cameraType, setCameraType] = useState('')
   const [notes, setNotes] = useState('')
   const [photoFile, setPhotoFile] = useState(null)
@@ -246,7 +247,7 @@ export default function SightingForm({ setTab }) {
             <div className="sf-tier-unlock">
               <Star size={28} className="sf-tier-star" />
               <div className="sf-tier-title">🎉 Tier {repEarned.newTier} Unlocked!</div>
-              <div className="sf-tier-subtitle">You're now a <strong>{repEarned.tierName}</strong>.{repEarned.newTier === 1 && ' Campaign access up to $1,000 is now available.'}</div>
+              <div className="sf-tier-subtitle">You're now a <strong>{repEarned.tierName}</strong> — recognized on your public contributor profile.</div>
             </div>
           )}
 
@@ -266,14 +267,21 @@ export default function SightingForm({ setTab }) {
             </div>
           )}
 
-          {!isLoggedIn && (
-            <div className="sf-promo-box">
-              <div className="sf-promo-title">🏅 Earn reputation for future sightings</div>
+          {!isLoggedIn && !nudgeDismissed && (
+            <div className="sf-promo-box" style={{ position: 'relative' }}>
+              <button
+                onClick={() => setNudgeDismissed(true)}
+                aria-label="Dismiss"
+                style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', opacity: 0.6, padding: 4, lineHeight: 1 }}
+              >
+                <X size={14} />
+              </button>
+              <div className="sf-promo-title">Sighting submitted ✓</div>
               <p className="sf-promo-text">
-                Create an account and shoot with <a href="https://proofmode.org" target="_blank" rel="noopener noreferrer" className="sf-accent-link">Proofmode</a> (iOS/Android, free), Galaxy S24+, or Pixel 10. 10 points unlocks Tier 1.
+                Create a free account to earn reputation for this and future contributions. Anonymous sightings count toward the map but not your profile.
               </p>
               <button onClick={() => setShowClaimModal(true)} className="sf-promo-btn">
-                <Shield size={13} /> Create Account →
+                <Shield size={13} /> Create account →
               </button>
             </div>
           )}

@@ -2,7 +2,7 @@ export default function Footer({ setTab }) {
   const navLinks = [
     { label: 'Campaigns', tab: 'campaigns' },
     { label: 'How It Works', tab: 'trust' },
-    { label: 'Governance', tab: 'governance' },
+    { label: 'Platform Rules', tab: 'governance' },
     { label: 'Run a Campaign', tab: 'operators' },
     { label: 'Report a Sighting', tab: 'report' },
     { label: 'Privacy Policy', tab: 'privacy' },
@@ -41,7 +41,7 @@ export default function Footer({ setTab }) {
           Pre-launch — no wallet addresses published until all prerequisites are met.
         </div>
         <div className="footer-bottom-text">
-          Governance —{' '}
+          Platform rules —{' '}
           <a
             href="https://github.com/citeback/citebackwebsite"
             target="_blank"
@@ -64,7 +64,7 @@ export default function Footer({ setTab }) {
 
       {/* Legal disclaimer */}
       <div className="footer-legal">
-        Contributions to Citeback campaigns are <strong>not tax-deductible</strong>. Citeback is a Wyoming DAO LLC (in formation), not a 501(c)(3) charitable organization.
+        Contributions to Citeback campaigns are <strong>not tax-deductible</strong>. Citeback is a Wyoming LLC (in formation), not a 501(c)(3) charitable organization.
         All contributions are final and non-refundable. Content on this site is for educational purposes only and does not constitute legal advice.{' '}
         Questions, press inquiries, or organizer applications: <a href="mailto:citeback@proton.me" className="footer-link">citeback@proton.me</a>
       </div>
@@ -73,13 +73,13 @@ export default function Footer({ setTab }) {
       <div className="footer-tip">
         <span className="footer-tip-bold">Support the platform.</span>{' '}
         Citeback is funded by voluntary tips — not by taking a cut of campaigns.{' '}
-        Tips go directly to the Wyoming DAO LLC to cover infrastructure costs.{' '}
-        <span className="footer-tip-italic">Not accepting tips until Wyoming DAO LLC is formed.</span>
+        Tips cover infrastructure costs, nothing else.{' '}
+        <span className="footer-tip-italic">Not accepting tips until the legal entity is formed.</span>
       </div>
 
       {/* Copyright */}
       <div className="footer-copyright">
-        &copy; 2026 Citeback (Wyoming DAO LLC, in formation). Code: MIT license.{' '}
+        &copy; 2026 Citeback (Wyoming LLC, in formation). Code: MIT license.{' '}
         <a href="https://github.com/citeback/citebackwebsite" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
       </div>
 
