@@ -19,7 +19,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'GOVERNANCE',
-    text: 'Governance specification published — community ratification required before mainnet',
+    text: 'Platform rules published on GitHub — plain-language, versioned, open source',
   },
   {
     category: 'SURVEILLANCE',
@@ -43,7 +43,7 @@ const ALL_EVENTS = [
   },
   {
     category: 'GOVERNANCE',
-    text: 'Wallet architecture spec published — direct operator custody model, view key monitoring, no platform key holding',
+    text: 'Wallet architecture: direct organizer custody, view key monitoring, Citeback never holds funds',
   },
   {
     category: 'SURVEILLANCE',

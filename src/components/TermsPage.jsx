@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 
-const TERMS_LAST_UPDATED = 'May 9, 2026'
+const TERMS_LAST_UPDATED = 'July 2, 2026'
 
 export default function TermsPage() {
   return (
@@ -14,9 +14,8 @@ export default function TermsPage() {
     <section className="legal-page-section">
       {/* Draft disclaimer — top of page, prominent */}
       <div className="legal-draft-notice">
-        <strong className="legal-draft-notice-title">⚠ These terms are in draft form pending legal review.</strong>
-        They are published for community transparency. They have <em>not</em> been reviewed by legal counsel and are subject to change before platform launch.
-        No funds go live until attorney review is complete. Full draft with OFAC disclosures, organizer obligations, and §230 notice:{' '}
+        <strong className="legal-draft-notice-title">⚠ These terms are pending final legal review.</strong>
+        They are published for transparency. No funds go live until attorney review is complete. Full text:{' '}
         <a href="https://github.com/citeback/citebackwebsite/blob/main/TERMS.md" target="_blank" rel="noopener noreferrer"
           className="legal-draft-notice-link">TERMS.md on GitHub</a>.
       </div>
@@ -26,9 +25,7 @@ export default function TermsPage() {
         Terms of Use
       </h1>
       <p className="legal-page-subtitle">
-        Last updated: <time dateTime="2026-05-09">{TERMS_LAST_UPDATED}</time>
-        {' '}· Citeback (Wyoming DAO LLC, in formation)
-        {' '}· Draft v0.1
+        Last updated: <time dateTime="2026-07-02">{TERMS_LAST_UPDATED}</time>
       </p>
 
       {[
@@ -40,7 +37,7 @@ If you do not agree to these terms, do not use the Site or send funds to any cam
         },
         {
           title: '2. What Citeback Is',
-          body: `Citeback is a pre-launch crowdfunding platform designed to fund surveillance resistance campaigns — including FOIA requests, legal challenges, and ordinance campaigns — using privacy cryptocurrencies (Monero XMR and Zano ZANO). Citeback is organized as a Wyoming DAO LLC (formation is a pre-launch prerequisite and has not yet been completed as of this writing).
+          body: `Citeback is a crowdfunding platform designed to fund surveillance resistance campaigns — including FOIA requests, legal challenges, and ordinance campaigns — using privacy cryptocurrencies (Monero XMR and Zano ZANO). The platform is operated by Scott Hughes.
 
 Citeback is not a charitable organization. Contributions are not tax-deductible. Citeback does not provide legal services and nothing on this Site constitutes legal advice.`,
         },
@@ -54,7 +51,7 @@ Citeback is not a charitable organization. Contributions are not tax-deductible.
 
 • All contributions are final and non-refundable. Monero's privacy model makes identifying senders technically infeasible; Citeback will not ask contributors to deanonymize themselves to facilitate refunds.
 • If a campaign does not reach its goal by the deadline, funds redirect to the highest-priority active campaign in the same category. Campaign organizers or community members may request an extension vote. After two extensions, redirect is automatic.
-• Contributions are not tax-deductible. Citeback is a Wyoming DAO LLC, not a 501(c)(3) exempt organization.
+• Contributions are not tax-deductible. Citeback is not a 501(c)(3) exempt organization.
 • Citeback takes no platform fee from campaign contributions. Zero percent is deducted. All campaign funds go directly to the campaign organizer\'s wallet. Citeback does not hold, pool, or direct campaign funds under any circumstances.`,
         },
         {
@@ -105,7 +102,7 @@ Citeback charges no platform fee on campaign contributions. Citeback's total lia
         },
         {
           title: '10. Modifications',
-          body: `These Terms may be updated prior to platform launch. After launch, material changes to Terms require community governance votes per GOVERNANCE.md. The current version of these Terms is always available at citeback.com/terms. Continued use of the Site after a change constitutes acceptance of the updated Terms.`,
+          body: `These Terms may be updated prior to platform launch. After launch, material changes to Terms are announced publicly at least 7 days before taking effect. The current version of these Terms is always available at citeback.com/terms. Continued use of the Site after a change constitutes acceptance of the updated Terms.`,
         },
         {
           title: '11. Governing Law',

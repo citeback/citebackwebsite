@@ -203,6 +203,33 @@ const mailer = emailEnabled ? nodemailer.createTransport({
 }) : null
 console.log('Email recovery:', emailEnabled ? `enabled (${SMTP_HOST})` : 'disabled (no SMTP config)')
 
+// ── Credential verification key (AES-256-GCM for legal names) ────────────────
+// Independent 32-byte hex key from CREDENTIAL_KEY env. Legal names are stored
+// encrypted and are NEVER returned to any client or written to logs.
+const CREDENTIAL_KEY_HEX = process.env.CREDENTIAL_KEY || null
+const CREDENTIAL_ENC_KEY = (CREDENTIAL_KEY_HEX && /^[0-9a-fA-F]{64}$/.test(CREDENTIAL_KEY_HEX))
+  ? Buffer.from(CREDENTIAL_KEY_HEX, 'hex')
+  : null
+if (!CREDENTIAL_ENC_KEY) console.warn('CREDENTIAL_KEY not set or invalid (need 64 hex chars) — /api/verify-credential disabled')
+
+function encryptLegalName(name) {
+  const iv = randomBytes(12)
+  const cipher = createCipheriv('aes-256-gcm', CREDENTIAL_ENC_KEY, iv)
+  const enc = Buffer.concat([cipher.update(String(name), 'utf8'), cipher.final()])
+  return iv.toString('hex') + ':' + cipher.getAuthTag().toString('hex') + ':' + enc.toString('hex')
+}
+
+// Decrypt kept for future admin/manual-review tooling only — never call in a
+// client-facing response path.
+function decryptLegalName(stored) {
+  try {
+    const [ivHex, tagHex, encHex] = String(stored).split(':')
+    const decipher = createDecipheriv('aes-256-gcm', CREDENTIAL_ENC_KEY, Buffer.from(ivHex, 'hex'))
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'))
+    return decipher.update(Buffer.from(encHex, 'hex')) + decipher.final('utf8')
+  } catch { return null }
+}
+
 // ── SQLite init ────────────────────────────────────────────────────────────────
 const db = new Database(path.join(DATA_DIR, 'citeback.db'))
 db.pragma('journal_mode = WAL')
@@ -438,6 +465,29 @@ try { db.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_launch_email_hmac ON lau
 })()
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN account_user_id TEXT DEFAULT NULL').run() } catch {}
 try { db.prepare('ALTER TABLE attorney_applications ADD COLUMN email TEXT DEFAULT NULL').run() } catch {}
+
+// ── Credential verification fields migration (verify-credential endpoint) ────
+// Safe no-ops when columns already exist; never drops or rewrites existing data.
+try { db.prepare('ALTER TABLE users ADD COLUMN credential_type TEXT').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN credential_id TEXT').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN credential_state TEXT').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN legal_name_enc TEXT').run() } catch {}
+try { db.prepare("ALTER TABLE users ADD COLUMN credential_status TEXT DEFAULT 'none'").run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN public_badge TEXT').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN credential_verified_at INTEGER').run() } catch {}
+try { db.prepare('ALTER TABLE users ADD COLUMN can_run_campaigns INTEGER DEFAULT 0').run() } catch {}
+db.exec(`
+  CREATE TABLE IF NOT EXISTS institutional_email_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    token_hash TEXT NOT NULL,
+    email_domain TEXT NOT NULL,
+    expires_at INTEGER NOT NULL,
+    used INTEGER DEFAULT 0,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_inst_tokens_hash ON institutional_email_tokens(token_hash);
+`)
 
 // ── Launch notification subscribers ──────────────────────────────────────────
 db.exec(`CREATE TABLE IF NOT EXISTS launch_subscribers (
@@ -685,7 +735,10 @@ function fetchUrlWithTimeout(url, timeoutMs) {
     const req = https.get(url, { timeout: timeoutMs }, (res) => {
       let body = ''
       res.setEncoding('utf8')
-      res.on('data', chunk => { if (body.length < 200000) body += chunk })
+      // Cap raised 200KB → 1MB: calbar detail pages grew past 600KB and the
+      // '>Active<' status marker sits near the end — the old cap truncated it,
+      // making every attorney look inactive.
+      res.on('data', chunk => { if (body.length < 1000000) body += chunk })
       res.on('end', () => resolve({ statusCode: res.statusCode, body }))
     })
     req.on('timeout', () => { req.destroy(); reject(new Error('timeout')) })
@@ -720,6 +773,139 @@ async function lookupCABar(rawBarNumber) {
   }
 }
 
+// ── Credential verification helpers ──────────────────────────────────────
+// SSRF guard: outbound credential lookups may only hit these hosts.
+// NOTE: apps.irs.gov (EO Select Check) blocks datacenter IPs via Akamai (403 from
+// this VPS), so nonprofit EINs are verified against ProPublica's Nonprofit
+// Explorer API, which mirrors the IRS EO Business Master File (same
+// deductibility_code field, no auth required).
+const CRED_ALLOWED_HOSTS = new Set(['projects.propublica.org', 'npiregistry.cms.hhs.gov', 'apps.calbar.ca.gov'])
+function credFetch(url, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    let parsed
+    try { parsed = new URL(url) } catch { return reject(new Error('invalid_url')) }
+    if (parsed.protocol !== 'https:' || !CRED_ALLOWED_HOSTS.has(parsed.hostname)) return reject(new Error('ssrf_blocked'))
+    const rq = https.get(url, { timeout: timeoutMs, headers: { 'User-Agent': 'citeback-credential-check/1.0', 'Accept': 'application/json' } }, (rs) => {
+      let body = ''
+      rs.setEncoding('utf8')
+      rs.on('data', c => { if (body.length < 500000) body += c })
+      rs.on('end', () => resolve({ statusCode: rs.statusCode, body }))
+    })
+    rq.on('timeout', () => { rq.destroy(); reject(new Error('timeout')) })
+    rq.on('error', reject)
+  })
+}
+
+// Nonprofit EIN — verified against IRS EO BMF data (via ProPublica mirror).
+// Verified when the org exists AND deductibility_code is not 0.
+async function verifyEIN(einRaw) {
+  const ein = String(einRaw || '').replace(/[^0-9]/g, '')
+  if (ein.length !== 9) return { status: 'failed', error: 'EIN must be 9 digits' }
+  try {
+    const { statusCode, body } = await credFetch(`https://projects.propublica.org/nonprofits/api/v2/organizations/${ein}.json`, 10000)
+    if (statusCode === 404) return { status: 'failed', error: 'EIN not found in IRS exempt organization registry' }
+    if (statusCode !== 200) return { status: 'unavailable' }
+    const org = JSON.parse(body)?.organization
+    if (!org) return { status: 'failed', error: 'EIN not found in IRS exempt organization registry' }
+    if (String(org.deductibility_code ?? '0') === '0') {
+      return { status: 'failed', error: 'Organization found but contributions are not tax-deductible — not an active exempt organization' }
+    }
+    const orgName = String(org.name || 'organization').slice(0, 120)
+    return { status: 'verified', badge: `Verified 501(c)(3) — ${orgName}` }
+  } catch { return { status: 'unavailable' } }
+}
+
+// Healthcare NPI — CMS National Provider Identifier registry (official, no auth).
+async function verifyNPI(npiRaw) {
+  const npi = String(npiRaw || '').replace(/[^0-9]/g, '')
+  if (npi.length !== 10) return { status: 'failed', error: 'NPI must be 10 digits' }
+  try {
+    const { statusCode, body } = await credFetch(`https://npiregistry.cms.hhs.gov/api/?number=${npi}&version=2.1`, 10000)
+    if (statusCode !== 200) return { status: 'unavailable' }
+    const data = JSON.parse(body)
+    if (!data.result_count || data.result_count < 1) {
+      return { status: 'failed', error: 'NPI number not found in CMS National Provider Identifier registry' }
+    }
+    const taxonomy = data.results?.[0]?.taxonomies?.[0]?.desc || null
+    return { status: 'verified', taxonomy, badge: `Verified Healthcare Professional — NPI ${npi}` }
+  } catch { return { status: 'unavailable' } }
+}
+
+// Redact credential IDs for the audit log — first 3 chars + ***
+function redactCredId(id) { return String(id || '').slice(0, 3) + '***' }
+
+// Credential rate limiters — 5/hour per IP, 3/day per userId
+const credIpRateCounts = new Map()
+const credUserRateCounts = new Map()
+function checkCredIpRateLimit(ip) { return _pkRateCheckWindow(credIpRateCounts, ip, 5, 60 * 60 * 1000) }
+function checkCredUserRateLimit(userId) { return _pkRateCheckWindow(credUserRateCounts, userId, 3, 24 * 60 * 60 * 1000) }
+function _pkRateCheckWindow(map, key, limit, windowMs) {
+  const now = Date.now()
+  const entry = map.get(key)
+  if (!entry || now - entry.start > windowMs) { map.set(key, { count: 1, start: now }); return true }
+  if (entry.count >= limit) return false
+  entry.count++; return true
+}
+
+// Persist a credential verification outcome on the user row + audit trail.
+function saveCredential(userId, fields, ip) {
+  db.prepare(`
+    UPDATE users SET credential_type = ?, credential_id = ?, credential_state = ?,
+      legal_name_enc = ?, credential_status = ?, public_badge = ?,
+      credential_verified_at = ?, can_run_campaigns = ?
+    WHERE id = ?
+  `).run(
+    fields.type, fields.credId, fields.state ?? null, fields.legalNameEnc,
+    fields.status, fields.badge ?? null,
+    fields.status === 'verified' ? Math.floor(Date.now() / 1000) : null,
+    fields.status === 'verified' ? 1 : 0, userId,
+  )
+  auditLog('credential_verify', userId, `${fields.type}:${redactCredId(fields.credId)}:${fields.status}`, ip)
+}
+
+const CRED_UNAVAILABLE_MSG = "Verification service temporarily unavailable — we'll verify within 24 hours"
+
+// Background retry for pending credential verifications (every 10 minutes).
+// CA attorneys / EINs / NPIs that went pending due to upstream outages are
+// re-checked automatically. Non-CA attorney bar registries have no reliable
+// public lookup API, so those stay pending for admin/manual review.
+setInterval(async () => {
+  try {
+    db.prepare('DELETE FROM institutional_email_tokens WHERE expires_at < ? OR used = 1').run(Date.now())
+    const pending = db.prepare(`
+      SELECT id, credential_type, credential_id, credential_state FROM users
+      WHERE credential_status = 'pending' AND credential_type IN ('attorney', 'nonprofit', 'healthcare')
+      LIMIT 10
+    `).all()
+    for (const u of pending) {
+      let outcome = null
+      if (u.credential_type === 'attorney') {
+        if (u.credential_state === 'CA') {
+          const lk = await lookupCABar(u.credential_id)
+          if (lk.status === 'found' && lk.active) outcome = { status: 'verified', badge: 'Verified Attorney — CA' }
+          else if (lk.status === 'found' || lk.status === 'not_found') outcome = { status: 'failed' }
+        }
+        // other states: leave pending — manual review
+      } else if (u.credential_type === 'nonprofit') {
+        const v = await verifyEIN(u.credential_id)
+        if (v.status !== 'unavailable') outcome = v
+      } else if (u.credential_type === 'healthcare') {
+        const v = await verifyNPI(u.credential_id)
+        if (v.status !== 'unavailable') outcome = v
+      }
+      if (outcome) {
+        db.prepare(`
+          UPDATE users SET credential_status = ?, public_badge = ?, credential_verified_at = ?, can_run_campaigns = ?
+          WHERE id = ?
+        `).run(outcome.status, outcome.badge ?? null,
+          outcome.status === 'verified' ? Math.floor(Date.now() / 1000) : null,
+          outcome.status === 'verified' ? 1 : 0, u.id)
+        auditLog('credential_async_verify', u.id, `${u.credential_type}:${redactCredId(u.credential_id)}:${outcome.status}`, null)
+      }
+    }
+  } catch (e) { console.error('credential retry job error:', e.message) }
+}, 10 * 60 * 1000)
+
 // Clean up expired/used tokens every hour (recovery_tokens + claim_tokens)
 setInterval(() => {
   try {
@@ -746,6 +932,8 @@ setInterval(() => {
   for (const [k, e] of pkRegRateCounts) { if (now - e.start > 60 * 1000)        pkRegRateCounts.delete(k) }
   for (const [ip, e] of adminFailCounts){ if ((e.lockedUntil && now > e.lockedUntil + 60000) || (!e.lockedUntil && e.firstFail && now - e.firstFail > ADMIN_LOCKOUT_MS)) adminFailCounts.delete(ip) }
   for (const [k, e] of forgotUsernameRateCounts){ if (now - e.start > 60 * 60 * 1000) forgotUsernameRateCounts.delete(k) }
+  for (const [k, e] of credIpRateCounts)  { if (now - e.start > 60 * 60 * 1000)      credIpRateCounts.delete(k)  }
+  for (const [k, e] of credUserRateCounts){ if (now - e.start > 24 * 60 * 60 * 1000) credUserRateCounts.delete(k) }
   for (const [k, e] of sightingRateCounts)        { if (now - e.start > 60 * 60 * 1000) sightingRateCounts.delete(k)        }
   for (const [k, e] of sightingUserRateCounts)    { if (now - e.start > 60 * 60 * 1000) sightingUserRateCounts.delete(k)    }
   for (const [k, until] of reauthSessions)       { if (until < now)                          reauthSessions.delete(k)          }
@@ -3081,6 +3269,221 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── Credential verification (attorney/nonprofit/healthcare/institutional) ──
+  if (req.method === 'POST' && req.url === '/api/verify-credential') {
+    if (!CREDENTIAL_ENC_KEY) {
+      res.writeHead(503, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Credential verification is not configured' }))
+    }
+    if (!checkCredIpRateLimit(ip)) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '3600' })
+      return res.end(JSON.stringify({ error: 'Too many verification attempts — try again in an hour' }))
+    }
+    try {
+      const body = await parseBody(req)
+      const credentialType = String(body.credentialType || '').toLowerCase().trim()
+      if (!['attorney', 'nonprofit', 'healthcare', 'institutional'].includes(credentialType)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Invalid credentialType — must be attorney, nonprofit, healthcare, or institutional' }))
+      }
+      const credentialIdRaw = String(body.credentialId || '').trim().slice(0, 200)
+      const legalName = String(body.legalName || '').trim().slice(0, 300)
+      if (!credentialIdRaw) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'credentialId is required' })) }
+      if (!legalName) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'legalName is required' })) }
+
+      // Pre-validate credential format BEFORE user resolution so malformed
+      // submissions can never create provisional accounts.
+      if (credentialType === 'nonprofit' && credentialIdRaw.replace(/[^0-9]/g, '').length !== 9) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'EIN must be 9 digits (dashes allowed)' }))
+      }
+      if (credentialType === 'healthcare' && credentialIdRaw.replace(/[^0-9]/g, '').length !== 10) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'NPI must be 10 digits' }))
+      }
+      if (credentialType === 'institutional') {
+        const preEmail = credentialIdRaw.toLowerCase()
+        const preOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(preEmail) && preEmail.length <= 200
+        const preDomain = preOk ? preEmail.split('@')[1] : ''
+        if (!preOk || !(preDomain.endsWith('.edu') || preDomain.endsWith('.gov'))) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Institutional verification requires a valid .edu or .gov email address' }))
+        }
+      }
+      if (credentialType === 'attorney') {
+        const preState = String(body.credentialState || '').toUpperCase().trim()
+        if (!US_BAR_STATES.has(preState)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Invalid or unrecognized state code' }))
+        }
+        if (!sanitizeBarNumber(credentialIdRaw)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Bar number required' }))
+        }
+      }
+
+      // Resolve user: authenticated session wins; a bare userId in the body is
+      // never trusted (that would let anyone overwrite another user's credentials).
+      const credClaims = verifyToken(req)
+      let credUserId
+      let createdAccount = false
+      if (credClaims) {
+        if (body.userId && String(body.userId) !== credClaims.userId) {
+          res.writeHead(403, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'userId does not match authenticated session' }))
+        }
+        credUserId = credClaims.userId
+      } else if (body.userId) {
+        res.writeHead(401, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Login required to verify credentials for an existing account' }))
+      } else {
+        // No account yet — create a provisional one so verification can attach to it.
+        credUserId = randomUUID()
+        const provUsername = 'cred-' + credUserId.slice(0, 8)
+        const provHash = await bcrypt.hash(randomBytes(32).toString('hex'), 12)
+        db.prepare('INSERT INTO users (id, username, password_hash, created_at) VALUES (?, ?, ?, ?)')
+          .run(credUserId, provUsername, provHash, new Date().toISOString())
+        createdAccount = true
+      }
+      if (!checkCredUserRateLimit(credUserId)) {
+        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '86400' })
+        return res.end(JSON.stringify({ error: 'Daily verification attempt limit reached — try again tomorrow' }))
+      }
+
+      const legalNameEnc = encryptLegalName(legalName)
+      const respond = (obj) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify(createdAccount ? { ...obj, userId: credUserId } : obj))
+      }
+
+      if (credentialType === 'nonprofit') {
+        const ein = credentialIdRaw.replace(/[^0-9]/g, '')
+        if (ein.length !== 9) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'EIN must be 9 digits (dashes allowed)' })) }
+        const r = await verifyEIN(ein)
+        if (r.status === 'verified') {
+          saveCredential(credUserId, { type: 'nonprofit', credId: ein, legalNameEnc, status: 'verified', badge: r.badge }, ip)
+          return respond({ verified: true, status: 'verified', publicBadge: r.badge })
+        }
+        if (r.status === 'failed') {
+          saveCredential(credUserId, { type: 'nonprofit', credId: ein, legalNameEnc, status: 'failed' }, ip)
+          return respond({ verified: false, status: 'failed', error: r.error })
+        }
+        saveCredential(credUserId, { type: 'nonprofit', credId: ein, legalNameEnc, status: 'pending' }, ip)
+        return respond({ verified: false, status: 'pending', message: CRED_UNAVAILABLE_MSG })
+      }
+
+      if (credentialType === 'healthcare') {
+        const npi = credentialIdRaw.replace(/[^0-9]/g, '')
+        if (npi.length !== 10) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'NPI must be 10 digits' })) }
+        const r = await verifyNPI(npi)
+        if (r.status === 'verified') {
+          saveCredential(credUserId, { type: 'healthcare', credId: npi, legalNameEnc, status: 'verified', badge: r.badge }, ip)
+          return respond({ verified: true, status: 'verified', publicBadge: r.badge, providerType: r.taxonomy || undefined })
+        }
+        if (r.status === 'failed') {
+          saveCredential(credUserId, { type: 'healthcare', credId: npi, legalNameEnc, status: 'failed' }, ip)
+          return respond({ verified: false, status: 'failed', error: r.error })
+        }
+        saveCredential(credUserId, { type: 'healthcare', credId: npi, legalNameEnc, status: 'pending' }, ip)
+        return respond({ verified: false, status: 'pending', message: CRED_UNAVAILABLE_MSG })
+      }
+
+      if (credentialType === 'institutional') {
+        const email = credentialIdRaw.toLowerCase()
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 200
+        const domain = emailOk ? email.split('@')[1] : ''
+        if (!emailOk || !(domain.endsWith('.edu') || domain.endsWith('.gov'))) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Institutional verification requires a valid .edu or .gov email address' }))
+        }
+        // Store only the domain — the full email is used transiently for delivery
+        // and never persisted (consistent with platform privacy posture).
+        const instToken = randomBytes(32).toString('hex')
+        db.prepare('INSERT INTO institutional_email_tokens (id, user_id, token_hash, email_domain, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+          .run(randomUUID(), credUserId, createHash('sha256').update(instToken).digest('hex'), domain, Date.now() + 24 * 60 * 60 * 1000, Date.now())
+        saveCredential(credUserId, { type: 'institutional', credId: domain, legalNameEnc, status: 'pending' }, ip)
+        if (emailEnabled) {
+          mailer.sendMail({
+            from: SMTP_FROM,
+            to: email,
+            subject: 'Citeback — verify your institutional email',
+            text: `Confirm your institutional affiliation on Citeback by opening this link (valid for 24 hours):\n\nhttps://ai.citeback.com/api/verify-institutional-email?token=${instToken}\n\nIf you did not request this, ignore this email.`,
+          }).catch(e => console.error('institutional verify email error:', e.message))
+        }
+        return respond({ verified: false, status: 'pending', message: `Verification email sent to your ${domain} address — click the link to complete verification.` })
+      }
+
+      // attorney
+      const credState = String(body.credentialState || '').toUpperCase().trim()
+      if (!US_BAR_STATES.has(credState)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Invalid or unrecognized state code' }))
+      }
+      const credBarNum = sanitizeBarNumber(credentialIdRaw)
+      if (!credBarNum) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ verified: false, status: 'failed', error: 'Bar number required' })) }
+      if (credState === 'CA') {
+        const lk = await lookupCABar(credBarNum)
+        if (lk.status === 'found' && lk.active) {
+          const credBadge = 'Verified Attorney — CA'
+          saveCredential(credUserId, { type: 'attorney', credId: credBarNum, state: 'CA', legalNameEnc, status: 'verified', badge: credBadge }, ip)
+          return respond({ verified: true, status: 'verified', publicBadge: credBadge })
+        }
+        if (lk.status === 'found') {
+          saveCredential(credUserId, { type: 'attorney', credId: credBarNum, state: 'CA', legalNameEnc, status: 'failed' }, ip)
+          return respond({ verified: false, status: 'failed', error: 'Bar number found but license is not active in the California State Bar registry' })
+        }
+        if (lk.status === 'not_found') {
+          saveCredential(credUserId, { type: 'attorney', credId: credBarNum, state: 'CA', legalNameEnc, status: 'failed' }, ip)
+          return respond({ verified: false, status: 'failed', error: 'Bar number not found in California State Bar registry' })
+        }
+        // lookup error — degrade to pending; background job retries
+        saveCredential(credUserId, { type: 'attorney', credId: credBarNum, state: 'CA', legalNameEnc, status: 'pending' }, ip)
+        return respond({ verified: false, status: 'pending', message: CRED_UNAVAILABLE_MSG })
+      }
+      // Non-CA states: no reliable public API — store pending for async/manual review
+      saveCredential(credUserId, { type: 'attorney', credId: credBarNum, state: credState, legalNameEnc, status: 'pending' }, ip)
+      return respond({ verified: false, status: 'pending', message: 'Your bar number is being verified — usually within a few minutes.' })
+    } catch (e) {
+      console.error('verify-credential error:', e.message)
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'bad request' }))
+    }
+  }
+
+  // ── Credential verification status polling ─────────────────────────────────
+  if (req.method === 'GET' && req.url.startsWith('/api/verify-credential/status')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'Too many requests' })) }
+    const statusUrl = new URL(req.url, 'http://localhost')
+    const statusUserId = String(statusUrl.searchParams.get('userId') || '').slice(0, 64)
+    if (!statusUserId) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'userId required' })) }
+    const statusRow = db.prepare('SELECT credential_status, public_badge FROM users WHERE id = ?').get(statusUserId)
+    if (!statusRow) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'not found' })) }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({
+      status: statusRow.credential_status || 'none',
+      verified: statusRow.credential_status === 'verified',
+      publicBadge: statusRow.credential_status === 'verified' ? (statusRow.public_badge || null) : null,
+    }))
+  }
+
+  // ── Institutional email verification (one-time link from email) ────────────
+  if (req.method === 'GET' && req.url.startsWith('/api/verify-institutional-email')) {
+    if (!checkRateLimit(ip)) { res.writeHead(429, { 'Content-Type': 'text/plain' }); return res.end('Too many requests') }
+    const instUrl = new URL(req.url, 'http://localhost')
+    const instTokenParam = String(instUrl.searchParams.get('token') || '')
+    const instFail = (msg) => { res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(`<!doctype html><meta name="viewport" content="width=device-width"><body style="font-family:system-ui;max-width:32rem;margin:4rem auto;text-align:center"><h2>Verification failed</h2><p>${msg}</p></body>`) }
+    if (!/^[0-9a-f]{64}$/.test(instTokenParam)) return instFail('Invalid verification link.')
+    const instHash = createHash('sha256').update(instTokenParam).digest('hex')
+    const instRow = db.prepare('SELECT * FROM institutional_email_tokens WHERE token_hash = ? AND used = 0').get(instHash)
+    if (!instRow || instRow.expires_at < Date.now()) return instFail('This verification link is invalid or has expired. Please request a new one.')
+    db.prepare('UPDATE institutional_email_tokens SET used = 1 WHERE id = ?').run(instRow.id)
+    const instBadge = `Verified — ${instRow.email_domain}`
+    db.prepare("UPDATE users SET credential_status = 'verified', public_badge = ?, credential_verified_at = ?, can_run_campaigns = 1 WHERE id = ?")
+      .run(instBadge, Math.floor(Date.now() / 1000), instRow.user_id)
+    auditLog('credential_verify', instRow.user_id, `institutional:${redactCredId(instRow.email_domain)}:verified`, ip)
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+    return res.end(`<!doctype html><meta name="viewport" content="width=device-width"><body style="font-family:system-ui;max-width:32rem;margin:4rem auto;text-align:center"><h2>✅ Email verified</h2><p>Your institutional affiliation (<strong>${instRow.email_domain}</strong>) is confirmed. You can return to Citeback.</p></body>`)
+  }
   // ── Bar lookup ─────────────────────────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/verify-bar') {
     const clientIp = getClientIp(req)
