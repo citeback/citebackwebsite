@@ -1,18 +1,17 @@
 /**
- * CameraCapture.jsx — In-app C2PA camera for CiteBack
+ * CameraCapture.jsx — Full-screen native camera for CiteBack
  *
- * Opens device camera via getUserMedia, captures a JPEG, sends to
- * /api/capture/sign for server-side C2PA signing, returns signed JPEG
- * to parent via onCapture(blob, { lat, lng }).
- *
- * Props:
- *   onCapture(blob, gps)  — called with signed Blob + { lat, lng } | null
- *   onClose()             — user dismissed camera
- *   cameraHint            — camera type string for manifest title
+ * Mobile-first design:
+ *   • Fills the entire screen (position: fixed, z-index: 99999)
+ *   • Controls overlaid ON the video — never off-screen
+ *   • Pinch-to-zoom + tap +/− buttons
+ *   • Native track zoom (Android) with CSS-scale fallback (iOS)
+ *   • Safe-area insets for notch / home bar
+ *   • Props: onCapture(blob, {lat,lng}), onClose(), cameraHint
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { X, Aperture, RefreshCw, ShieldCheck, AlertCircle, Loader } from 'lucide-react'
+import { X, RefreshCw, ShieldCheck, AlertCircle, Loader } from 'lucide-react'
 import { API_BASE as AI_URL } from '../config.js'
 
 const SIGN_URL = AI_URL + '/api/capture/sign'
@@ -21,70 +20,141 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
   const videoRef    = useRef(null)
   const canvasRef   = useRef(null)
   const streamRef   = useRef(null)
+  const trackRef    = useRef(null)
+  const pinchRef    = useRef({ active: false, startDist: 0, startZoom: 1 })
+  const zoomTimerRef = useRef(null)
 
-  const [phase, setPhase]         = useState('init')  // init | viewfinder | captured | signing | done | error
-  const [capturedBlob, setCapturedBlob]   = useState(null)
-  const [capturedURL, setCapturedURL]     = useState(null)
-  const [gps, setGps]             = useState(null)    // { lat, lng }
-  const [gpsStatus, setGpsStatus] = useState('waiting') // waiting | found | denied | timeout
-  const [facingMode, setFacingMode] = useState('environment') // environment = back cam
-  const [error, setError]         = useState(null)
+  const [phase, setPhase]           = useState('init')       // init | viewfinder | captured | signing | done | error
+  const [capturedBlob, setCapturedBlob] = useState(null)
+  const [capturedURL, setCapturedURL]   = useState(null)
+  const [gps, setGps]               = useState(null)
+  const [gpsStatus, setGpsStatus]   = useState('waiting')    // waiting | found | denied | timeout
+  const [facingMode, setFacingMode] = useState('environment')
+  const [error, setError]           = useState(null)
+  const [zoom, setZoom]             = useState(1)
+  const [showZoomHint, setShowZoomHint] = useState(false)
+  const [nativeZoomRange, setNativeZoomRange] = useState(null)  // { min, max } if device supports it
 
-  // ── Start camera ────────────────────────────────────────────────────────────
-  const startCamera = useCallback(async (facing = facingMode) => {
+  // ── Apply zoom ────────────────────────────────────────────────────────────
+  const applyZoom = useCallback((raw) => {
+    const clamped = Math.min(Math.max(raw, 1), nativeZoomRange ? nativeZoomRange.max : 5)
+    setZoom(clamped)
+    // Show hint briefly
+    clearTimeout(zoomTimerRef.current)
+    setShowZoomHint(true)
+    zoomTimerRef.current = setTimeout(() => setShowZoomHint(false), 1200)
+
+    // Try native track zoom (Android Chrome / some desktop)
+    const track = trackRef.current
+    if (track) {
+      try {
+        const caps = track.getCapabilities?.()
+        if (caps?.zoom) {
+          track.applyConstraints({ advanced: [{ zoom: clamped }] }).catch(() => {})
+          return
+        }
+      } catch (_) {}
+    }
+
+    // CSS transform fallback (iOS Safari)
+    if (videoRef.current) {
+      videoRef.current.style.transform = `scale(${clamped})`
+      videoRef.current.style.transformOrigin = 'center center'
+    }
+  }, [nativeZoomRange])
+
+  // ── Start camera ──────────────────────────────────────────────────────────
+  const startCamera = useCallback(async (facing) => {
     try {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => t.stop())
-      }
+      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop())
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: facing, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        video: { facingMode: facing ?? facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false,
       })
       streamRef.current = stream
+      const track = stream.getVideoTracks()[0]
+      trackRef.current = track
+
+      // Detect native zoom support
+      try {
+        const caps = track.getCapabilities?.()
+        if (caps?.zoom) setNativeZoomRange({ min: caps.zoom.min ?? 1, max: caps.zoom.max ?? 5 })
+      } catch (_) {}
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream
-        await videoRef.current.play()
+        videoRef.current.style.transform = 'scale(1)'
+        await videoRef.current.play().catch(() => {})
       }
+      setZoom(1)
       setPhase('viewfinder')
       setError(null)
     } catch (e) {
-      setError(e.name === 'NotAllowedError'
-        ? 'Camera permission denied. Allow camera access in your browser settings.'
-        : 'Could not open camera: ' + e.message)
+      setError(
+        e.name === 'NotAllowedError'
+          ? 'Camera permission denied. Allow camera access in your browser or device settings.'
+          : `Could not open camera: ${e.message}`
+      )
       setPhase('error')
     }
   }, [facingMode])
 
-  // ── GPS ─────────────────────────────────────────────────────────────────────
+  // ── GPS ───────────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!navigator.geolocation) { setGpsStatus('denied'); return }
     const id = navigator.geolocation.watchPosition(
-      pos => {
-        setGps({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setGpsStatus('found')
-      },
+      pos => { setGps({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setGpsStatus('found') },
       () => setGpsStatus('denied'),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     )
-    const fallback = setTimeout(() => setGpsStatus(s => s === 'waiting' ? 'timeout' : s), 15000)
-    return () => { navigator.geolocation.clearWatch(id); clearTimeout(fallback) }
+    const t = setTimeout(() => setGpsStatus(s => s === 'waiting' ? 'timeout' : s), 15000)
+    return () => { navigator.geolocation.clearWatch(id); clearTimeout(t) }
   }, [])
 
-  // ── Start camera on mount ────────────────────────────────────────────────────
+  // ── Mount ─────────────────────────────────────────────────────────────────
   useEffect(() => {
-    startCamera()
-    return () => { streamRef.current?.getTracks().forEach(t => t.stop()) }
+    startCamera(facingMode)
+    return () => {
+      streamRef.current?.getTracks().forEach(t => t.stop())
+      clearTimeout(zoomTimerRef.current)
+      if (capturedURL) URL.revokeObjectURL(capturedURL)
+    }
   }, []) // eslint-disable-line
 
-  // ── Flip camera ─────────────────────────────────────────────────────────────
-  function flipCamera() {
+  // Prevent body scroll while camera is open
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
+  // ── Pinch-to-zoom ─────────────────────────────────────────────────────────
+  function onTouchStart(e) {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      pinchRef.current = { active: true, startDist: Math.hypot(dx, dy), startZoom: zoom }
+    }
+  }
+  function onTouchMove(e) {
+    if (!pinchRef.current.active || e.touches.length !== 2) return
+    e.preventDefault()
+    const dx = e.touches[0].clientX - e.touches[1].clientX
+    const dy = e.touches[0].clientY - e.touches[1].clientY
+    const ratio = Math.hypot(dx, dy) / pinchRef.current.startDist
+    applyZoom(pinchRef.current.startZoom * ratio)
+  }
+  function onTouchEnd() { pinchRef.current.active = false }
+
+  // ── Flip ──────────────────────────────────────────────────────────────────
+  function flip() {
     const next = facingMode === 'environment' ? 'user' : 'environment'
     setFacingMode(next)
     startCamera(next)
   }
 
-  // ── Capture frame ────────────────────────────────────────────────────────────
-  async function capture() {
+  // ── Capture ───────────────────────────────────────────────────────────────
+  function capture() {
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
@@ -92,53 +162,51 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
     canvas.width  = video.videoWidth  || 1280
     canvas.height = video.videoHeight || 720
     const ctx = canvas.getContext('2d')
-    ctx.drawImage(video, 0, 0)
 
-    // Stop stream to show preview
+    // If using CSS-scale zoom, crop to the zoomed region so the photo matches what was seen
+    if (zoom > 1 && !nativeZoomRange) {
+      const sw = canvas.width / zoom
+      const sh = canvas.height / zoom
+      const sx = (canvas.width - sw) / 2
+      const sy = (canvas.height - sh) / 2
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
+    } else {
+      ctx.drawImage(video, 0, 0)
+    }
+
     streamRef.current?.getTracks().forEach(t => t.stop())
 
     canvas.toBlob(blob => {
       if (!blob) { setError('Could not capture frame'); return }
+      const url = URL.createObjectURL(blob)
       setCapturedBlob(blob)
-      setCapturedURL(URL.createObjectURL(blob))
+      setCapturedURL(url)
       setPhase('captured')
     }, 'image/jpeg', 0.92)
   }
 
-  // ── Sign & deliver ────────────────────────────────────────────────────────────
+  // ── Sign & deliver ────────────────────────────────────────────────────────
   async function signAndSubmit() {
     if (!capturedBlob) return
     setPhase('signing')
-
     const fd = new FormData()
     fd.append('photo', capturedBlob, 'citeback-capture.jpg')
     fd.append('timestamp', new Date().toISOString())
     fd.append('cameraHint', cameraHint)
-    if (gps) {
-      fd.append('lat', String(gps.lat))
-      fd.append('lng', String(gps.lng))
-    }
+    if (gps) { fd.append('lat', String(gps.lat)); fd.append('lng', String(gps.lng)) }
 
     try {
       const res = await fetch(SIGN_URL, { method: 'POST', body: fd, credentials: 'include' })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Server error' }))
-        throw new Error(err.error || 'Sign failed')
-      }
+      if (!res.ok) throw new Error('Sign failed')
       const signed = await res.blob()
-      const signedFile = new File([signed], 'citeback-c2pa.jpg', { type: 'image/jpeg' })
-      setPhase('done')
-      onCapture(signedFile, gps)
+      onCapture(new File([signed], 'citeback-c2pa.jpg', { type: 'image/jpeg' }), gps)
     } catch (e) {
-      // Fallback: deliver unsigned photo + warn
-      console.warn('[CameraCapture] Signing failed, falling back to unsigned:', e.message)
-      const unsignedFile = new File([capturedBlob], 'citeback-capture.jpg', { type: 'image/jpeg' })
-      setPhase('done')
-      onCapture(unsignedFile, gps)
+      console.warn('[CameraCapture] Signing failed, delivering unsigned:', e.message)
+      onCapture(new File([capturedBlob], 'citeback-capture.jpg', { type: 'image/jpeg' }), gps)
     }
   }
 
-  // ── Retake ────────────────────────────────────────────────────────────────────
+  // ── Retake ────────────────────────────────────────────────────────────────
   function retake() {
     if (capturedURL) URL.revokeObjectURL(capturedURL)
     setCapturedBlob(null)
@@ -146,199 +214,402 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
     startCamera(facingMode)
   }
 
-  // ── GPS badge ─────────────────────────────────────────────────────────────────
-  const gpsBadge = gpsStatus === 'found'
-    ? <span className="cc-badge cc-badge--green"><ShieldCheck size={12}/> GPS locked</span>
-    : gpsStatus === 'denied'
-    ? <span className="cc-badge cc-badge--red"><AlertCircle size={12}/> No GPS</span>
-    : <span className="cc-badge cc-badge--gray"><Loader size={12} className="cc-spin"/> Getting GPS…</span>
+  // ── GPS indicator ─────────────────────────────────────────────────────────
+  const gpsIndicator =
+    gpsStatus === 'found'    ? { dot: 'cc2-dot cc2-dot--green', label: 'GPS ✓' } :
+    gpsStatus === 'denied'   ? { dot: 'cc2-dot cc2-dot--red',   label: 'No GPS' } :
+                               { dot: 'cc2-dot cc2-dot--amber',  label: 'GPS…' }
 
   return (
-    <div className="cc-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="cc-modal">
+    <>
+      {/* ── Full-screen container ── */}
+      <div
+        className="cc2-root"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <canvas ref={canvasRef} className="cc2-hidden" />
 
-        {/* Header */}
-        <div className="cc-header">
-          <span className="cc-title">📷 CiteBack Camera</span>
-          <button className="cc-close" onClick={onClose}><X size={18}/></button>
-        </div>
-
-        {/* C2PA notice */}
-        <div className="cc-notice">
-          <ShieldCheck size={14}/> Photo will be <strong>C2PA-signed</strong> with GPS + timestamp before submission
-        </div>
-
-        {/* Viewfinder / preview area */}
-        <div className="cc-viewport">
-          {phase === 'error' && (
-            <div className="cc-error-box">
-              <AlertCircle size={32}/><p>{error}</p>
-            </div>
-          )}
-
-          {/* Live video */}
+        {/* Live video */}
+        {(phase === 'viewfinder' || phase === 'init') && (
           <video
             ref={videoRef}
             playsInline muted autoPlay
-            style={{ display: phase === 'viewfinder' ? 'block' : 'none' }}
-            className="cc-video"
+            className="cc2-video"
           />
+        )}
 
-          {/* Captured preview */}
-          {capturedURL && (phase === 'captured' || phase === 'signing') && (
-            <img src={capturedURL} alt="Captured" className="cc-video"/>
-          )}
+        {/* Captured preview */}
+        {capturedURL && (phase === 'captured' || phase === 'signing') && (
+          <img src={capturedURL} alt="Preview" className="cc2-video" />
+        )}
 
-          {/* Signing overlay */}
-          {phase === 'signing' && (
-            <div className="cc-signing-overlay">
-              <Loader size={28} className="cc-spin"/>
-              <p>Signing with C2PA…</p>
-            </div>
-          )}
+        {/* Error state */}
+        {phase === 'error' && (
+          <div className="cc2-error">
+            <AlertCircle size={44} />
+            <p>{error}</p>
+            <button className="cc2-err-btn" onClick={onClose}>Close</button>
+          </div>
+        )}
 
-          {/* Canvas (hidden — used for capture) */}
-          <canvas ref={canvasRef} style={{ display: 'none' }}/>
+        {/* Signing overlay */}
+        {phase === 'signing' && (
+          <div className="cc2-overlay-center">
+            <Loader size={36} className="cc2-spin" />
+            <p>Signing with C2PA…</p>
+          </div>
+        )}
 
-          {/* GPS badge overlaid on viewport */}
-          {(phase === 'viewfinder' || phase === 'captured') && (
-            <div className="cc-gps-badge">{gpsBadge}</div>
-          )}
+        {/* Zoom label (appears briefly) */}
+        {showZoomHint && (
+          <div className="cc2-zoom-hint">{zoom.toFixed(1)}×</div>
+        )}
 
-          {/* Flip button (viewfinder only) */}
-          {phase === 'viewfinder' && (
-            <button className="cc-flip" onClick={flipCamera} title="Flip camera">
-              <RefreshCw size={18}/>
-            </button>
-          )}
+        {/* ── TOP BAR ── */}
+        <div className="cc2-top-bar">
+          <button className="cc2-icon-btn" onClick={onClose} aria-label="Close camera">
+            <X size={22} />
+          </button>
+
+          <div className="cc2-badge-c2pa">
+            <ShieldCheck size={12} />
+            C2PA
+          </div>
+
+          <div className="cc2-gps-pill">
+            <span className={gpsIndicator.dot} />
+            <span className="cc2-gps-text">{gpsIndicator.label}</span>
+          </div>
         </div>
 
-        {/* Actions */}
-        <div className="cc-actions">
-          {phase === 'viewfinder' && (
-            <button className="cc-shutter" onClick={capture}>
-              <Aperture size={28}/>
+        {/* ── BOTTOM BAR — viewfinder ── */}
+        {phase === 'viewfinder' && (
+          <div className="cc2-bottom-bar">
+            {/* Zoom out */}
+            <button
+              className="cc2-icon-btn cc2-zoom-btn"
+              onClick={() => applyZoom(Math.max(1, zoom - 0.5))}
+              aria-label="Zoom out"
+            >
+              <span className="cc2-zoom-sym">−</span>
             </button>
-          )}
 
-          {phase === 'captured' && (
-            <>
-              <button className="cc-btn cc-btn--secondary" onClick={retake}>Retake</button>
-              <button className="cc-btn cc-btn--primary" onClick={signAndSubmit}>
-                <ShieldCheck size={16}/> Use this photo
-              </button>
-            </>
-          )}
+            {/* Shutter */}
+            <button className="cc2-shutter" onClick={capture} aria-label="Take photo">
+              <span className="cc2-shutter-inner" />
+            </button>
 
-          {phase === 'signing' && (
-            <p className="cc-status">Embedding C2PA provenance…</p>
-          )}
-        </div>
+            {/* Flip */}
+            <button className="cc2-icon-btn" onClick={flip} aria-label="Flip camera">
+              <RefreshCw size={20} />
+            </button>
+          </div>
+        )}
 
-        {/* GPS warning */}
-        {gpsStatus !== 'found' && phase !== 'init' && (
-          <p className="cc-gps-warning">
-            {gpsStatus === 'denied'
-              ? 'No GPS — photo will be submitted without location. Enable location services for full credibility.'
-              : 'Acquiring GPS signal — move to an open area for best accuracy.'}
-          </p>
+        {/* ── BOTTOM BAR — captured ── */}
+        {phase === 'captured' && (
+          <div className="cc2-bottom-bar cc2-bottom-bar--preview">
+            <button className="cc2-retake-btn" onClick={retake}>Retake</button>
+            <button className="cc2-use-btn" onClick={signAndSubmit}>
+              <ShieldCheck size={16} />
+              Use Photo
+            </button>
+          </div>
+        )}
+
+        {/* Zoom +/- hint overlay (viewfinder only) */}
+        {phase === 'viewfinder' && zoom > 1 && (
+          <div className="cc2-zoom-bar">
+            <button
+              className="cc2-zoom-step-btn"
+              onClick={() => applyZoom(Math.max(1, zoom - 0.5))}
+              aria-label="Zoom out"
+            >−</button>
+            <span className="cc2-zoom-bar-val">{zoom.toFixed(1)}×</span>
+            <button
+              className="cc2-zoom-step-btn"
+              onClick={() => applyZoom(Math.min(nativeZoomRange?.max ?? 5, zoom + 0.5))}
+              aria-label="Zoom in"
+            >+</button>
+          </div>
         )}
       </div>
 
+      {/* ── Styles (scoped, no external file needed) ── */}
       <style>{`
-        .cc-overlay {
-          position: fixed; inset: 0; z-index: 9999;
-          background: rgba(0,0,0,0.85);
-          display: flex; align-items: center; justify-content: center;
-          padding: 16px;
+        /* Root — true full-screen, above everything including nav */
+        .cc2-root {
+          position: fixed;
+          inset: 0;
+          z-index: 99999;
+          background: #000;
+          touch-action: none;
+          -webkit-user-select: none;
+          user-select: none;
+          overflow: hidden;
         }
-        .cc-modal {
-          background: #0f1117; border: 1px solid #2a2d3a;
-          border-radius: 16px; width: 100%; max-width: 480px;
-          display: flex; flex-direction: column; gap: 0;
-          overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+
+        /* Video fills screen */
+        .cc2-video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transform-origin: center center;
+          will-change: transform;
         }
-        .cc-header {
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 14px 16px; border-bottom: 1px solid #1e2030;
+
+        .cc2-hidden { display: none; }
+
+        /* Error */
+        .cc2-error {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          color: #f87171;
+          padding: 32px;
+          text-align: center;
+          font-size: 15px;
+          line-height: 1.5;
         }
-        .cc-title { font-weight: 600; color: #e2e8f0; font-size: 15px; }
-        .cc-close {
-          background: none; border: none; color: #64748b; cursor: pointer;
-          padding: 4px; border-radius: 6px;
+        .cc2-err-btn {
+          margin-top: 8px;
+          padding: 12px 28px;
+          background: #1e2030;
+          color: #e2e8f0;
+          border: none;
+          border-radius: 50px;
+          font-size: 15px;
+          cursor: pointer;
         }
-        .cc-close:hover { color: #e2e8f0; background: #1e2030; }
-        .cc-notice {
-          display: flex; align-items: center; gap: 6px;
-          padding: 8px 16px; background: rgba(16,185,129,0.08);
-          border-bottom: 1px solid rgba(16,185,129,0.15);
-          color: #6ee7b7; font-size: 12px;
+
+        /* Signing overlay */
+        .cc2-overlay-center {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          background: rgba(0,0,0,0.65);
+          color: #a5b4fc;
+          font-size: 15px;
+          z-index: 20;
         }
-        .cc-viewport {
-          position: relative; background: #000; aspect-ratio: 4/3;
-          overflow: hidden; max-height: 360px;
+
+        /* Zoom hint — fades in the center */
+        .cc2-zoom-hint {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(0,0,0,0.55);
+          color: #fff;
+          font-size: 22px;
+          font-weight: 700;
+          padding: 8px 20px;
+          border-radius: 12px;
+          pointer-events: none;
+          z-index: 30;
+          animation: cc2-zoom-fade 1.2s ease forwards;
         }
-        .cc-video {
-          width: 100%; height: 100%; object-fit: cover; display: block;
+        @keyframes cc2-zoom-fade {
+          0%   { opacity: 1; }
+          70%  { opacity: 1; }
+          100% { opacity: 0; }
         }
-        .cc-error-box {
-          display: flex; flex-direction: column; align-items: center;
-          justify-content: center; height: 100%; gap: 12px;
-          color: #f87171; padding: 24px; text-align: center; font-size: 14px;
+
+        /* ─ TOP BAR ─ */
+        .cc2-top-bar {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          padding: max(env(safe-area-inset-top, 0px) + 12px, 20px) 16px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 100%);
+          z-index: 10;
         }
-        .cc-signing-overlay {
-          position: absolute; inset: 0; display: flex; flex-direction: column;
-          align-items: center; justify-content: center; gap: 12px;
-          background: rgba(0,0,0,0.65); color: #a5b4fc; font-size: 14px;
+        .cc2-icon-btn {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.45);
+          border: none;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+          flex-shrink: 0;
         }
-        .cc-gps-badge {
-          position: absolute; top: 10px; left: 10px;
+        .cc2-badge-c2pa {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #6ee7b7;
+          font-size: 12px;
+          font-weight: 700;
+          background: rgba(0,0,0,0.45);
+          padding: 5px 12px;
+          border-radius: 20px;
+          letter-spacing: 0.03em;
         }
-        .cc-flip {
-          position: absolute; top: 10px; right: 10px;
-          background: rgba(0,0,0,0.5); border: none; border-radius: 8px;
-          color: #e2e8f0; padding: 8px; cursor: pointer;
+        .cc2-gps-pill {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          background: rgba(0,0,0,0.45);
+          padding: 5px 12px;
+          border-radius: 20px;
         }
-        .cc-flip:hover { background: rgba(0,0,0,0.75); }
-        .cc-actions {
-          display: flex; align-items: center; justify-content: center;
-          gap: 12px; padding: 16px;
+        .cc2-dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          display: inline-block;
+          flex-shrink: 0;
         }
-        .cc-shutter {
-          width: 64px; height: 64px; border-radius: 50%;
-          background: #fff; border: 4px solid #94a3b8; color: #0f172a;
-          cursor: pointer; display: flex; align-items: center; justify-content: center;
+        .cc2-dot--green { background: #10b981; }
+        .cc2-dot--red   { background: #ef4444; }
+        .cc2-dot--amber {
+          background: #f59e0b;
+          animation: cc2-pulse 1.2s ease infinite;
+        }
+        @keyframes cc2-pulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.35; }
+        }
+        .cc2-gps-text {
+          font-size: 11px;
+          font-weight: 600;
+          color: #e2e8f0;
+        }
+
+        /* ─ BOTTOM BAR ─ */
+        .cc2-bottom-bar {
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          padding: 20px 32px max(env(safe-area-inset-bottom, 0px) + 20px, 32px);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+          z-index: 10;
+        }
+        .cc2-bottom-bar--preview {
+          justify-content: center;
+          gap: 20px;
+        }
+
+        /* Shutter */
+        .cc2-shutter {
+          width: 76px; height: 76px;
+          border-radius: 50%;
+          border: 4px solid rgba(255,255,255,0.85);
+          background: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
           transition: transform 0.1s;
+          flex-shrink: 0;
         }
-        .cc-shutter:active { transform: scale(0.92); }
-        .cc-btn {
-          padding: 10px 20px; border-radius: 10px; font-size: 14px;
-          font-weight: 500; cursor: pointer; border: none;
-          display: flex; align-items: center; gap: 6px;
-          transition: opacity 0.15s;
+        .cc2-shutter:active { transform: scale(0.88); }
+        .cc2-shutter-inner {
+          display: block;
+          width: 60px; height: 60px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.92);
         }
-        .cc-btn--primary {
-          background: #10b981; color: #fff; display: flex; gap: 6px;
+
+        /* Zoom button (−/+) */
+        .cc2-zoom-btn {
+          background: rgba(0,0,0,0.45);
         }
-        .cc-btn--primary:hover { opacity: 0.88; }
-        .cc-btn--secondary {
-          background: #1e2030; color: #94a3b8; border: 1px solid #2a2d3a;
+        .cc2-zoom-sym {
+          font-size: 24px;
+          font-weight: 300;
+          line-height: 1;
+          color: #fff;
         }
-        .cc-btn--secondary:hover { color: #e2e8f0; }
-        .cc-status { color: #94a3b8; font-size: 13px; }
-        .cc-gps-warning {
-          padding: 8px 16px 14px; color: #f59e0b; font-size: 11px; text-align: center;
+
+        /* Preview mode buttons */
+        .cc2-retake-btn {
+          padding: 14px 28px;
+          background: rgba(15,17,27,0.85);
+          color: #94a3b8;
+          border: 1px solid rgba(100,116,139,0.35);
+          border-radius: 50px;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
         }
-        .cc-badge {
-          display: inline-flex; align-items: center; gap: 4px;
-          padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 500;
+        .cc2-use-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 30px;
+          background: #10b981;
+          color: #fff;
+          border: none;
+          border-radius: 50px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
         }
-        .cc-badge--green { background: rgba(16,185,129,0.18); color: #6ee7b7; }
-        .cc-badge--red   { background: rgba(239,68,68,0.18);  color: #fca5a5; }
-        .cc-badge--gray  { background: rgba(100,116,139,0.2); color: #94a3b8; }
-        @keyframes cc-spin { to { transform: rotate(360deg); } }
-        .cc-spin { animation: cc-spin 1s linear infinite; }
+
+        /* Zoom bar (shown while zoomed in) */
+        .cc2-zoom-bar {
+          position: absolute;
+          bottom: calc(max(env(safe-area-inset-bottom, 0px) + 20px, 32px) + 96px);
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: rgba(0,0,0,0.5);
+          padding: 6px 16px;
+          border-radius: 30px;
+          z-index: 10;
+        }
+        .cc2-zoom-step-btn {
+          width: 32px; height: 32px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.15);
+          border: none;
+          color: #fff;
+          font-size: 20px;
+          font-weight: 300;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .cc2-zoom-bar-val {
+          font-size: 14px;
+          font-weight: 700;
+          color: #fff;
+          min-width: 36px;
+          text-align: center;
+        }
+
+        /* Spinner */
+        @keyframes cc2-spin { to { transform: rotate(360deg); } }
+        .cc2-spin { animation: cc2-spin 1s linear infinite; }
       `}</style>
-    </div>
+    </>
   )
 }
