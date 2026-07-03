@@ -629,3 +629,184 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* ── Report FAB (mobile only) ─────────────────────────────── */
+.cmap-fab { display: none; }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE — map dominates the screen, chrome collapses
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Tighter section padding — give room to the map */
+  .cmap-section {
+    padding: 16px 12px 24px;
+  }
+
+  /* Compact header: small title, one-line subtitle, no legend row */
+  .cmap-map-header {
+    margin-bottom: 10px;
+    gap: 6px;
+  }
+  .cmap-map-header > div:first-child { min-width: 0; width: 100%; }
+  .cmap-map-title { font-size: 20px; }
+  .cmap-map-subtitle {
+    font-size: 12px;
+    margin-top: 2px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cmap-legend-items { display: none; }
+  .cmap-submit-camera-btn { display: none; } /* FAB replaces it */
+
+  /* Hide verbose educational chrome — it eats vertical space */
+  .cmap-layer-hint,
+  .cmap-source-notice,
+  .cmap-bottom-stats,
+  .cmap-photo-stats-bar,
+  .cmap-cameras-loaded,
+  .cmap-no-cameras { display: none; }
+
+  /* Filter toolbar: single horizontally-scrollable line */
+  .cmap-filter-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 8px;
+    padding-bottom: 2px;
+  }
+  .cmap-filter-toolbar::-webkit-scrollbar { display: none; }
+  .cmap-filter-toolbar > * { flex-shrink: 0; }
+  .cmap-filter-label { white-space: nowrap; }
+  .cmap-type-filter-btn { white-space: nowrap; min-height: 32px; }
+  .cmap-filter-right { margin-left: 4px; }
+
+  /* Map dominates the viewport (dvh handles the iOS URL bar) */
+  .map-container {
+    height: calc(100dvh - 190px) !important;
+    min-height: 420px !important;
+    border-radius: 12px;
+  }
+
+  /* Loading indicator: keep it tiny */
+  .cmap-loading-bar {
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+
+  /* Floating "Report" action button over the map */
+  .cmap-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: absolute;
+    bottom: 28px;
+    right: 14px;
+    height: 52px;
+    padding: 0 20px 0 16px;
+    border-radius: 26px;
+    background: #e63946;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 16px rgba(230, 57, 70, 0.45);
+    z-index: 1000;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cmap-fab:active { transform: scale(0.95); }
+}
+
+/* Leaflet popups must not overflow small screens */
+@media (max-width: 480px) {
+  .leaflet-popup-content-wrapper { max-width: 86vw; }
+  .leaflet-popup-content { max-width: 100% !important; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Mobile optimization (≤768px) — map dominates the screen
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .cmap-section { padding: 20px 12px 32px; }
+
+  /* Map fills most of the viewport (dvh handles iOS URL bar) */
+  .map-container {
+    height: calc(100dvh - 190px) !important;
+    min-height: 420px !important;
+  }
+  .cmap-leaflet-container { height: 100% !important; }
+
+  /* Hide verbose chrome stacked above/below the map */
+  .cmap-layer-hint,
+  .cmap-source-notice,
+  .cmap-bottom-stats,
+  .cmap-map-subtitle,
+  .cmap-legend-items { display: none; }
+
+  /* Compact header */
+  .cmap-map-header { margin-bottom: 10px; gap: 8px; }
+  .cmap-map-title { font-size: 20px; }
+
+  /* Photo stats bar tighter */
+  .cmap-photo-stats-bar { padding: 6px 10px; margin-bottom: 8px; font-size: 11px; }
+  .cmap-photo-stats-hint { display: none; }
+
+  /* Filter toolbar: single-line horizontal scroll */
+  .cmap-filter-toolbar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 8px;
+    padding-bottom: 2px;
+  }
+  .cmap-filter-toolbar::-webkit-scrollbar { display: none; }
+  .cmap-filter-toolbar > * { flex-shrink: 0; }
+
+  /* Compact status rows */
+  .cmap-cameras-loaded,
+  .cmap-no-cameras,
+  .cmap-loading-bar {
+    font-size: 11px;
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+
+  /* Hide header submit button — FAB replaces it */
+  .cmap-submit-camera-btn { display: none; }
+}
+
+@media (max-width: 480px) {
+  .leaflet-popup-content-wrapper { max-width: 86vw; }
+}
+
+/* ── Floating "report a camera" FAB (mobile only) ── */
+.cmap-fab { display: none; }
+@media (max-width: 768px) {
+  .cmap-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 28px;
+    right: 14px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e63946;
+    color: #fff;
+    border: none;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s;
+  }
+  .cmap-fab:active { transform: scale(0.94); }
+}

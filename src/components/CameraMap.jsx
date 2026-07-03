@@ -1566,6 +1566,25 @@ export default function CameraMap() {
           )}
         </div>
 
+        {/* Mobile-only floating "Report" button (replaces header Submit Camera btn) */}
+        <button
+          onClick={() => { setShowForm(!showForm); setSubmitted(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+          className="cmap-fab"
+          aria-label="Report a camera"
+        >
+          <Plus size={20} />
+          Report
+        </button>
+
+        {/* Floating report FAB (mobile only) */}
+        <button
+          onClick={() => { setShowForm(f => !f); setSubmitted(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+          className="cmap-fab"
+          aria-label="Report a camera"
+        >
+          <Plus size={24} />
+        </button>
+
         {/* Map attribution bar */}
         <div className="cmap-attribution">
           <span>Camera data:</span>

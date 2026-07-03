@@ -101,13 +101,14 @@ img {
 
 /* ─── Map mobile fixes ───────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  /* Reduce map height on small screens */
+  /* Leaflet fills its wrapper; wrapper height set below */
   .leaflet-container {
-    height: 360px !important;
+    height: 100% !important;
   }
-  /* Shrink outer map wrapper to match leaflet height */
+  /* Map should dominate the screen on mobile (dvh handles iOS URL bar) */
   .map-container {
-    height: 360px !important;
+    height: calc(100dvh - 190px) !important;
+    min-height: 420px !important;
   }
 
   /* Hero padding: app-main already has 60px to clear fixed nav — no extra needed */

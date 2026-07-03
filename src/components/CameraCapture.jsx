@@ -289,20 +289,20 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
           <div className="cc2-bottom-bar">
             {/* Zoom out */}
             <button
-              className="cc2-icon-btn cc2-zoom-btn"
+              className="cc2-icon-btn cc2-zoom-btn cc2-zoomout-pos"
               onClick={() => applyZoom(Math.max(1, zoom - 0.5))}
               aria-label="Zoom out"
             >
               <span className="cc2-zoom-sym">−</span>
             </button>
 
-            {/* Shutter */}
+            {/* Shutter — absolutely centered like native iOS camera */}
             <button className="cc2-shutter" onClick={capture} aria-label="Take photo">
               <span className="cc2-shutter-inner" />
             </button>
 
             {/* Flip */}
-            <button className="cc2-icon-btn" onClick={flip} aria-label="Flip camera">
+            <button className="cc2-icon-btn cc2-flip-pos" onClick={flip} aria-label="Flip camera">
               <RefreshCw size={20} />
             </button>
           </div>
@@ -495,24 +495,32 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
         }
 
         /* ─ BOTTOM BAR ─ */
+        /* Viewfinder mode: fixed-height strip, children absolutely positioned so
+           the shutter is PERFECTLY centered horizontally (native camera style). */
         .cc2-bottom-bar {
           position: absolute;
           bottom: 0; left: 0; right: 0;
-          padding: 20px 32px max(env(safe-area-inset-bottom, 0px) + 20px, 32px);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+          height: 140px;
+          padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+          background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
           z-index: 10;
         }
         .cc2-bottom-bar--preview {
+          height: auto;
+          padding: 20px 32px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 32px);
+          display: flex;
+          align-items: center;
           justify-content: center;
           gap: 20px;
         }
 
-        /* Shutter */
+        /* Shutter — dead center at the bottom */
         .cc2-shutter {
-          width: 76px; height: 76px;
+          position: absolute;
+          left: 50%;
+          bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), 32px);
+          transform: translateX(-50%);
+          width: 70px; height: 70px;
           border-radius: 50%;
           border: 4px solid rgba(255,255,255,0.85);
           background: transparent;
@@ -524,12 +532,24 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
           transition: transform 0.1s;
           flex-shrink: 0;
         }
-        .cc2-shutter:active { transform: scale(0.88); }
+        .cc2-shutter:active { transform: translateX(-50%) scale(0.88); }
         .cc2-shutter-inner {
           display: block;
-          width: 60px; height: 60px;
+          width: 56px; height: 56px;
           border-radius: 50%;
           background: rgba(255,255,255,0.92);
+        }
+
+        /* Side buttons — independently positioned so they never push the shutter */
+        .cc2-flip-pos {
+          position: absolute;
+          right: 32px;
+          bottom: max(calc(env(safe-area-inset-bottom, 0px) + 38px), 46px);
+        }
+        .cc2-zoomout-pos {
+          position: absolute;
+          left: 32px;
+          bottom: max(calc(env(safe-area-inset-bottom, 0px) + 38px), 46px);
         }
 
         /* Zoom button (−/+) */
