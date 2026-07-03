@@ -1,22 +1,25 @@
 {
-  "name": "Citeback — Fund the Fight Against Surveillance",
+  "name": "Citeback — Fight Surveillance",
   "short_name": "Citeback",
-  "description": "Anonymous crowdfunding for surveillance lawsuits, FOIA requests, and ordinance campaigns. Funded in Monero and Zano.",
-  "start_url": "/",
+  "description": "Document surveillance cameras, fund FOIA requests and lawsuits.",
+  "start_url": "/map",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#e63946",
   "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ],
-  "categories": ["finance", "news", "social"],
+  "categories": ["news", "social", "utilities"],
   "lang": "en-US",
   "scope": "/",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Report Camera", "short_name": "Report", "url": "/report" },
+    { "name": "View Map", "short_name": "Map", "url": "/map" }
+  ]
 }

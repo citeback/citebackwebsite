@@ -9378,3 +9378,33 @@ img {
 .lp-disambig-label  { font-size: 12px; font-weight: 700; } /* color via JS */
 .lp-disambig-dist   { font-size: 10px; color: #888; }
 .lp-disambig-arrow  { font-size: 11px; color: #aaa; }
+
+/* ── SightingForm: ZIP placeholder ────────────────────────────────────── */
+.sf-zip-placeholder {
+  width: 100%; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(16,185,129,0.06); border: 1px dashed rgba(16,185,129,0.3);
+  border-radius: 8px; color: #6ee7b7; font-size: 13px; font-weight: 500;
+}
+
+/* ── CameraMap: in-app camera CTA inside submit form ──────────────────── */
+.cmap-inapp-cam-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px; background: rgba(230,57,70,0.08);
+  border: 1px solid rgba(230,57,70,0.25); border-radius: 10px;
+  color: #e63946; font-size: 14px; font-weight: 600; cursor: pointer;
+  margin-bottom: 10px; transition: background 0.15s;
+}
+.cmap-inapp-cam-btn:hover { background: rgba(230,57,70,0.14); }
+.cmap-cam-c2pa-pill {
+  font-size: 10px; background: rgba(16,185,129,0.15); color: #6ee7b7;
+  border-radius: 6px; padding: 2px 6px; font-weight: 600;
+}
+.cmap-device-gps-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.25); border-radius: 8px;
+  color: #f59e0b; font-size: 12px; font-weight: 600; cursor: pointer;
+  margin-top: 8px; width: 100%; justify-content: center;
+}
+.cmap-device-gps-btn:hover { background: rgba(245,158,11,0.15); }

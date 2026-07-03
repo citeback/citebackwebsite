@@ -9,6 +9,7 @@ import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Plus, AlertCircle, Crosshair, CheckCircle, ExternalLink, Loader, Radio, Filter, ChevronDown, Upload, X, Camera, Eye, Clock, Layers, Shield, MapPin } from 'lucide-react'
 import * as Exifr from 'exifr'
 import { C2PAExplainer, ThreatDisclosure } from './VerificationTiers'
+import CameraCapture from './CameraCapture'
 import {
   facialRecognitionAgencies,
   stingrays,
@@ -152,6 +153,8 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
   const [success, setSuccess] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [notes, setNotes] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [serverError, setServerError] = useState(null)
   const inputRef = useRef()
 
   const processFile = async (f) => {
@@ -178,8 +181,21 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
     if (f) processFile(f)
   }
 
-  const handleSubmit = () => {
-    if (!preview) return
+  const handleSubmit = async () => {
+    if (!preview || !file) return
+    setSubmitting(true)
+    setServerError(null)
+    // POST to VPS server so photo is shared, not just local
+    try {
+      const fd = new FormData()
+      fd.append('photo', file)
+      fd.append('cameraType', 'alpr')
+      fd.append('notes', notes.trim() || '')
+      if (camera?.lat) fd.append('lat', String(camera.lat))
+      if (camera?.lon) fd.append('lng', String(camera.lon))
+      await fetch(`${AI_URL}/sighting`, { method: 'POST', credentials: 'include', body: fd })
+    } catch (_) { /* non-fatal — still save locally */ }
+    setSubmitting(false)
     onSubmit(camera.id, {
       id: Date.now().toString(),
       dataUrl: preview,
@@ -309,6 +325,7 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
                   id="cmap-photo-notes"
                   className="cmap-textarea cmap-textarea--min"
                   placeholder="e.g. Flock camera on pole at intersection, pointing east toward highway on-ramp"
+                  maxLength={500}
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
                 />
@@ -320,12 +337,14 @@ function PhotoSubmitModal({ camera, onClose, onSubmit }) {
               🤖 All photos pass a spam filter before review. Photos showing faces, license plates, or unrelated content are automatically blocked. Nothing goes live without human approval.
             </div>
 
+            {serverError && <div className="cmap-error-box" style={{marginTop:8}}><AlertCircle size={14}/> {serverError}</div>}
             {preview && (
               <button
                 onClick={handleSubmit}
+                disabled={submitting}
                 className="cmap-photo-submit-btn"
               >
-                <Camera size={15} /> Submit for Review
+                {submitting ? <><Loader size={13} className="spinning"/> Uploading…</> : <><Camera size={15} /> Submit for Review</>}
               </button>
             )}
           </>
@@ -939,6 +958,7 @@ export default function CameraMap() {
   const [photoStore, setPhotoStore] = useState({})   // { [cameraId]: [{id, dataUrl, notes, timestamp, status}] }
   const [showPhotoModal, setShowPhotoModal] = useState(false)
   const [photoModalCamera, setPhotoModalCamera] = useState(null)
+  const [showMapCamera, setShowMapCamera] = useState(false)
 
   // Load photos from localStorage on mount
   useEffect(() => {
@@ -970,6 +990,17 @@ export default function CameraMap() {
       const existing = prev[cameraId] || []
       return { ...prev, [cameraId]: [...existing, photo] }
     })
+  }
+
+  const handleMapCapture = (signedFile, captureGps) => {
+    setShowMapCamera(false)
+    set('photoFile', signedFile)
+    if (captureGps) {
+      set('lat', String(captureGps.lat))
+      set('lng', String(captureGps.lng))
+      setMapGpsStatus('found')
+    }
+    set('hasC2PA', true)
   }
 
   // Load community sightings — re-runs whenever sightingVersion bumps (post-submit)
@@ -1279,6 +1310,15 @@ export default function CameraMap() {
         </div>
       )}
 
+      {/* In-app C2PA camera for map submit form */}
+      {showMapCamera && (
+        <CameraCapture
+          cameraHint="Surveillance Camera"
+          onCapture={handleMapCapture}
+          onClose={() => setShowMapCamera(false)}
+        />
+      )}
+
       {/* Submit camera form */}
       {showForm && (
         <div className="cmap-form-container">
@@ -1294,6 +1334,15 @@ export default function CameraMap() {
               <div className="cmap-form-inner">
                 <C2PAExplainer />
                 <div className="cmap-form-fields">
+                  {!form.photoFile && (
+                    <button
+                      type="button"
+                      onClick={() => setShowMapCamera(true)}
+                      className="cmap-inapp-cam-btn"
+                    >
+                      <Camera size={18} /> Take Photo with CiteBack <span className="cmap-cam-c2pa-pill">C2PA-signed</span>
+                    </button>
+                  )}
                   <label className={`cmap-photo-label${form.photoFile ? ' cmap-photo-label--file' : ' cmap-photo-label--empty'}`}>
                     <Upload size={14} />
                     {mapGpsStatus === 'reading' ? 'Reading GPS…'
@@ -1306,8 +1355,29 @@ export default function CameraMap() {
                     />
                   </label>
                   {mapGpsStatus === 'none' && (
-                    <div className="cmap-gps-warn">
-                      No GPS found. Enable location in Proofmode before shooting, or use a Samsung Galaxy S24+ / Pixel 10.
+                    <div>
+                      <div className="cmap-gps-warn">
+                        No GPS in this photo. Use the in-app camera above, or use your current location.
+                      </div>
+                      <button
+                        type="button"
+                        className="cmap-device-gps-btn"
+                        onClick={() => {
+                          if (!navigator.geolocation) return
+                          setMapGpsStatus('reading')
+                          navigator.geolocation.getCurrentPosition(
+                            pos => {
+                              set('lat', pos.coords.latitude.toFixed(6))
+                              set('lng', pos.coords.longitude.toFixed(6))
+                              setMapGpsStatus('found')
+                            },
+                            () => setMapGpsStatus('none'),
+                            { enableHighAccuracy: true, timeout: 10000 }
+                          )
+                        }}
+                      >
+                        <MapPin size={13} /> Use my current location
+                      </button>
                     </div>
                   )}
                   {mapGpsStatus === 'found' && (

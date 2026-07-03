@@ -47,8 +47,8 @@ export default function SightingForm({ setTab }) {
     const isZip = file.type.includes('zip') || file.name.toLowerCase().endsWith('.zip')
 
     if (isZip) {
-      // Zip from Proofmode — show a generic icon, GPS will be extracted server-side from proof.json
-      setPhotoPreview(null)
+      // Zip from Proofmode — show a placeholder, GPS will be extracted server-side from proof.json
+      setPhotoPreview('zip')
       setGpsStatus('found')   // server will extract GPS from proof.json; trust the zip
       setGpsSource('zip')
       setPhotoGPS({ lat: 'zip', lng: 'zip' })  // sentinel — server replaces with real coords
@@ -385,7 +385,10 @@ export default function SightingForm({ setTab }) {
             ) : (
               <div className="sf-photo-preview">
                 <div className="sf-photo-relative">
-                  <img src={photoPreview} alt="Sighting" className="sf-preview-img" />
+                  {photoPreview === 'zip'
+                    ? <div className="sf-zip-placeholder">📦 Proofmode bundle attached — GPS in proof.json</div>
+                    : <img src={photoPreview} alt="Sighting" className="sf-preview-img" />
+                  }
                   <button type="button" onClick={clearPhoto} aria-label="Remove photo" className="sf-photo-clear">
                     <X size={14} />
                   </button>

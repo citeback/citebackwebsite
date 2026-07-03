@@ -120,7 +120,7 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
     }
 
     try {
-      const res = await fetch(SIGN_URL, { method: 'POST', body: fd })
+      const res = await fetch(SIGN_URL, { method: 'POST', body: fd, credentials: 'include' })
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Server error' }))
         throw new Error(err.error || 'Sign failed')
@@ -314,7 +314,7 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
         .cc-btn {
           padding: 10px 20px; border-radius: 10px; font-size: 14px;
           font-weight: 500; cursor: pointer; border: none;
-          display: flex; align-items: center; gap-6px;
+          display: flex; align-items: center; gap: 6px;
           transition: opacity 0.15s;
         }
         .cc-btn--primary {
