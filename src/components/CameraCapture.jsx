@@ -10,7 +10,7 @@
  *   • Props: onCapture(blob, {lat,lng}), onClose(), cameraHint
  */
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { X, RefreshCw, ShieldCheck, AlertCircle, Loader } from 'lucide-react'
 import { API_BASE as AI_URL } from '../config.js'
@@ -18,6 +18,33 @@ import { API_BASE as AI_URL } from '../config.js'
 const SIGN_URL = AI_URL + '/api/capture/sign'
 
 export default function CameraCapture({ onCapture, onClose, cameraHint = 'Surveillance Camera' }) {
+  // ── Portal container ─────────────────────────────────────────────────────
+  // We append a fixed div directly to <html> (not <body>) so that
+  // body-level CSS (overflow-x:hidden/clip, transforms, etc.) can’t interfere
+  // with position:fixed inside it.
+  const portalElRef = useRef(null)
+  if (!portalElRef.current) {
+    const el = document.createElement('div')
+    el.setAttribute('id', 'cc2-portal-slot')
+    el.style.cssText = [
+      'position:fixed',
+      'inset:0',
+      'z-index:2147483647',
+      'pointer-events:all',
+      'background:transparent',
+    ].join(';')
+    document.documentElement.appendChild(el)
+    portalElRef.current = el
+  }
+  useEffect(() => {
+    return () => {
+      const el = portalElRef.current
+      if (el && document.documentElement.contains(el)) {
+        document.documentElement.removeChild(el)
+      }
+    }
+  }, [])
+
   const videoRef    = useRef(null)
   const canvasRef   = useRef(null)
   const streamRef   = useRef(null)
@@ -340,11 +367,10 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
 
       {/* ── Styles (scoped, no external file needed) ── */}
       <style>{`
-        /* Root — true full-screen, above everything including nav */
+        /* Root — fills the portal container (which is already fixed to viewport) */
         .cc2-root {
-          position: fixed;
+          position: absolute;
           inset: 0;
-          z-index: 99999;
           background: #000;
           touch-action: none;
           -webkit-user-select: none;
@@ -634,5 +660,5 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
     </>
   )
 
-  return createPortal(content, document.body)
+  return createPortal(content, portalElRef.current)
 }
