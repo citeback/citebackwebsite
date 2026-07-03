@@ -11,6 +11,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { X, RefreshCw, ShieldCheck, AlertCircle, Loader } from 'lucide-react'
 import { API_BASE as AI_URL } from '../config.js'
 
@@ -220,7 +221,7 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
     gpsStatus === 'denied'   ? { dot: 'cc2-dot cc2-dot--red',   label: 'No GPS' } :
                                { dot: 'cc2-dot cc2-dot--amber',  label: 'GPS…' }
 
-  return (
+  const content = (
     <>
       {/* ── Full-screen container ── */}
       <div
@@ -632,4 +633,6 @@ export default function CameraCapture({ onCapture, onClose, cameraHint = 'Survei
       `}</style>
     </>
   )
+
+  return createPortal(content, document.body)
 }
