@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { CheckCircle, AlertCircle, Eye, Loader, Shield, Star, Camera, X, MapPin } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import AccountModal from './AccountModal'
+import CameraCapture from './CameraCapture'
 import * as Exifr from 'exifr'
 
 import { API_BASE as AI_URL } from '../config.js'
@@ -32,6 +33,7 @@ export default function SightingForm({ setTab }) {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(null)          // null | 'c2pa' | 'no_gps' | 'generic'
   const [checklistOpen, setChecklistOpen] = useState(false)
+  const [showCamera, setShowCamera] = useState(false)
   const fileInputRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -157,8 +159,26 @@ export default function SightingForm({ setTab }) {
     setSending(false)
   }
 
+  // ── Camera capture handler ──────────────────────────────────────────────────
+  function handleCameraCapture(signedFile, captureGps) {
+    setShowCamera(false)
+    processFile(signedFile)
+    if (captureGps) {
+      setPhotoGPS({ lat: String(captureGps.lat), lng: String(captureGps.lng) })
+      setGpsStatus('found')
+      setGpsSource('device')
+    }
+  }
+
   return (
     <>
+    {showCamera && (
+      <CameraCapture
+        cameraHint={cameraType || 'Surveillance Camera'}
+        onCapture={handleCameraCapture}
+        onClose={() => setShowCamera(false)}
+      />
+    )}
     <Helmet>
       <title>Report a Camera | Citeback — Submit C2PA-Verified Surveillance Sightings</title>
       <meta name="description" content="Spotted an ALPR, facial recognition camera, or ShotSpotter? Submit a C2PA-verified sighting to the Citeback surveillance map. Anonymous, no account required." />
@@ -334,12 +354,23 @@ export default function SightingForm({ setTab }) {
 
             {!photoFile ? (
               <>
+                {/* ── CiteBack In-App Camera (primary) ── */}
+                <button
+                  type="button"
+                  onClick={() => setShowCamera(true)}
+                  className="sf-camera-cta"
+                >
+                  <Camera size={20} />
+                  <span>Take photo with CiteBack</span>
+                  <span className="sf-c2pa-pill">C2PA-signed</span>
+                </button>
+
+                {/* ── Or upload / drag-and-drop (secondary) ── */}
                 <button type="button" onClick={() => fileInputRef.current?.click()}
                   onDragOver={handleDragOver} onDragEnter={handleDragEnter}
                   onDragLeave={handleDragLeave} onDrop={handleDrop}
                   className={`sf-photo-drop${isDragging ? ' sf-photo-drop--dragging' : ''}`}>
-                  <Camera size={28} className="sf-drop-icon" />
-                  <span className="sf-drop-title">Tap to attach photo</span>
+                  <span className="sf-drop-title" style={{fontSize:'13px',color:'#64748b'}}>or attach existing photo</span>
                   <span className="sf-drop-hint-text">Proofmode ZIP · JPEG · PNG · WEBP · HEIC · max 12MB</span>
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,application/zip,application/x-zip-compressed,.zip"
